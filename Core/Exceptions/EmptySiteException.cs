@@ -8,19 +8,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Core.Base;
 
-namespace Xarial.Docify.Core
+namespace Xarial.Docify.Core.Exceptions
 {
-    public class SourceFile : ISourceFile
+    public class EmptySiteException : Exception
     {
-        public Location Location { get; }
-        public string Content { get; }
-
-        public SourceFile(Location path, string content) 
+        public EmptySiteException() : base("Site contains no pages") 
         {
-            Location = path;
-            Content = content;
         }
     }
 }

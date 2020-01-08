@@ -50,10 +50,10 @@ namespace Xarial.Docify.Core
         }
     }
 
-    [DebuggerDisplay("{" + nameof(Url) + "}")]
+    [DebuggerDisplay("{" + nameof(Location) + "}")]
     public class Page 
     {
-        public Location Url { get; }
+        public Location Location { get; }
 
         public Template Layout { get; }
 
@@ -75,7 +75,7 @@ namespace Xarial.Docify.Core
 
         public Page(Location url, string rawContent, Dictionary<string, string> data, Template layout = null) 
         {
-            Url = url;
+            Location = url;
             Data = data ?? new Dictionary<string, string>();
             Children = new List<Page>();
             Assets = new List<Asset>();
@@ -155,7 +155,7 @@ namespace Xarial.Docify.Core
                 if (HasRazorCode(page))
                 {
                     html = await razorEngine.CompileRenderAsync(
-                        page.Url.ToId(), html, model, typeof(RazorModel));
+                        page.Location.ToId(), html, model, typeof(RazorModel));
                 }
 
                 //NOTE: by some reasons extra new line symbol is added to the output

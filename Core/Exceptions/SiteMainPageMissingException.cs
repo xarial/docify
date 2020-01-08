@@ -8,19 +8,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Core.Base;
 
-namespace Xarial.Docify.Core
+namespace Xarial.Docify.Core.Exceptions
 {
-    public class SourceFile : ISourceFile
+    public class SiteMainPageMissingException : Exception
     {
-        public Location Location { get; }
-        public string Content { get; }
-
-        public SourceFile(Location path, string content) 
+        public SiteMainPageMissingException() : base("Site main page is not found. Add index.(md/html/cshtml) page to the root folder of the site") 
         {
-            Location = path;
-            Content = content;
         }
     }
 }

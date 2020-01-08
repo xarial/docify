@@ -24,9 +24,9 @@ namespace Xarial.Docify.Core
                     .Equals("index", StringComparison.CurrentCultureIgnoreCase);
         }
 
-        internal static Location CreatePageLocation(this Location input)
+        internal static Location ConvertToPageLocation(this Location location)
         {
-            var fileName = input.FileName;
+            var fileName = location.FileName;
 
             if (string.IsNullOrEmpty(fileName))
             {
@@ -37,7 +37,7 @@ namespace Xarial.Docify.Core
                 fileName = Path.GetFileNameWithoutExtension(fileName) + ".html";
             }
 
-            return new Location(fileName, input.Path.ToArray());
+            return new Location(fileName, location.Path.ToArray());
         }
     }
 
@@ -48,7 +48,7 @@ namespace Xarial.Docify.Core
         
         private bool IsPage(ISourceFile srcFile) 
         {
-            var ext = Path.GetExtension(srcFile.Path.FileName);
+            var ext = Path.GetExtension(srcFile.Location.FileName);
 
             var htmlExts = new string[]
             {
@@ -132,7 +132,7 @@ namespace Xarial.Docify.Core
 
             //TODO: find template
 
-            return new Page(loc.CreatePageLocation(),
+            return new Page(loc.ConvertToPageLocation(),
                 rawContent, pageData, template);
         }
 
@@ -146,12 +146,17 @@ namespace Xarial.Docify.Core
             if (elements?.Any() == true)
             {
                 var srcPages = elements.Where(e => IsPage(e));
-                
-                var mainSrcPage = srcPages.FirstOrDefault(p => p.Path.IsIndexPage());
+
+                if (!srcPages.Any()) 
+                {
+                    throw new EmptySiteException();
+                }
+
+                var mainSrcPage = srcPages.FirstOrDefault(p => p.Location.IsRoot && p.Location.IsIndexPage());
 
                 if (mainSrcPage == null) 
                 {
-                    throw new Exception("Main page is missing");
+                    throw new SiteMainPageMissingException();
                 }
 
                 srcPages = srcPages.Except(new ISourceFile[] { mainSrcPage });
@@ -161,18 +166,14 @@ namespace Xarial.Docify.Core
                 site = new Site(baseUrl, mainPage);
                 pages.Add(new List<string>(), mainPage);
                 
-                foreach (var srcPage in srcPages.OrderBy(p => p.Path.TotalLevel))
+                foreach (var srcPage in srcPages.OrderBy(p => p.Location.TotalLevel))
                 {
-                    //var relPath = new Location(srcPage.Path.FileName, 
-                    //    new string[] { "" }.Concat(srcPage.Path.Path).ToArray());
-                    
                     var pageLocParts = new List<string>();
-                    //pageLocParts.Add("");
-                    pageLocParts.AddRange(srcPage.Path.Path);
-                    var isIndexPage = srcPage.Path.IsIndexPage();
+                    pageLocParts.AddRange(srcPage.Location.Path);
+                    var isIndexPage = srcPage.Location.IsIndexPage();
                     if (!isIndexPage) 
                     {
-                        pageLocParts.Add(Path.GetFileNameWithoutExtension(srcPage.Path.FileName));
+                        pageLocParts.Add(Path.GetFileNameWithoutExtension(srcPage.Location.FileName));
                     }
 
                     var parentLoc = new List<string>();
@@ -202,60 +203,31 @@ namespace Xarial.Docify.Core
                             }
                             
                             page = CreatePageFromSourceOrDefault(isPage ? srcPage : null,
-                                new Location(isPage ? srcPage.Path.FileName : "",
+                                new Location(isPage ? srcPage.Location.FileName : "",
                                 pagePath.ToArray()));
 
                             pages.Add(thisLoc, page);
-
-                            //var curPageUrl = new List<string>(thisUrl);
-
+                            
                             pages[parentLoc].Children.Add(page);
                         }
                         else
                         {
                             if (isPage)
                             {
-                                throw new DuplicatePageException(srcPage.Path);
+                                throw new DuplicatePageException(srcPage.Location);
                             }
                         }
-
-                        //if(isPage && !isIndexPage) 
-                        //{
-                        //    page = CreatePageFromSourceOrDefault(srcPage,
-                        //        new Location(srcPage.Path.FileName, thisUrl.Skip(1).ToArray()));
-
-                        //    pages.Add(page.Url, page);
-
-                        //    //var curPageUrl = new List<string>(thisUrl);
-
-                        //    pages[new Location("", thisUrl.Skip(1).ToArray())].Children.Add(page);
-                        //}
-                        //else
-                        //{
-                        //    if (isPage)
-                        //    {
-                        //        throw new Exception("Duplicate page");
-                        //    }
-                        //}
-
+                        
                         parentLoc = thisLoc;
                     }
                 }
             }
             else 
             {
-                throw new Exception("Empty site");
+                throw new EmptySiteException();
             }
 
             return site;
         }
-
-        //private void GetPageData(ISourceFile pageSrc, 
-        //    out Dictionary<string, string> data, out string rawContent)
-        //{
-        //    //TODO: extract front matter
-        //    data = null;
-        //    rawContent = null;
-        //}
     }
 }

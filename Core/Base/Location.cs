@@ -15,98 +15,11 @@ using System.Text;
 
 namespace Xarial.Docify.Core.Base
 {
-    //public class LocationBlock : IEquatable<LocationBlock>
-    //{
-    //    public string Value { get; }
-    //    public bool IsRoot { get; }
-    //    public bool IsFileName { get; }
-
-    //    internal LocationBlock(string value, bool isRoot, bool isFileName) 
-    //    {
-    //        Value = value;
-    //        IsRoot = isRoot;
-    //        IsFileName = isFileName;
-    //    }
-
-    //    public bool Equals([AllowNull] LocationBlock other)
-    //    {
-    //        return Equals(other, StringComparison.CurrentCultureIgnoreCase);
-    //    }
-
-    //    public bool Equals(LocationBlock other, StringComparison comparisonType) 
-    //    {
-    //        if (other == null)
-    //        {
-    //            return false;
-    //        }
-    //        else
-    //        {
-    //            return string.Equals(Value, other.Value, comparisonType)
-    //                && IsRoot == other.IsRoot 
-    //                && IsFileName == other.IsFileName;
-    //        }
-    //    }
-
-    //    public override string ToString()
-    //    {
-    //        return Value;
-    //    }
-
-    //    public static bool operator ==(LocationBlock obj1, LocationBlock obj2)
-    //    {
-    //        if (ReferenceEquals(obj1, obj2))
-    //        {
-    //            return true;
-    //        }
-
-    //        if (ReferenceEquals(obj1, null))
-    //        {
-    //            return false;
-    //        }
-
-    //        if (ReferenceEquals(obj2, null))
-    //        {
-    //            return false;
-    //        }
-
-    //        return obj1.Equals(obj2);
-    //    }
-
-    //    public static bool operator !=(LocationBlock obj1, LocationBlock obj2)
-    //    {
-    //        return !(obj1 == obj2);
-    //    }
-
-    //    public override bool Equals(object obj)
-    //    {
-    //        if (ReferenceEquals(null, obj))
-    //        {
-    //            return false;
-    //        }
-    //        if (ReferenceEquals(this, obj))
-    //        {
-    //            return true;
-    //        }
-
-    //        return obj.GetType() == GetType() && Equals((LocationBlock)obj);
-    //    }
-
-    //    public override int GetHashCode()
-    //    {
-    //        return 0;
-    //    }
-    //}
-
     public class Location
     {
         private const string PATH_SEP = "\\";
         private const string URL_SEP = "/";
         private const string ID_SEP = "-";
-
-        //public static Location Empty() 
-        //{
-        //    return new Location("");
-        //}
 
         public static Location FromPath(string path, string relTo = "") 
         {
@@ -192,38 +105,6 @@ namespace Xarial.Docify.Core.Base
             return fullLoc.ToString();
         }
         
-        //public bool Equals([AllowNull]Location other)
-        //{
-        //    return Equals(other, StringComparison.CurrentCultureIgnoreCase);
-        //}
-
-        //public bool Equals(Location other, StringComparison comparisonType)
-        //{
-        //    if (other == null)
-        //    {
-        //        return false;
-        //    }
-        //    else
-        //    {
-        //        if (other.Path.Count == Path.Count)
-        //        {
-        //            for (int i = 0; i < Path.Count; i++)
-        //            {
-        //                if (!string.Equals(Path[i], other.Path[i], comparisonType)) 
-        //                {
-        //                    return false;
-        //                }
-        //            }
-
-        //            return true;
-        //        }
-        //        else
-        //        {
-        //            return false;
-        //        }
-        //    }
-        //}
-
         public IReadOnlyList<string> Path { get; }
 
         public int TotalLevel 
@@ -234,11 +115,11 @@ namespace Xarial.Docify.Core.Base
             }
         }
 
-        public string Root 
+        public bool IsRoot 
         {
             get
             {
-                return Path.FirstOrDefault();
+                return !Path.Any();
             }
         }
 
@@ -250,64 +131,9 @@ namespace Xarial.Docify.Core.Base
             Path = new List<string>(path);
         }
         
-        //public static bool operator ==(Location obj1, Location obj2)
-        //{
-        //    if (ReferenceEquals(obj1, obj2))
-        //    {
-        //        return true;
-        //    }
-
-        //    if (ReferenceEquals(obj1, null))
-        //    {
-        //        return false;
-        //    }
-
-        //    if (ReferenceEquals(obj2, null))
-        //    {
-        //        return false;
-        //    }
-
-        //    return obj1.Equals(obj2);
-        //}
-
-        //public static bool operator !=(Location obj1, Location obj2)
-        //{
-        //    return !(obj1 == obj2);
-        //}
-
-        //public override bool Equals(object obj)
-        //{
-        //    if (ReferenceEquals(null, obj))
-        //    {
-        //        return false;
-        //    }
-        //    if (ReferenceEquals(this, obj))
-        //    {
-        //        return true;
-        //    }
-
-        //    return obj.GetType() == GetType() && Equals((Location)obj);
-        //}
-
-        //public override int GetHashCode()
-        //{
-        //    return 0;
-        //}
-
         public override string ToString()
         {
             return ToId();
         }
-
-        //public static Location operator +(Location obj1, Location obj2)
-        //{
-        //    return new Location(obj2.FileName, obj1.Path.ToArray());
-        //}
-
-        //public static Location operator +(Location obj1, string obj2)
-        //{
-        //    return new Location("", obj1.Path
-        //        .Concat(new string[] { obj2 }).ToArray());
-        //}
     }
 }

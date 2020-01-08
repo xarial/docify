@@ -34,59 +34,74 @@ namespace Xarial.Docify.Core
     public class Site 
     {
         public string BaseUrl { get; }
-        public IEnumerable<Asset> Assets { get; }
-        public IEnumerable<Page> Pages { get; }
+        
+        public List<Asset> Assets { get; }
+        public List<Page> Pages { get; }
+        public List<Template> Layouts { get; }
+        public List<Template> Includes { get; }
 
-        public Site(string baseUrl,
-            IEnumerable<Asset> assets, IEnumerable<Page> pages) 
+        public Site(string baseUrl) 
         {
             BaseUrl = baseUrl;
-            Assets = assets;
-            Pages = pages;
+            Pages = new List<Page>();
+            Assets = new List<Asset>();
+            Layouts = new List<Template>();
+            Includes = new List<Template>();
         }
     }
 
     [DebuggerDisplay("{" + nameof(Url) + "}")]
     public class Page 
     {
-        public string Url { get; }
-        
-        public IReadOnlyDictionary<string, string> Data { get; }
+        public Location Url { get; }
+
+        public Template Layout { get; }
+
+        public Dictionary<string, string> Data { get; }
         
         public string Content { get; internal set; }
 
-        public IEnumerable<Page> Children => ChildrenList;
+        public List<Page> Children { get; }
 
-        public IEnumerable<Asset> Assets { get; }
-        //IPageSource Source { get; }
-        
+        public List<Asset> Assets { get; }
+                
         public string RawContent { get; }
         
-        internal List<Page> ChildrenList { get; }
-
-        public Page(string url, IReadOnlyDictionary<string, string> data,
-            IEnumerable<Asset> assets, string rawContent)
+        public Page(Location url, string rawContent, Template layout = null) 
+            : this(url, rawContent, new Dictionary<string, string>(), layout)
         {
-            Url = url;
-            Data = data;
-            ChildrenList = new List<Page>();
-            Assets = assets;
-            RawContent = rawContent;
+            
         }
 
-        public Page(string url, IReadOnlyDictionary<string, string> data,
-            IEnumerable<Asset> assets, string rawContent, List<Page> children)
-            : this(url, data, assets, rawContent)
+        public Page(Location url, string rawContent, Dictionary<string, string> data, Template layout = null) 
         {
-            ChildrenList = children;
+            Url = url;
+            Data = data ?? new Dictionary<string, string>();
+            Children = new List<Page>();
+            Assets = new List<Asset>();
+            RawContent = rawContent;
+            Layout = layout;
         }
     }
 
     public class Asset 
     {
         public string Path { get; }
+        public byte[] Content { get; }
     }
 
+    public class Template 
+    {
+        public string Name { get; }
+        public string RawContent { get; }
+
+        public Template(string name, string rawContent) 
+        {
+            Name = name;
+            RawContent = rawContent;
+        }
+    }
+    
     public class MarkdownRazorCompilerConfig : ICompilerConfig
     {   
         public string SiteUrl { get; }
@@ -135,13 +150,27 @@ namespace Xarial.Docify.Core
             {
                 var model = new RazorModel(site, page);
 
-                var html = await razorEngine.CompileRenderAsync(
-                    page.Url, page.RawContent, model, typeof(RazorModel));
+                var html = page.RawContent;
 
+                if (HasRazorCode(page))
+                {
+                    html = await razorEngine.CompileRenderAsync(
+                        page.Url.ToId(), html, model, typeof(RazorModel));
+                }
+
+                //NOTE: by some reasons extra new line symbol is added to the output
                 html = Markdown.ToHtml(html, markdownEngine).Trim('\n');
+
+                //page.Layout
 
                 page.Content = html;
             }
+        }
+
+        private bool HasRazorCode(Page page) 
+        {
+            //TODO: might need to have better logic to identify this
+            return page.Content.Contains('@');
         }
     }
 }

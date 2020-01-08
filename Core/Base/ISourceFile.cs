@@ -11,18 +11,15 @@ using System.Text;
 
 namespace Xarial.Docify.Core.Base
 {
-    public enum ElementType_e 
+    public interface ISourceFile
     {
-        Page,
-        Script,
-        Style,
-        Asset
+        Location Path { get; }
+        string Content { get; }
     }
 
-    public interface IElementSource
+    public interface IBinaryFile 
     {
         string Path { get; }
-        string Content { get; }
-        ElementType_e Type { get; }
+        byte[] Content { get; }
     }
 }

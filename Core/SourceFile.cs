@@ -12,17 +12,15 @@ using Xarial.Docify.Core.Base;
 
 namespace Xarial.Docify.Core
 {
-    public class ElementSource : IElementSource
+    public class SourceFile : ISourceFile
     {
-        public string Path { get; }
+        public Location Path { get; }
         public string Content { get; }
-        public ElementType_e Type { get; }
 
-        public ElementSource(string path, string content, ElementType_e type) 
+        public SourceFile(Location path, string content) 
         {
             Path = path;
             Content = content;
-            Type = type;
         }
     }
 }

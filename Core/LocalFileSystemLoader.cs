@@ -31,7 +31,7 @@ namespace Xarial.Docify.Core
             Configuration = config;
         }
 
-        public IEnumerable<IElementSource> Load()
+        public IEnumerable<ISourceFile> Load()
         {
             return null;
         }

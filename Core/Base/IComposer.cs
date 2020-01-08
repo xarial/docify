@@ -13,6 +13,6 @@ namespace Xarial.Docify.Core.Base
 {
     public interface IComposer
     {
-        Site ComposeSite(IEnumerable<IElementSource> elements, string basePath, string baseUrl);
+        Site ComposeSite(IEnumerable<ISourceFile> elements, string baseUrl);
     }
 }

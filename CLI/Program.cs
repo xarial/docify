@@ -29,7 +29,7 @@ namespace Xarial.Docify.CLI
             var compiler = new MarkdownRazorCompiler(compilerConfig, null, publisher);
 
             var composer = new SiteComposer();
-            var s = composer.ComposeSite(elems, "", "");
+            var s = composer.ComposeSite(elems, "");
             compiler.Compile(s).Wait();
         }
     }

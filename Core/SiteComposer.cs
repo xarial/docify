@@ -7,6 +7,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Xarial.Docify.Core.Base;
@@ -15,68 +17,122 @@ namespace Xarial.Docify.Core
 {
     public class SiteComposer : IComposer
     {
-        private const char PATH_SEPARATOR = '\\';
-
-        public Site ComposeSite(IEnumerable<IElementSource> elements, string basePath, string baseUrl)
+        private const string LAYOUTS_FOLDER = "_Layouts";
+        private const string INCLUDES_FOLDER = "_Includes";
+        
+        private bool IsPage(ISourceFile srcFile) 
         {
-            var pages = new Dictionary<string, Page>(
-                StringComparer.CurrentCultureIgnoreCase);
+            var ext = Path.GetExtension(srcFile.Path.FileName);
 
-            var rootPages = new List<Page>();
+            var htmlExts = new string[]
+            {
+                ".html",
+                ".md",
+                ".cshtml"
+            };
+
+            return htmlExts.Contains(ext, StringComparer.CurrentCultureIgnoreCase);
+        }
+
+        private class PathDictionaryComparer : IEqualityComparer<IReadOnlyList<string>>
+        {
+            private readonly StringComparison m_CompType;
+
+            internal PathDictionaryComparer(StringComparison compType = StringComparison.CurrentCultureIgnoreCase) 
+            {
+                m_CompType = compType;
+            }
+
+            public bool Equals([AllowNull] IReadOnlyList<string> x, [AllowNull] IReadOnlyList<string> y)
+            {
+                throw new NotImplementedException();
+            }
+
+            public int GetHashCode([DisallowNull] IReadOnlyList<string> obj)
+            {
+                return obj.GetHashCode();
+            }
+        }
+
+        public Site ComposeSite(IEnumerable<ISourceFile> elements, string baseUrl)
+        {
+            var pages = new Dictionary<IReadOnlyList<string>, List<Page>>(
+                new PathDictionaryComparer());
+
+            var site = new Site(baseUrl);
 
             if (elements?.Any() == true)
             {
-                var srcPages = elements.Where(e => e.Type == ElementType_e.Page);
+                var srcPages = elements.Where(e => IsPage(e));
 
                 //TODO: handle the duplicate key exception and rethrow
-                var pagePerRelPath = srcPages.ToDictionary(
-                    p => GetRelativePath(p.Path, basePath), p => p);
+                //var pagePerRelPath = srcPages.ToDictionary(
+                //    p => p.Path, p => p);
 
-                foreach (var pageData in pagePerRelPath.OrderBy(
-                    p => p.Key.Count(c => c.Equals(PATH_SEPARATOR))))
+                foreach (var srcPage in srcPages.OrderBy(p => p.Path.TotalLevel))
                 {
-                    var relPath = pageData.Key;
-                    var pageSrc = pageData.Value;
-                    var pathParts = relPath.Split(PATH_SEPARATOR).SkipLast(1).ToArray();
+                    var relPath = srcPage.Path;
+                    
+                    var url = new List<string>();
 
-                    var url = "";
+                    //var isIndexedPage = Path.GetFileNameWithoutExtension(relPath.FileName)
+                    //    .Equals("index", StringComparison.CurrentCultureIgnoreCase);
 
-                    for (int i = 0; i < pathParts.Length; i++)
+                    for (int i = 0; i < relPath.Path.Count; i++)
                     {
+                        var pathPart = relPath.Path[i];
+
+                        var thisUrl = new List<string>(url);
+                        thisUrl.Add(pathPart);
+
                         var isRoot = i == 0;
-                        var isPage = i == pathParts.Length - 1;
+                        var isPage = i == relPath.Path.Count - 1;
 
-                        var sep = (i != 0) ? "/" : "";
-                        var thisUrl = $"{url}{sep}{pathParts[i]}";
+                        List<Page> pagesList = null;
 
-                        Page page = null;
-
-                        if (!pages.TryGetValue(thisUrl, out page))
+                        if (!pages.TryGetValue(thisUrl, out pagesList))
                         {
+                            pagesList = new List<Page>();
+                            pages.Add(thisUrl, pagesList);
+
                             string thisRawContent = null;
-                            IReadOnlyDictionary<string, string> thisPageData = null;
+                            Dictionary<string, string> thisPageData = null;
 
                             if (isPage)
                             {
-                                GetPageData(pageSrc, out thisPageData, out thisRawContent);
+                                GetPageData(srcPage, out thisPageData, out thisRawContent);
                             }
                             else
                             {
                                 //TODO: implement default attributes and raw content for auto-pages
                             }
 
-                            page = new Page(thisUrl, thisPageData, null, thisRawContent);
-                            pages.Add(thisUrl, page);
+                            var curPageUrl = new List<string>(thisUrl);
 
+                            string pageName = "";
+
+                            if (!isPage)
+                            {
+                                pageName = "index.html";
+                            }
+                            else 
+                            {
+                                pageName = Path.GetFileNameWithoutExtension(relPath.FileName) + ".html";
+                            }
+
+                            var page = new Page(new Location(pageName, curPageUrl.ToArray()),
+                                thisRawContent, thisPageData);
+                            pagesList.Add(page);
+                            
                             if (isRoot)
                             {
-                                rootPages.Add(page);
+                                site.Pages.Add(page);
                             }
 
-                            if (!string.IsNullOrEmpty(url))
-                            {
-                                pages[url].ChildrenList.Add(page);
-                            }
+                            //if (!url.IsEmpty)
+                            //{
+                            //    pages[url].Children.Add(page);
+                            //}
                         }
                         else
                         {
@@ -95,30 +151,15 @@ namespace Xarial.Docify.Core
                 throw new Exception("Empty site");
             }
 
-            return new Site(baseUrl, null, rootPages);
+            return site;
         }
 
-        private void GetPageData(IElementSource pageSrc, out IReadOnlyDictionary<string, string> data, out string rawContent)
+        private void GetPageData(ISourceFile pageSrc, 
+            out Dictionary<string, string> data, out string rawContent)
         {
             //TODO: extract front matter
             data = null;
             rawContent = null;
-        }
-
-        private bool IsInFolder(string path, string folderPath)
-        {
-            return path.StartsWith(folderPath,
-                StringComparison.CurrentCultureIgnoreCase);
-        }
-
-        private string GetRelativePath(string path, string basePath)
-        {
-            if (IsInFolder(path, basePath))
-            {
-                path = path.Substring(basePath.Length);
-            }
-
-            return path.Trim(PATH_SEPARATOR);
         }
     }
 }

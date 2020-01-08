@@ -18,6 +18,6 @@ namespace Xarial.Docify.Core.Base
     public interface ILoader
     {
         ILoaderConfig Configuration { get; }
-        IEnumerable<IElementSource> Load();
+        IEnumerable<ISourceFile> Load();
     }
 }

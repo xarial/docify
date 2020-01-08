@@ -114,13 +114,13 @@ namespace Xarial.Docify.Core
             }
         }
 
-        private void ParseTextFile(ITextSourceFile src, out string content,
-            out Dictionary<dynamic, dynamic> metadata, out string templateName) 
+        private void ParseTextFile(ITextSourceFile src, out string rawContent,
+            out Dictionary<dynamic, dynamic> data, out string layoutName) 
         {
             bool isStart = true;
             bool readingFrontMatter = false;
 
-            content = "";
+            rawContent = "";
             var frontMatter = new StringBuilder();
 
             using (var strReader = new StringReader(src.Content))
@@ -138,7 +138,7 @@ namespace Xarial.Docify.Core
                         else
                         {
                             readingFrontMatter = false;
-                            content = strReader.ReadToEnd();
+                            rawContent = strReader.ReadToEnd();
                         }
                     }
                     else if (readingFrontMatter)
@@ -147,9 +147,9 @@ namespace Xarial.Docify.Core
                     }
                     else
                     {
-                        content = strReader.ReadToEnd();
+                        rawContent = strReader.ReadToEnd();
 
-                        content = line + (!string.IsNullOrEmpty(content) ? Environment.NewLine : "") + content;
+                        rawContent = line + (!string.IsNullOrEmpty(rawContent) ? Environment.NewLine : "") + rawContent;
                     }
 
                     isStart = false;
@@ -166,35 +166,45 @@ namespace Xarial.Docify.Core
             {
                 var yamlDeserializer = new DeserializerBuilder().Build();
 
-                metadata = yamlDeserializer.Deserialize<Dictionary<dynamic, dynamic>>(frontMatter.ToString());
+                data = yamlDeserializer.Deserialize<Dictionary<dynamic, dynamic>>(frontMatter.ToString());
 
-                var templateKey = metadata.FirstOrDefault(m => string.Equals(m.Key, LAYOUT_VAR_NAME, 
+                var templateKey = data.FirstOrDefault(m => string.Equals(m.Key, LAYOUT_VAR_NAME, 
                     StringComparison.CurrentCultureIgnoreCase));
 
-                metadata.Remove(templateKey);
-                templateName = templateKey.Value;
+                layoutName = templateKey.Value;
+
+                if (!string.IsNullOrEmpty(layoutName)) 
+                {
+                    //item is not removed from the dictionary
+                    data.Remove(layoutName);
+                }
             }
             else 
             {
-                templateName = "";
-                metadata = null;
+                layoutName = "";
+                data = null;
             }
         }
 
-        private Page CreatePageFromSourceOrDefault(ITextSourceFile src, Location loc) 
+        private Page CreatePageFromSourceOrDefault(ITextSourceFile src,
+            Location loc, IReadOnlyDictionary<string, Template> layoutsMap) 
         {
             string rawContent = null;
             Dictionary<dynamic, dynamic> pageData = null;
-            Template template = null;
+            Template layout = null;
 
             if (src != null)
             {
-                //TODO: read front matter
-                //TODO: remove from matter from the content
-                //TODO: convert front matter to attributes
+                string layoutName;
+                ParseTextFile(src, out rawContent, out pageData, out layoutName);
 
-                string templateName;
-                ParseTextFile(src, out rawContent, out pageData, out templateName);
+                if (!string.IsNullOrEmpty(layoutName))
+                {
+                    if (!layoutsMap.TryGetValue(layoutName, out layout))
+                    {
+                        throw new MissingLayoutException(layoutName);
+                    }
+                }
             }
             else
             {
@@ -204,7 +214,7 @@ namespace Xarial.Docify.Core
             //TODO: find template
 
             return new Page(loc.ConvertToPageLocation(),
-                rawContent, pageData, template);
+                rawContent, pageData, layout);
         }
 
         public Site ComposeSite(IEnumerable<ISourceFile> files, string baseUrl)
@@ -236,9 +246,9 @@ namespace Xarial.Docify.Core
                     throw new EmptySiteException();
                 }
 
-                var templates = GetTemplates(textFiles);
+                var layouts = GetLayouts(textFiles);
 
-                ParsePages(baseUrl, srcPages, out site, out pageMap);
+                ParsePages(baseUrl, srcPages, layouts, out site, out pageMap);
 
                 return site;
             }
@@ -248,14 +258,65 @@ namespace Xarial.Docify.Core
             }
         }
 
-        private Dictionary<string, Template> GetTemplates(IEnumerable<ITextSourceFile> textFiles) 
+        private Dictionary<string, Template> GetLayouts(IEnumerable<ITextSourceFile> textFiles) 
         {
-            return textFiles.Where(f => string.Equals(f.Location.Root, LAYOUTS_FOLDER, StringComparison.CurrentCultureIgnoreCase))
-                .Select(f => new Template(Path.GetFileNameWithoutExtension(f.Location.FileName), f.Content))
-                .ToDictionary(t => t.Name);
+            var layouts = new Dictionary<string, Template>(StringComparer.CurrentCultureIgnoreCase);
+
+            var layoutSrcList = textFiles
+                .Where(f => string.Equals(f.Location.Root, LAYOUTS_FOLDER, StringComparison.CurrentCultureIgnoreCase))
+                .ToList();
+
+            while (layoutSrcList.Any()) 
+            {
+                var layoutName = Path.GetFileNameWithoutExtension(layoutSrcList.First().Location.FileName);
+                CreateLayout(layouts, layoutSrcList, layoutName);
+            }
+
+            return layouts;
+        }
+
+        private Template CreateLayout(Dictionary<string, Template> layouts, 
+            List<ITextSourceFile> layoutsSrcList, string layoutName) 
+        {
+            //TODO: detect circular dependencies
+
+            var layoutFile = layoutsSrcList.Find(
+                l => string.Equals(Path.GetFileNameWithoutExtension(l.Location.FileName), 
+                layoutName, 
+                StringComparison.CurrentCultureIgnoreCase));
+
+            if (layoutFile == null) 
+            {
+                throw new MissingLayoutException(layoutName);
+            }
+
+            string rawContent;
+            Dictionary<dynamic, dynamic> data;
+            string baseLayoutName;
+            ParseTextFile(layoutFile, out rawContent, out data, out baseLayoutName);
+
+            //TODO: validate layout is valid and has {{ content }} placeholder
+
+            Template baseLayout = null;
+
+            if (!string.IsNullOrEmpty(baseLayoutName))
+            {
+                if (!layouts.TryGetValue(baseLayoutName, out baseLayout))
+                {
+                    baseLayout = CreateLayout(layouts, layoutsSrcList, baseLayoutName);
+                }
+            }
+
+            var layout = new Template(layoutName, rawContent, data, baseLayout);
+
+            layouts.Add(layoutName, layout);
+            layoutsSrcList.Remove(layoutFile);
+
+            return layout;
         }
 
         private void ParsePages(string baseUrl, IEnumerable<ITextSourceFile> srcPages,
+            IReadOnlyDictionary<string, Template> templates,
             out Site site, out Dictionary<IReadOnlyList<string>, Page> pageMap)
         {
             pageMap = new Dictionary<IReadOnlyList<string>, Page>(
@@ -270,7 +331,7 @@ namespace Xarial.Docify.Core
 
             srcPages = srcPages.Except(new ITextSourceFile[] { mainSrcPage });
 
-            var mainPage = CreatePageFromSourceOrDefault(mainSrcPage, new Location(""));
+            var mainPage = CreatePageFromSourceOrDefault(mainSrcPage, new Location(""), templates);
 
             site = new Site(baseUrl, mainPage);
             pageMap.Add(new List<string>(), mainPage);
@@ -313,7 +374,7 @@ namespace Xarial.Docify.Core
 
                         page = CreatePageFromSourceOrDefault(isPage ? srcPage : null,
                             new Location(isPage ? srcPage.Location.FileName : "",
-                            pagePath.ToArray()));
+                            pagePath.ToArray()), templates);
 
                         pageMap.Add(thisLoc, page);
 

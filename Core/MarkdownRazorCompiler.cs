@@ -16,6 +16,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Markdig;
+using System.Collections;
 
 namespace Xarial.Docify.Core
 {
@@ -30,7 +31,7 @@ namespace Xarial.Docify.Core
             Page = page;
         }
     }
-
+    
     public class Site 
     {
         public string BaseUrl { get; }

@@ -83,5 +83,20 @@ namespace Core.Tests
 
             Assert.Throws<MissingLayoutException>(() => composer.ComposeSite(src, ""));
         }
+
+        [Test]
+        public void ComposeSite_DuplicateLayout()
+        {
+            var src = new TextSourceFile[]
+            {
+                new TextSourceFile(Location.FromPath(@"_layouts\\l1.md"), ""),
+                new TextSourceFile(Location.FromPath(@"_layouts\\l1.txt"), ""),
+                new TextSourceFile(Location.FromPath(@"index.md"), ""),
+            };
+
+            var composer = new SiteComposer();
+
+            Assert.Throws<DuplicateTemplateException>(() => composer.ComposeSite(src, ""));
+        }
     }
 }

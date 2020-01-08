@@ -280,6 +280,8 @@ namespace Xarial.Docify.Core
 
         private List<Template> GetIncludes(IEnumerable<ITextSourceFile> textFiles) 
         {
+            var usedIncludes = new List<string>();
+
             var includesSrcList = textFiles
                 .Where(f => string.Equals(f.Location.Root, INCLUDES_FOLDER, StringComparison.CurrentCultureIgnoreCase))
                 .ToList();
@@ -291,7 +293,16 @@ namespace Xarial.Docify.Core
                 string layoutName;
                 ParseTextFile(s, out rawContent, out data, out layoutName);
 
-                return new Template(Path.GetFileNameWithoutExtension(s.Location.FileName), rawContent, data);
+                var name = Path.GetFileNameWithoutExtension(s.Location.FileName);
+
+                if (usedIncludes.Contains(name, StringComparer.CurrentCultureIgnoreCase)) 
+                {
+                    throw new DuplicateTemplateException(name);
+                }
+
+                usedIncludes.Add(name);
+
+                return new Template(name, rawContent, data);
             }).ToList();
         }
 
@@ -328,6 +339,11 @@ namespace Xarial.Docify.Core
             }
 
             var layout = new Template(layoutName, rawContent, data, baseLayout);
+
+            if (layouts.ContainsKey(layoutName)) 
+            {
+                throw new DuplicateTemplateException(layoutName);
+            }
 
             layouts.Add(layoutName, layout);
             layoutsSrcList.Remove(layoutFile);

@@ -23,16 +23,19 @@ namespace Core.Tests
         {
             var src = new SourceFile[]
             {
+                new SourceFile(Location.FromPath(@"index.md"), ""),
                 new SourceFile(Location.FromPath(@"page1\index.md"), "")
             };
             
             var composer = new SiteComposer();
 
-            var res = composer.ComposeSite(src, "");
+            var site = composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, res.Pages.Count);
-            Assert.AreEqual(0, res.Pages[0].Children.Count);
-            Assert.AreEqual("page1-index.html", res.Pages[0].Url.ToId());
+            Assert.AreEqual(1, site.Pages.Count);
+            Assert.AreEqual(1, site.Pages[0].Children.Count);
+            Assert.AreEqual("index.html", site.Pages[0].Url.ToId());
+            Assert.AreEqual(0, site.Pages[0].Children[0].Children.Count);
+            Assert.AreEqual("page1-index.html", site.Pages[0].Children[0].Url.ToId());
         }
 
         [Test]
@@ -40,16 +43,17 @@ namespace Core.Tests
         {
             var src = new SourceFile[]
             {
+                new SourceFile(Location.FromPath(@"index.md"), ""),
                 new SourceFile(Location.FromPath(@"page1.md"), "")
             };
 
             var composer = new SiteComposer();
 
-            var res = composer.ComposeSite(src, "");
+            var site = composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, res.Pages.Count);
-            Assert.AreEqual(0, res.Pages[0].Children.Count);
-            Assert.AreEqual("page1.html", res.Pages[0].Url.ToId());
+            Assert.AreEqual(1, site.Pages.Count);
+            Assert.AreEqual(1, site.Pages[0].Children.Count);
+            Assert.AreEqual("page1.html", site.Pages[0].Children[0].Url.ToId());
         }
 
         [Test]

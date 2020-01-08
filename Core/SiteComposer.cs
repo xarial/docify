@@ -45,18 +45,91 @@ namespace Xarial.Docify.Core
 
             public bool Equals([AllowNull] IReadOnlyList<string> x, [AllowNull] IReadOnlyList<string> y)
             {
-                throw new NotImplementedException();
+                if (ReferenceEquals(x, y))
+                {
+                    return true;
+                }
+
+                if (ReferenceEquals(null, x))
+                {
+                    return false;
+                }
+
+                if (ReferenceEquals(null, y))
+                {
+                    return false;
+                }
+
+                if (x.Count == y.Count)
+                {
+                    for (int i = 0; i < x.Count; i++) 
+                    {
+                        if (!string.Equals(x[i], y[i], m_CompType)) 
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else 
+                {
+                    return false;
+                }
+
+                return true;
             }
 
             public int GetHashCode([DisallowNull] IReadOnlyList<string> obj)
             {
-                return obj.GetHashCode();
+                return 0;
             }
+        }
+
+        private bool IsIndexPage(Location loc) 
+        {
+            return Path.GetFileNameWithoutExtension(loc.FileName)
+                    .Equals("index", StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        private Page CreatePageFromSourceOrDefault(ISourceFile src, IReadOnlyList<string> loc) 
+        {
+            string rawContent = null;
+            Dictionary<string, string> pageData = null;
+            Template template = null;
+
+            if (src != null)
+            {
+                //TODO: read front matter
+                //TODO: remove from matter from the content
+                //TODO: convert front matter to attributes
+
+                rawContent = "";
+                pageData = new Dictionary<string, string>();
+            }
+            else
+            {
+                //TODO: assign default attributes and content if available
+            }
+
+            //TODO: find template
+
+            var fileName = src?.Path.FileName;
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                fileName = "index.html";
+            }
+            else 
+            {
+                fileName = Path.GetFileNameWithoutExtension(fileName) + ".html";
+            }
+
+            return new Page(new Location(fileName, loc.ToArray()),
+                rawContent, pageData, template);
         }
 
         public Site ComposeSite(IEnumerable<ISourceFile> elements, string baseUrl)
         {
-            var pages = new Dictionary<IReadOnlyList<string>, List<Page>>(
+            var pages = new Dictionary<IReadOnlyList<string>, Page>(
                 new PathDictionaryComparer());
 
             var site = new Site(baseUrl);
@@ -64,19 +137,29 @@ namespace Xarial.Docify.Core
             if (elements?.Any() == true)
             {
                 var srcPages = elements.Where(e => IsPage(e));
+                
+                var mainSrcPage = srcPages.FirstOrDefault(p => IsIndexPage(p.Path));
 
-                //TODO: handle the duplicate key exception and rethrow
-                //var pagePerRelPath = srcPages.ToDictionary(
-                //    p => p.Path, p => p);
+                if (mainSrcPage == null) 
+                {
+                    throw new Exception("Main page is missing");
+                }
 
+                srcPages = srcPages.Except(new ISourceFile[] { mainSrcPage });
+
+                var mainPage = CreatePageFromSourceOrDefault(mainSrcPage, new List<string>());
+
+                site.Pages.Add(mainPage);
+                pages.Add(mainPage.Url.Path, mainPage);
+                
                 foreach (var srcPage in srcPages.OrderBy(p => p.Path.TotalLevel))
                 {
-                    var relPath = srcPage.Path;
+                    var relPath = new Location(srcPage.Path.FileName, 
+                        new string[] { "" }.Concat(srcPage.Path.Path).ToArray());
                     
                     var url = new List<string>();
 
-                    //var isIndexedPage = Path.GetFileNameWithoutExtension(relPath.FileName)
-                    //    .Equals("index", StringComparison.CurrentCultureIgnoreCase);
+                    var isIndexPage = IsIndexPage(srcPage.Path);
 
                     for (int i = 0; i < relPath.Path.Count; i++)
                     {
@@ -85,62 +168,27 @@ namespace Xarial.Docify.Core
                         var thisUrl = new List<string>(url);
                         thisUrl.Add(pathPart);
 
-                        var isRoot = i == 0;
-                        var isPage = i == relPath.Path.Count - 1;
+                        var isPage = (i == relPath.Path.Count - 1);
 
-                        List<Page> pagesList = null;
+                        Page page = null;
 
-                        if (!pages.TryGetValue(thisUrl, out pagesList))
+                        if (!pages.TryGetValue(url, out page) || (isPage && !isIndexPage))
                         {
-                            pagesList = new List<Page>();
-                            pages.Add(thisUrl, pagesList);
+                            page = CreatePageFromSourceOrDefault(isPage ? srcPage : null, thisUrl.Skip(1).ToList());
 
-                            string thisRawContent = null;
-                            Dictionary<string, string> thisPageData = null;
-
-                            if (isPage)
-                            {
-                                GetPageData(srcPage, out thisPageData, out thisRawContent);
-                            }
-                            else
-                            {
-                                //TODO: implement default attributes and raw content for auto-pages
-                            }
-
-                            var curPageUrl = new List<string>(thisUrl);
-
-                            string pageName = "";
-
-                            if (!isPage)
-                            {
-                                pageName = "index.html";
-                            }
-                            else 
-                            {
-                                pageName = Path.GetFileNameWithoutExtension(relPath.FileName) + ".html";
-                            }
-
-                            var page = new Page(new Location(pageName, curPageUrl.ToArray()),
-                                thisRawContent, thisPageData);
-                            pagesList.Add(page);
+                            pages.Add(url, page);
                             
-                            if (isRoot)
-                            {
-                                site.Pages.Add(page);
-                            }
+                            //var curPageUrl = new List<string>(thisUrl);
 
-                            //if (!url.IsEmpty)
-                            //{
-                            //    pages[url].Children.Add(page);
-                            //}
+                            pages[url.Skip(1).ToList()].Children.Add(page);
                         }
-                        else
-                        {
-                            if (isPage)
-                            {
-                                throw new Exception("Duplicate page");
-                            }
-                        }
+                        //else
+                        //{
+                        //    if (isPage)
+                        //    {
+                        //        throw new Exception("Duplicate page");
+                        //    }
+                        //}
 
                         url = thisUrl;
                     }
@@ -154,12 +202,12 @@ namespace Xarial.Docify.Core
             return site;
         }
 
-        private void GetPageData(ISourceFile pageSrc, 
-            out Dictionary<string, string> data, out string rawContent)
-        {
-            //TODO: extract front matter
-            data = null;
-            rawContent = null;
-        }
+        //private void GetPageData(ISourceFile pageSrc, 
+        //    out Dictionary<string, string> data, out string rawContent)
+        //{
+        //    //TODO: extract front matter
+        //    data = null;
+        //    rawContent = null;
+        //}
     }
 }

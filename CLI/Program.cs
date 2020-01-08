@@ -3,7 +3,7 @@
 //Copyright(C) 2020 Xarial Pty Limited
 //Product URL: https://www.docify.net
 //License: https://github.com/xarial/docify/blob/master/LICENSE
-//*********************************************************************/
+//*********************************************************************
 
 using System;
 using Xarial.Docify.Core;
@@ -24,10 +24,13 @@ namespace Xarial.Docify.CLI
             var publisher = new LocalFileSystemPublisher(publConfig);
 
             var loader = new LocalFileSystemLoader(loaderConfig);
-            var site = loader.Load();
+            var elems = loader.Load();
 
             var compiler = new MarkdownRazorCompiler(compilerConfig, null, publisher);
-            compiler.Compile(site);
+
+            var composer = new SiteComposer();
+            var s = composer.ComposeSite(elems, "", "");
+            compiler.Compile(s).Wait();
         }
     }
 }

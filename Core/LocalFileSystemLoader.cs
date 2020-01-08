@@ -3,7 +3,7 @@
 //Copyright(C) 2020 Xarial Pty Limited
 //Product URL: https://www.docify.net
 //License: https://github.com/xarial/docify/blob/master/LICENSE
-//*********************************************************************/
+//*********************************************************************
 
 using System;
 using System.Collections.Generic;
@@ -31,7 +31,7 @@ namespace Xarial.Docify.Core
             Configuration = config;
         }
 
-        public ISiteSource Load()
+        public IEnumerable<IElementSource> Load()
         {
             return null;
         }

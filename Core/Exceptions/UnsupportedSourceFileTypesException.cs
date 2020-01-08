@@ -9,18 +9,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Core.Base;
+using System.Linq;
 
-namespace Xarial.Docify.Core
+namespace Xarial.Docify.Core.Exceptions
 {
-    public class TextSourceFile : ITextSourceFile
+    public class UnsupportedSourceFileTypesException : Exception
     {
-        public Location Location { get; }
-        public string Content { get; }
-
-        public TextSourceFile(Location path, string content) 
+        public UnsupportedSourceFileTypesException(IEnumerable<ISourceFile> srcFiles)
+            : base($"The followin source file are not supported: {string.Join(", ", srcFiles.Select(f => f.GetType()).Distinct().Select(t => t.FullName))}")
         {
-            Location = path;
-            Content = content;
         }
     }
 }

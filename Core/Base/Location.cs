@@ -123,6 +123,14 @@ namespace Xarial.Docify.Core.Base
             }
         }
 
+        public string Root 
+        {
+            get 
+            {
+                return Path.FirstOrDefault();
+            }
+        }
+
         public string FileName  { get; }
 
         public Location(string fileName, params string[] path) 

@@ -14,12 +14,15 @@ namespace Xarial.Docify.Core.Base
     public interface ISourceFile
     {
         Location Location { get; }
-        string Content { get; }
     }
 
-    public interface IBinaryFile 
+    public interface IBinarySourceFile : ISourceFile
     {
-        Location Location { get; }
         byte[] Content { get; }
+    }
+
+    public interface ITextSourceFile : ISourceFile
+    {
+        string Content { get; }
     }
 }

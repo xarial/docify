@@ -9,10 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xarial.Docify.Core.Base
+namespace Xarial.Docify.Core.Exceptions
 {
-    public interface IComposer
+    public class FrontMatterErrorException : Exception
     {
-        Site ComposeSite(IEnumerable<ISourceFile> files, string baseUrl);
+        public FrontMatterErrorException(string msg, Exception inner = null) : base(msg, inner) 
+        {
+        }
     }
 }

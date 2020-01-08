@@ -51,54 +51,60 @@ namespace Xarial.Docify.Core
     }
 
     [DebuggerDisplay("{" + nameof(Location) + "}")]
-    public class Page 
+    public class Page : Frame
     {
         public Location Location { get; }
 
-        public Template Layout { get; }
-
-        public Dictionary<string, string> Data { get; }
-        
         public string Content { get; internal set; }
 
         public List<Page> Children { get; }
 
         public List<Asset> Assets { get; }
-                
-        public string RawContent { get; }
         
         public Page(Location url, string rawContent, Template layout = null) 
-            : this(url, rawContent, new Dictionary<string, string>(), layout)
+            : this(url, rawContent, new Dictionary<dynamic, dynamic>(), layout)
         {
             
         }
 
-        public Page(Location url, string rawContent, Dictionary<string, string> data, Template layout = null) 
+        public Page(Location url, string rawContent, Dictionary<dynamic, dynamic> data, Template layout = null) 
+            : base(rawContent, data, layout)
         {
             Location = url;
-            Data = data ?? new Dictionary<string, string>();
             Children = new List<Page>();
             Assets = new List<Asset>();
-            RawContent = rawContent;
-            Layout = layout;
         }
     }
 
     public class Asset 
     {
-        public string Path { get; }
+        public Location Location { get; }
         public byte[] Content { get; }
     }
 
-    public class Template 
+    public abstract class Frame 
+    {
+        public string RawContent { get; }
+        public Template Layout { get; }
+        public Dictionary<dynamic, dynamic> Data { get; }
+
+        public Frame(string rawContent, Dictionary<dynamic, dynamic> data, Template layout) 
+        {
+            RawContent = rawContent;
+            Layout = layout;
+            Data = data ?? new Dictionary<dynamic, dynamic>();
+        }
+    }
+
+    public class Template : Frame
     {
         public string Name { get; }
-        public string RawContent { get; }
-
-        public Template(string name, string rawContent) 
+        
+        public Template(string name, string rawContent,
+            Dictionary<dynamic, dynamic> data = null, Template baseTemplate = null) 
+            : base(rawContent, data, baseTemplate)
         {
             Name = name;
-            RawContent = rawContent;
         }
     }
     

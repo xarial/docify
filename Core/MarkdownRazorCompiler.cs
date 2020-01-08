@@ -62,12 +62,12 @@ namespace Xarial.Docify.Core
         public List<Asset> Assets { get; }
         
         public Page(Location url, string rawContent, Template layout = null) 
-            : this(url, rawContent, new Dictionary<dynamic, dynamic>(), layout)
+            : this(url, rawContent, new Dictionary<string, dynamic>(), layout)
         {
             
         }
 
-        public Page(Location url, string rawContent, Dictionary<dynamic, dynamic> data, Template layout = null) 
+        public Page(Location url, string rawContent, Dictionary<string, dynamic> data, Template layout = null) 
             : base(rawContent, data, layout)
         {
             Location = url;
@@ -86,13 +86,13 @@ namespace Xarial.Docify.Core
     {
         public string RawContent { get; }
         public Template Layout { get; }
-        public Dictionary<dynamic, dynamic> Data { get; }
+        public Dictionary<string, dynamic> Data { get; }
 
-        public Frame(string rawContent, Dictionary<dynamic, dynamic> data, Template layout) 
+        public Frame(string rawContent, Dictionary<string, dynamic> data, Template layout) 
         {
             RawContent = rawContent;
             Layout = layout;
-            Data = data ?? new Dictionary<dynamic, dynamic>();
+            Data = data ?? new Dictionary<string, dynamic>();
         }
     }
 
@@ -101,7 +101,7 @@ namespace Xarial.Docify.Core
         public string Name { get; }
         
         public Template(string name, string rawContent,
-            Dictionary<dynamic, dynamic> data = null, Template baseTemplate = null) 
+            Dictionary<string, dynamic> data = null, Template baseTemplate = null) 
             : base(rawContent, data, baseTemplate)
         {
             Name = name;
@@ -182,8 +182,6 @@ namespace Xarial.Docify.Core
 
                 //NOTE: by some reasons extra new line symbol is added to the output
                 html = Markdown.ToHtml(html, markdownEngine).Trim('\n');
-
-                //page.Layout
 
                 page.Content = html;
             }

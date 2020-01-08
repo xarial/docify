@@ -115,7 +115,7 @@ namespace Xarial.Docify.Core
         }
 
         private void ParseTextFile(ITextSourceFile src, out string rawContent,
-            out Dictionary<dynamic, dynamic> data, out string layoutName) 
+            out Dictionary<string, dynamic> data, out string layoutName) 
         {
             bool isStart = true;
             bool readingFrontMatter = false;
@@ -166,7 +166,7 @@ namespace Xarial.Docify.Core
             {
                 var yamlDeserializer = new DeserializerBuilder().Build();
 
-                data = yamlDeserializer.Deserialize<Dictionary<dynamic, dynamic>>(frontMatter.ToString());
+                data = yamlDeserializer.Deserialize<Dictionary<string, dynamic>>(frontMatter.ToString());
 
                 var templateKey = data.FirstOrDefault(m => string.Equals(m.Key, LAYOUT_VAR_NAME, 
                     StringComparison.CurrentCultureIgnoreCase));
@@ -175,8 +175,7 @@ namespace Xarial.Docify.Core
 
                 if (!string.IsNullOrEmpty(layoutName)) 
                 {
-                    //item is not removed from the dictionary
-                    data.Remove(layoutName);
+                    data.Remove(LAYOUT_VAR_NAME);
                 }
             }
             else 
@@ -190,7 +189,7 @@ namespace Xarial.Docify.Core
             Location loc, IReadOnlyDictionary<string, Template> layoutsMap) 
         {
             string rawContent = null;
-            Dictionary<dynamic, dynamic> pageData = null;
+            Dictionary<string, dynamic> pageData = null;
             Template layout = null;
 
             if (src != null)
@@ -247,8 +246,12 @@ namespace Xarial.Docify.Core
                 }
 
                 var layouts = GetLayouts(textFiles);
+                var includes = GetIncludes(textFiles);
 
                 ParsePages(baseUrl, srcPages, layouts, out site, out pageMap);
+
+                site.Layouts.AddRange(layouts.Values);
+                site.Includes.AddRange(includes);
 
                 return site;
             }
@@ -275,6 +278,23 @@ namespace Xarial.Docify.Core
             return layouts;
         }
 
+        private List<Template> GetIncludes(IEnumerable<ITextSourceFile> textFiles) 
+        {
+            var includesSrcList = textFiles
+                .Where(f => string.Equals(f.Location.Root, INCLUDES_FOLDER, StringComparison.CurrentCultureIgnoreCase))
+                .ToList();
+
+            return includesSrcList.Select(s =>
+            {
+                string rawContent;
+                Dictionary<string, dynamic> data;
+                string layoutName;
+                ParseTextFile(s, out rawContent, out data, out layoutName);
+
+                return new Template(Path.GetFileNameWithoutExtension(s.Location.FileName), rawContent, data);
+            }).ToList();
+        }
+
         private Template CreateLayout(Dictionary<string, Template> layouts, 
             List<ITextSourceFile> layoutsSrcList, string layoutName) 
         {
@@ -291,7 +311,7 @@ namespace Xarial.Docify.Core
             }
 
             string rawContent;
-            Dictionary<dynamic, dynamic> data;
+            Dictionary<string, dynamic> data;
             string baseLayoutName;
             ParseTextFile(layoutFile, out rawContent, out data, out baseLayoutName);
 
@@ -316,7 +336,7 @@ namespace Xarial.Docify.Core
         }
 
         private void ParsePages(string baseUrl, IEnumerable<ITextSourceFile> srcPages,
-            IReadOnlyDictionary<string, Template> templates,
+            IReadOnlyDictionary<string, Template> layouts,
             out Site site, out Dictionary<IReadOnlyList<string>, Page> pageMap)
         {
             pageMap = new Dictionary<IReadOnlyList<string>, Page>(
@@ -331,7 +351,7 @@ namespace Xarial.Docify.Core
 
             srcPages = srcPages.Except(new ITextSourceFile[] { mainSrcPage });
 
-            var mainPage = CreatePageFromSourceOrDefault(mainSrcPage, new Location(""), templates);
+            var mainPage = CreatePageFromSourceOrDefault(mainSrcPage, new Location(""), layouts);
 
             site = new Site(baseUrl, mainPage);
             pageMap.Add(new List<string>(), mainPage);
@@ -374,7 +394,7 @@ namespace Xarial.Docify.Core
 
                         page = CreatePageFromSourceOrDefault(isPage ? srcPage : null,
                             new Location(isPage ? srcPage.Location.FileName : "",
-                            pagePath.ToArray()), templates);
+                            pagePath.ToArray()), layouts);
 
                         pageMap.Add(thisLoc, page);
 

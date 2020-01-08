@@ -129,7 +129,20 @@ namespace Xarial.Docify.Core
             Logger = logger;
             Publisher = publisher;
         }
-        
+
+        private void GetAllPages(Page page, List<Page> allPages) 
+        {
+            allPages.Add(page);
+
+            if (page.Children != null) 
+            {
+                foreach (var childPage in page.Children)
+                {
+                    GetAllPages(childPage, allPages);
+                }
+            }
+        }
+
         public async Task Compile(Site site)
         {
             //TODO: build all includes (identify if any circular)
@@ -145,8 +158,11 @@ namespace Xarial.Docify.Core
                 .UseAdvancedExtensions()
                 //.UseSyntaxHighlighting() //requires Markdig.SyntaxHighlighting
                 .Build();
-            
-            foreach (var page in new Page[] { site.MainPage }.Union(site.MainPage.Children.SelectMany(p => p.Children)))
+
+            var allPages = new List<Page>();
+            GetAllPages(site.MainPage, allPages);
+
+            foreach (var page in allPages)
             {
                 var model = new RazorModel(site, page);
 
@@ -170,7 +186,7 @@ namespace Xarial.Docify.Core
         private bool HasRazorCode(Page page) 
         {
             //TODO: might need to have better logic to identify this
-            return page.Content.Contains('@');
+            return page.RawContent?.Contains('@') == true;
         }
     }
 }

@@ -36,14 +36,14 @@ namespace Xarial.Docify.Core
         public string BaseUrl { get; }
         
         public List<Asset> Assets { get; }
-        public List<Page> Pages { get; }
+        public Page MainPage { get; }
         public List<Template> Layouts { get; }
         public List<Template> Includes { get; }
 
-        public Site(string baseUrl) 
+        public Site(string baseUrl, Page mainPage) 
         {
             BaseUrl = baseUrl;
-            Pages = new List<Page>();
+            MainPage = mainPage;
             Assets = new List<Asset>();
             Layouts = new List<Template>();
             Includes = new List<Template>();
@@ -146,7 +146,7 @@ namespace Xarial.Docify.Core
                 //.UseSyntaxHighlighting() //requires Markdig.SyntaxHighlighting
                 .Build();
             
-            foreach (var page in site.Pages.Union(site.Pages.SelectMany(p => p.Children)))
+            foreach (var page in new Page[] { site.MainPage }.Union(site.MainPage.Children.SelectMany(p => p.Children)))
             {
                 var model = new RazorModel(site, page);
 

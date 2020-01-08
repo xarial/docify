@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Base;
+using Xarial.Docify.Core.Exceptions;
 
 namespace Core.Tests
 {
@@ -23,19 +24,20 @@ namespace Core.Tests
         {
             var src = new SourceFile[]
             {
-                new SourceFile(Location.FromPath(@"index.md"), ""),
-                new SourceFile(Location.FromPath(@"page1\index.md"), "")
+                new SourceFile(Location.FromPath(@"index.md"), "i"),
+                new SourceFile(Location.FromPath(@"page1\index.md"), "p1")
             };
             
             var composer = new SiteComposer();
 
             var site = composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, site.Pages.Count);
-            Assert.AreEqual(1, site.Pages[0].Children.Count);
-            Assert.AreEqual("index.html", site.Pages[0].Url.ToId());
-            Assert.AreEqual(0, site.Pages[0].Children[0].Children.Count);
-            Assert.AreEqual("page1-index.html", site.Pages[0].Children[0].Url.ToId());
+            Assert.AreEqual(1, site.MainPage.Children.Count);
+            Assert.AreEqual("index.html", site.MainPage.Url.ToId());
+            Assert.AreEqual("i", site.MainPage.RawContent);
+            Assert.AreEqual(0, site.MainPage.Children[0].Children.Count);
+            Assert.AreEqual("page1-index.html", site.MainPage.Children[0].Url.ToId());
+            Assert.AreEqual("p1", site.MainPage.Children[0].RawContent);
         }
 
         [Test]
@@ -43,17 +45,40 @@ namespace Core.Tests
         {
             var src = new SourceFile[]
             {
-                new SourceFile(Location.FromPath(@"index.md"), ""),
-                new SourceFile(Location.FromPath(@"page1.md"), "")
+                new SourceFile(Location.FromPath(@"index.md"), "i"),
+                new SourceFile(Location.FromPath(@"page1.md"), "p1")
             };
 
             var composer = new SiteComposer();
 
             var site = composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, site.Pages.Count);
-            Assert.AreEqual(1, site.Pages[0].Children.Count);
-            Assert.AreEqual("page1.html", site.Pages[0].Children[0].Url.ToId());
+            Assert.AreEqual(1, site.MainPage.Children.Count);
+            Assert.AreEqual("i", site.MainPage.RawContent);
+            Assert.AreEqual("page1.html", site.MainPage.Children[0].Url.ToId());
+            Assert.AreEqual("p1", site.MainPage.Children[0].RawContent);
+        }
+
+        [Test]
+        public void ComposeSite_NestedIndexPageUndefinedTest()
+        {
+            var src = new SourceFile[]
+            {
+                new SourceFile(Location.FromPath(@"index.md"), "i"),
+                new SourceFile(Location.FromPath(@"page1\page2\index.md"), "p2")
+            };
+
+            var composer = new SiteComposer();
+
+            var site = composer.ComposeSite(src, "");
+
+            Assert.AreEqual(1, site.MainPage.Children.Count);
+            Assert.AreEqual("i", site.MainPage.RawContent);
+            Assert.AreEqual("page1-index.html", site.MainPage.Children[0].Url.ToId());
+            Assert.IsTrue(string.IsNullOrEmpty(site.MainPage.Children[0].RawContent));
+            Assert.AreEqual(1, site.MainPage.Children[0].Children.Count);
+            Assert.AreEqual("page1-page2-index.html", site.MainPage.Children[0].Children[0].Url.ToId());
+            Assert.AreEqual("p2", site.MainPage.Children[0].Children[0].RawContent);
         }
 
         [Test]
@@ -61,17 +86,44 @@ namespace Core.Tests
         {
             var src = new SourceFile[]
             {
-                new SourceFile(Location.FromPath(@"page1\page2\index.md"), "")
+                new SourceFile(Location.FromPath(@"index.md"), "i"),
+                new SourceFile(Location.FromPath(@"page1\page2\index.md"), "p2"),
+                new SourceFile(Location.FromPath(@"page1\index.md"), "p1")
             };
 
             var composer = new SiteComposer();
 
-            var res = composer.ComposeSite(src, "");
+            var site = composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, res.Pages.Count);
-            Assert.AreEqual(1, res.Pages[0].Children.Count);
-            Assert.AreEqual("page1.html", res.Pages[0].Url);
-            Assert.AreEqual("page2.html", res.Pages[0].Children[0].Url);
+            Assert.AreEqual(1, site.MainPage.Children.Count);
+            Assert.AreEqual("i", site.MainPage.RawContent);
+            Assert.AreEqual("page1-index.html", site.MainPage.Children[0].Url.ToId());
+            Assert.AreEqual("p1", site.MainPage.Children[0].RawContent);
+            Assert.AreEqual(1, site.MainPage.Children[0].Children.Count);
+            Assert.AreEqual("page1-page2-index.html", site.MainPage.Children[0].Children[0].Url.ToId());
+            Assert.AreEqual("p2", site.MainPage.Children[0].Children[0].RawContent);
+        }
+
+        [Test]
+        public void ComposeSite_NestedNamedPageUndefinedTest()
+        {
+            var src = new SourceFile[]
+            {
+                new SourceFile(Location.FromPath(@"index.md"), "i"),
+                new SourceFile(Location.FromPath(@"page1\page2.md"), "p2")
+            };
+
+            var composer = new SiteComposer();
+
+            var site = composer.ComposeSite(src, "");
+
+            Assert.AreEqual(1, site.MainPage.Children.Count);
+            Assert.AreEqual("i", site.MainPage.RawContent);
+            Assert.AreEqual("page1-index.html", site.MainPage.Children[0].Url.ToId());
+            Assert.IsTrue(string.IsNullOrEmpty(site.MainPage.Children[0].RawContent));
+            Assert.AreEqual(1, site.MainPage.Children[0].Children.Count);
+            Assert.AreEqual("page1-page2.html", site.MainPage.Children[0].Children[0].Url.ToId());
+            Assert.AreEqual("p2", site.MainPage.Children[0].Children[0].RawContent);
         }
 
         [Test]
@@ -79,17 +131,37 @@ namespace Core.Tests
         {
             var src = new SourceFile[]
             {
-                new SourceFile(Location.FromPath(@"page1/page2.md"), "")
+                new SourceFile(Location.FromPath(@"index.md"), "i"),
+                new SourceFile(Location.FromPath(@"page1\index.md"), "p1"),
+                new SourceFile(Location.FromPath(@"page1\page2.md"), "p2")
             };
 
             var composer = new SiteComposer();
 
-            var res = composer.ComposeSite(src, "");
+            var site = composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, res.Pages.Count);
-            Assert.AreEqual(1, res.Pages[0].Children.Count);
-            Assert.AreEqual("page1.html", res.Pages[0].Url);
-            Assert.AreEqual("page2.html", res.Pages[0].Children[0].Url);
+            Assert.AreEqual(1, site.MainPage.Children.Count);
+            Assert.AreEqual("i", site.MainPage.RawContent);
+            Assert.AreEqual("page1-index.html", site.MainPage.Children[0].Url.ToId());
+            Assert.AreEqual("p1", site.MainPage.Children[0].RawContent);
+            Assert.AreEqual(1, site.MainPage.Children[0].Children.Count);
+            Assert.AreEqual("page1-page2.html", site.MainPage.Children[0].Children[0].Url.ToId());
+            Assert.AreEqual("p2", site.MainPage.Children[0].Children[0].RawContent);
+        }
+
+        [Test]
+        public void ComposeSite_DuplicateTest()
+        {
+            var src = new SourceFile[]
+            {
+                new SourceFile(Location.FromPath(@"index.md"), ""),
+                new SourceFile(Location.FromPath(@"page1\index.md"), ""),
+                new SourceFile(Location.FromPath(@"page1.md"), "")
+            };
+
+            var composer = new SiteComposer();
+
+            Assert.Throws<DuplicatePageException>(() => composer.ComposeSite(src, ""));
         }
 
         [Test]
@@ -97,6 +169,7 @@ namespace Core.Tests
         {
             var elems = new ISourceFile[]
             {
+                new SourceFile(Location.FromPath(@"index.md", @"C:\MySite"), ""),
                 new SourceFile(Location.FromPath(@"C:\MySite\page1\index.md", @"C:\MySite"), ""),
                 new SourceFile(Location.FromPath(@"page2\index.md", @"C:\MySite"), ""),
                 new SourceFile(Location.FromPath(@"C:\MySite\page2\subpage1\index.md", @"C:\MySite"), ""),

@@ -1,1 +1,1 @@
-# docify
+[docify](https://www.docify.net) - static site generator

@@ -220,38 +220,29 @@ namespace Xarial.Docify.Core
         {
             if (files?.Any() == true)
             {
-                Dictionary<IReadOnlyList<string>, Page> pageMap = null;
-                Site site = null;
+                IEnumerable<ITextSourceFile> srcPages;
+                IEnumerable<ITextSourceFile> srcLayouts;
+                IEnumerable<ITextSourceFile> srcIncludes;
+                IEnumerable<ITextSourceFile> srcTextAssets;
+                IEnumerable<IBinarySourceFile> srcBinaryAssets;
 
-                if (files.Any(f => f == null)) 
-                {
-                    throw new NullReferenceException("Null reference source file is detected");
-                }
-
-                var textFiles = files.OfType<ITextSourceFile>();
-                var binFiles = files.OfType<IBinarySourceFile>();
-
-                var notSupported = files.Except(textFiles).Except(binFiles);
-
-                if (notSupported.Any()) 
-                {
-                    throw new UnsupportedSourceFileTypesException(notSupported);
-                }
-
-                var srcPages = textFiles.Where(e => IsPage(e));
+                GroupSourceFiles(files, out srcPages, out srcLayouts,
+                    out srcIncludes, out srcTextAssets, out srcBinaryAssets);
 
                 if (!srcPages.Any()) 
                 {
                     throw new EmptySiteException();
                 }
 
-                var layouts = GetLayouts(textFiles);
-                var includes = GetIncludes(textFiles);
+                var layouts = ParseLayouts(srcLayouts);
+                var includes = ParseIncludes(srcIncludes);
+                var assets = ParseAssets(srcTextAssets, srcBinaryAssets);
+                var mainPage = ParsePages(srcPages, layouts);
 
-                ParsePages(baseUrl, srcPages, layouts, out site, out pageMap);
-
+                var site = new Site(baseUrl, mainPage);
                 site.Layouts.AddRange(layouts.Values);
                 site.Includes.AddRange(includes);
+                site.Assets.AddRange(assets);
 
                 return site;
             }
@@ -261,12 +252,62 @@ namespace Xarial.Docify.Core
             }
         }
 
-        private Dictionary<string, Template> GetLayouts(IEnumerable<ITextSourceFile> textFiles) 
+        private void GroupSourceFiles(IEnumerable<ISourceFile> files,
+            out IEnumerable<ITextSourceFile> pages, 
+            out IEnumerable<ITextSourceFile> layouts,
+            out IEnumerable<ITextSourceFile> includes,
+            out IEnumerable<ITextSourceFile> textAssets,
+            out IEnumerable<IBinarySourceFile> binaryAssets) 
+        {
+            if (files.Any(f => f == null))
+            {
+                throw new NullReferenceException("Null reference source file is detected");
+            }
+
+            var textFiles = files.OfType<ITextSourceFile>();
+            var binFiles = files.OfType<IBinarySourceFile>();
+
+            var notSupported = files.Except(textFiles).Except(binFiles);
+
+            if (notSupported.Any())
+            {
+                throw new UnsupportedSourceFileTypesException(notSupported);
+            }
+
+            layouts = textFiles
+                .Where(f => string.Equals(f.Location.Root, LAYOUTS_FOLDER,
+                StringComparison.CurrentCultureIgnoreCase));
+
+            textFiles = textFiles.Except(layouts);
+
+            includes = textFiles
+                .Where(f => string.Equals(f.Location.Root, INCLUDES_FOLDER,
+                StringComparison.CurrentCultureIgnoreCase));
+
+            textFiles = textFiles.Except(includes);
+
+            pages = textFiles.Where(e => IsPage(e));
+
+            textFiles = textFiles.Except(pages);
+
+            textAssets = textFiles;
+            binaryAssets = binFiles;
+        }
+
+        private List<Asset> ParseAssets(IEnumerable<ITextSourceFile> textAssets,
+            IEnumerable<IBinarySourceFile> binaryAssets) 
+        {
+            var assets = new List<Asset>();
+
+            //TODO: implement
+            return assets;
+        }
+
+        private Dictionary<string, Template> ParseLayouts(IEnumerable<ITextSourceFile> layoutFiles) 
         {
             var layouts = new Dictionary<string, Template>(StringComparer.CurrentCultureIgnoreCase);
 
-            var layoutSrcList = textFiles
-                .Where(f => string.Equals(f.Location.Root, LAYOUTS_FOLDER, StringComparison.CurrentCultureIgnoreCase))
+            var layoutSrcList = layoutFiles
                 .ToList();
 
             while (layoutSrcList.Any()) 
@@ -278,12 +319,11 @@ namespace Xarial.Docify.Core
             return layouts;
         }
 
-        private List<Template> GetIncludes(IEnumerable<ITextSourceFile> textFiles) 
+        private List<Template> ParseIncludes(IEnumerable<ITextSourceFile> includeFiles) 
         {
             var usedIncludes = new List<string>();
 
-            var includesSrcList = textFiles
-                .Where(f => string.Equals(f.Location.Root, INCLUDES_FOLDER, StringComparison.CurrentCultureIgnoreCase))
+            var includesSrcList = includeFiles
                 .ToList();
 
             return includesSrcList.Select(s =>
@@ -351,11 +391,10 @@ namespace Xarial.Docify.Core
             return layout;
         }
 
-        private void ParsePages(string baseUrl, IEnumerable<ITextSourceFile> srcPages,
-            IReadOnlyDictionary<string, Template> layouts,
-            out Site site, out Dictionary<IReadOnlyList<string>, Page> pageMap)
+        private Page ParsePages(IEnumerable<ITextSourceFile> srcPages,
+            IReadOnlyDictionary<string, Template> layouts)
         {
-            pageMap = new Dictionary<IReadOnlyList<string>, Page>(
+            var pageMap = new Dictionary<IReadOnlyList<string>, Page>(
                 new LocationDictionaryComparer());
 
             var mainSrcPage = srcPages.FirstOrDefault(p => p.Location.IsRoot && p.Location.IsIndexPage());
@@ -369,7 +408,6 @@ namespace Xarial.Docify.Core
 
             var mainPage = CreatePageFromSourceOrDefault(mainSrcPage, new Location(""), layouts);
 
-            site = new Site(baseUrl, mainPage);
             pageMap.Add(new List<string>(), mainPage);
 
             foreach (var srcPage in srcPages.OrderBy(p => p.Location.TotalLevel))
@@ -427,6 +465,8 @@ namespace Xarial.Docify.Core
                     parentLoc = thisLoc;
                 }
             }
+
+            return mainPage;
         }
     }
 }

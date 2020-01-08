@@ -31,6 +31,13 @@ namespace Xarial.Docify.Core
             Page = page;
         }
     }
+
+    public interface ICompilable 
+    {
+        string RawContent { get; }
+        string Content { get;  set; }
+        string Key { get; }
+    }
     
     public class Site 
     {
@@ -53,15 +60,14 @@ namespace Xarial.Docify.Core
 
     [DebuggerDisplay("{" + nameof(Location) + "}")]
     public class Page : Frame
-    {
-        public Location Location { get; }
-
-        public string Content { get; internal set; }
-
+    {   
         public List<Page> Children { get; }
 
         public List<Asset> Assets { get; }
-        
+        public Location Location { get; }
+
+        public override string Key => Location.ToId();
+
         public Page(Location url, string rawContent, Template layout = null) 
             : this(url, rawContent, new Dictionary<string, dynamic>(), layout)
         {
@@ -77,17 +83,32 @@ namespace Xarial.Docify.Core
         }
     }
 
-    public class Asset 
+    public abstract class Asset
     {
         public Location Location { get; }
+    }
+
+    public abstract class TextAsset : Asset, ICompilable
+    {
+        public string RawContent { get; }
+        public string Content { get; set; }
+        public string Key => Location.ToId();
+    }
+
+    public abstract class BinaryAsset : Asset
+    {
         public byte[] Content { get; }
     }
 
-    public abstract class Frame 
+    public abstract class Frame : ICompilable
     {
         public string RawContent { get; }
+        public string Content { get; set; }
+
         public Template Layout { get; }
         public Dictionary<string, dynamic> Data { get; }
+
+        public abstract string Key { get; }
 
         public Frame(string rawContent, Dictionary<string, dynamic> data, Template layout) 
         {
@@ -100,7 +121,8 @@ namespace Xarial.Docify.Core
     public class Template : Frame
     {
         public string Name { get; }
-        
+        public override string Key => Name;
+
         public Template(string name, string rawContent,
             Dictionary<string, dynamic> data = null, Template baseTemplate = null) 
             : base(rawContent, data, baseTemplate)
@@ -171,24 +193,29 @@ namespace Xarial.Docify.Core
 
             foreach (var page in allPages)
             {
-                var model = new RazorModel(site, page);
-
-                var html = page.RawContent;
-
-                if (HasRazorCode(page))
-                {
-                    html = await razorEngine.CompileRenderAsync(
-                        page.Location.ToId(), html, model, typeof(RazorModel));
-                }
-
-                //NOTE: by some reasons extra new line symbol is added to the output
-                html = Markdown.ToHtml(html, markdownEngine).Trim('\n');
-
-                page.Content = html;
+                await CompileResource(page, new RazorModel(site, page),
+                    markdownEngine, razorEngine);
             }
         }
 
-        private bool HasRazorCode(Page page) 
+        private async Task CompileResource(ICompilable compilable, RazorModel model,
+            MarkdownPipeline markdownEngine, RazorLightEngine razorEngine) 
+        {
+            var html = compilable.RawContent;
+
+            if (HasRazorCode(compilable))
+            {
+                html = await razorEngine.CompileRenderAsync(
+                    compilable.Key, html, model, model?.GetType());
+            }
+
+            //NOTE: by some reasons extra new line symbol is added to the output
+            html = Markdown.ToHtml(html, markdownEngine).Trim('\n');
+
+            compilable.Content = html;
+        }
+
+        private bool HasRazorCode(ICompilable page) 
         {
             //TODO: might need to have better logic to identify this
             return page.RawContent?.Contains('@') == true;

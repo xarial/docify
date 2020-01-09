@@ -6,38 +6,30 @@
 //*********************************************************************
 
 using System;
+using System.Threading.Tasks;
 using Xarial.Docify.Core;
+using Xarial.Docify.Core.Base;
 
 namespace Xarial.Docify.CLI
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            //var srcDir = args[0];
-            //var outDir = args[1];
+            var srcDir = args[0];
+            var outDir = args[1];
 
-            //var loaderConfig = new LocalFileSystemLoaderConfig(srcDir);
-            //var compilerConfig = new BaseCompilerConfig("");
-            //var publConfig = new LocalFileSystemPublisherConfig(outDir);
+            var engine = new DocifyEngine(srcDir, outDir);
 
-            //var publisher = new LocalFileSystemPublisher(publConfig);
+            var loader = engine.Resove<ILoader>();
+            var composer = engine.Resove<IComposer>();
+            var compiler = engine.Resove<ICompiler>();
 
-            //var loader = new LocalFileSystemLoader(loaderConfig);
-            //var elems = loader.Load();
+            var elems = loader.Load();
 
-            //var composer = new SiteComposer(new LayoutParser());
-            //var s = composer.ComposeSite(elems, "");
+            var site = composer.ComposeSite(elems, "");
 
-            //var includesHandler = new IncludesHandler();
-
-            //var transformer = new CompositionTransformer(new RazorLightEvaluator(),
-            //    new MarkdigMarkdownParser(includesHandler));
-
-            //var compiler = new BaseCompiler(compilerConfig, null, publisher,
-            //    new LayoutParser(), transformer);
-
-            //compiler.Compile(s).Wait();
+            await compiler.Compile(site);
         }
     }
 }

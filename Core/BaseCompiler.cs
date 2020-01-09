@@ -189,6 +189,14 @@ namespace Xarial.Docify.Core
         }
     }
 
+
+    public class Logger : ILogger
+    {
+        public void Log()
+        {
+        }
+    }
+
     public class BaseCompiler : ICompiler
     {
         public ICompilerConfig Configuration => m_Config;

@@ -17,12 +17,13 @@ using Xarial.Docify.Core.Base;
 
 namespace Core.Tests
 {
-    public class MarkdownRazorCompilerTest
+    public class BaseCompilerTest
     {
-        private MarkdownRazorCompiler NewCompiler() 
+        private BaseCompiler NewCompiler() 
         {
-            var config = new MarkdownRazorCompilerConfig("");
-            var comp = new MarkdownRazorCompiler(config, new Mock<ILogger>().Object, null, new LayoutParser());
+            var config = new BaseCompilerConfig("");
+            var comp = new BaseCompiler(config, new Mock<ILogger>().Object, null, 
+                new LayoutParser(), new RazorLightEvaluator(), new MarkdigMarkdownParser());
             return comp;
         }
 

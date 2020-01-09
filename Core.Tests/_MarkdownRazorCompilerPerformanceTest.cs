@@ -67,9 +67,10 @@ namespace Core.Tests
 
             var site = new Site("", rootPage);
 
-            var config = new MarkdownRazorCompilerConfig("");
+            var config = new BaseCompilerConfig("");
             config.ParallelPartitionsCount = partCount;
-            var comp = new MarkdownRazorCompiler(config, new Mock<ILogger>().Object, null, new LayoutParser());
+            var comp = new BaseCompiler(config, new Mock<ILogger>().Object, null, 
+                new LayoutParser(), new RazorLightEvaluator(), new MarkdigMarkdownParser());
 
             var start = DateTime.Now;
             await comp.Compile(site);

@@ -18,7 +18,7 @@ namespace Xarial.Docify.CLI
             var outDir = args[1];
 
             var loaderConfig = new LocalFileSystemLoaderConfig(srcDir);
-            var compilerConfig = new MarkdownRazorCompilerConfig("");
+            var compilerConfig = new BaseCompilerConfig("");
             var publConfig = new LocalFileSystemPublisherConfig(outDir);
 
             var publisher = new LocalFileSystemPublisher(publConfig);
@@ -26,7 +26,8 @@ namespace Xarial.Docify.CLI
             var loader = new LocalFileSystemLoader(loaderConfig);
             var elems = loader.Load();
 
-            var compiler = new MarkdownRazorCompiler(compilerConfig, null, publisher, new LayoutParser());
+            var compiler = new BaseCompiler(compilerConfig, null, publisher, 
+                new LayoutParser(), new RazorLightEvaluator(), new MarkdigMarkdownParser());
 
             var composer = new SiteComposer(new LayoutParser());
             var s = composer.ComposeSite(elems, "");

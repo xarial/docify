@@ -8,13 +8,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Xarial.Docify.Core.Base
+namespace Xarial.Docify.Core.Exceptions
 {
-    public interface IIncludesHandler
+    public class MissingIncludeException : Exception
     {
-        Task ParseParameters(string rawContent, out string name, out Dictionary<string, dynamic> param);
-        Task<string> Insert(string name, Dictionary<string, dynamic> param, Site site, Page page);
+        public MissingIncludeException(string includeName)
+            : base($"Include cannot be found: {includeName}") 
+        {
+        }
     }
 }

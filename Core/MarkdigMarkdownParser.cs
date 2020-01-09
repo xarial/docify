@@ -13,6 +13,7 @@ using Markdig.Renderers.Html;
 using Markdig.Syntax.Inlines;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Core.Base;
@@ -22,6 +23,8 @@ namespace Xarial.Docify.Core
 {
     public class MarkdigMarkdownParser : IContentTransformer
     {
+        internal const string CONTEXT_MODEL_PARAM_NAME = "_DocifyContextModel_";
+
         private readonly MarkdownPipeline m_MarkdownEngine;
         private readonly IIncludesHandler m_IncludesHandler;
         
@@ -35,11 +38,19 @@ namespace Xarial.Docify.Core
                 .UseIncludes(m_IncludesHandler)
                 .Build();
         }
-        
+                
         public Task<string> Transform(string content, string key, ContextModel model)
         {
+            var context = new MarkdownParserContext();
+            context.Properties.Add(CONTEXT_MODEL_PARAM_NAME, model);
+
+            var htmlStr = new StringBuilder();
+            
+            Markdown.ToHtml(content, new StringWriter(htmlStr),
+                m_MarkdownEngine, context);
+
             //NOTE: by some reasons extra new line symbol is added to the output
-            var html = Markdown.ToHtml(content, m_MarkdownEngine).Trim('\n');
+            var html = htmlStr.ToString().Trim('\n');
 
             return Task.FromResult(html);
         }
@@ -111,7 +122,8 @@ namespace Xarial.Docify.Core
 
     public static class IncludeExtensionFunctions
     {
-        public static MarkdownPipelineBuilder UseIncludes(this MarkdownPipelineBuilder pipeline, IIncludesHandler paramsParser)
+        public static MarkdownPipelineBuilder UseIncludes(this MarkdownPipelineBuilder pipeline, 
+            IIncludesHandler paramsParser)
         {
             if (!pipeline.Extensions.Contains<IncludeExtension>())
             {
@@ -165,9 +177,8 @@ namespace Xarial.Docify.Core
             Dictionary<string, dynamic> param;
             m_ParamsParser.ParseParameters(rawContent.ToString(), out name, out param);
 
-            processor.Inline = new IncludeData(name, param);
-
-            //processor.Inline.Span.End = processor.Inline.Span.Start;
+            var model = (ContextModel)processor.Context.Properties[MarkdigMarkdownParser.CONTEXT_MODEL_PARAM_NAME];
+            processor.Inline = new IncludeData(name, param, model.Site, model.Page);
 
             return true;
         }
@@ -177,26 +188,17 @@ namespace Xarial.Docify.Core
     {
         public string Name { get; }
         public Dictionary<string, dynamic> Parameters { get; }
+        public Site Site { get; }
+        public Page Page { get; }
 
-        public IncludeData(string name, Dictionary<string, dynamic> parameters) 
+        public IncludeData(string name, Dictionary<string, dynamic> parameters, Site site, Page page) 
         {
             Name = name;
             Parameters = parameters;
+            Site = site;
+            Page = page;
         }
     }
-
-    //public interface IIncludeParameterParser 
-    //{
-    //    void Parse(string rawContent, out string name, out Dictionary<string, dynamic> param);
-    //}
-
-    //public class IncludeParameterParser : IIncludeParameterParser
-    //{
-    //    public void Parse(string rawContent, out string name, out Dictionary<string, dynamic> param)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
 
     public class IncludeRenderer : HtmlObjectRenderer<IncludeData>
     {
@@ -211,9 +213,8 @@ namespace Xarial.Docify.Core
         {
             if (renderer.EnableHtmlForInline)
             {
-                var res = m_IncludesHandler.Insert(data.Name, data.Parameters, null).Result;
+                var res = m_IncludesHandler.Insert(data.Name, data.Parameters, data.Site, data.Page).Result;
 
-                //TODO: merge parameters
                 renderer.Write(res);
             }
             else

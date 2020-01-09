@@ -21,7 +21,7 @@ namespace Core.Tests
     public class MarkdigMarkdownIncludesExtensionTest
     {
         private delegate Task ParseParametersDelegate(string rawContent, out string name, out Dictionary<string, dynamic> param);
-        private delegate Task<string> InsertDelegate(string name, Dictionary<string, dynamic> param, IEnumerable<Template> includes);
+        private delegate Task<string> InsertDelegate(string name, Dictionary<string, dynamic> param, Site site, Page page);
 
         private MarkdigMarkdownParser m_Parser;
 
@@ -39,9 +39,8 @@ namespace Core.Tests
                 }));
 
             paramsParserMock.Setup(m => m.Insert(It.IsAny<string>(),
-                It.IsAny<Dictionary<string, dynamic>>(),
-                It.IsAny<IEnumerable<Template>>())).Returns(
-                new InsertDelegate((n, p, t) =>
+                It.IsAny<Dictionary<string, dynamic>>(), It.IsAny<Site>(), It.IsAny<Page>())).Returns(
+                new InsertDelegate((n, p, s, pg) =>
                 {
                     return Task.FromResult($"[{n}: {p.ElementAt(0).Key}={p.ElementAt(0).Value}]");
                 }));

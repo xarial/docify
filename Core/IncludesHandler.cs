@@ -11,11 +11,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Core.Base;
+using Xarial.Docify.Core.Exceptions;
+using YamlDotNet.Serialization;
 
 namespace Xarial.Docify.Core
 {
+    public class IncludesContextModel : ContextModel 
+    {
+        public Dictionary<string, dynamic> Parameters { get; }
+
+        public IncludesContextModel(Site site, Page page, Dictionary<string, dynamic> parameters) 
+            : base(site, page)
+        {
+            Parameters = parameters;
+        }
+    }
+
     public class IncludesHandler : IIncludesHandler
     {
+        private const string NAME_PARAMS_SPLIT_SYMBOL = " ";
+
         private readonly IContentTransformer m_Transformer;
 
         public IncludesHandler(IContentTransformer transformer) 
@@ -24,24 +39,49 @@ namespace Xarial.Docify.Core
         }
         
         public async Task<string> Insert(string name, Dictionary<string, dynamic> param, 
-            IEnumerable<Template> includes)
+            Site site, Page page)
         {
-            //TODO: find the template
-            var include = includes.FirstOrDefault(i => string.Equals(i.Name, name, StringComparison.CurrentCultureIgnoreCase));
+            var include = site.Includes.FirstOrDefault(i => string.Equals(i.Name, 
+                name, StringComparison.CurrentCultureIgnoreCase));
 
             if (include == null) 
             {
-                //TODO: throw include not found exception
+                throw new MissingIncludeException(name);
             }
 
-            //TODO: compose the model for the include
-            return await m_Transformer.Transform(include.RawContent, include.Key, null);
+            return await m_Transformer.Transform(include.RawContent, include.Key, 
+                new IncludesContextModel(site, page, MergeParameters(param, include)));
+        }
+
+        private Dictionary<string, dynamic> MergeParameters(Dictionary<string, dynamic> parameters, Template include) 
+        {
+            var resParams = new Dictionary<string, dynamic>(include.Data, StringComparer.CurrentCultureIgnoreCase);
+
+            foreach (var param in parameters) 
+            {
+                if (resParams.ContainsKey(param.Key)) 
+                {
+                    resParams[param.Key] = param.Value;
+                }
+                else 
+                {
+                    resParams.Add(param.Key, param.Value);
+                }
+            }
+
+            return resParams;
         }
 
         public Task ParseParameters(string rawContent, out string name, out Dictionary<string, dynamic> param) 
         {
-            name = "";
-            param = null;
+            rawContent = rawContent.Trim();
+
+            name = rawContent.Substring(0, rawContent.IndexOf(NAME_PARAMS_SPLIT_SYMBOL));
+            var paramStr = rawContent.Substring(rawContent.IndexOf(NAME_PARAMS_SPLIT_SYMBOL) + 1);
+
+            var yamlDeserializer = new DeserializerBuilder().Build();
+
+            param = yamlDeserializer.Deserialize<Dictionary<string, dynamic>>(paramStr);
 
             return Task.CompletedTask;
         }

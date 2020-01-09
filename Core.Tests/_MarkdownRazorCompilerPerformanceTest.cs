@@ -70,7 +70,7 @@ namespace Core.Tests
             var config = new BaseCompilerConfig("");
             config.ParallelPartitionsCount = partCount;
             var comp = new BaseCompiler(config, new Mock<ILogger>().Object, null, 
-                new LayoutParser(), new CompositionTransformer(new RazorLightEvaluator(), new MarkdigMarkdownParser()));
+                new LayoutParser(), new MarkdigRazorLightTransformer(c => new IncludesHandler(c)));
 
             var start = DateTime.Now;
             await comp.Compile(site);

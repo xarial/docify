@@ -16,21 +16,34 @@ namespace Xarial.Docify.Core
 {
     public class IncludesHandler : IIncludesHandler
     {
-        private readonly IEnumerable<Template> m_Includes;
         private readonly IContentTransformer m_Transformer;
 
-        public IncludesHandler(IEnumerable<Template> includes, IContentTransformer transformer) 
+        public IncludesHandler(IContentTransformer transformer) 
         {
-            m_Includes = includes;
+            m_Transformer = transformer;
         }
-
-        public async Task<string> Replace(string content)
+        
+        public async Task<string> Insert(string name, Dictionary<string, dynamic> param, 
+            IEnumerable<Template> includes)
         {
             //TODO: find the template
-            var include = m_Includes.First();
+            var include = includes.FirstOrDefault(i => string.Equals(i.Name, name, StringComparison.CurrentCultureIgnoreCase));
 
-            //TODO: 
+            if (include == null) 
+            {
+                //TODO: throw include not found exception
+            }
+
+            //TODO: compose the model for the include
             return await m_Transformer.Transform(include.RawContent, include.Key, null);
+        }
+
+        public Task ParseParameters(string rawContent, out string name, out Dictionary<string, dynamic> param) 
+        {
+            name = "";
+            param = null;
+
+            return Task.CompletedTask;
         }
     }
 }

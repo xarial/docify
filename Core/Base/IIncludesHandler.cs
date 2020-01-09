@@ -14,6 +14,7 @@ namespace Xarial.Docify.Core.Base
 {
     public interface IIncludesHandler
     {
-        Task<string> Replace(string content);
+        Task ParseParameters(string rawContent, out string name, out Dictionary<string, dynamic> param);
+        Task<string> Insert(string name, Dictionary<string, dynamic> param, IEnumerable<Template> includes);
     }
 }

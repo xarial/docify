@@ -22,8 +22,8 @@ namespace Core.Tests
         private BaseCompiler NewCompiler() 
         {
             var config = new BaseCompilerConfig("");
-            var comp = new BaseCompiler(config, new Mock<ILogger>().Object, null, 
-                new LayoutParser(), new CompositionTransformer(new RazorLightEvaluator(), new MarkdigMarkdownParser()));
+            var comp = new BaseCompiler(config, new Mock<ILogger>().Object, null,
+                new LayoutParser(), new MarkdigRazorLightTransformer(c => new IncludesHandler(c)));
             return comp;
         }
 

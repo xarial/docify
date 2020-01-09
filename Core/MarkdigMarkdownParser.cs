@@ -9,6 +9,7 @@ using Markdig;
 using Markdig.Helpers;
 using Markdig.Parsers;
 using Markdig.Renderers;
+using Markdig.Renderers.Html;
 using Markdig.Syntax.Inlines;
 using System;
 using System.Collections.Generic;
@@ -21,12 +22,16 @@ namespace Xarial.Docify.Core
     public class MarkdigMarkdownParser : IContentTransformer
     {
         private readonly MarkdownPipeline m_MarkdownEngine;
-
-        public MarkdigMarkdownParser()
+        private readonly IIncludesHandler m_IncludesHandler;
+        
+        public MarkdigMarkdownParser(IIncludesHandler includesHandler)
         {
+            m_IncludesHandler = includesHandler;
+
             m_MarkdownEngine = new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
                 .UseObservableLinks()
+                .UseIncludes(m_IncludesHandler)
                 //.UseSyntaxHighlighting() //requires Markdig.SyntaxHighlighting
                 .Build();
         }
@@ -34,7 +39,9 @@ namespace Xarial.Docify.Core
         public Task<string> Transform(string content, string key, ContextModel model)
         {
             //NOTE: by some reasons extra new line symbol is added to the output
-            return Task.Run<string>(() => Markdown.ToHtml(content, m_MarkdownEngine).Trim('\n'));
+            var html = Markdown.ToHtml(content, m_MarkdownEngine).Trim('\n');
+
+            return Task.FromResult(html);
         }
     }
 
@@ -72,12 +79,152 @@ namespace Xarial.Docify.Core
     {
         public static MarkdownPipelineBuilder UseObservableLinks(this MarkdownPipelineBuilder pipeline)
         {
-            if (!pipeline.Extensions.Contains<ObservableLinkExtension>())
+            pipeline.Extensions.AddIfNotAlready<ObservableLinkExtension>();
+
+            return pipeline;
+        }
+    }
+
+    public class IncludeExtension : IMarkdownExtension
+    {
+        private readonly IIncludesHandler m_ParamsParser;
+
+        public IncludeExtension(IIncludesHandler paramsParser)
+        {
+            m_ParamsParser = paramsParser;
+        }
+
+        public void Setup(MarkdownPipelineBuilder pipeline)
+        {
+            pipeline.InlineParsers.AddIfNotAlready(new IncludeInlineParser(m_ParamsParser));
+            //if (!pipeline.InlineParsers.Contains<JiraLinkInlineParser>())
+            //{
+            //    // Insert the parser before the link inline parser
+            //    pipeline.InlineParsers.InsertBefore<LinkInlineParser>(new JiraLinkInlineParser());
+            //}
+        }
+
+        public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
+        {
+            var htmlRenderer = renderer as HtmlRenderer;
+            if (htmlRenderer != null)
             {
-                pipeline.Extensions.Add(new ObservableLinkExtension());
+                htmlRenderer.ObjectRenderers.AddIfNotAlready(new IncludeRenderer(m_ParamsParser));
+            }
+        }
+    }
+
+    public static class IncludeExtensionFunctions
+    {
+        public static MarkdownPipelineBuilder UseIncludes(this MarkdownPipelineBuilder pipeline, IIncludesHandler paramsParser)
+        {
+            if (!pipeline.Extensions.Contains<IncludeExtension>())
+            {
+                pipeline.Extensions.Add(new IncludeExtension(paramsParser));
             }
 
             return pipeline;
+        }
+    }
+
+    public class IncludeInlineParser : InlineParser
+    {
+        private readonly IIncludesHandler m_ParamsParser;
+
+        private const string START_TAG = "{%";
+        private const string END_TAG = "%}";
+
+        public IncludeInlineParser(IIncludesHandler paramsParser)
+        {
+            m_ParamsParser = paramsParser;
+            OpeningCharacters = new char[] { START_TAG[0] };
+        }
+        
+        public override bool Match(InlineProcessor processor, ref StringSlice slice)
+        {
+            if (!slice.Match(START_TAG))
+            {
+                return false;
+            }
+            
+            var rawContent = new StringBuilder();
+
+            slice.Start = slice.Start + START_TAG.Length - 1;
+
+            var current = slice.NextChar();
+            
+            while (current != '%' && slice.PeekChar(1) != '}')
+            {
+                if (slice.IsEmpty) 
+                {
+                    //TODO: throw exception
+                }
+
+                rawContent.Append(current);
+                current = slice.NextChar();
+            }
+
+            slice.Start = slice.Start + END_TAG.Length;
+
+            string name;
+            Dictionary<string, dynamic> param;
+            m_ParamsParser.ParseParameters(rawContent.ToString(), out name, out param);
+
+            processor.Inline = new IncludeData(name, param);
+
+            //processor.Inline.Span.End = processor.Inline.Span.Start;
+
+            return true;
+        }
+    }
+
+    public class IncludeData : LeafInline
+    {
+        public string Name { get; }
+        public Dictionary<string, dynamic> Parameters { get; }
+
+        public IncludeData(string name, Dictionary<string, dynamic> parameters) 
+        {
+            Name = name;
+            Parameters = parameters;
+        }
+    }
+
+    //public interface IIncludeParameterParser 
+    //{
+    //    void Parse(string rawContent, out string name, out Dictionary<string, dynamic> param);
+    //}
+
+    //public class IncludeParameterParser : IIncludeParameterParser
+    //{
+    //    public void Parse(string rawContent, out string name, out Dictionary<string, dynamic> param)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
+
+    public class IncludeRenderer : HtmlObjectRenderer<IncludeData>
+    {
+        private readonly IIncludesHandler m_IncludesHandler;
+
+        public IncludeRenderer(IIncludesHandler includesHandler)
+        {
+            m_IncludesHandler = includesHandler;
+        }
+
+        protected override void Write(HtmlRenderer renderer, IncludeData data)
+        {
+            if (renderer.EnableHtmlForInline)
+            {
+                var res = m_IncludesHandler.Insert(data.Name, data.Parameters, null).Result;
+
+                //TODO: merge parameters
+                renderer.Write(res);
+            }
+            else
+            {
+                //TODO: implement plain writing
+            }
         }
     }
 }

@@ -14,24 +14,30 @@ namespace Xarial.Docify.CLI
     {
         static void Main(string[] args)
         {
-            var srcDir = args[0];
-            var outDir = args[1];
+            //var srcDir = args[0];
+            //var outDir = args[1];
 
-            var loaderConfig = new LocalFileSystemLoaderConfig(srcDir);
-            var compilerConfig = new BaseCompilerConfig("");
-            var publConfig = new LocalFileSystemPublisherConfig(outDir);
+            //var loaderConfig = new LocalFileSystemLoaderConfig(srcDir);
+            //var compilerConfig = new BaseCompilerConfig("");
+            //var publConfig = new LocalFileSystemPublisherConfig(outDir);
 
-            var publisher = new LocalFileSystemPublisher(publConfig);
+            //var publisher = new LocalFileSystemPublisher(publConfig);
 
-            var loader = new LocalFileSystemLoader(loaderConfig);
-            var elems = loader.Load();
+            //var loader = new LocalFileSystemLoader(loaderConfig);
+            //var elems = loader.Load();
 
-            var compiler = new BaseCompiler(compilerConfig, null, publisher, 
-                new LayoutParser(), new CompositionTransformer(new RazorLightEvaluator(), new MarkdigMarkdownParser()));
+            //var composer = new SiteComposer(new LayoutParser());
+            //var s = composer.ComposeSite(elems, "");
 
-            var composer = new SiteComposer(new LayoutParser());
-            var s = composer.ComposeSite(elems, "");
-            compiler.Compile(s).Wait();
+            //var includesHandler = new IncludesHandler();
+
+            //var transformer = new CompositionTransformer(new RazorLightEvaluator(),
+            //    new MarkdigMarkdownParser(includesHandler));
+
+            //var compiler = new BaseCompiler(compilerConfig, null, publisher,
+            //    new LayoutParser(), transformer);
+
+            //compiler.Compile(s).Wait();
         }
     }
 }

@@ -76,12 +76,20 @@ namespace Xarial.Docify.Core
         {
             rawContent = rawContent.Trim();
 
-            name = rawContent.Substring(0, rawContent.IndexOf(NAME_PARAMS_SPLIT_SYMBOL));
-            var paramStr = rawContent.Substring(rawContent.IndexOf(NAME_PARAMS_SPLIT_SYMBOL) + 1);
+            if (rawContent.Contains(NAME_PARAMS_SPLIT_SYMBOL))
+            {
+                name = rawContent.Substring(0, rawContent.IndexOf(NAME_PARAMS_SPLIT_SYMBOL));
+                var paramStr = rawContent.Substring(rawContent.IndexOf(NAME_PARAMS_SPLIT_SYMBOL) + 1);
 
-            var yamlDeserializer = new DeserializerBuilder().Build();
+                var yamlDeserializer = new DeserializerBuilder().Build();
 
-            param = yamlDeserializer.Deserialize<Dictionary<string, dynamic>>(paramStr);
+                param = yamlDeserializer.Deserialize<Dictionary<string, dynamic>>(paramStr);
+            }
+            else 
+            {
+                name = rawContent;
+                param = new Dictionary<string, dynamic>();
+            }
 
             return Task.CompletedTask;
         }

@@ -6,6 +6,7 @@
 //*********************************************************************
 
 using NUnit.Framework;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xarial.Docify.CLI;
@@ -81,6 +82,27 @@ namespace CLI.Tests
             Assert.AreEqual("<p><em>T2</em> page2.html <p><em>T1</em> page2.html <p><strong>Page2</strong> page2.html</p>_T1</p>_T2</p>", site.MainPage.Children.FirstOrDefault(p => p.Key == "page2.html").Content);
             Assert.AreEqual("<p>T3<p>T4<p>Page3</p>T4</p>T3</p>", site.MainPage.Children.FirstOrDefault(p => p.Key == "page3.html").Content);
             Assert.AreEqual("<p>T3<p>T4<p>Page4</p>T4</p>T3</p>", site.MainPage.Children.FirstOrDefault(p => p.Key == "page4.html").Content);
+        }
+
+        [Test]
+        public async Task IncludePageTest()
+        {
+            var p1 = new Page(new Location("page1.html"),
+                "*@Model.Site.MainPage.Children.Count* {% i1 %}");
+
+            var p2 = new Page(new Location("page2.html"),
+                "@Model.Page.Location.FileName\r\n{% i1 p1: B %}\r\n{% i2 p2: X %}");
+
+            p1.Children.Add(p2);
+
+            var site = new Site("", p1);
+            site.Includes.Add(new Template("i1", "Some Value\r\n@Model.Parameters[\"p1\"]", new Dictionary<string, dynamic>() { { "p1", "A" } }));
+            site.Includes.Add(new Template("i2", "**@Model.Page.Location.FileName**\r\n@Model.Parameters.Count", new Dictionary<string, dynamic>() { { "p1", "A" }, { "p2", "X" } }));
+
+            await m_Compiler.Compile(site);
+
+            Assert.AreEqual("<p><em>1</em> <p>Some Value\nA</p></p>", site.MainPage.Content);
+            Assert.AreEqual("<p>page2.html\n<p>Some Value\nB</p>\n<p><strong>page2.html</strong>\n2</p></p>", site.MainPage.Children.FirstOrDefault(p => p.Key == "page2.html").Content);
         }
     }
 }

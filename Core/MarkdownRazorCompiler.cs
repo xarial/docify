@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Markdig;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace Xarial.Docify.Core
 {
@@ -35,7 +36,6 @@ namespace Xarial.Docify.Core
     public interface ICompilable 
     {
         string RawContent { get; }
-        string Content { get;  set; }
         string Key { get; }
     }
     
@@ -62,9 +62,9 @@ namespace Xarial.Docify.Core
     public class Page : Frame
     {   
         public List<Page> Children { get; }
-
         public List<Asset> Assets { get; }
         public Location Location { get; }
+        public string Content { get; set; }
 
         public override string Key => Location.ToId();
 
@@ -118,8 +118,6 @@ namespace Xarial.Docify.Core
     public abstract class Frame : ICompilable
     {
         public string RawContent { get; }
-        public string Content { get; set; }
-
         public Template Layout { get; }
         public Dictionary<string, dynamic> Data { get; }
 
@@ -145,14 +143,51 @@ namespace Xarial.Docify.Core
             Name = name;
         }
     }
+
+    public interface ILayoutParser
+    {
+        string PlaceholderValue { get; }
+        bool ContainsPlaceholder(string content);
+        string InsertContent(string content, string insertContent);
+    }
+
+    public class LayoutParser : ILayoutParser
+    {
+        private const string CONTENT_PLACEHOLDER_REGEX = "{{ *content *}}";
+
+        public string PlaceholderValue => CONTENT_PLACEHOLDER_REGEX;
+
+        public bool ContainsPlaceholder(string content) 
+        {
+            return Regex.IsMatch(content, CONTENT_PLACEHOLDER_REGEX);
+        }
+
+        public string InsertContent(string content, string insertContent)
+        {
+            return Regex.Replace(content, CONTENT_PLACEHOLDER_REGEX, insertContent);
+        }
+    }
     
     public class MarkdownRazorCompilerConfig : ICompilerConfig
-    {   
+    {
+        public enum ParallelPartitions_e 
+        {
+            Infinite = -1,
+            AutoDetect = 0,
+            NoParallelism = 1
+        }
+
         public string SiteUrl { get; }
+
+        /// <summary>
+        /// Number of partitions for parallel job. See <see cref="ParallelPartitions_e"/> for options
+        /// </summary>
+        public int ParallelPartitionsCount { get; set; }
 
         public MarkdownRazorCompilerConfig(string siteUrl) 
         {
             SiteUrl = siteUrl;
+            ParallelPartitionsCount = (int)ParallelPartitions_e.NoParallelism;
         }
     }
 
@@ -166,12 +201,15 @@ namespace Xarial.Docify.Core
 
         private readonly MarkdownRazorCompilerConfig m_Config;
 
+        private readonly ILayoutParser m_LayoutParser;
+
         public MarkdownRazorCompiler(MarkdownRazorCompilerConfig config,
-            ILogger logger, IPublisher publisher) 
+            ILogger logger, IPublisher publisher, ILayoutParser layoutParser) 
         {
             m_Config = config;
             Logger = logger;
             Publisher = publisher;
+            m_LayoutParser = layoutParser;
         }
 
         private void GetAllPages(Page page, List<Page> allPages) 
@@ -189,11 +227,6 @@ namespace Xarial.Docify.Core
 
         public async Task Compile(Site site)
         {
-            //TODO: build all includes (identify if any circular)
-            //TODO: build all layout (identify if any circular)
-            //TODO: parallel all pages building
-            //TODO: identify if any layouts or includes are not in use
-
             var razorEngine = new RazorLightEngineBuilder()
                 .UseMemoryCachingProvider()
                 .Build();
@@ -206,14 +239,80 @@ namespace Xarial.Docify.Core
             var allPages = new List<Page>();
             GetAllPages(site.MainPage, allPages);
 
-            foreach (var page in allPages)
+            if (m_Config.ParallelPartitionsCount == (int)MarkdownRazorCompilerConfig.ParallelPartitions_e.NoParallelism)
             {
-                await CompileResource(page, new RazorModel(site, page),
-                    markdownEngine, razorEngine);
+                foreach (var page in allPages)
+                {
+                    await CompilePage(page, site,
+                        markdownEngine, razorEngine);
+                }
+            }
+            else 
+            {
+                //this is preview only option as sometimes exception is thrown, perhaps some of the engines are not thread safe
+                int partitionsCount = 1;
+
+                switch ((MarkdownRazorCompilerConfig.ParallelPartitions_e)m_Config.ParallelPartitionsCount)
+                {
+                    case MarkdownRazorCompilerConfig.ParallelPartitions_e.Infinite:
+                        partitionsCount = -1;
+                        break;
+
+                    case MarkdownRazorCompilerConfig.ParallelPartitions_e.AutoDetect:
+                        partitionsCount = Environment.ProcessorCount;
+                        break;
+                }
+
+                await ForEachAsync(allPages, async p => await CompilePage(p, site,
+                        markdownEngine, razorEngine), partitionsCount);
             }
         }
 
-        private async Task CompileResource(ICompilable compilable, RazorModel model,
+        private Task ForEachAsync<T>(IEnumerable<T> source, Func<T, Task> body, int partitionsCount)
+        {
+            if (partitionsCount == -1) 
+            {
+                partitionsCount = source.Count();
+            }
+
+            return Task.WhenAll(
+                System.Collections.Concurrent.Partitioner.Create(source).GetPartitions(partitionsCount)
+                .Select(partition => Task.Run(async delegate
+                {
+                    using (partition)
+                    {
+                        while (partition.MoveNext())
+                        {
+                            await body(partition.Current);
+                        }
+                    }
+                })));
+        }
+
+        private async Task CompilePage(Page page, Site site,
+            MarkdownPipeline markdownEngine, RazorLightEngine razorEngine)
+        {
+            var model = new RazorModel(site, page);
+
+            var content = await CompileResource(page, model,
+                    markdownEngine, razorEngine);
+
+            var layout = page.Layout;
+
+            while (layout != null)
+            {
+                var layoutContent = await CompileResource(layout, model,
+                    markdownEngine, razorEngine);
+
+                content = m_LayoutParser.InsertContent(layoutContent, content);
+
+                layout = layout.Layout;
+            }
+
+            page.Content = content;
+        }
+
+        private async Task<string> CompileResource(ICompilable compilable, RazorModel model,
             MarkdownPipeline markdownEngine, RazorLightEngine razorEngine) 
         {
             var html = compilable.RawContent;
@@ -224,10 +323,12 @@ namespace Xarial.Docify.Core
                     compilable.Key, html, model, model?.GetType());
             }
 
+            //TODO: identify if any includes are not in use
+
             //NOTE: by some reasons extra new line symbol is added to the output
             html = Markdown.ToHtml(html, markdownEngine).Trim('\n');
-
-            compilable.Content = html;
+            
+            return html;
         }
 
         private bool HasRazorCode(ICompilable page) 

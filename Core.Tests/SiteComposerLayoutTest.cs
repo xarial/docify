@@ -17,6 +17,11 @@ namespace Core.Tests
 {
     public class SiteComposerLayoutTest
     {
+        private SiteComposer NewComposer() 
+        {
+            return new SiteComposer(new LayoutParser());
+        }
+
         [Test]
         public void ComposeSite_LayoutSimple() 
         {
@@ -27,7 +32,7 @@ namespace Core.Tests
                     "---\r\nprp1: A\r\nlayout: l1\r\n---\r\nText Line1\r\nText Line2"),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -54,7 +59,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"p4.md"), "---\r\nlayout: l4\r\n---\r\nP4")
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -79,7 +84,7 @@ namespace Core.Tests
                     "---\r\nprp1: A\r\nlayout: l2\r\n---\r\nText Line1\r\nText Line2"),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             Assert.Throws<MissingLayoutException>(() => composer.ComposeSite(src, ""));
         }
@@ -89,14 +94,28 @@ namespace Core.Tests
         {
             var src = new TextSourceFile[]
             {
-                new TextSourceFile(Location.FromPath(@"_layouts\\l1.md"), ""),
-                new TextSourceFile(Location.FromPath(@"_layouts\\l1.txt"), ""),
+                new TextSourceFile(Location.FromPath(@"_layouts\\l1.md"), "{{ content }}"),
+                new TextSourceFile(Location.FromPath(@"_layouts\\l1.txt"), "{{ content }}"),
                 new TextSourceFile(Location.FromPath(@"index.md"), ""),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             Assert.Throws<DuplicateTemplateException>(() => composer.ComposeSite(src, ""));
+        }
+
+        [Test]
+        public void ComposeSite_MissingContentPLaceholderLayout()
+        {
+            var src = new TextSourceFile[]
+            {
+                new TextSourceFile(Location.FromPath(@"_layouts\\l1.md"), "abc"),
+                new TextSourceFile(Location.FromPath(@"index.md"), ""),
+            };
+
+            var composer = NewComposer();
+
+            Assert.Throws<LayoutMissingContentPlaceholderException>(() => composer.ComposeSite(src, ""));
         }
     }
 }

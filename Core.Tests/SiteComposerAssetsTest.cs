@@ -17,6 +17,11 @@ namespace Core.Tests
 {
     public class SiteComposerAssetsTest
     {
+        private SiteComposer NewComposer()
+        {
+            return new SiteComposer(new LayoutParser());
+        }
+
         [Test]
         public void ComposeSite_SinglePageAsset()
         {
@@ -27,7 +32,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\asset.txt"), "a1"),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -45,7 +50,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"asset.txt"), "a1"),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -65,7 +70,7 @@ namespace Core.Tests
                 new BinarySourceFile(Location.FromPath(@"page1\asset1.bin"), new byte[] { 1,2,3 })
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -90,7 +95,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page2\page3\asset2.txt"), "a4"),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 

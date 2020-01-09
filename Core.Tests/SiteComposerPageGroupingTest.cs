@@ -19,6 +19,11 @@ namespace Core.Tests
 {
     public class SiteComposerPageGroupingTest
     {
+        private SiteComposer NewComposer()
+        {
+            return new SiteComposer(new LayoutParser());
+        }
+
         [Test]
         public void ComposeSite_IndexPageTest() 
         {
@@ -27,8 +32,8 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"index.md"), "i"),
                 new TextSourceFile(Location.FromPath(@"page1\index.md"), "p1")
             };
-            
-            var composer = new SiteComposer();
+
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -49,7 +54,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1.md"), "p1")
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -68,7 +73,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\page2\index.md"), "p2")
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -91,7 +96,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\index.md"), "p1")
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -113,7 +118,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\page2.md"), "p2")
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -136,7 +141,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\page2.md"), "p2")
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -159,7 +164,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1.md"), "")
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             Assert.Throws<DuplicatePageException>(() => composer.ComposeSite(src, ""));
         }
@@ -175,7 +180,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\Page3\INDEX.md"), "p3"),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -198,7 +203,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\index.txt"), ""),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             Assert.Throws<EmptySiteException>(() => composer.ComposeSite(src, ""));
         }
@@ -212,7 +217,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1.md"), "")
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             Assert.Throws<SiteMainPageMissingException>(() => composer.ComposeSite(src, ""));
         }
@@ -228,7 +233,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\page3\index.html"), "p3"),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -254,7 +259,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"asset2.ini"), "p1")
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -275,7 +280,7 @@ namespace Core.Tests
                 new Moq.Mock<ISourceFile>().Object
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             Assert.Throws<UnsupportedSourceFileTypesException>(() => composer.ComposeSite(src, ""));
         }

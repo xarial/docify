@@ -17,6 +17,11 @@ namespace Core.Tests
 {
     public class SiteComposerMetadataTest
     {
+        private SiteComposer NewComposer()
+        {
+            return new SiteComposer(new LayoutParser());
+        }
+
         [Test]
         public void ComposeSite_ContentMetadataSimpleProperties()
         {
@@ -26,7 +31,7 @@ namespace Core.Tests
                 "---\r\nprp1: A\r\nprp2: B\r\n---\r\nText Line1\r\nText Line2"),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -45,7 +50,7 @@ namespace Core.Tests
                 "---\r\nprp1: A\r\nprp2:\r\n  prp3: B\r\n---\r\nText Line1\r\nText Line2"),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -65,7 +70,7 @@ namespace Core.Tests
                 "---\r\nprp1: A\r\nprp2:\r\n  - B\r\n  - C\r\n---\r\nText Line1\r\nText Line2"),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -86,7 +91,7 @@ namespace Core.Tests
                 "Text Line1\r\nText Line2"),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -103,7 +108,7 @@ namespace Core.Tests
                 "---\r\nText Line1\r\nText Line2"),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             Assert.Throws<FrontMatterErrorException>(() => composer.ComposeSite(src, ""));
         }

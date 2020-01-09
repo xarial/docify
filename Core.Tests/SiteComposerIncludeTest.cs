@@ -18,6 +18,11 @@ namespace Core.Tests
 {
     public class SiteComposerIncludeTest
     {
+        private SiteComposer NewComposer()
+        {
+            return new SiteComposer(new LayoutParser());
+        }
+
         [Test]
         public void ComposeSite_SingleInclude() 
         {
@@ -27,7 +32,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"index.md"), ""),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -48,7 +53,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"index.md"), ""),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -68,7 +73,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"index.md"), ""),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             var site = composer.ComposeSite(src, "");
 
@@ -89,7 +94,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"index.md"), ""),
             };
 
-            var composer = new SiteComposer();
+            var composer = NewComposer();
 
             Assert.Throws<DuplicateTemplateException>(() => composer.ComposeSite(src, ""));
         }

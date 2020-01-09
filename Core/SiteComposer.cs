@@ -50,6 +50,13 @@ namespace Xarial.Docify.Core
         private const string FRONT_MATTER_HEADER = "---";
         private const string LAYOUT_VAR_NAME = "layout";
 
+        private readonly ILayoutParser m_LayoutParser;
+
+        public SiteComposer(ILayoutParser parser) 
+        {
+            m_LayoutParser = parser;
+        }
+
         private bool IsPage(ISourceFile srcFile) 
         {
             var ext = Path.GetExtension(srcFile.Location.FileName);
@@ -376,7 +383,10 @@ namespace Xarial.Docify.Core
             string baseLayoutName;
             ParseTextFile(layoutFile, out rawContent, out data, out baseLayoutName);
 
-            //TODO: validate layout is valid and has {{ content }} placeholder
+            if (!m_LayoutParser.ContainsPlaceholder(rawContent)) 
+            {
+                throw new LayoutMissingContentPlaceholderException(layoutName, m_LayoutParser.PlaceholderValue);
+            }
 
             Template baseLayout = null;
 
@@ -405,6 +415,8 @@ namespace Xarial.Docify.Core
             IReadOnlyDictionary<string, Template> layouts,
             IReadOnlyList<Asset> assets)
         {
+            //TODO: identify if any layouts are not in use
+
             var pageMap = new Dictionary<IReadOnlyList<string>, Page>(
                 new LocationDictionaryComparer());
             

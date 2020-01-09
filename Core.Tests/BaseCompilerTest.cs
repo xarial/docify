@@ -19,12 +19,30 @@ namespace Core.Tests
 {
     public class BaseCompilerTest
     {
-        private BaseCompiler NewCompiler() 
+        private ICompiler m_Compiler;
+
+        [SetUp]
+        public void Setup() 
         {
-            var config = new BaseCompilerConfig("");
-            var comp = new BaseCompiler(config, new Mock<ILogger>().Object, null,
-                new LayoutParser(), new MarkdigRazorLightTransformer(c => new IncludesHandler(c)));
-            return comp;
+            var contTransMock = new Mock<IContentTransformer>();
+            contTransMock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ContextModel>()))
+                .Returns<string, string, ContextModel>((c, k, m) => Task.FromResult(
+                    c.Replace("_FN_", m.Page.Location.FileName)
+                    .Replace("_CC_", m.Site.MainPage.Children.Count.ToString())));
+
+            var layoutMock = new Mock<ILayoutParser>();
+
+            layoutMock.Setup(m => m.ContainsPlaceholder(It.IsAny<string>()))
+                .Returns<string>(c => c.Contains("_C_"));
+
+            layoutMock.Setup(m => m.InsertContent(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns<string, string>((c, i) => c.Replace("_C_", i));
+
+            m_Compiler = new BaseCompiler(new BaseCompilerConfig(""),
+                new Mock<ILogger>().Object,
+                new Mock<IPublisher>().Object,
+                layoutMock.Object,
+                contTransMock.Object);
         }
 
         [Test]
@@ -32,49 +50,34 @@ namespace Core.Tests
         {
             var site = new Site("",
                 new Page(new Location("page.html"),
-                "<div>@Model.Site.MainPage.Children.Count <a href=\"@Model.Page.Location.FileName\">Test</a></div>"));
+                "abc _CC_ _FN_ test"));
 
-            var comp = NewCompiler();
-            await comp.Compile(site);
+            await m_Compiler.Compile(site);
 
-            Assert.AreEqual("<div>0 <a href=\"page.html\">Test</a></div>", site.MainPage.Content);
+            Assert.AreEqual("abc 0 page.html test", site.MainPage.Content);
         }
 
         [Test]
         public async Task Compile_MultipleNestedPagesTest()
         {
-            var p1 = new Page(new Location("page1.html"), "<p>P1</p>");
+            var p1 = new Page(new Location("page1.html"), "P1");
 
             var site = new Site("", p1);
 
-            var p2 = new Page(new Location("page2.html"), "<p>P2</p>");
+            var p2 = new Page(new Location("page2.html"), "P2");
             p1.Children.Add(p2);
-            p2.Children.Add(new Page(new Location("page3.html"), "<p>P3</p>"));
-            var p4 = new Page(new Location("page4.html"), "<p>P4</p>");
+            p2.Children.Add(new Page(new Location("page3.html"), "P3"));
+            var p4 = new Page(new Location("page4.html"), "P4");
             p2.Children.Add(p4);
-            p4.Children.Add(new Page(new Location("page5.html"), "<p>P5</p>"));
+            p4.Children.Add(new Page(new Location("page5.html"), "P5"));
 
-            var comp = NewCompiler();
-            await comp.Compile(site);
+            await m_Compiler.Compile(site);
 
-            Assert.AreEqual("<p>P1</p>", site.MainPage.Content);
-            Assert.AreEqual("<p>P2</p>", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Content);
-            Assert.AreEqual("<p>P3</p>", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Children.First(p => p.Location.ToId() == "page3.html").Content);
-            Assert.AreEqual("<p>P4</p>", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Children.First(p => p.Location.ToId() == "page4.html").Content);
-            Assert.AreEqual("<p>P5</p>", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Children.First(p => p.Location.ToId() == "page4.html").Children.First(p => p.Location.ToId() == "page5.html").Content);
-        }
-
-        [Test]
-        public async Task Compile_SinglePageMarkdownTest()
-        {
-            var site = new Site("",
-                new Page(new Location("page.html"),
-                "<p>@Model.Site.MainPage.Children.Count</p>\n\n[site](https://www.mysite.com/page.html)"));
-
-            var comp = NewCompiler();
-            await comp.Compile(site);
-
-            Assert.AreEqual("<p>0</p>\n<p><a href=\"https://www.mysite.com/page.html\">site</a></p>", site.MainPage.Content);
+            Assert.AreEqual("P1", site.MainPage.Content);
+            Assert.AreEqual("P2", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Content);
+            Assert.AreEqual("P3", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Children.First(p => p.Location.ToId() == "page3.html").Content);
+            Assert.AreEqual("P4", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Children.First(p => p.Location.ToId() == "page4.html").Content);
+            Assert.AreEqual("P5", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Children.First(p => p.Location.ToId() == "page4.html").Children.First(p => p.Location.ToId() == "page5.html").Content);
         }
 
         [Test]
@@ -83,12 +86,11 @@ namespace Core.Tests
             var site = new Site("",
                 new Page(new Location("page.html"),
                 "My Page Content",
-                new Template("t1", "TemplateText1{{ content }}TemplateText2")));
+                new Template("t1", "TemplateText1 _C_ TemplateText2")));
 
-            var comp = NewCompiler();
-            await comp.Compile(site);
+            await m_Compiler.Compile(site);
 
-            Assert.AreEqual("<p>TemplateText1<p>My Page Content</p>TemplateText2</p>", site.MainPage.Content);
+            Assert.AreEqual("TemplateText1 My Page Content TemplateText2", site.MainPage.Content);
         }
 
         [Test]
@@ -97,51 +99,30 @@ namespace Core.Tests
             var site = new Site("",
                 new Page(new Location("page.html"),
                 "My Page Content",
-                new Template("t1", "T1{{ content }}T1", null,
-                new Template("t2", "T2{{ content }}T2"))));
+                new Template("t1", "T1 _C_ T1", null,
+                new Template("t2", "T2 _C_ T2"))));
 
-            var comp = NewCompiler();
-            await comp.Compile(site);
+            await m_Compiler.Compile(site);
 
-            Assert.AreEqual("<p>T2<p>T1<p>My Page Content</p>T1</p>T2</p>", site.MainPage.Content);
+            Assert.AreEqual("T2 T1 My Page Content T1 T2", site.MainPage.Content);
         }
 
         [Test]
         public async Task Compile_NestedTemplateMultiPageTest()
         {
-            var t2 = new Template("t2", "*T2* @Model.Page.Location.FileName {{ content }}_T2");
-            var t1 = new Template("t1", "*T1* @Model.Page.Location.FileName {{ content }}_T1", null, t2);
+            var t2 = new Template("t2", "T2 _FN_ _C_ T2");
+            var t1 = new Template("t1", "T1 _FN_ _C_ T1", null, t2);
 
-            var p1 = new Page(new Location("page1.html"), "**Page1** @Model.Page.Location.FileName", t1);
+            var p1 = new Page(new Location("page1.html"), "Page1 _FN_", t1);
 
-            p1.Children.Add(new Page(new Location("page2.html"), "**Page2** @Model.Page.Location.FileName", t1));
-
-            var site = new Site("", p1);
-
-            var comp = NewCompiler();
-            await comp.Compile(site);
-
-            Assert.AreEqual("<p><em>T2</em> page1.html <p><em>T1</em> page1.html <p><strong>Page1</strong> page1.html</p>_T1</p>_T2</p>", site.MainPage.Content);
-            Assert.AreEqual("<p><em>T2</em> page2.html <p><em>T1</em> page2.html <p><strong>Page2</strong> page2.html</p>_T1</p>_T2</p>", site.MainPage.Children[0].Content);
-        }
-
-        [Test]
-        public async Task Compile_NestedTemplateMarkdownMultiPageTest()
-        {
-            var t2 = new Template("t2", "T2{{ content }}T2");
-            var t1 = new Template("t1", "T1{{ content }}T1", null, t2);
-
-            var p1 = new Page(new Location("page.html"), "Page1", t1);
-
-            p1.Children.Add(new Page(new Location("page2.html"), "Page2", t1));
+            p1.Children.Add(new Page(new Location("page2.html"), "Page2 _FN_", t1));
 
             var site = new Site("", p1);
 
-            var comp = NewCompiler();
-            await comp.Compile(site);
+            await m_Compiler.Compile(site);
 
-            Assert.AreEqual("<p>T2<p>T1<p>Page1</p>T1</p>T2</p>", site.MainPage.Content);
-            Assert.AreEqual("<p>T2<p>T1<p>Page2</p>T1</p>T2</p>", site.MainPage.Children[0].Content);
+            Assert.AreEqual("T2 page1.html T1 page1.html Page1 page1.html T1 T2", site.MainPage.Content);
+            Assert.AreEqual("T2 page2.html T1 page2.html Page2 page2.html T1 T2", site.MainPage.Children[0].Content);
         }
     }
 }

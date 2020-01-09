@@ -19,9 +19,12 @@ namespace Core.Tests
 {
     public class SiteComposerPageGroupingTest
     {
-        private SiteComposer NewComposer()
+        private SiteComposer m_Composer;
+
+        [SetUp]
+        public void Setup()
         {
-            return new SiteComposer(new LayoutParser());
+            m_Composer = new SiteComposer(new Mock<ILayoutParser>().Object);
         }
 
         [Test]
@@ -33,9 +36,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\index.md"), "p1")
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.Children.Count);
             Assert.AreEqual("index.html", site.MainPage.Location.ToId());
@@ -53,10 +54,8 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"index.md"), "i"),
                 new TextSourceFile(Location.FromPath(@"page1.md"), "p1")
             };
-
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.Children.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
@@ -73,9 +72,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\page2\index.md"), "p2")
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.Children.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
@@ -96,9 +93,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\index.md"), "p1")
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.Children.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
@@ -118,9 +113,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\page2.md"), "p2")
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.Children.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
@@ -141,9 +134,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\page2.md"), "p2")
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.Children.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
@@ -164,9 +155,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1.md"), "")
             };
 
-            var composer = NewComposer();
-
-            Assert.Throws<DuplicatePageException>(() => composer.ComposeSite(src, ""));
+            Assert.Throws<DuplicatePageException>(() => m_Composer.ComposeSite(src, ""));
         }
 
         [Test]
@@ -180,9 +169,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\Page3\INDEX.md"), "p3"),
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.Children.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
@@ -203,9 +190,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\index.txt"), ""),
             };
 
-            var composer = NewComposer();
-
-            Assert.Throws<EmptySiteException>(() => composer.ComposeSite(src, ""));
+            Assert.Throws<EmptySiteException>(() => m_Composer.ComposeSite(src, ""));
         }
 
         [Test]
@@ -217,9 +202,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1.md"), "")
             };
 
-            var composer = NewComposer();
-
-            Assert.Throws<SiteMainPageMissingException>(() => composer.ComposeSite(src, ""));
+            Assert.Throws<SiteMainPageMissingException>(() => m_Composer.ComposeSite(src, ""));
         }
 
         [Test]
@@ -233,9 +216,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\page3\index.html"), "p3"),
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.Children.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
@@ -259,9 +240,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"asset2.ini"), "p1")
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.Children.Count);
             Assert.AreEqual("index.html", site.MainPage.Location.ToId());
@@ -280,9 +259,7 @@ namespace Core.Tests
                 new Moq.Mock<ISourceFile>().Object
             };
 
-            var composer = NewComposer();
-
-            Assert.Throws<UnsupportedSourceFileTypesException>(() => composer.ComposeSite(src, ""));
+            Assert.Throws<UnsupportedSourceFileTypesException>(() => m_Composer.ComposeSite(src, ""));
         }
     }
 }

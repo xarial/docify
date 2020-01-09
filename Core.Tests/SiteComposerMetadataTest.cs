@@ -12,14 +12,18 @@ using System.Text;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Base;
 using Xarial.Docify.Core.Exceptions;
+using Moq;
 
 namespace Core.Tests
 {
     public class SiteComposerMetadataTest
     {
-        private SiteComposer NewComposer()
+        private SiteComposer m_Composer;
+
+        [SetUp]
+        public void Setup()
         {
-            return new SiteComposer(new LayoutParser());
+            m_Composer = new SiteComposer(new Mock<ILayoutParser>().Object);
         }
 
         [Test]
@@ -31,9 +35,7 @@ namespace Core.Tests
                 "---\r\nprp1: A\r\nprp2: B\r\n---\r\nText Line1\r\nText Line2"),
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(2, site.MainPage.Data.Count);
@@ -50,9 +52,7 @@ namespace Core.Tests
                 "---\r\nprp1: A\r\nprp2:\r\n  prp3: B\r\n---\r\nText Line1\r\nText Line2"),
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(2, site.MainPage.Data.Count);
@@ -70,9 +70,7 @@ namespace Core.Tests
                 "---\r\nprp1: A\r\nprp2:\r\n  - B\r\n  - C\r\n---\r\nText Line1\r\nText Line2"),
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(2, site.MainPage.Data.Count);
@@ -91,9 +89,7 @@ namespace Core.Tests
                 "Text Line1\r\nText Line2"),
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(0, site.MainPage.Data.Count);
@@ -108,9 +104,7 @@ namespace Core.Tests
                 "---\r\nText Line1\r\nText Line2"),
             };
 
-            var composer = NewComposer();
-
-            Assert.Throws<FrontMatterErrorException>(() => composer.ComposeSite(src, ""));
+            Assert.Throws<FrontMatterErrorException>(() => m_Composer.ComposeSite(src, ""));
         }
     }
 }

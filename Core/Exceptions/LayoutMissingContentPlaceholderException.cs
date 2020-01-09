@@ -13,8 +13,8 @@ namespace Xarial.Docify.Core.Exceptions
 {
     public class LayoutMissingContentPlaceholderException : Exception
     {
-        public LayoutMissingContentPlaceholderException(string layoutName, string placeholderValue)
-            : base($"Layout: '{layoutName}' doesn't containt the placeholder '{placeholderValue}'")
+        public LayoutMissingContentPlaceholderException(string layoutName)
+            : base($"Layout: '{layoutName}' doesn't contain the placeholder")
         {
         }
     }

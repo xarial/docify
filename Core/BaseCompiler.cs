@@ -144,7 +144,6 @@ namespace Xarial.Docify.Core
 
     public interface ILayoutParser
     {
-        string PlaceholderValue { get; }
         bool ContainsPlaceholder(string content);
         string InsertContent(string content, string insertContent);
     }
@@ -152,8 +151,6 @@ namespace Xarial.Docify.Core
     public class LayoutParser : ILayoutParser
     {
         private const string CONTENT_PLACEHOLDER_REGEX = "{{ *content *}}";
-
-        public string PlaceholderValue => CONTENT_PLACEHOLDER_REGEX;
 
         public bool ContainsPlaceholder(string content) 
         {

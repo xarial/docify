@@ -5,6 +5,7 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,17 @@ namespace Core.Tests
 {
     public class SiteComposerLayoutTest
     {
-        private SiteComposer NewComposer() 
+        private SiteComposer m_Composer;
+
+        [SetUp]
+        public void Setup()
         {
-            return new SiteComposer(new LayoutParser());
+            var layoutMock = new Mock<ILayoutParser>();
+
+            layoutMock.Setup(m => m.ContainsPlaceholder(It.IsAny<string>()))
+                .Returns<string>(c => c.Contains("_C_"));
+
+            m_Composer = new SiteComposer(layoutMock.Object);
         }
 
         [Test]
@@ -27,21 +36,19 @@ namespace Core.Tests
         {
             var src = new TextSourceFile[]
             {
-                new TextSourceFile(Location.FromPath(@"_layouts\\l1.md"), "Layout {{ content }}"),
+                new TextSourceFile(Location.FromPath(@"_layouts\\l1.md"), "Layout _C_"),
                 new TextSourceFile(Location.FromPath(@"index.md"),
                     "---\r\nprp1: A\r\nlayout: l1\r\n---\r\nText Line1\r\nText Line2"),
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(1, site.MainPage.Data.Count);
             Assert.AreEqual("A", site.MainPage.Data["prp1"]);
             Assert.IsNotNull(site.MainPage.Layout);
             Assert.AreEqual("l1", site.MainPage.Layout.Name);
-            Assert.AreEqual("Layout {{ content }}", site.MainPage.Layout.RawContent);
+            Assert.AreEqual("Layout _C_", site.MainPage.Layout.RawContent);
         }
 
         [Test]
@@ -49,19 +56,17 @@ namespace Core.Tests
         {
             var src = new TextSourceFile[]
             {
-                new TextSourceFile(Location.FromPath(@"_layouts\\l1.md"), "L1 {{ content }}"),
-                new TextSourceFile(Location.FromPath(@"_layouts\\l2.md"), "---\r\nlayout: l1\r\n---\r\nL2 {{ content }}"),
-                new TextSourceFile(Location.FromPath(@"_layouts\\l4.md"), "---\r\nlayout: l3\r\n---\r\nL4 {{ content }}"),
-                new TextSourceFile(Location.FromPath(@"_layouts\\l3.md"), "L3 {{ content }}"),
+                new TextSourceFile(Location.FromPath(@"_layouts\\l1.md"), "L1 _C_"),
+                new TextSourceFile(Location.FromPath(@"_layouts\\l2.md"), "---\r\nlayout: l1\r\n---\r\nL2 _C_"),
+                new TextSourceFile(Location.FromPath(@"_layouts\\l4.md"), "---\r\nlayout: l3\r\n---\r\nL4 _C_"),
+                new TextSourceFile(Location.FromPath(@"_layouts\\l3.md"), "L3 _C_"),
                 new TextSourceFile(Location.FromPath(@"index.md"),
                     "---\r\nprp1: A\r\n---\r\nText Line1\r\nText Line2"),
                 new TextSourceFile(Location.FromPath(@"p2.md"), "---\r\nlayout: l2\r\n---\r\nP1"),
                 new TextSourceFile(Location.FromPath(@"p4.md"), "---\r\nlayout: l4\r\n---\r\nP4")
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.IsNull(site.MainPage.Layout);
@@ -79,14 +84,12 @@ namespace Core.Tests
         {
             var src = new TextSourceFile[]
             {
-                new TextSourceFile(Location.FromPath(@"_layouts\\l1.md"), "Layout {{ content }}"),
+                new TextSourceFile(Location.FromPath(@"_layouts\\l1.md"), "Layout _C_"),
                 new TextSourceFile(Location.FromPath(@"index.md"),
                     "---\r\nprp1: A\r\nlayout: l2\r\n---\r\nText Line1\r\nText Line2"),
             };
 
-            var composer = NewComposer();
-
-            Assert.Throws<MissingLayoutException>(() => composer.ComposeSite(src, ""));
+            Assert.Throws<MissingLayoutException>(() => m_Composer.ComposeSite(src, ""));
         }
 
         [Test]
@@ -94,14 +97,12 @@ namespace Core.Tests
         {
             var src = new TextSourceFile[]
             {
-                new TextSourceFile(Location.FromPath(@"_layouts\\l1.md"), "{{ content }}"),
-                new TextSourceFile(Location.FromPath(@"_layouts\\l1.txt"), "{{ content }}"),
+                new TextSourceFile(Location.FromPath(@"_layouts\\l1.md"), "_C_"),
+                new TextSourceFile(Location.FromPath(@"_layouts\\l1.txt"), "_C_"),
                 new TextSourceFile(Location.FromPath(@"index.md"), ""),
             };
 
-            var composer = NewComposer();
-
-            Assert.Throws<DuplicateTemplateException>(() => composer.ComposeSite(src, ""));
+            Assert.Throws<DuplicateTemplateException>(() => m_Composer.ComposeSite(src, ""));
         }
 
         [Test]
@@ -113,9 +114,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"index.md"), ""),
             };
 
-            var composer = NewComposer();
-
-            Assert.Throws<LayoutMissingContentPlaceholderException>(() => composer.ComposeSite(src, ""));
+            Assert.Throws<LayoutMissingContentPlaceholderException>(() => m_Composer.ComposeSite(src, ""));
         }
     }
 }

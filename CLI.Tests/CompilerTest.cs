@@ -38,29 +38,6 @@ namespace CLI.Tests
         }
 
         [Test]
-        public async Task MultipleNestedPagesTest()
-        {
-            var p1 = new Page(new Location("page1.html"), "<p>P1</p>");
-
-            var site = new Site("", p1);
-
-            var p2 = new Page(new Location("page2.html"), "<p>P2</p>");
-            p1.Children.Add(p2);
-            p2.Children.Add(new Page(new Location("page3.html"), "<p>P3</p>"));
-            var p4 = new Page(new Location("page4.html"), "<p>P4</p>");
-            p2.Children.Add(p4);
-            p4.Children.Add(new Page(new Location("page5.html"), "<p>P5</p>"));
-
-            await m_Compiler.Compile(site);
-
-            Assert.AreEqual("<p>P1</p>", site.MainPage.Content);
-            Assert.AreEqual("<p>P2</p>", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Content);
-            Assert.AreEqual("<p>P3</p>", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Children.First(p => p.Location.ToId() == "page3.html").Content);
-            Assert.AreEqual("<p>P4</p>", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Children.First(p => p.Location.ToId() == "page4.html").Content);
-            Assert.AreEqual("<p>P5</p>", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Children.First(p => p.Location.ToId() == "page4.html").Children.First(p => p.Location.ToId() == "page5.html").Content);
-        }
-
-        [Test]
         public async Task SinglePageMarkdownTest()
         {
             var site = new Site("",

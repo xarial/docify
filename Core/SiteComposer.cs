@@ -385,7 +385,7 @@ namespace Xarial.Docify.Core
 
             if (!m_LayoutParser.ContainsPlaceholder(rawContent)) 
             {
-                throw new LayoutMissingContentPlaceholderException(layoutName, m_LayoutParser.PlaceholderValue);
+                throw new LayoutMissingContentPlaceholderException(layoutName);
             }
 
             Template baseLayout = null;

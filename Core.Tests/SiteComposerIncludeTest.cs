@@ -13,14 +13,18 @@ using System.Text;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Base;
 using Xarial.Docify.Core.Exceptions;
+using Moq;
 
 namespace Core.Tests
 {
     public class SiteComposerIncludeTest
     {
-        private SiteComposer NewComposer()
+        private SiteComposer m_Composer;
+
+        [SetUp]
+        public void Setup()
         {
-            return new SiteComposer(new LayoutParser());
+            m_Composer = new SiteComposer(new Mock<ILayoutParser>().Object);
         }
 
         [Test]
@@ -32,9 +36,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"index.md"), ""),
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.Includes.Count);
             Assert.AreEqual("i1", site.Includes[0].Name);
@@ -53,9 +55,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"index.md"), ""),
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(3, site.Includes.Count);
             Assert.AreEqual(0, site.Includes.Select(i => i.Name).Except(new string[] { "i1", "i2", "i3" }).Count());
@@ -73,9 +73,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"index.md"), ""),
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.Includes.Count);
             Assert.AreEqual("i1", site.Includes[0].Name);
@@ -94,9 +92,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"index.md"), ""),
             };
 
-            var composer = NewComposer();
-
-            Assert.Throws<DuplicateTemplateException>(() => composer.ComposeSite(src, ""));
+            Assert.Throws<DuplicateTemplateException>(() => m_Composer.ComposeSite(src, ""));
         }
     }
 };

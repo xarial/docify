@@ -12,14 +12,18 @@ using System.Text;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Base;
 using System.Linq;
+using Moq;
 
 namespace Core.Tests
 {
     public class SiteComposerAssetsTest
     {
-        private SiteComposer NewComposer()
+        private SiteComposer m_Composer;
+
+        [SetUp]
+        public void Setup() 
         {
-            return new SiteComposer(new LayoutParser());
+            m_Composer = new SiteComposer(new Mock<ILayoutParser>().Object);
         }
 
         [Test]
@@ -32,9 +36,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\asset.txt"), "a1"),
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.Assets.Count);
             Assert.AreEqual(1, site.MainPage.Children[0].Assets.Count);
@@ -49,10 +51,8 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"index.md"), ""),
                 new TextSourceFile(Location.FromPath(@"asset.txt"), "a1"),
             };
-
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.Assets.Count);
             Assert.AreEqual(1, site.MainPage.Assets.Count);
@@ -69,10 +69,8 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page1\asset.txt"), "a1"),
                 new BinarySourceFile(Location.FromPath(@"page1\asset1.bin"), new byte[] { 1,2,3 })
             };
-
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(2, site.Assets.Count);
             Assert.AreEqual(2, site.MainPage.Children[0].Assets.Count);
@@ -95,9 +93,7 @@ namespace Core.Tests
                 new TextSourceFile(Location.FromPath(@"page2\page3\asset2.txt"), "a4"),
             };
 
-            var composer = NewComposer();
-
-            var site = composer.ComposeSite(src, "");
+            var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(4, site.Assets.Count);
             Assert.AreEqual(1, site.MainPage.Children[0].Assets.Count);

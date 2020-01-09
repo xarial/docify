@@ -25,7 +25,7 @@ namespace Xarial.Docify.CLI
             var composer = engine.Resove<IComposer>();
             var compiler = engine.Resove<ICompiler>();
 
-            var elems = loader.Load();
+            var elems = await loader.Load();
 
             var site = composer.ComposeSite(elems, "");
 

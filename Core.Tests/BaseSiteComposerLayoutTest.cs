@@ -19,7 +19,7 @@ using Xarial.Docify.Core.Exceptions;
 
 namespace Core.Tests
 {
-    public class SiteComposerLayoutTest
+    public class BaseSiteComposerLayoutTest
     {
         private BaseSiteComposer m_Composer;
 

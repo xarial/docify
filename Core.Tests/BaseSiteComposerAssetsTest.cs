@@ -21,7 +21,7 @@ using Xarial.Docify.Core.Composer;
 
 namespace Core.Tests
 {
-    public class SiteComposerAssetsTest
+    public class BaseSiteComposerAssetsTest
     {
         private BaseSiteComposer m_Composer;
 

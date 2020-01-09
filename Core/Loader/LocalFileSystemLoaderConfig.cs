@@ -14,10 +14,12 @@ namespace Xarial.Docify.Core.Loader
     public class LocalFileSystemLoaderConfig
     {
         public string Path { get; }
+        public string[] Ignore { get; }
 
-        public LocalFileSystemLoaderConfig(string path)
+        public LocalFileSystemLoaderConfig(string path, string[] ignore)
         {
             Path = path;
+            Ignore = ignore ?? new string[0];
         }
     }
 }

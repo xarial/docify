@@ -20,7 +20,7 @@ using Xarial.Docify.Core.Composer;
 
 namespace Core.Tests
 {
-    public class SiteComposerIncludeTest
+    public class BaseSiteComposerIncludeTest
     {
         private BaseSiteComposer m_Composer;
 

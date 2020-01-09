@@ -21,7 +21,7 @@ using Xarial.Docify.Core.Exceptions;
 
 namespace Core.Tests
 {
-    public class SiteComposerPageGroupingTest
+    public class BaseSiteComposerPageGroupingTest
     {
         private BaseSiteComposer m_Composer;
 

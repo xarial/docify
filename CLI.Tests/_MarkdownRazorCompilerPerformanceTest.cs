@@ -7,13 +7,13 @@
 
 //#define ENABLE_PERFORMANCE_USER_TEST
 
-using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
+using Xarial.Docify.CLI;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Base;
 
@@ -22,12 +22,19 @@ namespace Core.Tests
     //not real unit test, but supervised user test
     public class _MarkdownRazorCompilerPerformanceTest
     {
+        private ICompiler m_Compiler;
+
+        [SetUp]
+        public void Setup()
+        {
+            m_Compiler = new DocifyEngine("", "").Resove<ICompiler>();
+        }
 
 #if ENABLE_PERFORMANCE_USER_TEST
         [Test]
         public async Task Compile_PerformanceAutoPartitionsTest()
         {
-            await CompileMeasurePerformance((int)MarkdownRazorCompilerConfig.ParallelPartitions_e.AutoDetect, true);
+            await CompileMeasurePerformance((int)BaseCompilerConfig.ParallelPartitions_e.AutoDetect, true);
         }
 
         [Test]
@@ -39,7 +46,7 @@ namespace Core.Tests
         [Test]
         public async Task Compile_PerformanceInfinitePartitionsTest()
         {
-            await CompileMeasurePerformance((int)MarkdownRazorCompilerConfig.ParallelPartitions_e.Infinite, true);
+            await CompileMeasurePerformance((int)BaseCompilerConfig.ParallelPartitions_e.Infinite, true);
         }
 #endif
 
@@ -69,11 +76,9 @@ namespace Core.Tests
 
             var config = new BaseCompilerConfig("");
             config.ParallelPartitionsCount = partCount;
-            var comp = new BaseCompiler(config, new Mock<ILogger>().Object, null, 
-                new LayoutParser(), new MarkdigRazorLightTransformer(c => new IncludesHandler(c)));
-
+            
             var start = DateTime.Now;
-            await comp.Compile(site);
+            await m_Compiler.Compile(site);
             var elapsed = DateTime.Now - start;
 
             TestContext.WriteLine($"Compilation time of {NUMBER_OF_PAGES} with {partCount} partitions is {elapsed.TotalSeconds} seconds");

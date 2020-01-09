@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Base;
+using Xarial.Docify.Core.Exceptions;
 
 namespace Core.Tests
 {
@@ -22,34 +23,60 @@ namespace Core.Tests
         private delegate Task ParseParametersDelegate(string rawContent, out string name, out Dictionary<string, dynamic> param);
         private delegate Task<string> InsertDelegate(string name, Dictionary<string, dynamic> param, IEnumerable<Template> includes);
 
-        [Test]
-        public async Task Transform_NewLineSingleLineInclude() 
+        private MarkdigMarkdownParser m_Parser;
+
+        [SetUp]
+        public void Setup() 
         {
             var paramsParserMock = new Moq.Mock<IIncludesHandler>();
             paramsParserMock.Setup(m => m.ParseParameters(It.IsAny<string>(), out It.Ref<string>.IsAny,
                 out It.Ref<Dictionary<string, dynamic>>.IsAny)).Returns(
                 new ParseParametersDelegate((string rawContent, out string name, out Dictionary<string, dynamic> param) =>
                 {
-                    var data = rawContent.Split(" ");
-
-                    name = data[0];
-                    param = data.Skip(1).ToDictionary(d => d, d => (dynamic)"");
+                    name = rawContent.Replace("\n", " ").Trim();
+                    param = new Dictionary<string, dynamic>() { { "A", "B" } };
                     return Task.CompletedTask;
                 }));
 
             paramsParserMock.Setup(m => m.Insert(It.IsAny<string>(),
                 It.IsAny<Dictionary<string, dynamic>>(),
                 It.IsAny<IEnumerable<Template>>())).Returns(
-                new InsertDelegate((n, p, t) => 
+                new InsertDelegate((n, p, t) =>
                 {
-                    return Task.FromResult($"{n}: {string.Join("___", p.Keys.ToArray())}");
+                    return Task.FromResult($"[{n}: {p.ElementAt(0).Key}={p.ElementAt(0).Value}]");
                 }));
 
-            var parser = new MarkdigMarkdownParser(paramsParserMock.Object);
-            
-            var res = await parser.Transform("abc\r\n{% include some value %}\r\nxyz", "", new ContextModel(null, null));
+            m_Parser = new MarkdigMarkdownParser(paramsParserMock.Object);
+        }
 
-            //Assert.AreEqual("");
+        [Test]
+        public async Task Transform_NewLineSingleLineInclude() 
+        {            
+            var res = await m_Parser.Transform("abc\r\n{% include some value %}\r\nxyz", "", new ContextModel(null, null));
+
+            Assert.AreEqual("<p>abc\n[include some value: A=B]\nxyz</p>", res);
+        }
+
+        [Test]
+        public async Task Transform_InlineInclude()
+        {
+            var res = await m_Parser.Transform("abc{% include some value %}xyz", "", new ContextModel(null, null));
+
+            Assert.AreEqual("<p>abc[include some value: A=B]xyz</p>", res);
+        }
+
+        [Test]
+        public async Task Transform_MultilineInlineInclude()
+        {
+            var res = await m_Parser.Transform("abc{% include some\r\nvalue %}xyz", "", new ContextModel(null, null));
+
+            Assert.AreEqual("<p>abc[include some value: A=B]xyz</p>", res);
+        }
+
+        [Test]
+        public void Transform_NotClosedInclude()
+        {
+            Assert.ThrowsAsync<NotClosedIncludeException>(() => m_Parser.Transform("abc{% include some\r\nvalue xyz", "", new ContextModel(null, null)));
         }
     }
 }

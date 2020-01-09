@@ -16,7 +16,6 @@ namespace CLI.Tests
 {
     public class CompilerTest
     {
-        //TODO: group tests
         private ICompiler m_Compiler;
 
         [SetUp]

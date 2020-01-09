@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Core.Base;
+using Xarial.Docify.Core.Exceptions;
 
 namespace Xarial.Docify.Core
 {
@@ -32,7 +33,6 @@ namespace Xarial.Docify.Core
                 .UseAdvancedExtensions()
                 .UseObservableLinks()
                 .UseIncludes(m_IncludesHandler)
-                //.UseSyntaxHighlighting() //requires Markdig.SyntaxHighlighting
                 .Build();
         }
         
@@ -97,11 +97,6 @@ namespace Xarial.Docify.Core
         public void Setup(MarkdownPipelineBuilder pipeline)
         {
             pipeline.InlineParsers.AddIfNotAlready(new IncludeInlineParser(m_ParamsParser));
-            //if (!pipeline.InlineParsers.Contains<JiraLinkInlineParser>())
-            //{
-            //    // Insert the parser before the link inline parser
-            //    pipeline.InlineParsers.InsertBefore<LinkInlineParser>(new JiraLinkInlineParser());
-            //}
         }
 
         public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
@@ -153,11 +148,11 @@ namespace Xarial.Docify.Core
 
             var current = slice.NextChar();
             
-            while (current != '%' && slice.PeekChar(1) != '}')
+            while (current != END_TAG[0] && slice.PeekChar(1) != END_TAG[1])
             {
                 if (slice.IsEmpty) 
                 {
-                    //TODO: throw exception
+                    throw new NotClosedIncludeException(rawContent.ToString(), END_TAG);
                 }
 
                 rawContent.Append(current);

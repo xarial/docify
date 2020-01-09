@@ -14,38 +14,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Exceptions;
 using YamlDotNet.Serialization;
 
-namespace Xarial.Docify.Core
+namespace Xarial.Docify.Core.Composer
 {
-    internal static class LocationExtension
-    {
-        internal static bool IsIndexPage(this Location loc)
-        {
-            return Path.GetFileNameWithoutExtension(loc.FileName)
-                    .Equals("index", StringComparison.CurrentCultureIgnoreCase);
-        }
-
-        internal static Location ConvertToPageLocation(this Location location)
-        {
-            var fileName = location.FileName;
-
-            if (string.IsNullOrEmpty(fileName))
-            {
-                fileName = "index.html";
-            }
-            else
-            {
-                fileName = Path.GetFileNameWithoutExtension(fileName) + ".html";
-            }
-
-            return new Location(fileName, location.Path.ToArray());
-        }
-    }
-
-    public class SiteComposer : IComposer
+    public class BaseSiteComposer : IComposer
     {
         private const string LAYOUTS_FOLDER = "_layouts";
         private const string INCLUDES_FOLDER = "_includes";
@@ -54,7 +30,7 @@ namespace Xarial.Docify.Core
 
         private readonly ILayoutParser m_LayoutParser;
 
-        public SiteComposer(ILayoutParser parser) 
+        public BaseSiteComposer(ILayoutParser parser) 
         {
             m_LayoutParser = parser;
         }

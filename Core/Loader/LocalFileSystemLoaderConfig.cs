@@ -8,12 +8,16 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Base.Services
+namespace Xarial.Docify.Core.Loader
 {
-    public interface IComposer
+    public class LocalFileSystemLoaderConfig
     {
-        Site ComposeSite(IEnumerable<ISourceFile> files, string baseUrl);
+        public string Path { get; }
+
+        public LocalFileSystemLoaderConfig(string path)
+        {
+            Path = path;
+        }
     }
 }

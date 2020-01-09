@@ -8,12 +8,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Services;
 
-namespace Xarial.Docify.Base.Services
+namespace Xarial.Docify.Core.Logger
 {
-    public interface IComposer
+    public class ConsoleLogger : ILogger
     {
-        Site ComposeSite(IEnumerable<ISourceFile> files, string baseUrl);
+        public void Log()
+        {
+        }
     }
 }

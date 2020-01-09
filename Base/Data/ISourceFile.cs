@@ -9,10 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xarial.Docify.Base
+namespace Xarial.Docify.Base.Data
 {
-    public interface IBinarySourceFile : ISourceFile
+    public interface ISourceFile
     {
-        byte[] Content { get; }
+        Location Location { get; }
     }
 }

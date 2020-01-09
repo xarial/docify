@@ -9,20 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Base;
+using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 
-namespace Xarial.Docify.Core
+namespace Xarial.Docify.Core.Loader
 {
-    public class LocalFileSystemLoaderConfig
-    {
-        public string Path { get; }
-
-        public LocalFileSystemLoaderConfig(string path) 
-        {
-            Path = path;
-        }
-    }
-
     public class LocalFileSystemLoader : ILoader
     {
         private readonly LocalFileSystemLoaderConfig m_Config;

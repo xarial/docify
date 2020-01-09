@@ -8,12 +8,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Base.Services
+namespace Xarial.Docify.Base.Data
 {
-    public interface IComposer
+    public interface ITextSourceFile : ISourceFile
     {
-        Site ComposeSite(IEnumerable<ISourceFile> files, string baseUrl);
+        string Content { get; }
     }
 }

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Xarial.Docify.Base;
+using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Exceptions
 {

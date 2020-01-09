@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Core;
+using Xarial.Docify.Core.Compiler;
 
 namespace Core.Tests
 {

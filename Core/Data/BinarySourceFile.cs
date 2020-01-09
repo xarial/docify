@@ -8,12 +8,21 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Base.Services
+namespace Xarial.Docify.Core.Data
 {
-    public interface IComposer
+    public class BinarySourceFile : IBinarySourceFile
     {
-        Site ComposeSite(IEnumerable<ISourceFile> files, string baseUrl);
+        public byte[] Content { get; }
+
+        public Location Location { get; }
+
+        public BinarySourceFile(Location path, byte[] content)
+        {
+            Location = path;
+            Content = content;
+        }
     }
 }

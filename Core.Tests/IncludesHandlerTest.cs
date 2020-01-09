@@ -14,8 +14,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
+using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Exceptions;
 
 namespace Core.Tests

@@ -12,20 +12,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Xarial.Docify.Base;
+using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
+using Xarial.Docify.Core.Composer;
+using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
 
 namespace Core.Tests
 {
     public class SiteComposerPageGroupingTest
     {
-        private SiteComposer m_Composer;
+        private BaseSiteComposer m_Composer;
 
         [SetUp]
         public void Setup()
         {
-            m_Composer = new SiteComposer(new Mock<ILayoutParser>().Object);
+            m_Composer = new BaseSiteComposer(new Mock<ILayoutParser>().Object);
         }
 
         [Test]

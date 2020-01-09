@@ -11,15 +11,16 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
+using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 
-namespace Xarial.Docify.Core
+namespace Xarial.Docify.Core.Compiler
 {
-    public class RazorLightEvaluator : IContentTransformer
+    public class RazorLightContentTransformer : IContentTransformer
     {
         private readonly RazorLightEngine m_RazorEngine;
 
-        public RazorLightEvaluator() 
+        public RazorLightContentTransformer() 
         {
             m_RazorEngine = new RazorLightEngineBuilder()
                 .UseMemoryCachingProvider()

@@ -18,6 +18,7 @@ using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.CLI;
 using Xarial.Docify.Core;
+using Xarial.Docify.Core.Compiler;
 
 namespace Core.Tests
 {

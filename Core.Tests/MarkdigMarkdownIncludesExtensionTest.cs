@@ -16,6 +16,8 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Exceptions;
+using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
+using Xarial.Docify.Core.Compiler;
 
 namespace Core.Tests
 {
@@ -24,7 +26,7 @@ namespace Core.Tests
         private delegate Task ParseParametersDelegate(string rawContent, out string name, out Dictionary<string, dynamic> param);
         private delegate Task<string> InsertDelegate(string name, Dictionary<string, dynamic> param, Site site, Page page);
 
-        private MarkdigMarkdownParser m_Parser;
+        private MarkdigMarkdownContentTransformer m_Parser;
 
         [SetUp]
         public void Setup() 
@@ -46,7 +48,7 @@ namespace Core.Tests
                     return Task.FromResult($"[{n}: {p.ElementAt(0).Key}={p.ElementAt(0).Value}]");
                 }));
 
-            m_Parser = new MarkdigMarkdownParser(paramsParserMock.Object);
+            m_Parser = new MarkdigMarkdownContentTransformer(paramsParserMock.Object);
         }
 
         [Test]

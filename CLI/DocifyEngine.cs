@@ -11,6 +11,11 @@ using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
+using Xarial.Docify.Core.Compiler;
+using Xarial.Docify.Core.Composer;
+using Xarial.Docify.Core.Loader;
+using Xarial.Docify.Core.Logger;
+using Xarial.Docify.Core.Publisher;
 
 namespace Xarial.Docify.CLI
 {
@@ -45,9 +50,9 @@ namespace Xarial.Docify.CLI
             builder.RegisterType<LayoutParser>()
                 .As<ILayoutParser>();
 
-            builder.RegisterType<SiteComposer>().As<IComposer>();
+            builder.RegisterType<BaseSiteComposer>().As<IComposer>();
 
-            builder.RegisterType<Logger>().As<ILogger>();
+            builder.RegisterType<ConsoleLogger>().As<ILogger>();
 
             builder.RegisterType<IncludesHandler>().As<IIncludesHandler>();
 

@@ -14,8 +14,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
+using Xarial.Docify.Core.Compiler;
 
 namespace Core.Tests
 {
@@ -27,10 +29,10 @@ namespace Core.Tests
         public void Setup() 
         {
             var contTransMock = new Mock<IContentTransformer>();
-            contTransMock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ContextModel>()))
-                .Returns<string, string, ContextModel>((c, k, m) => Task.FromResult(
-                    c.Replace("_FN_", m.Page.Location.FileName)
-                    .Replace("_CC_", m.Site.MainPage.Children.Count.ToString())));
+            contTransMock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IContextModel>()))
+                .Returns<string, string, IContextModel>((c, k, m) => Task.FromResult(
+                    c.Replace("_FN_", (m as ContextModel).Page.Location.FileName)
+                    .Replace("_CC_", (m as ContextModel).Site.MainPage.Children.Count.ToString())));
 
             var layoutMock = new Mock<ILayoutParser>();
 

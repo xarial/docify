@@ -5,15 +5,19 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using Markdig.Renderers;
+using Markdig.Syntax.Inlines;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Base.Services
+namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
-    public interface IComposer
+    public class ObservableLinkInlineRenderer : Markdig.Renderers.Html.Inlines.LinkInlineRenderer
     {
-        Site ComposeSite(IEnumerable<ISourceFile> files, string baseUrl);
+        protected override void Write(HtmlRenderer renderer, LinkInline link)
+        {
+            base.Write(renderer, link);
+        }
     }
 }

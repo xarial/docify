@@ -5,14 +5,20 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using Markdig;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xarial.Docify.Base
+namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
-    public interface ISourceFile
+    public static class ObservableLinksExtensionFunctions
     {
-        Location Location { get; }
+        public static MarkdownPipelineBuilder UseObservableLinks(this MarkdownPipelineBuilder pipeline)
+        {
+            pipeline.Extensions.AddIfNotAlready<ObservableLinkExtension>();
+
+            return pipeline;
+        }
     }
 }

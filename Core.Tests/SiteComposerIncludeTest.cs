@@ -15,17 +15,19 @@ using Xarial.Docify.Core.Exceptions;
 using Moq;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core.Data;
+using Xarial.Docify.Core.Composer;
 
 namespace Core.Tests
 {
     public class SiteComposerIncludeTest
     {
-        private SiteComposer m_Composer;
+        private BaseSiteComposer m_Composer;
 
         [SetUp]
         public void Setup()
         {
-            m_Composer = new SiteComposer(new Mock<ILayoutParser>().Object);
+            m_Composer = new BaseSiteComposer(new Mock<ILayoutParser>().Object);
         }
 
         [Test]

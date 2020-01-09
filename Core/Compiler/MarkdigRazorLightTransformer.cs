@@ -10,14 +10,16 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
+using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
 
-namespace Xarial.Docify.Core
+namespace Xarial.Docify.Core.Compiler
 {
     public class MarkdigRazorLightTransformer : IContentTransformer
     {
         private readonly IContentTransformer m_MarkdownTransformer;
-        private readonly RazorLightEvaluator m_RazorTransformer;
+        private readonly RazorLightContentTransformer m_RazorTransformer;
 
         public MarkdigRazorLightTransformer(IIncludesHandler includesHandler) 
             : this(c => includesHandler)
@@ -27,8 +29,8 @@ namespace Xarial.Docify.Core
         public MarkdigRazorLightTransformer(Func<IContentTransformer, IIncludesHandler> includesHandlerFact) 
         {
             var includesHandler = includesHandlerFact.Invoke(this);
-            m_MarkdownTransformer = new MarkdigMarkdownParser(includesHandler);
-            m_RazorTransformer = new RazorLightEvaluator();
+            m_MarkdownTransformer = new MarkdigMarkdownContentTransformer(includesHandler);
+            m_RazorTransformer = new RazorLightContentTransformer();
         }
 
         public async Task<string> Transform(string content, string key, IContextModel model)

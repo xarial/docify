@@ -16,19 +16,8 @@ using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Exceptions;
 using YamlDotNet.Serialization;
 
-namespace Xarial.Docify.Core
+namespace Xarial.Docify.Core.Compiler
 {
-    public class IncludesContextModel : ContextModel 
-    {
-        public Dictionary<string, dynamic> Parameters { get; }
-
-        public IncludesContextModel(Site site, Page page, Dictionary<string, dynamic> parameters) 
-            : base(site, page)
-        {
-            Parameters = parameters;
-        }
-    }
-
     public class IncludesHandler : IIncludesHandler
     {
         private const string NAME_PARAMS_SPLIT_SYMBOL = " ";

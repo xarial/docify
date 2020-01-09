@@ -8,12 +8,20 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Base.Services
+namespace Xarial.Docify.Core.Compiler
 {
-    public interface IComposer
+    public class ContextModel : IContextModel
     {
-        Site ComposeSite(IEnumerable<ISourceFile> files, string baseUrl);
+        public Site Site { get; }
+        public Page Page { get; }
+
+        public ContextModel(Site site, Page page)
+        {
+            Site = site;
+            Page = page;
+        }
     }
 }

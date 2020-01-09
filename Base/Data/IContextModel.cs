@@ -9,10 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xarial.Docify.Base
+namespace Xarial.Docify.Base.Data
 {
-    public interface ITextSourceFile : ISourceFile
+    public interface IContextModel
     {
-        string Content { get; }
     }
 }

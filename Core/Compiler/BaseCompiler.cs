@@ -17,67 +17,10 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Core
+namespace Xarial.Docify.Core.Compiler
 {
-    public class ContextModel : IContextModel
-    {
-        public Site Site { get; }
-        public Page Page { get; }
-
-        public ContextModel(Site site, Page page) 
-        {
-            Site = site;
-            Page = page;
-        }
-    }
-    
-    public class LayoutParser : ILayoutParser
-    {
-        private const string CONTENT_PLACEHOLDER_REGEX = "{{ *content *}}";
-
-        public bool ContainsPlaceholder(string content) 
-        {
-            return Regex.IsMatch(content, CONTENT_PLACEHOLDER_REGEX);
-        }
-
-        public string InsertContent(string content, string insertContent)
-        {
-            return Regex.Replace(content, CONTENT_PLACEHOLDER_REGEX, insertContent);
-        }
-    }
-    
-    public class BaseCompilerConfig
-    {
-        public enum ParallelPartitions_e 
-        {
-            Infinite = -1,
-            AutoDetect = 0,
-            NoParallelism = 1
-        }
-
-        public string SiteUrl { get; }
-
-        /// <summary>
-        /// Number of partitions for parallel job. See <see cref="ParallelPartitions_e"/> for options
-        /// </summary>
-        public int ParallelPartitionsCount { get; set; }
-
-        public BaseCompilerConfig(string siteUrl) 
-        {
-            SiteUrl = siteUrl;
-            ParallelPartitionsCount = (int)ParallelPartitions_e.NoParallelism;
-        }
-    }
-
-
-    public class Logger : ILogger
-    {
-        public void Log()
-        {
-        }
-    }
-
     public class BaseCompiler : ICompiler
     {
         public ILogger Logger { get; }

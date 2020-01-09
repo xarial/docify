@@ -23,4 +23,17 @@ namespace Xarial.Docify.Core
             Content = content;
         }
     }
+
+    public class BinarySourceFile : IBinarySourceFile
+    {
+        public byte[] Content { get; }
+
+        public Location Location { get; }
+
+        public BinarySourceFile(Location path, byte[] content)
+        {
+            Location = path;
+            Content = content;
+        }
+    }
 }

@@ -86,18 +86,33 @@ namespace Xarial.Docify.Core
     public abstract class Asset
     {
         public Location Location { get; }
+
+        public Asset(Location loc) 
+        {
+            Location = loc;
+        }
     }
 
-    public abstract class TextAsset : Asset, ICompilable
+    public class TextAsset : Asset, ICompilable
     {
         public string RawContent { get; }
         public string Content { get; set; }
         public string Key => Location.ToId();
+
+        public TextAsset(string rawContent, Location loc) : base(loc) 
+        {
+            RawContent = rawContent;
+        }
     }
 
-    public abstract class BinaryAsset : Asset
+    public class BinaryAsset : Asset
     {
         public byte[] Content { get; }
+
+        public BinaryAsset(byte[] content, Location loc) : base(loc)
+        {
+            Content = content;
+        }
     }
 
     public abstract class Frame : ICompilable

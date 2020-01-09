@@ -186,7 +186,9 @@ namespace Xarial.Docify.Core
         }
 
         private Page CreatePageFromSourceOrDefault(ITextSourceFile src,
-            Location loc, IReadOnlyDictionary<string, Template> layoutsMap) 
+            Location loc, 
+            IReadOnlyDictionary<string, Template> layoutsMap,
+            Dictionary<IReadOnlyList<string>, Asset[]> assetsMap)
         {
             string rawContent = null;
             Dictionary<string, dynamic> pageData = null;
@@ -209,11 +211,17 @@ namespace Xarial.Docify.Core
             {
                 //TODO: assign default attributes and content if available
             }
-
-            //TODO: find template
-
-            return new Page(loc.ConvertToPageLocation(),
+            
+            var page = new Page(loc.ConvertToPageLocation(),
                 rawContent, pageData, layout);
+
+            Asset[] assets;
+            if (assetsMap.TryGetValue(page.Location.Path, out assets))
+            {
+                page.Assets.AddRange(assets);
+            }
+
+            return page;
         }
 
         public Site ComposeSite(IEnumerable<ISourceFile> files, string baseUrl)
@@ -237,7 +245,7 @@ namespace Xarial.Docify.Core
                 var layouts = ParseLayouts(srcLayouts);
                 var includes = ParseIncludes(srcIncludes);
                 var assets = ParseAssets(srcTextAssets, srcBinaryAssets);
-                var mainPage = ParsePages(srcPages, layouts);
+                var mainPage = ParsePages(srcPages, layouts, assets);
 
                 var site = new Site(baseUrl, mainPage);
                 site.Layouts.AddRange(layouts.Values);
@@ -299,7 +307,9 @@ namespace Xarial.Docify.Core
         {
             var assets = new List<Asset>();
 
-            //TODO: implement
+            assets.AddRange(textAssets.Select(a => new TextAsset(a.Content, a.Location)));
+            assets.AddRange(binaryAssets.Select(a => new BinaryAsset(a.Content, a.Location)));
+
             return assets;
         }
 
@@ -392,10 +402,15 @@ namespace Xarial.Docify.Core
         }
 
         private Page ParsePages(IEnumerable<ITextSourceFile> srcPages,
-            IReadOnlyDictionary<string, Template> layouts)
+            IReadOnlyDictionary<string, Template> layouts,
+            IReadOnlyList<Asset> assets)
         {
             var pageMap = new Dictionary<IReadOnlyList<string>, Page>(
                 new LocationDictionaryComparer());
+            
+            var assetsMap = assets
+                .GroupBy(a => a.Location.Path, new LocationDictionaryComparer())
+                .ToDictionary(g => g.Key, g => g.ToArray(), new LocationDictionaryComparer());
 
             var mainSrcPage = srcPages.FirstOrDefault(p => p.Location.IsRoot && p.Location.IsIndexPage());
 
@@ -406,7 +421,7 @@ namespace Xarial.Docify.Core
 
             srcPages = srcPages.Except(new ITextSourceFile[] { mainSrcPage });
 
-            var mainPage = CreatePageFromSourceOrDefault(mainSrcPage, new Location(""), layouts);
+            var mainPage = CreatePageFromSourceOrDefault(mainSrcPage, new Location(""), layouts, assetsMap);
 
             pageMap.Add(new List<string>(), mainPage);
 
@@ -448,7 +463,7 @@ namespace Xarial.Docify.Core
 
                         page = CreatePageFromSourceOrDefault(isPage ? srcPage : null,
                             new Location(isPage ? srcPage.Location.FileName : "",
-                            pagePath.ToArray()), layouts);
+                            pagePath.ToArray()), layouts, assetsMap);
 
                         pageMap.Add(thisLoc, page);
 

@@ -27,7 +27,7 @@ namespace Xarial.Docify.CLI
             var elems = loader.Load();
 
             var compiler = new BaseCompiler(compilerConfig, null, publisher, 
-                new LayoutParser(), new RazorLightEvaluator(), new MarkdigMarkdownParser());
+                new LayoutParser(), new CompositionTransformer(new RazorLightEvaluator(), new MarkdigMarkdownParser()));
 
             var composer = new SiteComposer(new LayoutParser());
             var s = composer.ComposeSite(elems, "");

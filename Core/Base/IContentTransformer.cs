@@ -12,8 +12,8 @@ using System.Threading.Tasks;
 
 namespace Xarial.Docify.Core.Base
 {
-    public interface IScriptEvaluator
+    public interface IContentTransformer
     {
-        Task<string> Evaluate(ICompilable compilable, ContextModel model);
+        Task<string> Transform(string content, string key, ContextModel model);
     }
 }

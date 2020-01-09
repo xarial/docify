@@ -23,7 +23,7 @@ namespace Core.Tests
         {
             var config = new BaseCompilerConfig("");
             var comp = new BaseCompiler(config, new Mock<ILogger>().Object, null, 
-                new LayoutParser(), new RazorLightEvaluator(), new MarkdigMarkdownParser());
+                new LayoutParser(), new CompositionTransformer(new RazorLightEvaluator(), new MarkdigMarkdownParser()));
             return comp;
         }
 

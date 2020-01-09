@@ -14,7 +14,7 @@ using Xarial.Docify.Core.Base;
 
 namespace Xarial.Docify.Core
 {
-    public class RazorLightEvaluator : IScriptEvaluator
+    public class RazorLightEvaluator : IContentTransformer
     {
         private readonly RazorLightEngine m_RazorEngine;
 
@@ -24,24 +24,24 @@ namespace Xarial.Docify.Core
                 .UseMemoryCachingProvider()
                 .Build();
         }
-
-        public async Task<string> Evaluate(ICompilable compilable, ContextModel model)
+        
+        public async Task<string> Transform(string content, string key, ContextModel model)
         {
-            var html = compilable.RawContent;
+            var html = content;
 
-            if (HasRazorCode(compilable))
+            if (HasRazorCode(content))
             {
                 html = await m_RazorEngine.CompileRenderAsync(
-                    compilable.Key, html, model, model?.GetType());
+                    key, html, model, model?.GetType());
             }
 
             return html;
         }
 
-        private bool HasRazorCode(ICompilable page)
+        private bool HasRazorCode(string content)
         {
             //TODO: might need to have better logic to identify this
-            return page.RawContent?.Contains('@') == true;
+            return content?.Contains('@') == true;
         }
     }
 }

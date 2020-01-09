@@ -8,11 +8,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Xarial.Docify.Core.Base
 {
-    public interface IMarkdownParser
+    public interface IIncludesHandler
     {
-        string Parse(string content);
+        Task<string> Replace(string content);
     }
 }

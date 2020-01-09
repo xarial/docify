@@ -196,23 +196,21 @@ namespace Xarial.Docify.Core
         public ILogger Logger { get; }
 
         public IPublisher Publisher { get; }
-        private readonly IScriptEvaluator m_ScriptEvaluator;
+        private readonly IContentTransformer m_ContentTransformer;
 
         private readonly BaseCompilerConfig m_Config;
 
         private readonly ILayoutParser m_LayoutParser;
-        private readonly IMarkdownParser m_MarkdownParser;
 
         public BaseCompiler(BaseCompilerConfig config,
-            ILogger logger, IPublisher publisher, ILayoutParser layoutParser, 
-            IScriptEvaluator scriptEvaluator, IMarkdownParser markdownParser) 
+            ILogger logger, IPublisher publisher, ILayoutParser layoutParser,
+            IContentTransformer contentTransformer) 
         {
             m_Config = config;
             Logger = logger;
             Publisher = publisher;
             m_LayoutParser = layoutParser;
-            m_ScriptEvaluator = scriptEvaluator;
-            m_MarkdownParser = markdownParser;
+            m_ContentTransformer = contentTransformer;
         }
 
         private void GetAllPages(Page page, List<Page> allPages) 
@@ -303,11 +301,9 @@ namespace Xarial.Docify.Core
 
         private async Task<string> CompileResource(ICompilable compilable, ContextModel model) 
         {
-            var html = await m_ScriptEvaluator.Evaluate(compilable, model);
+            var html = await m_ContentTransformer.Transform(compilable.RawContent, compilable.Key, model);
 
             //TODO: identify if any includes are not in use
-
-            html = m_MarkdownParser.Parse(html);
 
             return html;
         }

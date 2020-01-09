@@ -12,8 +12,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xarial.Docify.Base;
+using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
-using Xarial.Docify.Core.Base;
 using Xarial.Docify.Core.Exceptions;
 
 namespace Core.Tests

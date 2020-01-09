@@ -8,13 +8,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Xarial.Docify.Core.Base
+namespace Xarial.Docify.Base.Services
 {
-    public interface IIncludesHandler
+    public interface ILayoutParser
     {
-        Task ParseParameters(string rawContent, out string name, out Dictionary<string, dynamic> param);
-        Task<string> Insert(string name, Dictionary<string, dynamic> param, Site site, Page page);
+        bool ContainsPlaceholder(string content);
+        string InsertContent(string content, string insertContent);
     }
 }

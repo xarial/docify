@@ -12,8 +12,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xarial.Docify.Base;
+using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
-using Xarial.Docify.Core.Base;
 using Xarial.Docify.Core.Exceptions;
 
 namespace Core.Tests
@@ -27,9 +29,9 @@ namespace Core.Tests
         {
             var mock = new Mock<IContentTransformer>();
             mock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ContextModel>()))
-                .Returns(new Func<string, string, ContextModel, Task<string>>(
+                .Returns(new Func<string, string, IContextModel, Task<string>>(
                     (c, k, m) => Task.FromResult(
-                        $"{c}_{m.Page.Key}_{string.Join(",", (m as IncludesContextModel).Parameters.OrderBy(p => p.Key).Select(p => $"{p.Key}={p.Value}").ToArray())}")));
+                        $"{c}_{(m as ContextModel).Page.Key}_{string.Join(",", (m as IncludesContextModel).Parameters.OrderBy(p => p.Key).Select(p => $"{p.Key}={p.Value}").ToArray())}")));
 
             m_Handler = new IncludesHandler(mock.Object);
         }

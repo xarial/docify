@@ -8,15 +8,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Base;
 
-namespace Xarial.Docify.Core.Exceptions
+namespace Xarial.Docify.Base.Services
 {
-    public class DuplicatePageException : Exception
+    public interface IComposer
     {
-        public DuplicatePageException(Location loc) 
-            : base($"Specified page already exist '{loc.ToId()}'")
-        {
-        }
+        Site ComposeSite(IEnumerable<ISourceFile> files, string baseUrl);
     }
 }

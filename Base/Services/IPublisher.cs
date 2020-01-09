@@ -8,19 +8,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Xarial.Docify.Core.Base
+namespace Xarial.Docify.Base.Services
 {
-    public interface ICompilerConfig
+    public interface IPublisher
     {
-    }
-
-    public interface ICompiler
-    {
-        IPublisher Publisher { get; }
-        ICompilerConfig Configuration { get; }
-        ILogger Logger { get; }
-        Task Compile(Site site);
+        void Write(string path, byte[] content);
     }
 }

@@ -8,15 +8,16 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Base;
 
-namespace Xarial.Docify.Core.Exceptions
+namespace Xarial.Docify.Base.Content
 {
-    public class DuplicatePageException : Exception
+    public class BinaryAsset : Asset
     {
-        public DuplicatePageException(Location loc) 
-            : base($"Specified page already exist '{loc.ToId()}'")
+        public byte[] Content { get; }
+
+        public BinaryAsset(byte[] content, Location loc) : base(loc)
         {
+            Content = content;
         }
     }
 }

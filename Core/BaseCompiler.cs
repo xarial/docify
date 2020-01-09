@@ -10,16 +10,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
-using Xarial.Docify.Core.Base;
 using System.Linq;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Collections;
 using System.Text.RegularExpressions;
+using Xarial.Docify.Base;
+using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Core
 {
-    public class ContextModel 
+    public class ContextModel : IContextModel
     {
         public Site Site { get; }
         public Page Page { get; }
@@ -30,124 +31,7 @@ namespace Xarial.Docify.Core
             Page = page;
         }
     }
-
-    public interface ICompilable 
-    {
-        string RawContent { get; }
-        string Key { get; }
-    }
     
-    public class Site 
-    {
-        public string BaseUrl { get; }
-        
-        public List<Asset> Assets { get; }
-        public Page MainPage { get; }
-        public List<Template> Layouts { get; }
-        public List<Template> Includes { get; }
-
-        public Site(string baseUrl, Page mainPage) 
-        {
-            BaseUrl = baseUrl;
-            MainPage = mainPage;
-            Assets = new List<Asset>();
-            Layouts = new List<Template>();
-            Includes = new List<Template>();
-        }
-    }
-
-    [DebuggerDisplay("{" + nameof(Location) + "}")]
-    public class Page : Frame
-    {   
-        public List<Page> Children { get; }
-        public List<Asset> Assets { get; }
-        public Location Location { get; }
-        public string Content { get; set; }
-
-        public override string Key => Location.ToId();
-
-        public Page(Location url, string rawContent, Template layout = null) 
-            : this(url, rawContent, new Dictionary<string, dynamic>(), layout)
-        {
-            
-        }
-
-        public Page(Location url, string rawContent, Dictionary<string, dynamic> data, Template layout = null) 
-            : base(rawContent, data, layout)
-        {
-            Location = url;
-            Children = new List<Page>();
-            Assets = new List<Asset>();
-        }
-    }
-
-    public abstract class Asset
-    {
-        public Location Location { get; }
-
-        public Asset(Location loc) 
-        {
-            Location = loc;
-        }
-    }
-
-    public class TextAsset : Asset, ICompilable
-    {
-        public string RawContent { get; }
-        public string Content { get; set; }
-        public string Key => Location.ToId();
-
-        public TextAsset(string rawContent, Location loc) : base(loc) 
-        {
-            RawContent = rawContent;
-        }
-    }
-
-    public class BinaryAsset : Asset
-    {
-        public byte[] Content { get; }
-
-        public BinaryAsset(byte[] content, Location loc) : base(loc)
-        {
-            Content = content;
-        }
-    }
-
-    public abstract class Frame : ICompilable
-    {
-        public string RawContent { get; }
-        public Template Layout { get; }
-        public Dictionary<string, dynamic> Data { get; }
-
-        public abstract string Key { get; }
-
-        public Frame(string rawContent, Dictionary<string, dynamic> data, Template layout) 
-        {
-            RawContent = rawContent;
-            Layout = layout;
-            Data = data ?? new Dictionary<string, dynamic>();
-        }
-    }
-
-    public class Template : Frame
-    {
-        public string Name { get; }
-        public override string Key => Name;
-
-        public Template(string name, string rawContent,
-            Dictionary<string, dynamic> data = null, Template baseTemplate = null) 
-            : base(rawContent, data, baseTemplate)
-        {
-            Name = name;
-        }
-    }
-
-    public interface ILayoutParser
-    {
-        bool ContainsPlaceholder(string content);
-        string InsertContent(string content, string insertContent);
-    }
-
     public class LayoutParser : ILayoutParser
     {
         private const string CONTENT_PLACEHOLDER_REGEX = "{{ *content *}}";
@@ -163,7 +47,7 @@ namespace Xarial.Docify.Core
         }
     }
     
-    public class BaseCompilerConfig : ICompilerConfig
+    public class BaseCompilerConfig
     {
         public enum ParallelPartitions_e 
         {
@@ -196,8 +80,6 @@ namespace Xarial.Docify.Core
 
     public class BaseCompiler : ICompiler
     {
-        public ICompilerConfig Configuration => m_Config;
-
         public ILogger Logger { get; }
 
         public IPublisher Publisher { get; }

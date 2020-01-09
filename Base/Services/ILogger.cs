@@ -9,10 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xarial.Docify.Core.Base
+namespace Xarial.Docify.Base.Services
 {
-    public interface IComposer
+    public interface ILogger
     {
-        Site ComposeSite(IEnumerable<ISourceFile> files, string baseUrl);
+        //TODO: add log for warning and errors
+        void Log();
     }
 }

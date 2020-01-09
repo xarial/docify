@@ -7,8 +7,8 @@
 
 using System;
 using System.Threading.Tasks;
+using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
-using Xarial.Docify.Core.Base;
 
 namespace Xarial.Docify.CLI
 {

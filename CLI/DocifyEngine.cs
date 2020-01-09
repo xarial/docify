@@ -9,8 +9,8 @@ using Autofac;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
-using Xarial.Docify.Core.Base;
 
 namespace Xarial.Docify.CLI
 {

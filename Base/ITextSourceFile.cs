@@ -9,11 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xarial.Docify.Core.Base
+namespace Xarial.Docify.Base
 {
-    public interface ILogger
+    public interface ITextSourceFile : ISourceFile
     {
-        //TODO: add log for warning and errors
-        void Log();
+        string Content { get; }
     }
 }

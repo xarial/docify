@@ -8,7 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Core.Base;
+using Xarial.Docify.Base;
 
 namespace Xarial.Docify.Core
 {

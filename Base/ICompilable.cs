@@ -9,15 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xarial.Docify.Core.Base
+namespace Xarial.Docify.Base
 {
-    public interface IPublisherConfig 
+    public interface ICompilable
     {
-    }
-
-    public interface IPublisher
-    {
-        IPublisherConfig Config { get; }
-        void Write(string path, byte[] content);
+        string RawContent { get; }
+        string Key { get; }
     }
 }

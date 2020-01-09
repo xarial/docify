@@ -11,9 +11,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Xarial.Docify.Core;
-using Xarial.Docify.Core.Base;
 using Xarial.Docify.Core.Exceptions;
 using Moq;
+using Xarial.Docify.Base;
+using Xarial.Docify.Base.Services;
 
 namespace Core.Tests
 {

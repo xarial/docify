@@ -8,15 +8,19 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Base;
 
-namespace Xarial.Docify.Core.Exceptions
+namespace Xarial.Docify.Base.Content
 {
-    public class DuplicatePageException : Exception
+    public class Template : Frame
     {
-        public DuplicatePageException(Location loc) 
-            : base($"Specified page already exist '{loc.ToId()}'")
+        public string Name { get; }
+        public override string Key => Name;
+
+        public Template(string name, string rawContent,
+            Dictionary<string, dynamic> data = null, Template baseTemplate = null)
+            : base(rawContent, data, baseTemplate)
         {
+            Name = name;
         }
     }
 }

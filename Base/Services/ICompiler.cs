@@ -8,15 +8,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Base;
+using System.Threading.Tasks;
 
-namespace Xarial.Docify.Core.Exceptions
+namespace Xarial.Docify.Base.Services
 {
-    public class DuplicatePageException : Exception
+    public interface ICompiler
     {
-        public DuplicatePageException(Location loc) 
-            : base($"Specified page already exist '{loc.ToId()}'")
-        {
-        }
+        IPublisher Publisher { get; }
+        ILogger Logger { get; }
+        Task Compile(Site site);
     }
 }

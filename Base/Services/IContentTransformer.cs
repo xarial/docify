@@ -8,15 +8,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Base;
+using System.Threading.Tasks;
 
-namespace Xarial.Docify.Core.Exceptions
+namespace Xarial.Docify.Base.Services
 {
-    public class DuplicatePageException : Exception
+    public interface IContentTransformer
     {
-        public DuplicatePageException(Location loc) 
-            : base($"Specified page already exist '{loc.ToId()}'")
-        {
-        }
+        Task<string> Transform(string content, string key, IContextModel model);
     }
 }

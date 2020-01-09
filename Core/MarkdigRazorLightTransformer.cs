@@ -9,7 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Xarial.Docify.Core.Base;
+using Xarial.Docify.Base;
+using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Core
 {
@@ -30,7 +31,7 @@ namespace Xarial.Docify.Core
             m_RazorTransformer = new RazorLightEvaluator();
         }
 
-        public async Task<string> Transform(string content, string key, ContextModel model)
+        public async Task<string> Transform(string content, string key, IContextModel model)
         {
             var res = content;
 

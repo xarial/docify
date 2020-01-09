@@ -8,21 +8,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Xarial.Docify.Core.Base
+namespace Xarial.Docify.Base.Services
 {
-    public interface ISourceFile
+    public interface IIncludesHandler
     {
-        Location Location { get; }
-    }
-
-    public interface IBinarySourceFile : ISourceFile
-    {
-        byte[] Content { get; }
-    }
-
-    public interface ITextSourceFile : ISourceFile
-    {
-        string Content { get; }
+        Task ParseParameters(string rawContent, out string name, out Dictionary<string, dynamic> param);
+        Task<string> Insert(string name, Dictionary<string, dynamic> param, Site site, Page page);
     }
 }

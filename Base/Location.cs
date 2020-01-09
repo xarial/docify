@@ -13,13 +13,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Xarial.Docify.Core.Base
+namespace Xarial.Docify.Base
 {
     public class Location
     {
-        private const string PATH_SEP = "\\";
-        private const string URL_SEP = "/";
-        private const string ID_SEP = "-";
+        private const char PATH_SEP = '\\';
+        private const char URL_SEP = '/';
+        private const char ID_SEP = '-';
 
         public static Location FromPath(string path, string relTo = "") 
         {
@@ -29,7 +29,7 @@ namespace Xarial.Docify.Core.Base
             {
                 if (path.StartsWith(relTo, StringComparison.CurrentCultureIgnoreCase))
                 {
-                    path = System.IO.Path.GetRelativePath(relTo, path);
+                    path = path.Substring(relTo.Length).TrimStart('\\');
                 }
             }
 
@@ -73,7 +73,7 @@ namespace Xarial.Docify.Core.Base
             return FormFullLocation(baseUrl, URL_SEP);
         }
 
-        private string FormFullLocation(string basePart, string sep) 
+        private string FormFullLocation(string basePart, char sep) 
         {
             var fullLoc = new StringBuilder();
 

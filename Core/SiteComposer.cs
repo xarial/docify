@@ -12,7 +12,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Xarial.Docify.Core.Base;
+using Xarial.Docify.Base;
+using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Exceptions;
 using YamlDotNet.Serialization;
 

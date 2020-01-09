@@ -16,7 +16,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Xarial.Docify.Core.Base;
+using Xarial.Docify.Base;
+using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Exceptions;
 
 namespace Xarial.Docify.Core
@@ -39,7 +40,7 @@ namespace Xarial.Docify.Core
                 .Build();
         }
                 
-        public Task<string> Transform(string content, string key, ContextModel model)
+        public Task<string> Transform(string content, string key, IContextModel model)
         {
             var context = new MarkdownParserContext();
             context.Properties.Add(CONTEXT_MODEL_PARAM_NAME, model);

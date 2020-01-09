@@ -8,12 +8,16 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Xarial.Docify.Core.Base
+namespace Xarial.Docify.Base.Content
 {
-    public interface IContentTransformer
+    public abstract class Asset
     {
-        Task<string> Transform(string content, string key, ContextModel model);
+        public Location Location { get; }
+
+        public Asset(Location loc)
+        {
+            Location = loc;
+        }
     }
 }

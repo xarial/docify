@@ -8,11 +8,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Core.Base;
+using Xarial.Docify.Base;
+using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Core
 {
-    public class LocalFileSystemLoaderConfig : ILoaderConfig
+    public class LocalFileSystemLoaderConfig
     {
         public string Path { get; }
 
@@ -24,11 +25,11 @@ namespace Xarial.Docify.Core
 
     public class LocalFileSystemLoader : ILoader
     {
-        public ILoaderConfig Configuration { get; }
+        private readonly LocalFileSystemLoaderConfig m_Config;
 
         public LocalFileSystemLoader(LocalFileSystemLoaderConfig config) 
         {
-            Configuration = config;
+            m_Config = config;
         }
 
         public IEnumerable<ISourceFile> Load()

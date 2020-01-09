@@ -8,8 +8,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Core.Base;
 using System.Linq;
+using Xarial.Docify.Base;
 
 namespace Xarial.Docify.Core.Exceptions
 {

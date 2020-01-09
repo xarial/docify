@@ -8,11 +8,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Core.Base;
+using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Core
 {
-    public class LocalFileSystemPublisherConfig : IPublisherConfig
+    public class LocalFileSystemPublisherConfig
     {
         public string OutDir { get; }
 
@@ -24,11 +24,11 @@ namespace Xarial.Docify.Core
 
     public class LocalFileSystemPublisher : IPublisher
     {
-        public IPublisherConfig Config { get; }
+        private readonly LocalFileSystemPublisherConfig m_Config;
 
         public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config) 
         {
-            Config = config;
+            m_Config = config;
         }
 
         public void Write(string path, byte[] content)

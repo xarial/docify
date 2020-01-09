@@ -9,15 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xarial.Docify.Core.Base
+namespace Xarial.Docify.Base
 {
-    public interface ILoaderConfig
+    public interface ISourceFile
     {
-    }
-
-    public interface ILoader
-    {
-        ILoaderConfig Configuration { get; }
-        IEnumerable<ISourceFile> Load();
+        Location Location { get; }
     }
 }

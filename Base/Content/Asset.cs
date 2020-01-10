@@ -11,7 +11,7 @@ using System.Text;
 
 namespace Xarial.Docify.Base.Content
 {
-    public abstract class Asset
+    public abstract class Asset : IWritable
     {
         public Location Location { get; }
 

@@ -8,7 +8,11 @@
 using Autofac;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using Xarial.Docify.Base;
+using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler;
@@ -22,6 +26,7 @@ namespace Xarial.Docify.CLI
     public interface IDocifyEngine 
     {
         T Resove<T>();
+        Task Build();
     }
 
     public class DocifyEngine : IDocifyEngine
@@ -63,6 +68,26 @@ namespace Xarial.Docify.CLI
             builder.RegisterType<BaseCompiler>().As<ICompiler>();
 
             m_Container = builder.Build();
+        }
+
+        public async Task Build()
+        {
+            var loader = Resove<ILoader>();
+            var composer = Resove<IComposer>();
+            var compiler = Resove<ICompiler>();
+            var publisher = Resove<IPublisher>();
+
+            var elems = await loader.Load();
+
+            var site = composer.ComposeSite(elems, "");
+
+            await compiler.Compile(site);
+
+            var writables = Enumerable.Empty<IWritable>();
+            writables = writables.Union(site.MainPage.GetAllPages());
+            writables = writables.Union(site.Assets);
+
+            await publisher.Write(writables);
         }
 
         public T Resove<T>() 

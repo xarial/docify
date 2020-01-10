@@ -11,15 +11,8 @@ using System.Text;
 
 namespace Xarial.Docify.Base.Content
 {
-    public class TextAsset : Asset, ICompilable, ITextWritable
+    public interface ITextWritable : IWritable
     {
-        public string RawContent { get; }
-        public string Content { get; set; }
-        public string Key => Location.ToId();
-
-        public TextAsset(string rawContent, Location loc) : base(loc)
-        {
-            RawContent = rawContent;
-        }
+        string Content { get; }
     }
 }

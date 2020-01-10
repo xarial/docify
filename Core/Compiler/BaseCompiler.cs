@@ -43,23 +43,9 @@ namespace Xarial.Docify.Core.Compiler
             m_ContentTransformer = contentTransformer;
         }
 
-        private void GetAllPages(Page page, List<Page> allPages) 
-        {
-            allPages.Add(page);
-
-            if (page.Children != null) 
-            {
-                foreach (var childPage in page.Children)
-                {
-                    GetAllPages(childPage, allPages);
-                }
-            }
-        }
-
         public async Task Compile(Site site)
         {
-            var allPages = new List<Page>();
-            GetAllPages(site.MainPage, allPages);
+            var allPages = site.MainPage.GetAllPages();
 
             if (m_Config.ParallelPartitionsCount == (int)BaseCompilerConfig.ParallelPartitions_e.NoParallelism)
             {

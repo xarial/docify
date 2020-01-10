@@ -21,15 +21,7 @@ namespace Xarial.Docify.CLI
 
             var engine = new DocifyEngine(srcDir, outDir);
 
-            var loader = engine.Resove<ILoader>();
-            var composer = engine.Resove<IComposer>();
-            var compiler = engine.Resove<ICompiler>();
-
-            var elems = await loader.Load();
-
-            var site = composer.ComposeSite(elems, "");
-
-            await compiler.Compile(site);
+            await engine.Build();
         }
     }
 }

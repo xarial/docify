@@ -7,7 +7,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Abstractions;
 using System.Text;
+using System.Threading.Tasks;
+using Xarial.Docify.Base;
+using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Core.Publisher
@@ -15,15 +20,51 @@ namespace Xarial.Docify.Core.Publisher
     public class LocalFileSystemPublisher : IPublisher
     {
         private readonly LocalFileSystemPublisherConfig m_Config;
+        private readonly IFileSystem m_FileSystem;
 
-        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config) 
+        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config) :
+            this(config, new FileSystem())
         {
-            m_Config = config;
         }
 
-        public void Write(string path, byte[] content)
+        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config, IFileSystem fileSystem)
         {
-            throw new NotImplementedException();
+            m_Config = config;
+            m_FileSystem = fileSystem;
+        }
+
+        public async Task Write(IEnumerable<IWritable> writables)
+        {
+            foreach (var writable in writables)
+            {
+                var outFilePath = writable.Location.ToPath();
+
+                if (!Path.IsPathRooted(outFilePath)) 
+                {
+                    outFilePath = Path.Combine(m_Config.OutDir, outFilePath);
+                }
+                
+                var dir = Path.GetDirectoryName(outFilePath);
+
+                if (!m_FileSystem.Directory.Exists(dir))
+                {
+                    m_FileSystem.Directory.CreateDirectory(dir);
+                }
+
+                switch (writable)
+                {
+                    case ITextWritable text:
+                        await m_FileSystem.File.WriteAllTextAsync(outFilePath, text.Content);
+                        break;
+
+                    case IBinaryWritable bin:
+                        await m_FileSystem.File.WriteAllBytesAsync(outFilePath, bin.Content);
+                        break;
+
+                    default:
+                        throw new NotSupportedException();
+                }
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ using Xarial.Docify.Base.Content;
 namespace Xarial.Docify.Base
 {
     [DebuggerDisplay("{" + nameof(Location) + "}")]
-    public class Page : Frame
+    public class Page : Frame, ITextWritable
     {
         public List<Page> Children { get; }
         public List<Asset> Assets { get; }

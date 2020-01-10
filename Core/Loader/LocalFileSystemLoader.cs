@@ -36,7 +36,6 @@ namespace Xarial.Docify.Core.Loader
         public LocalFileSystemLoader(LocalFileSystemLoaderConfig config)
             : this(config, new FileSystem())
         {
-            m_Config = config;
         }
 
         public LocalFileSystemLoader(LocalFileSystemLoaderConfig config, IFileSystem fileSystem)

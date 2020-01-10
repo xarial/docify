@@ -11,7 +11,7 @@ using System.Text;
 
 namespace Xarial.Docify.Base.Content
 {
-    public class BinaryAsset : Asset
+    public class BinaryAsset : Asset, IBinaryWritable
     {
         public byte[] Content { get; }
 

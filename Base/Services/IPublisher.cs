@@ -8,11 +8,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
+using Xarial.Docify.Base.Content;
 
 namespace Xarial.Docify.Base.Services
 {
     public interface IPublisher
     {
-        void Write(string path, byte[] content);
+        Task Write(IEnumerable<IWritable> writables);
     }
 }

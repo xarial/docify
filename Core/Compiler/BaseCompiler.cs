@@ -18,6 +18,7 @@ using System.Text.RegularExpressions;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Core.Compiler.Context;
 
 namespace Xarial.Docify.Core.Compiler
 {

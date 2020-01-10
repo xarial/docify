@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Core.Data;
 
 namespace Xarial.Docify.Core.Loader
 {
@@ -18,12 +19,12 @@ namespace Xarial.Docify.Core.Loader
         private const string IGNORE_FILE_PARAM_NAME = "ignore";
 
         public string Path { get; }
-        public string[] Ignore { get; }
+        public List<string> Ignore { get; }
 
-        public LocalFileSystemLoaderConfig(string path, string[] ignore)
+        public LocalFileSystemLoaderConfig(string path, IEnumerable<string> ignore)
         {
             Path = path;
-            Ignore = ignore ?? new string[0];
+            Ignore = ignore?.ToList() ?? new List<string>();
         }
 
         public LocalFileSystemLoaderConfig(string path, Configuration conf) 
@@ -31,24 +32,24 @@ namespace Xarial.Docify.Core.Loader
         {
         }
 
-        private static string[] GetIgnoreFiles(Configuration conf)
+        private static List<string> GetIgnoreFiles(Configuration conf)
         {
-            dynamic arr;
-            
-            if (conf.TryGetValue(IGNORE_FILE_PARAM_NAME, out arr))
+            try
             {
-                if (arr is IEnumerable<string>)
+                var vals = conf.GetParameterOrDefault<IEnumerable<string>>(IGNORE_FILE_PARAM_NAME);
+
+                if (vals != null)
                 {
-                    return (arr as IEnumerable<string>).ToArray();
+                    return vals.ToList();
                 }
                 else 
                 {
-                    throw new InvalidCastException($"Value specified in {IGNORE_FILE_PARAM_NAME} must be an array");
+                    return null;
                 }
             }
-            else 
+            catch 
             {
-                return null;
+                throw new InvalidCastException($"Value specified in {IGNORE_FILE_PARAM_NAME} must be an array");
             }
         }
     }

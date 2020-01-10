@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core.Compiler.Context;
 using Xarial.Docify.Core.Exceptions;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser

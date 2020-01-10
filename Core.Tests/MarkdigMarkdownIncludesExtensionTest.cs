@@ -19,6 +19,7 @@ using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
 using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Core.Compiler.Context;
 
 namespace Core.Tests
 {

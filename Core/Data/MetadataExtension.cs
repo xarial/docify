@@ -42,5 +42,48 @@ namespace Xarial.Docify.Core.Data
 
             return resParams;
         }
+
+        public static T GetParameterOrDefault<T>(this Metadata data, string name) 
+        {
+            T val;
+            TryGetParameter(data, name, out val);
+            return val;
+        }
+
+        public static T GetRemoveParameterOrDefault<T>(this Metadata data, string name) 
+        {
+            T val;
+            
+            if (TryGetParameter(data, name, out val)) 
+            {
+                data.Remove(name);
+            }
+
+            return val;
+        }
+
+        private static bool TryGetParameter<T>(Metadata data, string name, out T val) 
+        {
+            dynamic dynVal;
+
+            if (data.TryGetValue(name, out dynVal))
+            {
+                if (dynVal is T)
+                {
+                    val = (T)dynVal;
+                }
+                else
+                {
+                    val = Convert.ChangeType(dynVal, typeof(T));
+                }
+
+                return true;
+            }
+            else
+            {
+                val = default(T);
+                return false;
+            }
+        }
     }
 }

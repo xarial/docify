@@ -23,7 +23,7 @@ namespace Core.Tests
         [Test]
         public async Task Load_TextAndBinaryTest() 
         {
-            var loader = new LocalFileSystemLoader(new LocalFileSystemLoaderConfig(@"C:\site", new string[0]),
+            var loader = new LocalFileSystemLoader(new LocalFileSystemLoaderConfig(@"C:\site", new string[0].ToList()),
             new MockFileSystem(new Dictionary<string, MockFileData>() 
             {
                 { @"C:\page2.md", null },

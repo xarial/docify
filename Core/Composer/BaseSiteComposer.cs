@@ -7,18 +7,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
-using YamlDotNet.Serialization;
 
 namespace Xarial.Docify.Core.Composer
 {
@@ -30,11 +26,13 @@ namespace Xarial.Docify.Core.Composer
 
         private readonly ILayoutParser m_LayoutParser;
         private readonly Configuration m_Config;
+        private readonly IFragmentsLoader m_FragmentsLoader;
 
-        public BaseSiteComposer(ILayoutParser parser, Configuration config) 
+        public BaseSiteComposer(ILayoutParser parser, IFragmentsLoader fragmentsLoader, Configuration config) 
         {
             m_LayoutParser = parser;
             m_Config = config;
+            m_FragmentsLoader = fragmentsLoader;
         }
 
         private bool IsPage(ISourceFile srcFile) 
@@ -51,72 +49,12 @@ namespace Xarial.Docify.Core.Composer
             return htmlExts.Contains(ext, StringComparer.CurrentCultureIgnoreCase);
         }
 
-        private class LocationDictionaryComparer : IEqualityComparer<IReadOnlyList<string>>
-        {
-            private readonly StringComparison m_CompType;
-
-            internal LocationDictionaryComparer(StringComparison compType = StringComparison.CurrentCultureIgnoreCase)
-            {
-                m_CompType = compType;
-            }
-
-            public bool Equals([AllowNull] IReadOnlyList<string> x, [AllowNull] IReadOnlyList<string> y)
-            {
-                if (ReferenceEquals(x, y))
-                {
-                    return true;
-                }
-
-                if (ReferenceEquals(null, x))
-                {
-                    return false;
-                }
-
-                if (ReferenceEquals(null, y))
-                {
-                    return false;
-                }
-
-                if (x.Count == y.Count)
-                {
-                    for (int i = 0; i < x.Count; i++)
-                    {
-                        if (!string.Equals(x[i], y[i], m_CompType))
-                        {
-                            return false;
-                        }
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-
-                return true;
-            }
-
-            public int GetHashCode([DisallowNull] IReadOnlyList<string> obj)
-            {
-                return 0;
-            }
-        }
-
         private void ParseTextFile(ITextSourceFile src, out string rawContent,
             out Metadata data, out string layoutName) 
         {
             src.Parse(out rawContent, out data);
 
-            dynamic layoutNameDyn;
-            if (data.TryGetValue(LAYOUT_VAR_NAME, out layoutNameDyn))
-            {
-                layoutName = (string)layoutNameDyn;
-                data.Remove(LAYOUT_VAR_NAME);
-            }
-            else 
-            {
-                layoutName = "";
-
-            }
+            layoutName = data.GetRemoveParameterOrDefault<string>(LAYOUT_VAR_NAME);
         }
 
         private Page CreatePageFromSourceOrDefault(ITextSourceFile src,
@@ -162,14 +100,13 @@ namespace Xarial.Docify.Core.Composer
         {
             if (files?.Any() == true)
             {
-                IEnumerable<ITextSourceFile> srcPages;
-                IEnumerable<ITextSourceFile> srcLayouts;
-                IEnumerable<ITextSourceFile> srcIncludes;
-                IEnumerable<ITextSourceFile> srcTextAssets;
-                IEnumerable<IBinarySourceFile> srcBinaryAssets;
 
-                GroupSourceFiles(files, out srcPages, out srcLayouts,
-                    out srcIncludes, out srcTextAssets, out srcBinaryAssets);
+                GroupSourceFiles(files, 
+                    out IEnumerable<ITextSourceFile> srcPages, 
+                    out IEnumerable<ITextSourceFile> srcLayouts,
+                    out IEnumerable<ITextSourceFile> srcIncludes, 
+                    out IEnumerable<ITextSourceFile> srcTextAssets,
+                    out IEnumerable<IBinarySourceFile> srcBinaryAssets);
 
                 if (!srcPages.Any()) 
                 {

@@ -17,7 +17,12 @@ namespace Xarial.Docify.Base.Data
 
     public class Configuration : Metadata, IConfiguration
     {
-        public Environment_e Environment { get; }
+        public Environment_e Environment { get; set; }
+        public string WorkingFolder { get; set; }
+        public string FragmentsFolder { get; set; }
+        public List<string> Fragments { get; set; }
+        public string ThemesFolder { get; set; }
+        public string Theme { get; set; }
 
         public Configuration(Environment_e env) : this(new Dictionary<string, dynamic>(), env)
         {

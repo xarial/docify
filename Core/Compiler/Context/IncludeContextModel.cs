@@ -11,7 +11,7 @@ using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Core.Compiler
+namespace Xarial.Docify.Core.Compiler.Context
 {
     public class IncludeContextModel : ContextModel
     {

@@ -14,7 +14,7 @@ using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Core.Data;
 
-namespace Xarial.Docify.Core.Compiler
+namespace Xarial.Docify.Core.Compiler.Context
 {
     public class ContextPage
     {

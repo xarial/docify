@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Base;
 
-namespace Xarial.Docify.Core.Compiler
+namespace Xarial.Docify.Core.Compiler.Context
 {
     public class ContextSite
     {

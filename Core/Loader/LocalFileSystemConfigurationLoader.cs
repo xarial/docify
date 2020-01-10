@@ -74,19 +74,28 @@ namespace Xarial.Docify.Core.Loader
 
             var conf = await GetConfiguration(location);
 
-            var theme = conf.GetRemoveParameterOrDefault<string>(Params.Theme);
             var themesDir = NormalizeDirFunc(conf.GetRemoveParameterOrDefault<string>(Params.ThemesDir), DEFAULT_THEMES_DIR);
 
-            if (!string.IsNullOrEmpty(theme))
+            var themesHierarchy = new List<string>();
+            string theme;
+            
+            do
             {
-                var themeConf = await GetConfiguration(Location.FromPath(Path.Combine(themesDir, theme)));
-                conf = conf.Merge(themeConf);
-            }
+                theme = conf.GetRemoveParameterOrDefault<string>(Params.Theme);
 
+                if (!string.IsNullOrEmpty(theme))
+                {
+                    var themeConf = await GetConfiguration(Location.FromPath(Path.Combine(themesDir, theme)));
+                    conf = conf.Merge(themeConf);
+                    themesHierarchy.Add(theme);
+                }
+            }
+            while (!string.IsNullOrEmpty(theme));
+            
             conf.Environment = m_Environment;
             conf.ThemesFolder = Location.FromPath(themesDir);
-            conf.Theme = theme;
-
+            conf.ThemesHierarchy.AddRange(themesHierarchy);
+            
             conf.WorkingFolder = NormalizeDirFunc(conf.GetRemoveParameterOrDefault<string>(Params.WorkDir), Path.GetTempPath());
             conf.FragmentsFolder = Location.FromPath(NormalizeDirFunc(conf.GetRemoveParameterOrDefault<string>(Params.FragmentsDir), DEFAULT_FRAGMENTS_DIR));
             conf.Fragments = conf.GetRemoveParameterOrDefault<IEnumerable<object>>(Params.Fragments)?.Cast<string>()?.ToList();

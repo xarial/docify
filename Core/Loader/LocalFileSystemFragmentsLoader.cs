@@ -47,9 +47,9 @@ namespace Xarial.Docify.Core.Loader
                 }
             }
 
-            if (!string.IsNullOrEmpty(m_Config.Theme)) 
+            foreach (var theme in m_Config.ThemesHierarchy) 
             {
-                await AddFiles(resFiles, m_Config.ThemesFolder.Combine(m_Config.Theme), m_Config.Theme, true);
+                await AddFiles(resFiles, m_Config.ThemesFolder.Combine(theme), theme, true);
             }
 
             return resFiles.Values;

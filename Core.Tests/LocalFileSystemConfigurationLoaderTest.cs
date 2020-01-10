@@ -49,6 +49,7 @@ namespace Core.Tests
             Assert.AreEqual(2, conf.Fragments.Count);
             Assert.Contains("fragment1", conf.Fragments);
             Assert.Contains("fragment2", conf.Fragments);
+            Assert.AreEqual(0, conf.ThemesHierarchy.Count);
         }
 
         [Test]
@@ -66,7 +67,8 @@ namespace Core.Tests
             Assert.That(conf.ContainsKey("a1"));
             Assert.AreEqual("D:\\work", conf.WorkingFolder);
             Assert.AreEqual("D:\\themes", conf.ThemesFolder.ToPath());
-            Assert.AreEqual("theme1", conf.Theme);
+            Assert.AreEqual(1, conf.ThemesHierarchy.Count);
+            Assert.AreEqual("theme1", conf.ThemesHierarchy[0]);
         }
 
         [Test]
@@ -122,8 +124,33 @@ namespace Core.Tests
             Assert.AreEqual("C", conf["x1"]);
             Assert.AreEqual("D", conf["x2"]);
 
-            Assert.AreEqual("theme1", conf.Theme);
+            Assert.AreEqual(1, conf.ThemesHierarchy.Count);
+            Assert.AreEqual("theme1", conf.ThemesHierarchy[0]);
             Assert.AreEqual("C:\\themes", conf.ThemesFolder.ToPath());
+        }
+
+        [Test]
+        public async Task Load_ConfigWithNestedTheme() 
+        {
+            var fs = new MockFileSystem();
+            fs.AddFile("C:\\site\\page.html", null);
+            fs.AddFile("C:\\themes\\theme1\\_config.yml", new MockFileData("a: 1\r\nb: 2\r\nd: 6"));
+            fs.AddFile("C:\\themes\\theme2\\_config.yml", new MockFileData("a: 3\r\nc: 4\r\ntheme: theme1"));
+            fs.AddFile("C:\\site\\_config.yml", new MockFileData("theme: theme2\r\nb: 5\r\nthemes_dir: C:\\themes"));
+
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
+
+            var conf = await confLoader.Load(Location.FromPath("C:\\site"));
+
+            Assert.AreEqual(2, conf.ThemesHierarchy.Count);
+            Assert.AreEqual("theme2", conf.ThemesHierarchy[0]);
+            Assert.AreEqual("theme1", conf.ThemesHierarchy[1]);
+
+            Assert.AreEqual(4, conf.Count);
+            Assert.AreEqual("3", conf["a"]);
+            Assert.AreEqual("5", conf["b"]);
+            Assert.AreEqual("4", conf["c"]);
+            Assert.AreEqual("6", conf["d"]);
         }
     }
 }

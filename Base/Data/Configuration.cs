@@ -22,7 +22,7 @@ namespace Xarial.Docify.Base.Data
         public Location FragmentsFolder { get; set; }
         public List<string> Fragments { get; set; }
         public Location ThemesFolder { get; set; }
-        public string Theme { get; set; }
+        public List<string> ThemesHierarchy { get; }
         
         public Configuration() : this(new Dictionary<string, dynamic>())
         {
@@ -31,6 +31,7 @@ namespace Xarial.Docify.Base.Data
         public Configuration(IDictionary<string, dynamic> parameters) : base(parameters) 
         {
             Environment = Environment_e.Test;
+            ThemesHierarchy = new List<string>();
         }
     }
 }

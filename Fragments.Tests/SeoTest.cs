@@ -5,6 +5,7 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using Fragments.Tests.Properties;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,7 @@ namespace Fragments.Tests
 
             var p1 = new Page(Location.FromPath("index.html"), "");
             var p2 = new Page(Location.FromPath("p2\\index.html"), "");
+            p2.Data["title"] = "p2";
             p1.SubPages.Add(p2);
 
             var site = new Site("www.example.com", null, new Configuration()
@@ -36,12 +38,16 @@ namespace Fragments.Tests
 
             Metadata data;
             string rawContent;
-            var path = @"D:\Projects\Xarial\open-source\docify\Fragments\seo\_includes\seo.cshtml";
+            var path = FragmentTest.GetPath(@"seo\_includes\seo.cshtml");
             new TextSourceFile(Location.FromPath(path), File.ReadAllText(path)).Parse(out rawContent, out data);
             
             site.Includes.Add(new Template("seo", rawContent, data));
 
             var res = await includesHandler.Insert("seo", null, site, p2);
+
+            res = FragmentTest.Normalize(res);
+            
+            Assert.AreEqual(Resources.seo1, res);
         }
     }
 }

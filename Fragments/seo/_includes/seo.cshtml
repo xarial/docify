@@ -10,7 +10,21 @@ og: true
 twitter: true
 linkedin: true
 ---
-@model Xarial.Docify.Core.Compiler.IncludeContextModel
+@using RazorLight
+@inherits TemplatePage<Xarial.Docify.Core.Compiler.IncludeContextModel>
+@functions{
+    public class LinkedInMetadata
+    {
+        public string url { get; set; }
+        public string description { get; set; }
+        public string headline { get; set; }
+        public string image { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("@type")]
+        public string type { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("@context")]
+        public string context { get; set; }
+    }
+}
 @{
     dynamic title = "";
     dynamic description = "";
@@ -52,14 +66,15 @@ linkedin: true
 
     if (linkedin)
     {
-        ld = System.Text.Json.JsonSerializer.Serialize(new
-        {
-            url = Model.Page.FullUrl,
-            description = description,
-            headline = siteDescription,
-            image = image,
-            @type = "WebPage",
-            @context = "http://schema.org"
+        ld = System.Text.Json.JsonSerializer.Serialize(
+            new LinkedInMetadata
+            {
+                url = Model.Page.FullUrl,
+                description = description,
+                headline = siteDescription,
+                image = image,
+                type = "WebPage",
+                context = "http://schema.org"
         }).ToString();
     }
 }
@@ -86,7 +101,6 @@ linkedin: true
 @if (linkedin)
 {
     <script type="application/ld+json">
-        @ld
-        @*{"url":"@Model.Page.FullUrl","description":"@description","headline":"@siteDescription","image":"@image","@@type":"WebPage","@@context":"http://schema.org"}*@
+        @Raw(@ld)
     </script>
 }

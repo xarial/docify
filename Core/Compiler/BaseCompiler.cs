@@ -45,7 +45,7 @@ namespace Xarial.Docify.Core.Compiler
 
         public async Task Compile(Site site)
         {
-            var allPages = site.MainPage.GetAllPages();
+            var allPages = site.GetAllPages();
 
             if (m_Config.ParallelPartitionsCount == (int)BaseCompilerConfig.ParallelPartitions_e.NoParallelism)
             {

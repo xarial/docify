@@ -35,6 +35,11 @@ namespace Xarial.Docify.Core.Publisher
 
         public async Task Write(IEnumerable<IWritable> writables)
         {
+            if (m_FileSystem.Directory.Exists(m_Config.OutDir))
+            {
+                m_FileSystem.Directory.Delete(m_Config.OutDir, true);
+            }
+
             foreach (var writable in writables)
             {
                 var outFilePath = writable.Location.ToPath();

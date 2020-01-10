@@ -98,7 +98,7 @@ namespace Core.Tests
             var p2 = new Page(Location.FromPath("page2.html"), "");
             var s = new Site("", p1);
             s.Includes.Add(new Template("i1", "abc"));
-            p1.Children.Add(p2);
+            p1.SubPages.Add(p2);
 
             var res1 = await m_Handler.Insert("i1", new Dictionary<string, dynamic>() { { "a1", "A" } }, s, p1);
             var res2 = await m_Handler.Insert("i1", new Dictionary<string, dynamic>() { { "a2", "B" } }, s, p2);

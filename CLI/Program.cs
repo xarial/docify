@@ -18,8 +18,9 @@ namespace Xarial.Docify.CLI
         {
             var srcDir = args[0];
             var outDir = args[1];
+            var siteUrl = args[2];
 
-            var engine = new DocifyEngine(srcDir, outDir);
+            var engine = new DocifyEngine(srcDir, outDir, siteUrl);
 
             await engine.Build();
         }

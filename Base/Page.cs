@@ -16,7 +16,23 @@ namespace Xarial.Docify.Base
     [DebuggerDisplay("{" + nameof(Location) + "}")]
     public class Page : Frame, ITextWritable
     {
-        public List<Page> Children { get; }
+        public string Url 
+        {
+            get 
+            {
+                return Location.ToUrl();
+            }
+        }
+        
+        public IEnumerable<Page> AllSubPages 
+        {
+            get 
+            {
+                return this.GetAllSubPages();
+            }
+        }
+
+        public List<Page> SubPages { get; }
         public List<Asset> Assets { get; }
         public Location Location { get; }
         public string Content { get; set; }
@@ -33,8 +49,27 @@ namespace Xarial.Docify.Base
             : base(rawContent, data, layout)
         {
             Location = url;
-            Children = new List<Page>();
+            SubPages = new List<Page>();
             Assets = new List<Asset>();
+        }
+    }
+
+    public static class PageExtension
+    {
+        public static IEnumerable<Page> GetAllSubPages(this Page page)
+        {
+            if (page.SubPages != null)
+            {
+                foreach (var childPage in page.SubPages)
+                {
+                    yield return childPage;
+
+                    foreach (var subChildPage in GetAllSubPages(childPage))
+                    {
+                        yield return subChildPage;
+                    }
+                }
+            }
         }
     }
 }

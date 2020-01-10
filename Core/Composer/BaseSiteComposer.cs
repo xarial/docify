@@ -457,7 +457,7 @@ namespace Xarial.Docify.Core.Composer
 
                         pageMap.Add(thisLoc, page);
 
-                        pageMap[parentLoc].Children.Add(page);
+                        pageMap[parentLoc].SubPages.Add(page);
                     }
                     else
                     {

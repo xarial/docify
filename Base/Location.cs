@@ -17,15 +17,11 @@ namespace Xarial.Docify.Base
 {
     public class Location
     {
-        private const char PATH_SEP = '\\';
-        private const char URL_SEP = '/';
-        private const char ID_SEP = '-';
-
-        public static Location FromPath(string path, string relTo = "") 
+        public static Location FromPath(string path, string relTo = "")
         {
             //TODO: check if path is valid
 
-            if (!string.IsNullOrEmpty(relTo)) 
+            if (!string.IsNullOrEmpty(relTo))
             {
                 if (path.StartsWith(relTo, StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -40,82 +36,35 @@ namespace Xarial.Docify.Base
 
             if (!string.IsNullOrEmpty(dir))
             {
-                blocks = dir.Split(PATH_SEP).ToArray();
+                blocks = dir.Split(LocationExtension.PATH_SEP).ToArray();
             }
-            else 
+            else
             {
                 blocks = new string[0];
             }
-            
+
             return new Location(fileName, blocks);
-        }
-
-        public string ToPath(string root = "") 
-        {
-            return FormFullLocation(root, PATH_SEP);
-        }
-
-        public string ToId()
-        {
-            return FormFullLocation("", ID_SEP);
         }
 
         public bool IsEmpty
         {
-            get 
+            get
             {
                 return !Path.Any() && string.IsNullOrEmpty(FileName);
             }
         }
 
-        public string ToUrl(string baseUrl = "") 
-        {
-            return FormFullLocation(baseUrl, URL_SEP);
-        }
-
-        private string FormFullLocation(string basePart, char sep) 
-        {
-            var fullLoc = new StringBuilder();
-
-            if (!string.IsNullOrEmpty(basePart)) 
-            {
-                fullLoc.Append(basePart);
-            }
-
-            foreach (var block in Path) 
-            {
-                if (fullLoc.Length > 0) 
-                {
-                    fullLoc.Append(sep);
-                }
-
-                fullLoc.Append(block);
-            }
-
-            if (!string.IsNullOrEmpty(FileName)) 
-            {
-                if (fullLoc.Length > 0)
-                {
-                    fullLoc.Append(sep);
-                }
-
-                fullLoc.Append(FileName);
-            }
-
-            return fullLoc.ToString();
-        }
-        
         public IReadOnlyList<string> Path { get; }
 
-        public int TotalLevel 
+        public int TotalLevel
         {
-            get 
+            get
             {
                 return Path.Count;
             }
         }
 
-        public bool IsRoot 
+        public bool IsRoot
         {
             get
             {
@@ -123,25 +72,79 @@ namespace Xarial.Docify.Base
             }
         }
 
-        public string Root 
+        public string Root
         {
-            get 
+            get
             {
                 return Path.FirstOrDefault();
             }
         }
 
-        public string FileName  { get; }
+        public string FileName { get; }
 
-        public Location(string fileName, params string[] path) 
+        public Location(string fileName, params string[] path)
         {
             FileName = fileName;
             Path = new List<string>(path);
         }
-        
+
         public override string ToString()
         {
-            return ToId();
+            return this.ToId();
+        }
+    }
+
+    public static class LocationExtension
+    {
+        internal const char PATH_SEP = '\\';
+        private const char URL_SEP = '/';
+        private const char ID_SEP = '-';
+
+        public static string ToPath(this Location loc, string root = "")
+        {
+            return FormFullLocation(loc, root, PATH_SEP);
+        }
+
+        public static string ToId(this Location loc)
+        {
+            return FormFullLocation(loc, "", ID_SEP);
+        }
+
+        public static string ToUrl(this Location loc, string baseUrl = "")
+        {
+            return FormFullLocation(loc, baseUrl, URL_SEP);
+        }
+
+        private static string FormFullLocation(Location loc, string basePart, char sep)
+        {
+            var fullLoc = new StringBuilder();
+
+            if (!string.IsNullOrEmpty(basePart))
+            {
+                fullLoc.Append(basePart);
+            }
+
+            foreach (var block in loc.Path)
+            {
+                if (fullLoc.Length > 0)
+                {
+                    fullLoc.Append(sep);
+                }
+
+                fullLoc.Append(block);
+            }
+
+            if (!string.IsNullOrEmpty(loc.FileName))
+            {
+                if (fullLoc.Length > 0)
+                {
+                    fullLoc.Append(sep);
+                }
+
+                fullLoc.Append(loc.FileName);
+            }
+
+            return fullLoc.ToString();
         }
     }
 }

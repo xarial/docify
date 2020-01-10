@@ -2,7 +2,7 @@
   "profiles": {
     "CLI": {
       "commandName": "Project",
-      "commandLineArgs": "\"D:\\Projects\\Xarial\\open-source\\Docify\\test\\src\" \"D:\\Projects\\Xarial\\open-source\\Docify\\test\\out\""
+      "commandLineArgs": "\"D:\\Projects\\Xarial\\open-source\\Docify\\test\\src\" \"D:\\Projects\\Xarial\\open-source\\Docify\\test\\out\" https://www.test.com"
     }
   }
 }

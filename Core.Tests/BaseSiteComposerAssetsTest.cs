@@ -44,8 +44,8 @@ namespace Core.Tests
             var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.Assets.Count);
-            Assert.AreEqual(1, site.MainPage.Children[0].Assets.Count);
-            Assert.AreEqual("a1", (site.MainPage.Children[0].Assets[0] as TextAsset).RawContent);
+            Assert.AreEqual(1, site.MainPage.SubPages[0].Assets.Count);
+            Assert.AreEqual("a1", (site.MainPage.SubPages[0].Assets[0] as TextAsset).RawContent);
         }
 
         [Test]
@@ -78,9 +78,9 @@ namespace Core.Tests
             var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(2, site.Assets.Count);
-            Assert.AreEqual(2, site.MainPage.Children[0].Assets.Count);
-            Assert.AreEqual("a1", (site.MainPage.Children[0].Assets.Find(a => a.Location.FileName == "asset.txt") as TextAsset).RawContent);
-            Assert.IsTrue(new byte[] { 1, 2, 3 }.SequenceEqual((site.MainPage.Children[0].Assets.Find(a => a.Location.FileName == "asset1.bin") as BinaryAsset).Content));
+            Assert.AreEqual(2, site.MainPage.SubPages[0].Assets.Count);
+            Assert.AreEqual("a1", (site.MainPage.SubPages[0].Assets.Find(a => a.Location.FileName == "asset.txt") as TextAsset).RawContent);
+            Assert.IsTrue(new byte[] { 1, 2, 3 }.SequenceEqual((site.MainPage.SubPages[0].Assets.Find(a => a.Location.FileName == "asset1.bin") as BinaryAsset).Content));
         }
 
         [Test]
@@ -101,19 +101,19 @@ namespace Core.Tests
             var site = m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(4, site.Assets.Count);
-            Assert.AreEqual(1, site.MainPage.Children[0].Assets.Count);
+            Assert.AreEqual(1, site.MainPage.SubPages[0].Assets.Count);
             Assert.AreEqual("a1", (site.MainPage.Assets[0] as TextAsset).RawContent);
             Assert.AreEqual("asset.txt", site.MainPage.Assets[0].Location.FileName);
-            Assert.AreEqual(1, site.MainPage.Children.Find(p => p.Location.ToId() == "page1-index.html").Assets.Count);
-            Assert.AreEqual("a2", (site.MainPage.Children.Find(p => p.Location.ToId() == "page1-index.html").Assets[0] as TextAsset).RawContent);
-            Assert.AreEqual("asset1.txt", site.MainPage.Children.Find(p => p.Location.ToId() == "page1-index.html").Assets[0].Location.FileName);
-            Assert.AreEqual(1, site.MainPage.Children.Find(p => p.Location.ToId() == "page2-index.html").Assets.Count);
-            Assert.AreEqual("a3", (site.MainPage.Children.Find(p => p.Location.ToId() == "page2-index.html").Assets[0] as TextAsset).RawContent);
-            Assert.AreEqual("asset.txt", site.MainPage.Children.Find(p => p.Location.ToId() == "page2-index.html").Assets[0].Location.FileName);
+            Assert.AreEqual(1, site.MainPage.SubPages.Find(p => p.Location.ToId() == "page1-index.html").Assets.Count);
+            Assert.AreEqual("a2", (site.MainPage.SubPages.Find(p => p.Location.ToId() == "page1-index.html").Assets[0] as TextAsset).RawContent);
+            Assert.AreEqual("asset1.txt", site.MainPage.SubPages.Find(p => p.Location.ToId() == "page1-index.html").Assets[0].Location.FileName);
+            Assert.AreEqual(1, site.MainPage.SubPages.Find(p => p.Location.ToId() == "page2-index.html").Assets.Count);
+            Assert.AreEqual("a3", (site.MainPage.SubPages.Find(p => p.Location.ToId() == "page2-index.html").Assets[0] as TextAsset).RawContent);
+            Assert.AreEqual("asset.txt", site.MainPage.SubPages.Find(p => p.Location.ToId() == "page2-index.html").Assets[0].Location.FileName);
 
-            Assert.AreEqual(1, site.MainPage.Children.Find(p => p.Location.ToId() == "page2-index.html").Children[0].Assets.Count);
-            Assert.AreEqual("a4", (site.MainPage.Children.Find(p => p.Location.ToId() == "page2-index.html").Children[0].Assets[0] as TextAsset).RawContent);
-            Assert.AreEqual("asset2.txt", site.MainPage.Children.Find(p => p.Location.ToId() == "page2-index.html").Children[0].Assets[0].Location.FileName);
+            Assert.AreEqual(1, site.MainPage.SubPages.Find(p => p.Location.ToId() == "page2-index.html").SubPages[0].Assets.Count);
+            Assert.AreEqual("a4", (site.MainPage.SubPages.Find(p => p.Location.ToId() == "page2-index.html").SubPages[0].Assets[0] as TextAsset).RawContent);
+            Assert.AreEqual("asset2.txt", site.MainPage.SubPages.Find(p => p.Location.ToId() == "page2-index.html").SubPages[0].Assets[0].Location.FileName);
         }
     }
 }

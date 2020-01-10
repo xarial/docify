@@ -14,6 +14,7 @@ using Xarial.Docify.Core.Loader;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base;
 
 namespace Core.Tests
 {
@@ -22,7 +23,7 @@ namespace Core.Tests
         [Test]
         public async Task Load_TextAndBinaryTest() 
         {
-            var loader = new LocalFileSystemLoader(new LocalFileSystemLoaderConfig(@"C:\site", null),
+            var loader = new LocalFileSystemLoader(new LocalFileSystemLoaderConfig(@"C:\site", new string[0]),
             new MockFileSystem(new Dictionary<string, MockFileData>() 
             {
                 { @"C:\page2.md", null },

@@ -19,17 +19,14 @@ namespace Xarial.Docify.Core.Compiler
             AutoDetect = 0,
             NoParallelism = 1
         }
-
-        public string SiteUrl { get; }
-
+        
         /// <summary>
         /// Number of partitions for parallel job. See <see cref="ParallelPartitions_e"/> for options
         /// </summary>
         public int ParallelPartitionsCount { get; set; }
 
-        public BaseCompilerConfig(string siteUrl)
+        public BaseCompilerConfig()
         {
-            SiteUrl = siteUrl;
             ParallelPartitionsCount = (int)ParallelPartitions_e.NoParallelism;
         }
     }

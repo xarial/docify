@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler;
@@ -31,13 +32,17 @@ namespace Xarial.Docify.CLI
 
     public class DocifyEngine : IDocifyEngine
     {
-        private IContainer m_Container;
+        private readonly IContainer m_Container;
 
-        public DocifyEngine(string srcDir, string outDir) 
+        private readonly string m_SiteUrl;
+
+        public DocifyEngine(string srcDir, string outDir, string siteUrl) 
         {
             var builder = new ContainerBuilder();
+            m_SiteUrl = siteUrl;
 
             builder.RegisterType<LocalFileSystemLoaderConfig>()
+                .UsingConstructor(typeof(string), typeof(Configuration))
                 .WithParameter(new TypedParameter(typeof(string), srcDir));
 
             builder.RegisterType<BaseCompilerConfig>()
@@ -65,7 +70,13 @@ namespace Xarial.Docify.CLI
                 .As<IContentTransformer>()
                 .UsingConstructor(typeof(Func<IContentTransformer, IIncludesHandler>));
 
-            builder.RegisterType<BaseCompiler>().As<ICompiler>();
+            builder.RegisterType<LocalFileSystemConfigurationLoader>().As<IConfigurationLoader>()
+                .WithParameter(new TypedParameter(typeof(string), srcDir));
+
+            builder.RegisterType<BaseCompiler>().As<ICompiler>()
+                .WithParameter(new TypedParameter(typeof(string), srcDir));
+
+            builder.Register(c => c.Resolve<IConfigurationLoader>().Load().Result);
 
             m_Container = builder.Build();
         }
@@ -79,12 +90,12 @@ namespace Xarial.Docify.CLI
 
             var elems = await loader.Load();
 
-            var site = composer.ComposeSite(elems, "");
+            var site = composer.ComposeSite(elems, m_SiteUrl);
 
             await compiler.Compile(site);
 
             var writables = Enumerable.Empty<IWritable>();
-            writables = writables.Union(site.MainPage.GetAllPages());
+            writables = writables.Union(site.GetAllPages());
             writables = writables.Union(site.Assets);
 
             await publisher.Write(writables);

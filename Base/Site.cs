@@ -30,4 +30,17 @@ namespace Xarial.Docify.Base
             Includes = new List<Template>();
         }
     }
+
+    public static class SiteExtension 
+    {
+        public static IEnumerable<Page> GetAllPages(this Site site) 
+        {
+            yield return site.MainPage;
+
+            foreach (var childPage in site.MainPage.GetAllSubPages()) 
+            {
+                yield return childPage;
+            }
+        }
+    }
 }

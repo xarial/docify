@@ -28,7 +28,7 @@ namespace Xarial.Docify.Core.Loader
         private readonly string[] m_TextFilesExtentions = new string[]
         {
             "htm", "html", "cshtml", "md", 
-            "xml", "json", "yaml",
+            "xml", "json", "yml",
             "css", "js", "ts",
             "txt", "csv", "tsv"
         };

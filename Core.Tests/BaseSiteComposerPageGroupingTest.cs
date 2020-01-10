@@ -42,12 +42,12 @@ namespace Core.Tests
 
             var site = m_Composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, site.MainPage.Children.Count);
+            Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("index.html", site.MainPage.Location.ToId());
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.AreEqual(0, site.MainPage.Children[0].Children.Count);
-            Assert.AreEqual("page1-index.html", site.MainPage.Children[0].Location.ToId());
-            Assert.AreEqual("p1", site.MainPage.Children[0].RawContent);
+            Assert.AreEqual(0, site.MainPage.SubPages[0].SubPages.Count);
+            Assert.AreEqual("page1-index.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
         }
 
         [Test]
@@ -61,10 +61,10 @@ namespace Core.Tests
             
             var site = m_Composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, site.MainPage.Children.Count);
+            Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.AreEqual("page1.html", site.MainPage.Children[0].Location.ToId());
-            Assert.AreEqual("p1", site.MainPage.Children[0].RawContent);
+            Assert.AreEqual("page1.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
         }
 
         [Test]
@@ -78,13 +78,13 @@ namespace Core.Tests
 
             var site = m_Composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, site.MainPage.Children.Count);
+            Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.AreEqual("page1-index.html", site.MainPage.Children[0].Location.ToId());
-            Assert.IsTrue(string.IsNullOrEmpty(site.MainPage.Children[0].RawContent));
-            Assert.AreEqual(1, site.MainPage.Children[0].Children.Count);
-            Assert.AreEqual("page1-page2-index.html", site.MainPage.Children[0].Children[0].Location.ToId());
-            Assert.AreEqual("p2", site.MainPage.Children[0].Children[0].RawContent);
+            Assert.AreEqual("page1-index.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.IsTrue(string.IsNullOrEmpty(site.MainPage.SubPages[0].RawContent));
+            Assert.AreEqual(1, site.MainPage.SubPages[0].SubPages.Count);
+            Assert.AreEqual("page1-page2-index.html", site.MainPage.SubPages[0].SubPages[0].Location.ToId());
+            Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
         }
 
         [Test]
@@ -99,13 +99,13 @@ namespace Core.Tests
 
             var site = m_Composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, site.MainPage.Children.Count);
+            Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.AreEqual("page1-index.html", site.MainPage.Children[0].Location.ToId());
-            Assert.AreEqual("p1", site.MainPage.Children[0].RawContent);
-            Assert.AreEqual(1, site.MainPage.Children[0].Children.Count);
-            Assert.AreEqual("page1-page2-index.html", site.MainPage.Children[0].Children[0].Location.ToId());
-            Assert.AreEqual("p2", site.MainPage.Children[0].Children[0].RawContent);
+            Assert.AreEqual("page1-index.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
+            Assert.AreEqual(1, site.MainPage.SubPages[0].SubPages.Count);
+            Assert.AreEqual("page1-page2-index.html", site.MainPage.SubPages[0].SubPages[0].Location.ToId());
+            Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
         }
 
         [Test]
@@ -119,13 +119,13 @@ namespace Core.Tests
 
             var site = m_Composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, site.MainPage.Children.Count);
+            Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.AreEqual("page1-index.html", site.MainPage.Children[0].Location.ToId());
-            Assert.IsTrue(string.IsNullOrEmpty(site.MainPage.Children[0].RawContent));
-            Assert.AreEqual(1, site.MainPage.Children[0].Children.Count);
-            Assert.AreEqual("page1-page2.html", site.MainPage.Children[0].Children[0].Location.ToId());
-            Assert.AreEqual("p2", site.MainPage.Children[0].Children[0].RawContent);
+            Assert.AreEqual("page1-index.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.IsTrue(string.IsNullOrEmpty(site.MainPage.SubPages[0].RawContent));
+            Assert.AreEqual(1, site.MainPage.SubPages[0].SubPages.Count);
+            Assert.AreEqual("page1-page2.html", site.MainPage.SubPages[0].SubPages[0].Location.ToId());
+            Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
         }
 
         [Test]
@@ -140,13 +140,13 @@ namespace Core.Tests
 
             var site = m_Composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, site.MainPage.Children.Count);
+            Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.AreEqual("page1-index.html", site.MainPage.Children[0].Location.ToId());
-            Assert.AreEqual("p1", site.MainPage.Children[0].RawContent);
-            Assert.AreEqual(1, site.MainPage.Children[0].Children.Count);
-            Assert.AreEqual("page1-page2.html", site.MainPage.Children[0].Children[0].Location.ToId());
-            Assert.AreEqual("p2", site.MainPage.Children[0].Children[0].RawContent);
+            Assert.AreEqual("page1-index.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
+            Assert.AreEqual(1, site.MainPage.SubPages[0].SubPages.Count);
+            Assert.AreEqual("page1-page2.html", site.MainPage.SubPages[0].SubPages[0].Location.ToId());
+            Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
         }
 
         [Test]
@@ -175,15 +175,15 @@ namespace Core.Tests
 
             var site = m_Composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, site.MainPage.Children.Count);
+            Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            StringAssert.AreEqualIgnoringCase("page1-index.html", site.MainPage.Children[0].Location.ToId());
-            Assert.AreEqual("p1", site.MainPage.Children[0].RawContent);
-            Assert.AreEqual(2, site.MainPage.Children[0].Children.Count);
-            StringAssert.AreEqualIgnoringCase("page1-page2-index.html", site.MainPage.Children[0].Children[0].Location.ToId());
-            Assert.AreEqual("p2", site.MainPage.Children[0].Children[0].RawContent);
-            StringAssert.AreEqualIgnoringCase("page1-page3-index.html", site.MainPage.Children[0].Children[1].Location.ToId());
-            Assert.AreEqual("p3", site.MainPage.Children[0].Children[1].RawContent);
+            StringAssert.AreEqualIgnoringCase("page1-index.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
+            Assert.AreEqual(2, site.MainPage.SubPages[0].SubPages.Count);
+            StringAssert.AreEqualIgnoringCase("page1-page2-index.html", site.MainPage.SubPages[0].SubPages[0].Location.ToId());
+            Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
+            StringAssert.AreEqualIgnoringCase("page1-page3-index.html", site.MainPage.SubPages[0].SubPages[1].Location.ToId());
+            Assert.AreEqual("p3", site.MainPage.SubPages[0].SubPages[1].RawContent);
         }
 
         [Test]
@@ -222,15 +222,15 @@ namespace Core.Tests
 
             var site = m_Composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, site.MainPage.Children.Count);
+            Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.AreEqual("page1-index.html", site.MainPage.Children[0].Location.ToId());
-            Assert.AreEqual("p1", site.MainPage.Children[0].RawContent);
-            Assert.AreEqual(2, site.MainPage.Children[0].Children.Count);
-            Assert.AreEqual("page1-page2-index.html", site.MainPage.Children[0].Children[0].Location.ToId());
-            Assert.AreEqual("p2", site.MainPage.Children[0].Children[0].RawContent);
-            Assert.AreEqual("page1-page3-index.html", site.MainPage.Children[0].Children[1].Location.ToId());
-            Assert.AreEqual("p3", site.MainPage.Children[0].Children[1].RawContent);
+            Assert.AreEqual("page1-index.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
+            Assert.AreEqual(2, site.MainPage.SubPages[0].SubPages.Count);
+            Assert.AreEqual("page1-page2-index.html", site.MainPage.SubPages[0].SubPages[0].Location.ToId());
+            Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
+            Assert.AreEqual("page1-page3-index.html", site.MainPage.SubPages[0].SubPages[1].Location.ToId());
+            Assert.AreEqual("p3", site.MainPage.SubPages[0].SubPages[1].RawContent);
         }
 
         [Test]
@@ -246,12 +246,12 @@ namespace Core.Tests
 
             var site = m_Composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, site.MainPage.Children.Count);
+            Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("index.html", site.MainPage.Location.ToId());
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.AreEqual(0, site.MainPage.Children[0].Children.Count);
-            Assert.AreEqual("page1-index.html", site.MainPage.Children[0].Location.ToId());
-            Assert.AreEqual("p1", site.MainPage.Children[0].RawContent);
+            Assert.AreEqual(0, site.MainPage.SubPages[0].SubPages.Count);
+            Assert.AreEqual("page1-index.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
         }
 
         [Test]

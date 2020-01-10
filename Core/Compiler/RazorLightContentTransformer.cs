@@ -6,6 +6,7 @@
 //*********************************************************************
 
 using RazorLight;
+using RazorLight.Razor;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,22 +24,33 @@ namespace Xarial.Docify.Core.Compiler
         public RazorLightContentTransformer() 
         {
             m_RazorEngine = new RazorLightEngineBuilder()
+                .AddDefaultNamespaces(typeof(Site).Namespace)
                 .UseMemoryCachingProvider()
+                .UseEmbeddedResourcesProject(typeof(Site))
                 .Build();
         }
         
         public async Task<string> Transform(string content, string key, IContextModel model)
         {
-            var html = content;
-
             if (HasRazorCode(content))
             {
-                html = await m_RazorEngine.CompileRenderAsync(
-                    key, html, model, model?.GetType());
-            }
+                var html = content;
 
-            return html;
+                html = await m_RazorEngine.CompileRenderStringAsync(
+                    key, html, model);
+
+                return html;
+            }
+            else 
+            {
+                return content;
+            }
         }
+
+        //private string GetRazorPageContent(string content, Type modelType)
+        //{
+        //    return $"@model {modelType.FullName}\r\n" + content;
+        //}
 
         private bool HasRazorCode(string content)
         {

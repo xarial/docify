@@ -59,50 +59,5 @@ namespace Core.Tests.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to # Header1
-        ///## Header2
-        ///
-        ///[link](https://www.google.com)
-        ///
-        ///*italic* text and **bold** text
-        ///
-        ///~~~cs
-        ///var a = new Class1();
-        ///a.DoWork(&quot;Hello World&quot;);
-        ///~~~
-        ///
-        ///&lt;div&gt;
-        ///&lt;b&gt;Some text&lt;/b&gt; inside div
-        ///&lt;/div&gt;
-        ///
-        ///&gt; Quote
-        ///
-        ///&lt;div&gt;
-        ///    @foreach (var item in Model.Pages) {    
-        ///        &lt;a href=&quot;@item.Url&quot;&gt;@item.Label&lt;/a&gt;
-        ///    }
-        ///&lt;/div&gt;
-        ///
-        ///More text
-        ///
-        ///* Item 1
-        ///* Item 2
-        ///	* Sub Item1
-        ///	* Sub Item2
-        ///		* Sub Sub Item1
-        ///* Item 3
-        ///
-        ///1. ListItem1
-        ///1. ListItem2
-        ///	1. SubListItem1
-        ///1. ListItem3.
-        /// </summary>
-        internal static string Sample1 {
-            get {
-                return ResourceManager.GetString("Sample1", resourceCulture);
-            }
-        }
     }
 }

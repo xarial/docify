@@ -32,7 +32,7 @@ namespace Core.Tests
             contTransMock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IContextModel>()))
                 .Returns<string, string, IContextModel>((c, k, m) => Task.FromResult(
                     c.Replace("_FN_", (m as ContextModel).Page.Location.FileName)
-                    .Replace("_CC_", (m as ContextModel).Site.MainPage.Children.Count.ToString())));
+                    .Replace("_CC_", (m as ContextModel).Site.MainPage.SubPages.Count.ToString())));
 
             var layoutMock = new Mock<ILayoutParser>();
 
@@ -42,7 +42,7 @@ namespace Core.Tests
             layoutMock.Setup(m => m.InsertContent(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns<string, string>((c, i) => c.Replace("_C_", i));
 
-            m_Compiler = new BaseCompiler(new BaseCompilerConfig(""),
+            m_Compiler = new BaseCompiler(new BaseCompilerConfig(),
                 new Mock<ILogger>().Object,
                 new Mock<IPublisher>().Object,
                 layoutMock.Object,
@@ -69,19 +69,19 @@ namespace Core.Tests
             var site = new Site("", p1);
 
             var p2 = new Page(new Location("page2.html"), "P2");
-            p1.Children.Add(p2);
-            p2.Children.Add(new Page(new Location("page3.html"), "P3"));
+            p1.SubPages.Add(p2);
+            p2.SubPages.Add(new Page(new Location("page3.html"), "P3"));
             var p4 = new Page(new Location("page4.html"), "P4");
-            p2.Children.Add(p4);
-            p4.Children.Add(new Page(new Location("page5.html"), "P5"));
+            p2.SubPages.Add(p4);
+            p4.SubPages.Add(new Page(new Location("page5.html"), "P5"));
 
             await m_Compiler.Compile(site);
 
             Assert.AreEqual("P1", site.MainPage.Content);
-            Assert.AreEqual("P2", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Content);
-            Assert.AreEqual("P3", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Children.First(p => p.Location.ToId() == "page3.html").Content);
-            Assert.AreEqual("P4", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Children.First(p => p.Location.ToId() == "page4.html").Content);
-            Assert.AreEqual("P5", site.MainPage.Children.First(p => p.Location.ToId() == "page2.html").Children.First(p => p.Location.ToId() == "page4.html").Children.First(p => p.Location.ToId() == "page5.html").Content);
+            Assert.AreEqual("P2", site.MainPage.SubPages.First(p => p.Location.ToId() == "page2.html").Content);
+            Assert.AreEqual("P3", site.MainPage.SubPages.First(p => p.Location.ToId() == "page2.html").SubPages.First(p => p.Location.ToId() == "page3.html").Content);
+            Assert.AreEqual("P4", site.MainPage.SubPages.First(p => p.Location.ToId() == "page2.html").SubPages.First(p => p.Location.ToId() == "page4.html").Content);
+            Assert.AreEqual("P5", site.MainPage.SubPages.First(p => p.Location.ToId() == "page2.html").SubPages.First(p => p.Location.ToId() == "page4.html").SubPages.First(p => p.Location.ToId() == "page5.html").Content);
         }
 
         [Test]
@@ -119,14 +119,14 @@ namespace Core.Tests
 
             var p1 = new Page(new Location("page1.html"), "Page1 _FN_", t1);
 
-            p1.Children.Add(new Page(new Location("page2.html"), "Page2 _FN_", t1));
+            p1.SubPages.Add(new Page(new Location("page2.html"), "Page2 _FN_", t1));
 
             var site = new Site("", p1);
 
             await m_Compiler.Compile(site);
 
             Assert.AreEqual("T2 page1.html T1 page1.html Page1 page1.html T1 T2", site.MainPage.Content);
-            Assert.AreEqual("T2 page2.html T1 page2.html Page2 page2.html T1 T2", site.MainPage.Children[0].Content);
+            Assert.AreEqual("T2 page2.html T1 page2.html Page2 page2.html T1 T2", site.MainPage.SubPages[0].Content);
         }
     }
 }

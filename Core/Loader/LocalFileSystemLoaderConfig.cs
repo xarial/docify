@@ -18,17 +18,23 @@ namespace Xarial.Docify.Core.Loader
     {
         private const string IGNORE_FILE_PARAM_NAME = "ignore";
 
-        public string Path { get; }
         public List<string> Ignore { get; }
 
-        public LocalFileSystemLoaderConfig(string path, IEnumerable<string> ignore)
+        public List<string> TextFileExtensions { get; } = new List<string>(new string[]
         {
-            Path = path;
+            "htm", "html", "cshtml", "md",
+            "xml", "json", "yml",
+            "css", "js", "ts",
+            "txt", "csv", "tsv"
+        });
+
+        public LocalFileSystemLoaderConfig(IEnumerable<string> ignore)
+        {
             Ignore = ignore?.ToList() ?? new List<string>();
         }
 
-        public LocalFileSystemLoaderConfig(string path, Configuration conf) 
-            : this(path, GetIgnoreFiles(conf))
+        public LocalFileSystemLoaderConfig(Configuration conf) 
+            : this(GetIgnoreFiles(conf))
         {
         }
 

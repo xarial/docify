@@ -15,6 +15,6 @@ namespace Xarial.Docify.Base.Services
 {
     public interface IConfigurationLoader
     {
-        Task<Configuration> Load();
+        Task<Configuration> Load(Location location);
     }
 }

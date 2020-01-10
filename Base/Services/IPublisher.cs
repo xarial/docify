@@ -15,6 +15,6 @@ namespace Xarial.Docify.Base.Services
 {
     public interface IPublisher
     {
-        Task Write(IEnumerable<IWritable> writables);
+        Task Write(Location loc, IEnumerable<IWritable> writables);
     }
 }

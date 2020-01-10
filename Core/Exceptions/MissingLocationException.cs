@@ -11,9 +11,9 @@ using System.Text;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class MissingFragmentException : Exception
+    public class MissingLocationException : Exception
     {
-        public MissingFragmentException(string fragName, string fragDir) : base($"Fragment '{fragName}' cannot be found in '{fragDir}'")
+        public MissingLocationException(string loc) : base($"'{loc}' location doesn't exist")
         { 
         }
     }

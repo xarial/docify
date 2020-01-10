@@ -33,11 +33,13 @@ namespace Xarial.Docify.Core.Publisher
             m_FileSystem = fileSystem;
         }
 
-        public async Task Write(IEnumerable<IWritable> writables)
+        public async Task Write(Location loc, IEnumerable<IWritable> writables)
         {
-            if (m_FileSystem.Directory.Exists(m_Config.OutDir))
+            var outDir = loc.ToPath();
+
+            if (m_FileSystem.Directory.Exists(outDir))
             {
-                m_FileSystem.Directory.Delete(m_Config.OutDir, true);
+                m_FileSystem.Directory.Delete(outDir, true);
             }
 
             foreach (var writable in writables)
@@ -46,7 +48,7 @@ namespace Xarial.Docify.Core.Publisher
 
                 if (!Path.IsPathRooted(outFilePath)) 
                 {
-                    outFilePath = Path.Combine(m_Config.OutDir, outFilePath);
+                    outFilePath = Path.Combine(outDir, outFilePath);
                 }
                 
                 var dir = Path.GetDirectoryName(outFilePath);

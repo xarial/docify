@@ -37,21 +37,23 @@ namespace Xarial.Docify.CLI
         private readonly IContainer m_Container;
 
         private readonly string m_SiteUrl;
+        private readonly string m_SrcDir;
+        private readonly string m_OutDir;
 
         public DocifyEngine(string srcDir, string outDir, string siteUrl, Environment_e env) 
         {
             var builder = new ContainerBuilder();
             m_SiteUrl = siteUrl;
+            m_SrcDir = srcDir;
+            m_OutDir = outDir;
 
             builder.RegisterType<LocalFileSystemLoaderConfig>()
-                .UsingConstructor(typeof(string), typeof(Configuration))
-                .WithParameter(new TypedParameter(typeof(string), srcDir));
+                .UsingConstructor(typeof(Configuration));
 
             builder.RegisterType<BaseCompilerConfig>()
                 .WithParameter(new TypedParameter(typeof(string), ""));
 
-            builder.RegisterType<LocalFileSystemPublisherConfig>()
-                .WithParameter(new TypedParameter(typeof(string), outDir));
+            builder.RegisterType<LocalFileSystemPublisherConfig>();
             
             builder.RegisterType<LocalFileSystemPublisher>()
                 .As<IPublisher>();
@@ -79,13 +81,11 @@ namespace Xarial.Docify.CLI
                 .UsingConstructor(typeof(MarkdigMarkdownContentTransformer), typeof(RazorLightContentTransformer));
 
             builder.RegisterType<LocalFileSystemConfigurationLoader>().As<IConfigurationLoader>()
-                .WithParameter(new TypedParameter(typeof(string), srcDir))
                 .WithParameter(new TypedParameter(typeof(Environment_e), env));
 
-            builder.RegisterType<BaseCompiler>().As<ICompiler>()
-                .WithParameter(new TypedParameter(typeof(string), srcDir));
+            builder.RegisterType<BaseCompiler>().As<ICompiler>();
 
-            builder.Register(c => c.Resolve<IConfigurationLoader>().Load().Result);
+            builder.Register(c => c.Resolve<IConfigurationLoader>().Load(Location.FromPath(m_SrcDir)).Result);
 
             m_Container = builder.Build();
         }
@@ -97,9 +97,12 @@ namespace Xarial.Docify.CLI
             var compiler = Resove<ICompiler>();
             var publisher = Resove<IPublisher>();
 
-            var elems = await loader.Load();
+            var srcFiles = await loader.Load(Location.FromPath(m_SrcDir));
 
-            var site = composer.ComposeSite(elems, m_SiteUrl);
+            var fragmentsLoader = Resove<IFragmentsLoader>();
+            srcFiles = await fragmentsLoader.Load(srcFiles);
+
+            var site = composer.ComposeSite(srcFiles, m_SiteUrl);
 
             await compiler.Compile(site);
 
@@ -107,7 +110,7 @@ namespace Xarial.Docify.CLI
             writables = writables.Union(site.GetAllPages());
             writables = writables.Union(site.Assets);
 
-            await publisher.Write(writables);
+            await publisher.Write(Location.FromPath(m_OutDir), writables);
         }
 
         public T Resove<T>() 

@@ -8,13 +8,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
-using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Base.Services
+namespace Xarial.Docify.Core.Exceptions
 {
-    public interface IFragmentsLoader
+    public class DuplicateFragmentSourceFileException : Exception
     {
-        Task<IEnumerable<ISourceFile>> Load(IEnumerable<ISourceFile> srcFiles);
+        public DuplicateFragmentSourceFileException(string fragmentName, string id)
+            : base($"Specified file '{id}' from '{fragmentName}' fragment already present in the source files")
+        {
+        }
     }
 }

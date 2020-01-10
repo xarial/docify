@@ -13,11 +13,5 @@ namespace Xarial.Docify.Core.Publisher
 {
     public class LocalFileSystemPublisherConfig
     {
-        public string OutDir { get; }
-
-        public LocalFileSystemPublisherConfig(string outDir)
-        {
-            OutDir = outDir;
-        }
     }
 }

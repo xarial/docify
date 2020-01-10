@@ -9,7 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
@@ -19,37 +21,60 @@ namespace Xarial.Docify.Core.Loader
 {
     public class LocalFileSystemFragmentsLoader : IFragmentsLoader
     {
-        private readonly IFileSystem m_FileSystem;
+        private readonly ILoader m_Loader;
+        private readonly Configuration m_Config;
 
-        public LocalFileSystemFragmentsLoader() : this (new FileSystem())
+        public LocalFileSystemFragmentsLoader(ILoader loader, Configuration conf)
         {
+            m_Loader = loader;
+            m_Config = conf;
         }
 
-        public LocalFileSystemFragmentsLoader(IFileSystem fs) 
+        public async Task<IEnumerable<ISourceFile>> Load(IEnumerable<ISourceFile> srcFiles)
         {
-            m_FileSystem = fs;
-        }
-
-        public IEnumerable<ISourceFile> GetFiles(Location fragmentsLoc, params string[] fragments)
-        {
-            var path = fragmentsLoc.ToPath();
-
-            foreach (var fragment in fragments) 
+            if (srcFiles == null)
             {
-                var fragmentDir = Path.Combine(path, fragment);
+                srcFiles = Enumerable.Empty<ISourceFile>();
+            }
 
-                if (!m_FileSystem.Directory.Exists(fragmentDir)) 
-                {
-                    throw new MissingFragmentException(fragment, fragmentDir);
-                }
+            var resFiles = srcFiles.ToDictionary(f => f.Location.ToId(), f => f, StringComparer.CurrentCultureIgnoreCase);
 
-                foreach (var file in m_FileSystem.Directory.GetFiles(fragmentDir)) 
+            if (m_Config.Fragments?.Any() == true)
+            {
+                foreach (var fragment in m_Config.Fragments)
                 {
-                     
+                    await AddFiles(resFiles, m_Config.FragmentsFolder.Combine(fragment), fragment);
                 }
             }
 
-            return null;
+            if (!string.IsNullOrEmpty(m_Config.Theme)) 
+            {
+                await AddFiles(resFiles, m_Config.ThemesFolder.Combine(m_Config.Theme), m_Config.Theme);
+            }
+
+            return resFiles.Values;
+        }
+
+        private async Task AddFiles(Dictionary<string, ISourceFile> srcFiles, Location loc, string fragName) 
+        {
+            var newSrcFiles = await m_Loader.Load(loc);
+
+            if (newSrcFiles != null) 
+            {
+                foreach (var newSrcFile in newSrcFiles) 
+                {
+                    var id = newSrcFile.Location.ToId();
+
+                    if (!srcFiles.ContainsKey(id))
+                    {
+                        srcFiles.Add(id, newSrcFile);
+                    }
+                    else 
+                    {
+                        throw new DuplicateFragmentSourceFileException(fragName, id);
+                    }
+                }
+            }
         }
     }
 }

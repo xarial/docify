@@ -14,8 +14,6 @@ namespace Xarial.Docify.Base.Services
 {
     public interface ICompiler
     {
-        IPublisher Publisher { get; }
-        ILogger Logger { get; }
         Task Compile(Site site);
     }
 }

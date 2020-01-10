@@ -60,7 +60,6 @@ namespace Core.Tests
 
             m_Compiler = new BaseCompiler(new BaseCompilerConfig(),
                 new Mock<ILogger>().Object,
-                new Mock<IPublisher>().Object,
                 layoutMock.Object,
                 contTransMock.Object);
         }

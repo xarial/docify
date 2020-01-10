@@ -12,25 +12,25 @@ namespace Xarial.Docify.Base.Data
 {
     public interface IConfiguration 
     {
-        Environment_e Environment { get; }
+        Environment_e Environment { get; set; }
     }
 
     public class Configuration : Metadata, IConfiguration
     {
         public Environment_e Environment { get; set; }
         public string WorkingFolder { get; set; }
-        public string FragmentsFolder { get; set; }
+        public Location FragmentsFolder { get; set; }
         public List<string> Fragments { get; set; }
-        public string ThemesFolder { get; set; }
+        public Location ThemesFolder { get; set; }
         public string Theme { get; set; }
-
-        public Configuration(Environment_e env) : this(new Dictionary<string, dynamic>(), env)
+        
+        public Configuration() : this(new Dictionary<string, dynamic>())
         {
         }
 
-        public Configuration(IDictionary<string, dynamic> parameters, Environment_e env) : base(parameters) 
+        public Configuration(IDictionary<string, dynamic> parameters) : base(parameters) 
         {
-            Environment = env;
+            Environment = Environment_e.Test;
         }
     }
 }

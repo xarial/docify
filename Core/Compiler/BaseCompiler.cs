@@ -24,22 +24,17 @@ namespace Xarial.Docify.Core.Compiler
 {
     public class BaseCompiler : ICompiler
     {
-        public ILogger Logger { get; }
-
-        public IPublisher Publisher { get; }
+        private readonly ILogger m_Logger;
         private readonly IContentTransformer m_ContentTransformer;
-
         private readonly BaseCompilerConfig m_Config;
-
         private readonly ILayoutParser m_LayoutParser;
 
         public BaseCompiler(BaseCompilerConfig config,
-            ILogger logger, IPublisher publisher, ILayoutParser layoutParser,
+            ILogger logger, ILayoutParser layoutParser,
             IContentTransformer contentTransformer) 
         {
             m_Config = config;
-            Logger = logger;
-            Publisher = publisher;
+            m_Logger = logger;
             m_LayoutParser = layoutParser;
             m_ContentTransformer = contentTransformer;
         }

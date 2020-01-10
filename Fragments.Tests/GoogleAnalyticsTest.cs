@@ -27,7 +27,7 @@ namespace Fragments.Tests
         {
             var p1 = new Page(Location.FromPath("index.html"), "");
             
-            var site = new Site("www.example.com", null, new Configuration(env));
+            var site = new Site("www.example.com", null, new Configuration() { Environment = env });
 
             return FragmentTest.InsertIncludeToPageNormalize(@"google-analytics\_includes\google-analytics.cshtml", param, site, p1);
         }

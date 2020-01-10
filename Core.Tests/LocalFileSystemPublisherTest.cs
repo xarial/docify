@@ -26,7 +26,7 @@ namespace Core.Tests
         public async Task WriteTextTest() 
         {
             var fs = new MockFileSystem();
-            var publisher = new LocalFileSystemPublisher(new LocalFileSystemPublisherConfig("C:\\site"), fs);
+            var publisher = new LocalFileSystemPublisher(new LocalFileSystemPublisherConfig(), fs);
 
             var pages = new Page[]
             {
@@ -35,7 +35,7 @@ namespace Core.Tests
                 new Page(Location.FromPath("C:\\external\\page3.html"), "") { Content  = "xyz" },
             };
 
-            await publisher.Write(pages);
+            await publisher.Write(Location.FromPath("C:\\site"), pages);
 
             Assert.AreEqual(2, fs.Directory.GetFiles("C:\\site", "*.*", System.IO.SearchOption.AllDirectories).Length);
             Assert.IsTrue(fs.File.Exists("C:\\site\\page1.html"));
@@ -50,14 +50,14 @@ namespace Core.Tests
         public async Task WriteBinaryTest()
         {
             var fs = new MockFileSystem();
-            var publisher = new LocalFileSystemPublisher(new LocalFileSystemPublisherConfig("C:\\site"), fs);
+            var publisher = new LocalFileSystemPublisher(new LocalFileSystemPublisherConfig(), fs);
 
             var assets = new BinaryAsset[]
             {
                 new BinaryAsset(new byte[] { 1,2,3 }, Location.FromPath("file.bin"))
             };
 
-            await publisher.Write(assets);
+            await publisher.Write(Location.FromPath("C:\\site"), assets);
 
             Assert.AreEqual(1, fs.Directory.GetFiles("C:\\site", "*.*", System.IO.SearchOption.AllDirectories).Length);
             Assert.IsTrue(fs.File.Exists("C:\\site\\file.bin"));

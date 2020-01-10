@@ -26,13 +26,11 @@ namespace Xarial.Docify.Core.Composer
 
         private readonly ILayoutParser m_LayoutParser;
         private readonly Configuration m_Config;
-        private readonly IFragmentsLoader m_FragmentsLoader;
-
-        public BaseSiteComposer(ILayoutParser parser, IFragmentsLoader fragmentsLoader, Configuration config) 
+        
+        public BaseSiteComposer(ILayoutParser parser, Configuration config) 
         {
             m_LayoutParser = parser;
             m_Config = config;
-            m_FragmentsLoader = fragmentsLoader;
         }
 
         private bool IsPage(ISourceFile srcFile) 
@@ -100,7 +98,6 @@ namespace Xarial.Docify.Core.Composer
         {
             if (files?.Any() == true)
             {
-
                 GroupSourceFiles(files, 
                     out IEnumerable<ITextSourceFile> srcPages, 
                     out IEnumerable<ITextSourceFile> srcLayouts,

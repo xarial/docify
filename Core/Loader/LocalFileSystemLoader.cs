@@ -17,6 +17,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Data;
+using Xarial.Docify.Core.Exceptions;
 
 namespace Xarial.Docify.Core.Loader
 {
@@ -24,14 +25,6 @@ namespace Xarial.Docify.Core.Loader
     {
         private readonly LocalFileSystemLoaderConfig m_Config;
         private readonly IFileSystem m_FileSystem;
-
-        private readonly string[] m_TextFilesExtentions = new string[]
-        {
-            "htm", "html", "cshtml", "md", 
-            "xml", "json", "yml",
-            "css", "js", "ts",
-            "txt", "csv", "tsv"
-        };
 
         public LocalFileSystemLoader(LocalFileSystemLoaderConfig config)
             : this(config, new FileSystem())
@@ -44,7 +37,7 @@ namespace Xarial.Docify.Core.Loader
             m_FileSystem = fileSystem;
         }
 
-        public async Task<IEnumerable<ISourceFile>> Load()
+        public async Task<IEnumerable<ISourceFile>> Load(Location location)
         {
             var files = new List<ISourceFile>();
 
@@ -52,10 +45,17 @@ namespace Xarial.Docify.Core.Loader
             var ignoreRegex = m_Config.Ignore.Select(
                 i => "^" + Regex.Escape(i).Replace("\\*", ".*").Replace("\\?", ".") + "$").ToArray();
 
-            foreach (var filePath in m_FileSystem.Directory.GetFiles(m_Config.Path, 
+            var path = location.ToPath();
+
+            if (!m_FileSystem.Directory.Exists(path)) 
+            {
+                throw new MissingLocationException(path);
+            }
+
+            foreach (var filePath in m_FileSystem.Directory.GetFiles(path, 
                 "*.*", System.IO.SearchOption.AllDirectories))
             {
-                var relPath = Path.GetRelativePath(m_Config.Path, filePath);
+                var relPath = Path.GetRelativePath(path, filePath);
 
                 if (!ignoreRegex.Any(i => Regex.IsMatch(relPath, i, RegexOptions.IgnoreCase)))
                 {
@@ -81,7 +81,7 @@ namespace Xarial.Docify.Core.Loader
         {
             var ext = Path.GetExtension(filePath).TrimStart('.');
 
-            return m_TextFilesExtentions.Contains(ext, StringComparer.CurrentCultureIgnoreCase);
+            return m_Config.TextFileExtensions.Contains(ext, StringComparer.CurrentCultureIgnoreCase);
         }
     }
 }

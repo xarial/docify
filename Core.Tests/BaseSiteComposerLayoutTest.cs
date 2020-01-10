@@ -31,7 +31,7 @@ namespace Core.Tests
             layoutMock.Setup(m => m.ContainsPlaceholder(It.IsAny<string>()))
                 .Returns<string>(c => c.Contains("_C_"));
 
-            m_Composer = new BaseSiteComposer(layoutMock.Object, new Mock<IFragmentsLoader>().Object, null);
+            m_Composer = new BaseSiteComposer(layoutMock.Object, null);
         }
 
         [Test]

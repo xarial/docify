@@ -15,6 +15,7 @@ using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base;
+using Xarial.Docify.Core.Exceptions;
 
 namespace Core.Tests
 {
@@ -23,7 +24,7 @@ namespace Core.Tests
         [Test]
         public async Task Load_TextAndBinaryTest() 
         {
-            var loader = new LocalFileSystemLoader(new LocalFileSystemLoaderConfig(@"C:\site", new string[0].ToList()),
+            var loader = new LocalFileSystemLoader(new LocalFileSystemLoaderConfig(new string[0].ToList()),
             new MockFileSystem(new Dictionary<string, MockFileData>() 
             {
                 { @"C:\page2.md", null },
@@ -35,7 +36,7 @@ namespace Core.Tests
             }
             ));
 
-            var res = await loader.Load();
+            var res = await loader.Load(Location.FromPath("C:\\site"));
 
             Assert.AreEqual(5, res.Count());
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "page1.md"));
@@ -55,7 +56,7 @@ namespace Core.Tests
         [Test]
         public async Task Load_IgnoreTest()
         {
-            var loader = new LocalFileSystemLoader(new LocalFileSystemLoaderConfig(@"C:\site",
+            var loader = new LocalFileSystemLoader(new LocalFileSystemLoaderConfig(
                 new string[] 
                 {
                     "*.txt",
@@ -77,11 +78,62 @@ namespace Core.Tests
             }
             ));
 
-            var res = await loader.Load();
+            var res = await loader.Load(Location.FromPath("C:\\site"));
 
             Assert.AreEqual(2, res.Count());
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "page1.md"));
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "img1-img1.png"));
+        }
+
+        [Test]
+        public void Load_MissingLocation() 
+        {
+            var loader = new LocalFileSystemLoader(new LocalFileSystemLoaderConfig(Enumerable.Empty<string>()),
+            new MockFileSystem(new Dictionary<string, MockFileData>()
+            {
+                { @"C:\page2.md", null },
+                { @"C:\site\folder\page2.md", null }
+            }
+            ));
+
+            Assert.ThrowsAsync<MissingLocationException>(() => loader.Load(Location.FromPath("C:\\site1")));
+        }
+
+        [Test]
+        public void LocalFileSystemLoaderConfig_IgnoreEmptyTest()
+        {
+            var config = new LocalFileSystemLoaderConfig(
+                new Configuration());
+
+            Assert.IsEmpty(config.Ignore);
+        }
+
+        [Test]
+        public void LocalFileSystemLoaderConfig_IgnoreTest()
+        {
+            var config = new LocalFileSystemLoaderConfig(
+                new Configuration(new Dictionary<string, dynamic>()
+                {
+                    {
+                        "ignore", new List<string>(new string[] { "A", "B" })
+                    }
+                }));
+
+            Assert.AreEqual(2, config.Ignore.Count);
+            Assert.Contains("A", config.Ignore);
+            Assert.Contains("B", config.Ignore);
+        }
+
+        [Test]
+        public void LocalFileSystemLoaderConfig_IgnoreInvalidCastTest()
+        {
+            Assert.Throws<InvalidCastException>(() => new LocalFileSystemLoaderConfig(
+                    new Configuration(new Dictionary<string, dynamic>()
+                    {
+                        {
+                            "ignore", "A"
+                        }
+                    })));
         }
     }
 }

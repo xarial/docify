@@ -29,7 +29,7 @@ namespace Fragments.Tests
             p2.Data["title"] = "p2";
             p1.SubPages.Add(p2);
 
-            var site = new Site("www.example.com", null, new Configuration( Environment_e.Test)
+            var site = new Site("www.example.com", null, new Configuration()
             { { "title", "t1" }, { "description", "d1" } });
             
             return FragmentTest.InsertIncludeToPageNormalize(@"seo\_includes\seo.cshtml", param, site, p2);

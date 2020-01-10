@@ -18,7 +18,7 @@ using YamlDotNet.Serialization;
 using Xarial.Docify.Core.Data;
 using System.Linq;
 
-namespace Xarial.Docify.Core
+namespace Xarial.Docify.Core.Loader
 {
     public class LocalFileSystemConfigurationLoader : IConfigurationLoader
     {
@@ -36,47 +36,24 @@ namespace Xarial.Docify.Core
         private const string DEFAULT_THEMES_DIR = "themes";
 
         private readonly IFileSystem m_FileSystem;
-        private readonly string m_ConfigFile;
         private readonly IDeserializer m_YamlSerializer;
         private readonly Environment_e m_Environment;
 
-        public LocalFileSystemConfigurationLoader(string srcDir, Environment_e env)
-            : this(srcDir, new FileSystem(), env)
+        public LocalFileSystemConfigurationLoader(Environment_e env)
+            : this(new FileSystem(), env)
         {
         }
 
-        public LocalFileSystemConfigurationLoader(string srcDir, IFileSystem fileSystem, Environment_e env) 
+        public LocalFileSystemConfigurationLoader(IFileSystem fileSystem, Environment_e env) 
         {
-            m_ConfigFile = Path.Combine(srcDir, CONF_FILE_NAME);
             m_FileSystem = fileSystem;
             m_YamlSerializer = new DeserializerBuilder().Build();
             m_Environment = env;
         }
 
-        public async Task<Configuration> Load()
+        public async Task<Configuration> Load(Location location)
         {
-            Configuration conf;
-
-            if (m_FileSystem.File.Exists(m_ConfigFile))
-            {
-                var confStr = await m_FileSystem.File.ReadAllTextAsync(m_ConfigFile);
-
-                conf = new Configuration(m_YamlSerializer.Deserialize<Dictionary<string, dynamic>>(confStr), m_Environment);
-
-                conf.WorkingFolder = conf.GetRemoveParameterOrDefault<string>(Params.WorkDir);
-                conf.FragmentsFolder = conf.GetRemoveParameterOrDefault<string>(Params.FragmentsDir);
-                conf.ThemesFolder = conf.GetRemoveParameterOrDefault<string>(Params.ThemesDir);
-                conf.Fragments = conf.GetRemoveParameterOrDefault<IEnumerable<object>>(Params.Fragments)?.Cast<string>()?.ToList();
-                conf.Theme = conf.GetRemoveParameterOrDefault<string>(Params.Theme);
-
-                return conf;
-            }
-            else 
-            {
-                conf = new Configuration(m_Environment);
-            }
-
-            var normalizeDir = new Func<string, string, string>((dir, defDir) => 
+            string NormalizeDirFunc(string dir, string defDir)
             {
                 var newDir = dir;
 
@@ -93,14 +70,46 @@ namespace Xarial.Docify.Core
                 }
 
                 return newDir;
-            });
+            };
 
+            var conf = await GetConfiguration(location);
 
-            conf.WorkingFolder = normalizeDir.Invoke(conf.WorkingFolder, Path.GetTempPath());
-            conf.FragmentsFolder = normalizeDir.Invoke(conf.FragmentsFolder, DEFAULT_FRAGMENTS_DIR);
-            conf.ThemesFolder = normalizeDir.Invoke(conf.ThemesFolder, DEFAULT_THEMES_DIR);
+            var theme = conf.GetRemoveParameterOrDefault<string>(Params.Theme);
+            var themesDir = NormalizeDirFunc(conf.GetRemoveParameterOrDefault<string>(Params.ThemesDir), DEFAULT_THEMES_DIR);
 
+            if (!string.IsNullOrEmpty(theme))
+            {
+                var themeConf = await GetConfiguration(Location.FromPath(Path.Combine(themesDir, theme)));
+                conf = conf.Merge(themeConf);
+            }
+
+            conf.Environment = m_Environment;
+            conf.ThemesFolder = Location.FromPath(themesDir);
+            conf.Theme = theme;
+
+            conf.WorkingFolder = NormalizeDirFunc(conf.GetRemoveParameterOrDefault<string>(Params.WorkDir), Path.GetTempPath());
+            conf.FragmentsFolder = Location.FromPath(NormalizeDirFunc(conf.GetRemoveParameterOrDefault<string>(Params.FragmentsDir), DEFAULT_FRAGMENTS_DIR));
+            conf.Fragments = conf.GetRemoveParameterOrDefault<IEnumerable<object>>(Params.Fragments)?.Cast<string>()?.ToList();
+            
             return conf;
+        }
+
+        private async Task<Configuration> GetConfiguration(Location location)
+        {
+            var srcDir = location.ToPath();
+
+            var configFilePath = Path.Combine(srcDir, CONF_FILE_NAME);
+
+            if (m_FileSystem.File.Exists(configFilePath))
+            {
+                var confStr = await m_FileSystem.File.ReadAllTextAsync(configFilePath);
+
+                return new Configuration(m_YamlSerializer.Deserialize<Dictionary<string, dynamic>>(confStr));
+            }
+            else
+            {
+                return new Configuration();
+            }
         }
     }
 }

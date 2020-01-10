@@ -29,8 +29,17 @@ namespace Xarial.Docify.Base
                 }
             }
 
+            var isFile = !string.IsNullOrEmpty(System.IO.Path.GetExtension(path));
+
             var fileName = System.IO.Path.GetFileName(path);
+            
             var dir = System.IO.Path.GetDirectoryName(path);
+
+            if (!isFile)
+            {
+                fileName = "";
+                dir = path;
+            }
 
             string[] blocks = null;
 
@@ -88,6 +97,11 @@ namespace Xarial.Docify.Base
             Path = new List<string>(path);
         }
 
+        public Location(IEnumerable<string> path)
+        {
+            Path = new List<string>(path);
+        }
+
         public override string ToString()
         {
             return this.ToId();
@@ -113,6 +127,11 @@ namespace Xarial.Docify.Base
         public static string ToUrl(this Location loc, string baseUrl = "")
         {
             return FormFullLocation(loc, baseUrl, URL_SEP);
+        }
+
+        public static Location Combine(this Location loc, params string[] blocks) 
+        {
+            return new Location(loc.Path.Union(blocks));
         }
 
         private static string FormFullLocation(Location loc, string basePart, char sep)

@@ -43,19 +43,19 @@ namespace Xarial.Docify.Core.Loader
             {
                 foreach (var fragment in m_Config.Fragments)
                 {
-                    await AddFiles(resFiles, m_Config.FragmentsFolder.Combine(fragment), fragment);
+                    await AddFiles(resFiles, m_Config.FragmentsFolder.Combine(fragment), fragment, false);
                 }
             }
 
             if (!string.IsNullOrEmpty(m_Config.Theme)) 
             {
-                await AddFiles(resFiles, m_Config.ThemesFolder.Combine(m_Config.Theme), m_Config.Theme);
+                await AddFiles(resFiles, m_Config.ThemesFolder.Combine(m_Config.Theme), m_Config.Theme, true);
             }
 
             return resFiles.Values;
         }
 
-        private async Task AddFiles(Dictionary<string, ISourceFile> srcFiles, Location loc, string fragName) 
+        private async Task AddFiles(Dictionary<string, ISourceFile> srcFiles, Location loc, string fragName, bool allowInherit) 
         {
             var newSrcFiles = await m_Loader.Load(loc);
 
@@ -71,7 +71,10 @@ namespace Xarial.Docify.Core.Loader
                     }
                     else 
                     {
-                        throw new DuplicateFragmentSourceFileException(fragName, id);
+                        if (!allowInherit)
+                        {
+                            throw new DuplicateFragmentSourceFileException(fragName, id);
+                        }
                     }
                 }
             }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,6 +6,10 @@
     <RootNamespace>Xarial.Docify.CLI</RootNamespace>
     <StartupObject>Xarial.Docify.CLI.Program</StartupObject>
     <PreserveCompilationContext>true</PreserveCompilationContext>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath></OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,4 +21,14 @@
     <ProjectReference Include="..\Core\Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+     <LibDir Include="$(SolutionDir)\Fragments\Lib\**\*" TargetPath="$(OutDir)\Fragments\%(RecursiveDir)%(Filename)%(Extension)" />
+	 <LibDir Include="$(SolutionDir)\Themes\Lib\**\*" TargetPath="$(OutDir)\Themes\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <Target Name="CopyLib" AfterTargets="AfterBuild">
+    <Copy SourceFiles="@(LibDir)"
+      DestinationFiles="@(LibDir->'%(TargetPath)')"
+      OverwriteReadOnlyFiles="true"/>
+  </Target>
+  
 </Project>

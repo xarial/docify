@@ -33,7 +33,7 @@ namespace Core.Tests
             loaderMock.Setup(m => m.Load(It.IsAny<Location>()))
                 .Returns<Location>(l => Task.FromResult<IEnumerable<ISourceFile>>(new ISourceFile[] 
                 {
-                    new TextSourceFile(Location.FromPath("file1.txt"), ""),
+                    new TextSourceFile(Location.FromPath("file1.txt"), "theme_f1"),
                     new TextSourceFile(Location.FromPath("dir\\file2.txt"), "")
                 }));
 
@@ -73,6 +73,7 @@ namespace Core.Tests
 
             var res = await frgLoader.Load(new ISourceFile[]
             {
+                new TextSourceFile(Location.FromPath("file1.txt"), "f1"),
                 new TextSourceFile(Location.FromPath("file2.txt"), ""),
                 new TextSourceFile(Location.FromPath("dir\\file3.txt"), "")
             });
@@ -82,6 +83,7 @@ namespace Core.Tests
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir-file2.txt"));
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file2.txt"));
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir-file3.txt"));
+            Assert.AreEqual("f1", (res.First(f => f.Location.ToId() == "file1.txt") as TextSourceFile).Content);
         }
 
         [Test]
@@ -89,8 +91,8 @@ namespace Core.Tests
         {
             var frgLoader = new LocalFileSystemFragmentsLoader(m_Loader, new Configuration()
             {
-                Theme = "A",
-                ThemesFolder = Location.FromPath("C:\\themes")
+                Fragments = new string[] { "A" }.ToList(),
+                FragmentsFolder = Location.FromPath("C:\\fragments")
             });
 
             Assert.ThrowsAsync<DuplicateFragmentSourceFileException>(() => frgLoader.Load(new ISourceFile[]

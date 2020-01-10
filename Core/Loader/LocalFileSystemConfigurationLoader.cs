@@ -32,8 +32,8 @@ namespace Xarial.Docify.Core.Loader
         }
 
         private const string CONF_FILE_NAME = "_config.yml";
-        private const string DEFAULT_FRAGMENTS_DIR = "fragments";
-        private const string DEFAULT_THEMES_DIR = "themes";
+        private const string DEFAULT_FRAGMENTS_DIR = "Fragments";
+        private const string DEFAULT_THEMES_DIR = "Themes";
 
         private readonly IFileSystem m_FileSystem;
         private readonly IDeserializer m_YamlSerializer;

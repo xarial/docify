@@ -34,7 +34,7 @@ namespace Fragments.Tests
                 solDir = Path.GetDirectoryName(solDir);
             }
 
-            var fragDir = Path.Combine(solDir, "Fragments");
+            var fragDir = Path.Combine(solDir, "Fragments\\Lib");
 
             return Path.Combine(fragDir, relPath);
         }

@@ -75,7 +75,7 @@ namespace Core.Tests
                     string.Format(CONTENT_TEMPLATE, Guid.NewGuid()), layout));
             }
 
-            var site = new Site("", rootPage);
+            var site = new Site("", rootPage, null);
 
             var config = new BaseCompilerConfig();
             config.ParallelPartitionsCount = partCount;

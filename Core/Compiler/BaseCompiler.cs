@@ -103,13 +103,9 @@ namespace Xarial.Docify.Core.Compiler
 
             var layout = page.Layout;
 
-            while (layout != null)
+            if (layout != null) 
             {
-                var layoutContent = await CompileResource(layout, model);
-
-                content = m_LayoutParser.InsertContent(layoutContent, content);
-
-                layout = layout.Layout;
+                content = await m_LayoutParser.InsertContent(layout, content, model);
             }
 
             page.Content = content;

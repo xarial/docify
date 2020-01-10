@@ -15,13 +15,13 @@ namespace Xarial.Docify.Core.Compiler
 {
     public class ContextModel : IContextModel
     {
-        public Site Site { get; }
-        public Page Page { get; }
+        public ContextSite Site { get; }
+        public ContextPage Page { get; }
 
         public ContextModel(Site site, Page page)
         {
-            Site = site;
-            Page = page;
+            Site = new ContextSite(site);
+            Page = new ContextPage(site, page);
         }
     }
 }

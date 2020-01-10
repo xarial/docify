@@ -30,14 +30,14 @@ namespace CLI.Tests
         public async Task NoTemplatePageTest()
         {
             var p1 = new Page(new Location("page1.html"),
-                "<div>@Model.Site.MainPage.SubPages.Count <a href=\"@Model.Page.Location.FileName\">Test</a></div>");
+                "<div>@Model.Site.MainPage.SubPages.Count <a href=\"@Model.Page.Name\">Test</a></div>");
                         
             var p2 = new Page(new Location("page2.html"),
                 "<p>@Model.Site.MainPage.SubPages.Count</p>\n\n[page](@Model.Site.BaseUrl/@Model.Page.Url)");
             
             p1.SubPages.Add(p2);
 
-            var site = new Site("https://www.mysite.com", p1);
+            var site = new Site("https://www.mysite.com", p1, null);
 
             await m_Compiler.Compile(site);
 
@@ -51,7 +51,7 @@ namespace CLI.Tests
             var site = new Site("",
                 new Page(new Location("page.html"),
                 "My Page Content",
-                new Template("t1", "TemplateText1{{ content }}TemplateText2")));
+                new Template("t1", "TemplateText1{{ content }}TemplateText2")), null);
             
             await m_Compiler.Compile(site);
 
@@ -61,13 +61,13 @@ namespace CLI.Tests
         [Test]
         public async Task NestedTemplatePageTest()
         {
-            var t2 = new Template("t2", "*T2* @Model.Page.Location.FileName {{ content }}_T2");
-            var t1 = new Template("t1", "*T1* @Model.Page.Location.FileName {{ content }}_T1", null, t2);
+            var t2 = new Template("t2", "*T2* @Model.Page.Name {{ content }}_T2");
+            var t1 = new Template("t1", "*T1* @Model.Page.Name {{ content }}_T1", null, t2);
             var t3 = new Template("t3", "T3{{ content }}T3");
             var t4 = new Template("t4", "T4{{ content }}T4", null, t3);
 
-            var p1 = new Page(new Location("page1.html"), "**Page1** @Model.Page.Location.FileName", t1);
-            var p2 = new Page(new Location("page2.html"), "**Page2** @Model.Page.Location.FileName", t1);
+            var p1 = new Page(new Location("page1.html"), "**Page1** @Model.Page.Name", t1);
+            var p2 = new Page(new Location("page2.html"), "**Page2** @Model.Page.Name", t1);
             var p3 = new Page(new Location("page3.html"), "Page3", t4);
             var p4 = new Page(new Location("page4.html"), "Page4", t4);
 
@@ -75,7 +75,7 @@ namespace CLI.Tests
             p1.SubPages.Add(p3);
             p1.SubPages.Add(p4);
 
-            var site = new Site("", p1);
+            var site = new Site("", p1, null);
 
             await m_Compiler.Compile(site);
 
@@ -92,13 +92,13 @@ namespace CLI.Tests
                 "*@Model.Site.MainPage.SubPages.Count* {% i1 %}");
 
             var p2 = new Page(new Location("page2.html"),
-                "@Model.Page.Location.FileName\r\n{% i1 p1: B %}\r\n{% i2 p2: X %}");
+                "@Model.Page.Name\r\n{% i1 p1: B %}\r\n{% i2 p2: X %}");
 
             p1.SubPages.Add(p2);
 
-            var site = new Site("", p1);
-            site.Includes.Add(new Template("i1", "Some Value\r\n@Model.Parameters[\"p1\"]", new Dictionary<string, dynamic>() { { "p1", "A" } }));
-            site.Includes.Add(new Template("i2", "**@Model.Page.Location.FileName**\r\n@Model.Parameters.Count", new Dictionary<string, dynamic>() { { "p1", "A" }, { "p2", "X" } }));
+            var site = new Site("", p1, null);
+            site.Includes.Add(new Template("i1", "Some Value\r\n@Model.Data[\"p1\"]", new Dictionary<string, dynamic>() { { "p1", "A" } }));
+            site.Includes.Add(new Template("i2", "**@Model.Page.Name**\r\n@Model.Data.Count", new Dictionary<string, dynamic>() { { "p1", "A" }, { "p2", "X" } }));
 
             await m_Compiler.Compile(site);
 

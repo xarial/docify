@@ -33,7 +33,7 @@ namespace Core.Tests
             mock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ContextModel>()))
                 .Returns(new Func<string, string, IContextModel, Task<string>>(
                     (c, k, m) => Task.FromResult(
-                        $"{c}_{(m as ContextModel).Page.Key}_{string.Join(",", (m as IncludesContextModel).Parameters.OrderBy(p => p.Key).Select(p => $"{p.Key}={p.Value}").ToArray())}")));
+                        $"{c}_{(m as ContextModel).Page.Name}_{string.Join(",", (m as IncludesContextModel).Data.OrderBy(p => p.Key).Select(p => $"{p.Key}={p.Value}").ToArray())}")));
 
             m_Handler = new IncludesHandler(mock.Object);
         }
@@ -96,7 +96,7 @@ namespace Core.Tests
         {
             var p1 = new Page(Location.FromPath("page1.html"), "");
             var p2 = new Page(Location.FromPath("page2.html"), "");
-            var s = new Site("", p1);
+            var s = new Site("", p1, null);
             s.Includes.Add(new Template("i1", "abc"));
             p1.SubPages.Add(p2);
 
@@ -111,7 +111,7 @@ namespace Core.Tests
         public async Task Insert_MergedParameters()
         {
             var p1 = new Page(Location.FromPath("page1.html"), "");
-            var s = new Site("", p1);
+            var s = new Site("", p1, null);
             s.Includes.Add(new Template("i1", "abc", new Dictionary<string, dynamic>() { { "a1", "A" }, { "a2", "B" } }));
 
             var res1 = await m_Handler.Insert("i1", new Dictionary<string, dynamic>() { { "a1", "X" }, { "a3", "Y" } }, s, p1);
@@ -123,7 +123,7 @@ namespace Core.Tests
         public void Insert_MissingIncludes()
         {
             var p1 = new Page(Location.FromPath("page1.html"), "");
-            var s = new Site("", p1);
+            var s = new Site("", p1, null);
             s.Includes.Add(new Template("i1", "abc"));
 
             Assert.ThrowsAsync<MissingIncludeException>(() => m_Handler.Insert("i2", new Dictionary<string, dynamic>(), s, p1));

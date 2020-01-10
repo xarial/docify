@@ -28,7 +28,7 @@ namespace Core.Tests
         [SetUp]
         public void Setup()
         {
-            m_Composer = new BaseSiteComposer(new Mock<ILayoutParser>().Object);
+            m_Composer = new BaseSiteComposer(new Mock<ILayoutParser>().Object, null);
         }
 
         [Test]

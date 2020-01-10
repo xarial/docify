@@ -29,8 +29,9 @@ namespace Xarial.Docify.Core.Composer
         private const string LAYOUT_VAR_NAME = "layout";
 
         private readonly ILayoutParser m_LayoutParser;
+        private readonly Configuration m_Config;
 
-        public BaseSiteComposer(ILayoutParser parser) 
+        public BaseSiteComposer(ILayoutParser parser, Configuration config) 
         {
             m_LayoutParser = parser;
         }
@@ -232,7 +233,7 @@ namespace Xarial.Docify.Core.Composer
                 var assets = ParseAssets(srcTextAssets, srcBinaryAssets);
                 var mainPage = ParsePages(srcPages, layouts, assets);
 
-                var site = new Site(baseUrl, mainPage);
+                var site = new Site(baseUrl, mainPage, m_Config);
                 site.Layouts.AddRange(layouts.Values);
                 site.Includes.AddRange(includes);
                 site.Assets.AddRange(assets);

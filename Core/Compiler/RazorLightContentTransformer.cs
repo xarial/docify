@@ -47,11 +47,6 @@ namespace Xarial.Docify.Core.Compiler
             }
         }
 
-        //private string GetRazorPageContent(string content, Type modelType)
-        //{
-        //    return $"@model {modelType.FullName}\r\n" + content;
-        //}
-
         private bool HasRazorCode(string content)
         {
             //TODO: might need to have better logic to identify this

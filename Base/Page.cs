@@ -16,22 +16,6 @@ namespace Xarial.Docify.Base
     [DebuggerDisplay("{" + nameof(Location) + "}")]
     public class Page : Frame, ITextWritable
     {
-        public string Url 
-        {
-            get 
-            {
-                return Location.ToUrl();
-            }
-        }
-        
-        public IEnumerable<Page> AllSubPages 
-        {
-            get 
-            {
-                return this.GetAllSubPages();
-            }
-        }
-
         public List<Page> SubPages { get; }
         public List<Asset> Assets { get; }
         public Location Location { get; }

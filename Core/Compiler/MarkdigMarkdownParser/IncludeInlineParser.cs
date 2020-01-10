@@ -59,7 +59,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
             m_ParamsParser.ParseParameters(rawContent.ToString(), out name, out param);
 
             var model = (ContextModel)processor.Context.Properties[MarkdigMarkdownContentTransformer.CONTEXT_MODEL_PARAM_NAME];
-            processor.Inline = new IncludeData(name, param, model.Site, model.Page);
+            processor.Inline = new IncludeData(name, param, model.Site.BaseSite, model.Page.BasePage);
 
             return true;
         }

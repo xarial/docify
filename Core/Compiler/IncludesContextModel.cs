@@ -14,12 +14,12 @@ namespace Xarial.Docify.Core.Compiler
 {
     public class IncludesContextModel : ContextModel
     {
-        public Dictionary<string, dynamic> Parameters { get; }
+        public IReadOnlyDictionary<string, dynamic> Data { get; }
 
-        public IncludesContextModel(Site site, Page page, Dictionary<string, dynamic> parameters)
+        public IncludesContextModel(Site site, Page page, Dictionary<string, dynamic> data)
             : base(site, page)
         {
-            Parameters = parameters;
+            Data = data;
         }
     }
 }

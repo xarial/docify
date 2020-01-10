@@ -14,6 +14,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Exceptions;
+using Xarial.Docify.Core.Helpers;
 using YamlDotNet.Serialization;
 
 namespace Xarial.Docify.Core.Compiler
@@ -41,26 +42,7 @@ namespace Xarial.Docify.Core.Compiler
             }
 
             return await m_Transformer.Transform(include.RawContent, include.Key, 
-                new IncludesContextModel(site, page, MergeParameters(param, include)));
-        }
-
-        private Dictionary<string, dynamic> MergeParameters(Dictionary<string, dynamic> parameters, Template include) 
-        {
-            var resParams = new Dictionary<string, dynamic>(include.Data, StringComparer.CurrentCultureIgnoreCase);
-
-            foreach (var param in parameters) 
-            {
-                if (resParams.ContainsKey(param.Key)) 
-                {
-                    resParams[param.Key] = param.Value;
-                }
-                else 
-                {
-                    resParams.Add(param.Key, param.Value);
-                }
-            }
-
-            return resParams;
+                new IncludesContextModel(site, page, ParametersHelper.MergeParameters(param, include.Data)));
         }
 
         public Task ParseParameters(string rawContent, out string name, out Dictionary<string, dynamic> param) 

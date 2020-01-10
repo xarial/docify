@@ -16,6 +16,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
 using YamlDotNet.Serialization;
 
@@ -25,7 +26,6 @@ namespace Xarial.Docify.Core.Composer
     {
         private const string LAYOUTS_FOLDER = "_layouts";
         private const string INCLUDES_FOLDER = "_includes";
-        private const string FRONT_MATTER_HEADER = "---";
         private const string LAYOUT_VAR_NAME = "layout";
 
         private readonly ILayoutParser m_LayoutParser;
@@ -34,6 +34,7 @@ namespace Xarial.Docify.Core.Composer
         public BaseSiteComposer(ILayoutParser parser, Configuration config) 
         {
             m_LayoutParser = parser;
+            m_Config = config;
         }
 
         private bool IsPage(ISourceFile srcFile) 
@@ -101,73 +102,20 @@ namespace Xarial.Docify.Core.Composer
         }
 
         private void ParseTextFile(ITextSourceFile src, out string rawContent,
-            out Dictionary<string, dynamic> data, out string layoutName) 
+            out Metadata data, out string layoutName) 
         {
-            bool isStart = true;
-            bool readingFrontMatter = false;
+            src.Parse(out rawContent, out data);
 
-            rawContent = "";
-            var frontMatter = new StringBuilder();
-
-            using (var strReader = new StringReader(src.Content))
+            dynamic layoutNameDyn;
+            if (data.TryGetValue(LAYOUT_VAR_NAME, out layoutNameDyn))
             {
-                var line = strReader.ReadLine();
-
-                while(line != null)
-                {
-                    if (line == FRONT_MATTER_HEADER)
-                    {
-                        if (isStart)
-                        {
-                            readingFrontMatter = true;
-                        }
-                        else
-                        {
-                            readingFrontMatter = false;
-                            rawContent = strReader.ReadToEnd();
-                        }
-                    }
-                    else if (readingFrontMatter)
-                    {
-                        frontMatter.AppendLine(line);
-                    }
-                    else
-                    {
-                        rawContent = strReader.ReadToEnd();
-
-                        rawContent = line + (!string.IsNullOrEmpty(rawContent) ? Environment.NewLine : "") + rawContent;
-                    }
-
-                    isStart = false;
-                    line = strReader.ReadLine();
-                } 
-            }
-
-            if (readingFrontMatter) 
-            {
-                throw new FrontMatterErrorException("Front matter closing tag is not found");
-            }
-
-            if (frontMatter.Length > 0)
-            {
-                var yamlDeserializer = new DeserializerBuilder().Build();
-
-                data = yamlDeserializer.Deserialize<Dictionary<string, dynamic>>(frontMatter.ToString());
-
-                var templateKey = data.FirstOrDefault(m => string.Equals(m.Key, LAYOUT_VAR_NAME, 
-                    StringComparison.CurrentCultureIgnoreCase));
-
-                layoutName = templateKey.Value;
-
-                if (!string.IsNullOrEmpty(layoutName)) 
-                {
-                    data.Remove(LAYOUT_VAR_NAME);
-                }
+                layoutName = (string)layoutNameDyn;
+                data.Remove(LAYOUT_VAR_NAME);
             }
             else 
             {
                 layoutName = "";
-                data = null;
+
             }
         }
 
@@ -177,7 +125,7 @@ namespace Xarial.Docify.Core.Composer
             Dictionary<IReadOnlyList<string>, Asset[]> assetsMap)
         {
             string rawContent = null;
-            Dictionary<string, dynamic> pageData = null;
+            Metadata pageData = null;
             Template layout = null;
 
             if (src != null)
@@ -325,7 +273,7 @@ namespace Xarial.Docify.Core.Composer
             return includesSrcList.Select(s =>
             {
                 string rawContent;
-                Dictionary<string, dynamic> data;
+                Metadata data;
                 string layoutName;
                 ParseTextFile(s, out rawContent, out data, out layoutName);
 
@@ -358,7 +306,7 @@ namespace Xarial.Docify.Core.Composer
             }
 
             string rawContent;
-            Dictionary<string, dynamic> data;
+            Metadata data;
             string baseLayoutName;
             ParseTextFile(layoutFile, out rawContent, out data, out baseLayoutName);
 

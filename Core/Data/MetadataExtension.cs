@@ -8,18 +8,27 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Core.Helpers
+namespace Xarial.Docify.Core.Data
 {
-    internal static class ParametersHelper
+    public static class MetadataExtension
     {
-        internal static Dictionary<string, dynamic> MergeParameters(Dictionary<string, dynamic> thisParams,
+        public static T Merge<T>(this T thisParams,
             Dictionary<string, dynamic> baseParams)
+            where T : Metadata, new()
         {
-            var resParams = new Dictionary<string, dynamic>(
-                baseParams ?? new Dictionary<string, dynamic>(), StringComparer.CurrentCultureIgnoreCase);
+            var resParams = new T();
 
-            foreach (var thisParam in thisParams ?? new Dictionary<string, dynamic>())
+            if (baseParams != null)
+            {
+                foreach (var baseParam in baseParams)
+                {
+                    resParams.Add(baseParam.Key, baseParam.Value);
+                }
+            }
+
+            foreach (var thisParam in thisParams ?? new T())
             {
                 if (resParams.ContainsKey(thisParam.Key))
                 {

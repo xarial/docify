@@ -12,9 +12,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
-using Xarial.Docify.Core.Helpers;
 using YamlDotNet.Serialization;
 
 namespace Xarial.Docify.Core.Compiler
@@ -30,7 +31,7 @@ namespace Xarial.Docify.Core.Compiler
             m_Transformer = transformer;
         }
         
-        public async Task<string> Insert(string name, Dictionary<string, dynamic> param, 
+        public async Task<string> Insert(string name, Metadata param, 
             Site site, Page page)
         {
             var include = site.Includes.FirstOrDefault(i => string.Equals(i.Name, 
@@ -42,10 +43,10 @@ namespace Xarial.Docify.Core.Compiler
             }
 
             return await m_Transformer.Transform(include.RawContent, include.Key, 
-                new IncludesContextModel(site, page, ParametersHelper.MergeParameters(param, include.Data)));
+                new IncludeContextModel(site, page, param.Merge(include.Data)));
         }
 
-        public Task ParseParameters(string rawContent, out string name, out Dictionary<string, dynamic> param) 
+        public Task ParseParameters(string rawContent, out string name, out Metadata param) 
         {
             rawContent = rawContent.Trim();
 
@@ -56,12 +57,12 @@ namespace Xarial.Docify.Core.Compiler
 
                 var yamlDeserializer = new DeserializerBuilder().Build();
 
-                param = yamlDeserializer.Deserialize<Dictionary<string, dynamic>>(paramStr);
+                param = yamlDeserializer.Deserialize<Metadata>(paramStr);
             }
             else 
             {
                 name = rawContent;
-                param = new Dictionary<string, dynamic>();
+                param = new Metadata();
             }
 
             return Task.CompletedTask;

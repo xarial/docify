@@ -10,6 +10,7 @@ using Markdig.Parsers;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Exceptions;
 
@@ -55,7 +56,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
             slice.Start = slice.Start + END_TAG.Length;
 
             string name;
-            Dictionary<string, dynamic> param;
+            Metadata param;
             m_ParamsParser.ParseParameters(rawContent.ToString(), out name, out param);
 
             var model = (ContextModel)processor.Context.Properties[MarkdigMarkdownContentTransformer.CONTEXT_MODEL_PARAM_NAME];

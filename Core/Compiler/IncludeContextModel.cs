@@ -12,11 +12,11 @@ using Xarial.Docify.Base;
 
 namespace Xarial.Docify.Core.Compiler
 {
-    public class IncludesContextModel : ContextModel
+    public class IncludeContextModel : ContextModel
     {
         public IReadOnlyDictionary<string, dynamic> Data { get; }
 
-        public IncludesContextModel(Site site, Page page, Dictionary<string, dynamic> data)
+        public IncludeContextModel(Site site, Page page, Dictionary<string, dynamic> data)
             : base(site, page)
         {
             Data = data;

@@ -11,7 +11,8 @@ using System.Linq;
 using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
-using Xarial.Docify.Core.Helpers;
+using Xarial.Docify.Base.Data;
+using Xarial.Docify.Core.Data;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -49,13 +50,13 @@ namespace Xarial.Docify.Core.Compiler
         {
             get
             {
-                var thisParam = new Dictionary<string, dynamic>();
+                var thisParam = new Metadata();
 
                 Frame frame = BasePage;
 
                 while (frame != null) 
                 {
-                    thisParam = ParametersHelper.MergeParameters(thisParam, frame.Data);
+                    thisParam = thisParam.Merge(frame.Data);
                     frame = frame.Layout;
                 }
 

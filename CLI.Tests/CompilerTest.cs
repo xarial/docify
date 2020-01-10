@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.CLI;
 
@@ -97,8 +98,8 @@ namespace CLI.Tests
             p1.SubPages.Add(p2);
 
             var site = new Site("", p1, null);
-            site.Includes.Add(new Template("i1", "Some Value\r\n@Model.Data[\"p1\"]", new Dictionary<string, dynamic>() { { "p1", "A" } }));
-            site.Includes.Add(new Template("i2", "**@Model.Page.Name**\r\n@Model.Data.Count", new Dictionary<string, dynamic>() { { "p1", "A" }, { "p2", "X" } }));
+            site.Includes.Add(new Template("i1", "Some Value\r\n@Model.Data[\"p1\"]", new Metadata() { { "p1", "A" } }));
+            site.Includes.Add(new Template("i2", "**@Model.Page.Name**\r\n@Model.Data.Count", new Metadata() { { "p1", "A" }, { "p2", "X" } }));
 
             await m_Compiler.Compile(site);
 

@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Content
 {
@@ -15,15 +16,15 @@ namespace Xarial.Docify.Base.Content
     {
         public string RawContent { get; }
         public Template Layout { get; }
-        public Dictionary<string, dynamic> Data { get; }
+        public Metadata Data { get; }
 
         public abstract string Key { get; }
 
-        public Frame(string rawContent, Dictionary<string, dynamic> data, Template layout)
+        public Frame(string rawContent, Metadata data, Template layout)
         {
             RawContent = rawContent;
             Layout = layout;
-            Data = data ?? new Dictionary<string, dynamic>();
+            Data = data ?? new Metadata();
         }
     }
 }

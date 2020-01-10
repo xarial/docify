@@ -10,17 +10,18 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Base;
+using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
     public class IncludeData : LeafInline
     {
         public string Name { get; }
-        public Dictionary<string, dynamic> Parameters { get; }
+        public Metadata Parameters { get; }
         public Site Site { get; }
         public Page Page { get; }
 
-        public IncludeData(string name, Dictionary<string, dynamic> parameters, Site site, Page page)
+        public IncludeData(string name, Metadata parameters, Site site, Page page)
         {
             Name = name;
             Parameters = parameters;

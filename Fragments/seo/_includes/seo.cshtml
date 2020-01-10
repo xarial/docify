@@ -1,0 +1,92 @@
+﻿@**********************************************************************
+//docify
+//Copyright(C) 2020 Xarial Pty Limited
+//Product URL: https://www.docify.net
+//License: https://github.com/xarial/docify/blob/master/LICENSE
+//********************************************************************@
+
+---
+og: true
+twitter: true
+linkedin: true
+---
+@model Xarial.Docify.Core.Compiler.IncludeContextModel
+@{
+    dynamic title = "";
+    dynamic description = "";
+    dynamic image = "";
+    dynamic lang = "";
+
+    dynamic siteTitle = "";
+    dynamic siteDescription = "";
+
+    Model.Page.Data.TryGetValue("title", out title);
+    Model.Page.Data.TryGetValue("description", out description);
+    Model.Page.Data.TryGetValue("lang", out lang);
+
+    if (Model.Page.Data.TryGetValue("image", out image))
+    {
+    }
+
+    Model.Site.Configuration.TryGetValue("title", out siteTitle);
+    Model.Site.Configuration.TryGetValue("description", out siteDescription);
+
+    dynamic ogDyn = false;
+    Model.Data.TryGetValue("og", out ogDyn);
+
+    dynamic twitterDyn = false;
+    Model.Data.TryGetValue("twitter", out twitterDyn);
+
+    dynamic linkedinDyn = false;
+    Model.Data.TryGetValue("linkedin", out linkedinDyn);
+
+    bool og = false;
+    bool twitter = false;
+    bool linkedin = false;
+
+    bool.TryParse(ogDyn, out og);
+    bool.TryParse(twitterDyn, out twitter);
+    bool.TryParse(linkedinDyn, out linkedin);
+
+    var ld = "";
+
+    if (linkedin)
+    {
+        ld = System.Text.Json.JsonSerializer.Serialize(new
+        {
+            url = Model.Page.FullUrl,
+            description = description,
+            headline = siteDescription,
+            image = image,
+            @type = "WebPage",
+            @context = "http://schema.org"
+        }).ToString();
+    }
+}
+<meta name="generator" content="Docify v0.1" />
+<meta name="description" content="@description" />
+<link rel="canonical" href="@Model.Page.FullUrl" />
+@if (og)
+{
+    <meta property="og:title" content="@title" />
+    <meta property="og:locale" content="@lang" />
+    <meta property="og:description" content="@description" />
+    <meta property="og:url" content="@Model.Page.FullUrl" />
+    <meta property="og:site_name" content="@siteTitle" />
+    <meta property="og:image" content="@image" />
+}
+@if (twitter)
+{
+    <meta name="twitter:card" content="@description" />
+    <meta name="twitter:site" content="@Model.Page.FullUrl" />
+    <meta name="twitter:title" content="@title" />
+    <meta name="twitter:description" content="@description" />
+    <meta name="twitter:image" content="@image" />
+}
+@if (linkedin)
+{
+    <script type="application/ld+json">
+        @ld
+        @*{"url":"@Model.Page.FullUrl","description":"@description","headline":"@siteDescription","image":"@image","@@type":"WebPage","@@context":"http://schema.org"}*@
+    </script>
+}

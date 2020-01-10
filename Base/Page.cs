@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base
 {
@@ -24,12 +25,12 @@ namespace Xarial.Docify.Base
         public override string Key => Location.ToId();
 
         public Page(Location url, string rawContent, Template layout = null)
-            : this(url, rawContent, new Dictionary<string, dynamic>(), layout)
+            : this(url, rawContent, new Metadata(), layout)
         {
 
         }
 
-        public Page(Location url, string rawContent, Dictionary<string, dynamic> data, Template layout = null)
+        public Page(Location url, string rawContent, Metadata data, Template layout = null)
             : base(rawContent, data, layout)
         {
             Location = url;

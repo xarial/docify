@@ -11,13 +11,14 @@ using System.Text;
 
 namespace Xarial.Docify.Base.Data
 {
-    public class Configuration : Metadata
+    public class Metadata : Dictionary<string, dynamic>
     {
-        public Configuration() : base()
+        public Metadata() : base(StringComparer.CurrentCultureIgnoreCase)
         {
         }
 
-        public Configuration(Dictionary<string, dynamic> parameters) : base(parameters) 
+        public Metadata(Dictionary<string, dynamic> parameters) 
+            : base(parameters, StringComparer.CurrentCultureIgnoreCase)
         {
         }
     }

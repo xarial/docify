@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Content
 {
@@ -17,7 +18,7 @@ namespace Xarial.Docify.Base.Content
         public override string Key => Name;
 
         public Template(string name, string rawContent,
-            Dictionary<string, dynamic> data = null, Template baseTemplate = null)
+            Metadata data = null, Template baseTemplate = null)
             : base(rawContent, data, baseTemplate)
         {
             Name = name;

@@ -18,13 +18,14 @@ using Xarial.Docify.Core;
 using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
 using Xarial.Docify.Core.Compiler;
+using Xarial.Docify.Base.Data;
 
 namespace Core.Tests
 {
     public class MarkdigMarkdownIncludesExtensionTest
     {
-        private delegate Task ParseParametersDelegate(string rawContent, out string name, out Dictionary<string, dynamic> param);
-        private delegate Task<string> InsertDelegate(string name, Dictionary<string, dynamic> param, Site site, Page page);
+        private delegate Task ParseParametersDelegate(string rawContent, out string name, out Metadata param);
+        private delegate Task<string> InsertDelegate(string name, Metadata param, Site site, Page page);
 
         private MarkdigMarkdownContentTransformer m_Parser;
 
@@ -33,16 +34,16 @@ namespace Core.Tests
         {
             var paramsParserMock = new Moq.Mock<IIncludesHandler>();
             paramsParserMock.Setup(m => m.ParseParameters(It.IsAny<string>(), out It.Ref<string>.IsAny,
-                out It.Ref<Dictionary<string, dynamic>>.IsAny)).Returns(
-                new ParseParametersDelegate((string rawContent, out string name, out Dictionary<string, dynamic> param) =>
+                out It.Ref<Metadata>.IsAny)).Returns(
+                new ParseParametersDelegate((string rawContent, out string name, out Metadata param) =>
                 {
                     name = rawContent.Replace("\n", " ").Trim();
-                    param = new Dictionary<string, dynamic>() { { "A", "B" } };
+                    param = new Metadata() { { "A", "B" } };
                     return Task.CompletedTask;
                 }));
 
             paramsParserMock.Setup(m => m.Insert(It.IsAny<string>(),
-                It.IsAny<Dictionary<string, dynamic>>(), It.IsAny<Site>(), It.IsAny<Page>())).Returns(
+                It.IsAny<Metadata>(), It.IsAny<Site>(), It.IsAny<Page>())).Returns(
                 new InsertDelegate((n, p, s, pg) =>
                 {
                     return Task.FromResult($"[{n}: {p.ElementAt(0).Key}={p.ElementAt(0).Value}]");

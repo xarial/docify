@@ -17,7 +17,7 @@ namespace Xarial.Docify.Base.Data
         {
         }
 
-        public Metadata(Dictionary<string, dynamic> parameters) 
+        public Metadata(IDictionary<string, dynamic> parameters) 
             : base(parameters, StringComparer.CurrentCultureIgnoreCase)
         {
         }

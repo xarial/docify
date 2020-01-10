@@ -23,7 +23,7 @@ namespace Core.Tests
             var fs = new MockFileSystem();
             fs.AddFile("C:\\site\\page.html", null);
 
-            var confLoader = new LocalFileSystemConfigurationLoader("C:\\site", fs);
+            var confLoader = new LocalFileSystemConfigurationLoader("C:\\site", fs, Xarial.Docify.Base.Environment_e.Test);
 
             var conf = await confLoader.Load();
 
@@ -37,7 +37,7 @@ namespace Core.Tests
             fs.AddFile("C:\\site\\page.html", null);
             fs.AddFile("C:\\site\\_config.yml", new MockFileData("a1: A\r\na2: B"));
 
-            var confLoader = new LocalFileSystemConfigurationLoader("C:\\site", fs);
+            var confLoader = new LocalFileSystemConfigurationLoader("C:\\site", fs, Xarial.Docify.Base.Environment_e.Test);
 
             var conf = await confLoader.Load();
 

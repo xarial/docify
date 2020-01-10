@@ -7,20 +7,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Xarial.Docify.Base;
-using Xarial.Docify.Base.Data;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Xarial.Docify.Core.Compiler
+namespace Fragments.Exceptions
 {
-    public class IncludeContextModel : ContextModel
+    public class GoogleAnalyticsIdNotSpecifiedException : Exception
     {
-        public ContextMetadata Data { get; }
-
-        public IncludeContextModel(Site site, Page page, Metadata data)
-            : base(site, page)
+        public GoogleAnalyticsIdNotSpecifiedException() : base("Specify the ID for google analytics via 'google_analytics' parameter in the configuration file") 
         {
-            Data = new ContextMetadata(data);
         }
     }
 }

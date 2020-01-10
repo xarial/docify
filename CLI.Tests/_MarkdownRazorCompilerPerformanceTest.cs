@@ -30,7 +30,7 @@ namespace Core.Tests
         [SetUp]
         public void Setup()
         {
-            m_Compiler = new DocifyEngine("", "", "").Resove<ICompiler>();
+            m_Compiler = new DocifyEngine("", "", "", Environment_e.Test).Resove<ICompiler>();
         }
 
 #if ENABLE_PERFORMANCE_USER_TEST

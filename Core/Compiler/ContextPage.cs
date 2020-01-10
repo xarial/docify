@@ -46,7 +46,7 @@ namespace Xarial.Docify.Core.Compiler
             }
         }
 
-        public IReadOnlyDictionary<string, dynamic> Data 
+        public ContextMetadata Data 
         {
             get
             {
@@ -60,7 +60,7 @@ namespace Xarial.Docify.Core.Compiler
                     frame = frame.Layout;
                 }
 
-                return thisParam;
+                return new ContextMetadata(thisParam);
             }
         }
 

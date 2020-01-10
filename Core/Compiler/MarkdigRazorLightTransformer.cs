@@ -33,6 +33,13 @@ namespace Xarial.Docify.Core.Compiler
             m_RazorTransformer = new RazorLightContentTransformer();
         }
 
+        public MarkdigRazorLightTransformer(MarkdigMarkdownContentTransformer markDownTransformer, 
+            RazorLightContentTransformer razorTransformer)
+        {
+            m_MarkdownTransformer = markDownTransformer;
+            m_RazorTransformer = razorTransformer;
+        }
+
         public async Task<string> Transform(string content, string key, IContextModel model)
         {
             var res = content;

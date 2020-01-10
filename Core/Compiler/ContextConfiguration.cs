@@ -7,20 +7,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Compiler
 {
-    public class IncludeContextModel : ContextModel
+    public class ContextConfiguration : ContextMetadata, IConfiguration
     {
-        public ContextMetadata Data { get; }
+        public Environment_e Environment { get; }
 
-        public IncludeContextModel(Site site, Page page, Metadata data)
-            : base(site, page)
+        public ContextConfiguration(Configuration config)
+            : base(config) 
         {
-            Data = new ContextMetadata(data);
+            Environment = config.Environment;
         }
     }
 }

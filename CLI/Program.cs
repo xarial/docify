@@ -5,9 +5,11 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using CommandLine;
 using System;
 using System.Threading.Tasks;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.CLI.Options;
 using Xarial.Docify.Core;
 
 namespace Xarial.Docify.CLI
@@ -16,13 +18,39 @@ namespace Xarial.Docify.CLI
     {
         static async Task Main(string[] args)
         {
-            var srcDir = args[0];
-            var outDir = args[1];
-            var siteUrl = args[2];
+            var parser = new Parser(p =>
+            {
+                p.CaseInsensitiveEnumValues = true;
+                p.AutoHelp = true;
+                p.EnableDashDash = true;
+                p.HelpWriter = Console.Out;
+                p.IgnoreUnknownArguments = false;
+            });
 
-            var engine = new DocifyEngine(srcDir, outDir, siteUrl);
+            bool isError = false;
 
-            await engine.Build();
+            BuildOptions buildOpts = null;
+            ServeOptions serveOpts = null;
+
+            parser.ParseArguments<BuildOptions, ServeOptions>(args)
+                .WithParsed<BuildOptions>(o => buildOpts = o)
+                .WithParsed<ServeOptions>(o => serveOpts = o)
+                .WithNotParsed(e => isError = true);
+
+            if (!isError)
+            {
+                DocifyEngine engine = null;
+
+                if (buildOpts != null || serveOpts != null)
+                {
+                    engine = new DocifyEngine(buildOpts.SourceDirectory, buildOpts.OutputDirectory, buildOpts.SiteUrl, Base.Environment_e.Test);
+                }
+
+                if (buildOpts != null)
+                {
+                    await engine.Build();
+                }
+            }
         }
     }
 }

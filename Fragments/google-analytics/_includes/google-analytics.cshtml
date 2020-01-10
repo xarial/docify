@@ -1,0 +1,32 @@
+﻿---
+google_analytics:
+production_only: true
+---
+@using RazorLight
+@using System;
+@inherits TemplatePage<Xarial.Docify.Core.Compiler.IncludeContextModel>
+@{
+    string googleAnalyticsId = "";
+
+    var enable = Model.Data.Get<bool>("production_only") ? Model.Site.Configuration.Environment == Xarial.Docify.Base.Environment_e.Production : true;
+
+    if (enable)
+    {
+        googleAnalyticsId = Model.Data["google_analytics"];
+
+        if (string.IsNullOrEmpty(googleAnalyticsId))
+        {
+            throw new Fragments.Exceptions.GoogleAnalyticsIdNotSpecifiedException();
+        }
+    }
+}
+@if (enable)
+{
+    <script async src="https://www.googletagmanager.com/gtag/js?id=@googleAnalyticsId"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', @googleAnalyticsId);
+    </script>
+}

@@ -6,6 +6,7 @@
 //*********************************************************************
 
 using Autofac;
+using Autofac.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler;
+using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
 using Xarial.Docify.Core.Composer;
 using Xarial.Docify.Core.Loader;
 using Xarial.Docify.Core.Logger;
@@ -36,7 +38,7 @@ namespace Xarial.Docify.CLI
 
         private readonly string m_SiteUrl;
 
-        public DocifyEngine(string srcDir, string outDir, string siteUrl) 
+        public DocifyEngine(string srcDir, string outDir, string siteUrl, Environment_e env) 
         {
             var builder = new ContainerBuilder();
             m_SiteUrl = siteUrl;
@@ -64,14 +66,22 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<ConsoleLogger>().As<ILogger>();
 
-            builder.RegisterType<IncludesHandler>().As<IIncludesHandler>();
+            builder.RegisterType<IncludesHandler>().As<IIncludesHandler>()
+                .WithParameter((pi, ctx) => pi.ParameterType == typeof(IContentTransformer),
+                          (pi, ctx) => ctx.Resolve<RazorLightContentTransformer>());
 
+            builder.RegisterType<MarkdigMarkdownContentTransformer>();
+            builder.RegisterType<RazorLightContentTransformer>();
             builder.RegisterType<MarkdigRazorLightTransformer>()
                 .As<IContentTransformer>()
-                .UsingConstructor(typeof(Func<IContentTransformer, IIncludesHandler>));
+                .UsingConstructor(typeof(MarkdigMarkdownContentTransformer), typeof(RazorLightContentTransformer));
+            //builder.RegisterType<MarkdigRazorLightTransformer>()
+            //    .As<IContentTransformer>()
+            //    .UsingConstructor(typeof(Func<IContentTransformer, IIncludesHandler>));
 
             builder.RegisterType<LocalFileSystemConfigurationLoader>().As<IConfigurationLoader>()
-                .WithParameter(new TypedParameter(typeof(string), srcDir));
+                .WithParameter(new TypedParameter(typeof(string), srcDir))
+                .WithParameter(new TypedParameter(typeof(Environment_e), env));
 
             builder.RegisterType<BaseCompiler>().As<ICompiler>()
                 .WithParameter(new TypedParameter(typeof(string), srcDir));

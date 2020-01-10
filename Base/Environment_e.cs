@@ -8,19 +8,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Base;
-using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Core.Compiler
+namespace Xarial.Docify.Base
 {
-    public class IncludeContextModel : ContextModel
+    public enum Environment_e
     {
-        public ContextMetadata Data { get; }
-
-        public IncludeContextModel(Site site, Page page, Metadata data)
-            : base(site, page)
-        {
-            Data = new ContextMetadata(data);
-        }
+        Test,
+        Staging,
+        Production
     }
 }

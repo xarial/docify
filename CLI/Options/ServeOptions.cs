@@ -5,22 +5,15 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using CommandLine;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Base;
-using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Core.Compiler
+namespace Xarial.Docify.CLI.Options
 {
-    public class IncludeContextModel : ContextModel
+    [Verb("serve", HelpText = "Serves the static site from source")]
+    public class ServeOptions : BuildOptions
     {
-        public ContextMetadata Data { get; }
-
-        public IncludeContextModel(Site site, Page page, Metadata data)
-            : base(site, page)
-        {
-            Data = new ContextMetadata(data);
-        }
     }
 }

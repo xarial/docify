@@ -24,7 +24,7 @@ namespace CLI.Tests
         [SetUp]
         public void Setup()
         {
-            m_Compiler = new DocifyEngine("", "", "").Resove<ICompiler>();
+            m_Compiler = new DocifyEngine("", "", "", Environment_e.Test).Resove<ICompiler>();
         }
         
         [Test]
@@ -103,8 +103,8 @@ namespace CLI.Tests
 
             await m_Compiler.Compile(site);
 
-            Assert.AreEqual("<p><em>1</em> <p>Some Value\nA</p></p>", site.MainPage.Content);
-            Assert.AreEqual("<p>page2.html\n<p>Some Value\nB</p>\n<p><strong>page2.html</strong>\n2</p></p>", site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page2.html").Content);
+            Assert.AreEqual("<p><em>1</em> Some Value\r\nA</p>", site.MainPage.Content);
+            Assert.AreEqual("<p>page2.html\nSome Value\r\nB\n**page2.html**\r\n2</p>", site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page2.html").Content);
         }
     }
 }

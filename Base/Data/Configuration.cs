@@ -7,18 +7,25 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Xarial.Docify.Base.Data
 {
-    public class Configuration : Metadata
+    public interface IConfiguration 
     {
-        public Configuration() : base()
+        Environment_e Environment { get; }
+    }
+
+    public class Configuration : Metadata, IConfiguration
+    {
+        public Environment_e Environment { get; }
+
+        public Configuration(Environment_e env) : this(new Dictionary<string, dynamic>(), env)
         {
         }
 
-        public Configuration(Dictionary<string, dynamic> parameters) : base(parameters) 
+        public Configuration(IDictionary<string, dynamic> parameters, Environment_e env) : base(parameters) 
         {
+            Environment = env;
         }
     }
 }

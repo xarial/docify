@@ -22,32 +22,67 @@ namespace Fragments.Tests
 {
     public class SeoTest
     {
-        [Test]
-        public async Task DefaultParamsTest() 
-        {
-            IncludesHandler includesHandler = null;
-            new MarkdigRazorLightTransformer(t => includesHandler = new IncludesHandler(t));
-
+        private Task<string> Insert(Metadata param)
+        {            
             var p1 = new Page(Location.FromPath("index.html"), "");
             var p2 = new Page(Location.FromPath("p2\\index.html"), "");
             p2.Data["title"] = "p2";
             p1.SubPages.Add(p2);
 
-            var site = new Site("www.example.com", null, new Configuration()
+            var site = new Site("www.example.com", null, new Configuration( Environment_e.Test)
             { { "title", "t1" }, { "description", "d1" } });
-
-            Metadata data;
-            string rawContent;
-            var path = FragmentTest.GetPath(@"seo\_includes\seo.cshtml");
-            new TextSourceFile(Location.FromPath(path), File.ReadAllText(path)).Parse(out rawContent, out data);
             
-            site.Includes.Add(new Template("seo", rawContent, data));
+            return FragmentTest.InsertIncludeToPageNormalize(@"seo\_includes\seo.cshtml", param, site, p2);
+        }
 
-            var res = await includesHandler.Insert("seo", null, site, p2);
+        [Test]
+        public async Task DefaultParamsTest()
+        {
+            var res = await Insert(null);
 
-            res = FragmentTest.Normalize(res);
-            
             Assert.AreEqual(Resources.seo1, res);
+        }
+
+        [Test]
+        public async Task OgParamsTest()
+        {
+            var res = await Insert(
+                new Metadata() 
+                {
+                    { "og", true },
+                    { "twitter", false },
+                    { "linkedin", false }
+                });
+            
+            Assert.AreEqual(Resources.seo2, res);
+        }
+
+        [Test]
+        public async Task TwitterParamsTest()
+        {
+            var res = await Insert(
+                new Metadata()
+                {
+                    { "og", false },
+                    { "twitter", true },
+                    { "linkedin", false }
+                });
+
+            Assert.AreEqual(Resources.seo3, res);
+        }
+
+        [Test]
+        public async Task LiParamsTest()
+        {
+            var res = await Insert(
+                new Metadata()
+                {
+                    { "og", false },
+                    { "twitter", false },
+                    { "linkedin", true }
+                });
+
+            Assert.AreEqual(Resources.seo4, res);
         }
     }
 }

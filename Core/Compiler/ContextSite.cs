@@ -32,11 +32,11 @@ namespace Xarial.Docify.Core.Compiler
             }
         }
 
-        public IReadOnlyDictionary<string, dynamic> Configuration 
+        public ContextConfiguration Configuration 
         {
             get 
             {
-                return BaseSite.Configuration;
+                return new ContextConfiguration(BaseSite.Configuration);
             }
         }
 

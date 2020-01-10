@@ -1,16 +1,10 @@
-﻿@**********************************************************************
-//docify
-//Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
-//********************************************************************@
-
----
+﻿---
 og: true
 twitter: true
 linkedin: true
 ---
 @using RazorLight
+@using System;
 @inherits TemplatePage<Xarial.Docify.Core.Compiler.IncludeContextModel>
 @functions{
     public class LinkedInMetadata
@@ -26,6 +20,8 @@ linkedin: true
     }
 }
 @{
+    const string VERSION = "0.1";
+
     dynamic title = "";
     dynamic description = "";
     dynamic image = "";
@@ -45,22 +41,9 @@ linkedin: true
     Model.Site.Configuration.TryGetValue("title", out siteTitle);
     Model.Site.Configuration.TryGetValue("description", out siteDescription);
 
-    dynamic ogDyn = false;
-    Model.Data.TryGetValue("og", out ogDyn);
-
-    dynamic twitterDyn = false;
-    Model.Data.TryGetValue("twitter", out twitterDyn);
-
-    dynamic linkedinDyn = false;
-    Model.Data.TryGetValue("linkedin", out linkedinDyn);
-
-    bool og = false;
-    bool twitter = false;
-    bool linkedin = false;
-
-    bool.TryParse(ogDyn, out og);
-    bool.TryParse(twitterDyn, out twitter);
-    bool.TryParse(linkedinDyn, out linkedin);
+    var og = Model.Data.Get<bool>("og");
+    var twitter = Model.Data.Get<bool>("twitter");
+    var linkedin = Model.Data.Get<bool>("linkedin");
 
     var ld = "";
 
@@ -75,10 +58,10 @@ linkedin: true
                 image = image,
                 type = "WebPage",
                 context = "http://schema.org"
-        }).ToString();
+            }).ToString();
     }
 }
-<meta name="generator" content="Docify v0.1" />
+<meta name="generator" content="@string.Format("Docify v{0}", VERSION)" />
 <meta name="description" content="@description" />
 <link rel="canonical" href="@Model.Page.FullUrl" />
 @if (og)

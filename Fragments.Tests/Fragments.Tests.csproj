@@ -14,7 +14,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Base\Base.csproj" />
+    <ProjectReference Include="..\CLI\CLI.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Fragments\Fragments.csproj" />
   </ItemGroup>
 
   <ItemGroup>

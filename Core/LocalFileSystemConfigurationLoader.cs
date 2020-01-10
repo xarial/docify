@@ -11,6 +11,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Text;
 using System.Threading.Tasks;
+using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using YamlDotNet.Serialization;
@@ -23,18 +24,20 @@ namespace Xarial.Docify.Core
 
         private readonly IFileSystem m_FileSystem;
         private readonly string m_ConfigFile;
-        private IDeserializer m_YamlSerializer;
+        private readonly IDeserializer m_YamlSerializer;
+        private readonly Environment_e m_Environment;
 
-        public LocalFileSystemConfigurationLoader(string srcDir)
-            : this(srcDir, new FileSystem())
+        public LocalFileSystemConfigurationLoader(string srcDir, Environment_e env)
+            : this(srcDir, new FileSystem(), env)
         {
         }
 
-        public LocalFileSystemConfigurationLoader(string srcDir, IFileSystem fileSystem) 
+        public LocalFileSystemConfigurationLoader(string srcDir, IFileSystem fileSystem, Environment_e env) 
         {
             m_ConfigFile = Path.Combine(srcDir, CONF_FILE_NAME);
             m_FileSystem = fileSystem;
             m_YamlSerializer = new DeserializerBuilder().Build();
+            m_Environment = env;
         }
 
         public async Task<Configuration> Load()
@@ -43,11 +46,11 @@ namespace Xarial.Docify.Core
             {
                 var confStr = await m_FileSystem.File.ReadAllTextAsync(m_ConfigFile);
 
-                return new Configuration(m_YamlSerializer.Deserialize<Dictionary<string, dynamic>>(confStr));
+                return new Configuration(m_YamlSerializer.Deserialize<Dictionary<string, dynamic>>(confStr), m_Environment);
             }
             else 
             {
-                return new Configuration();
+                return new Configuration(m_Environment);
             }
         }
     }

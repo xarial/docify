@@ -21,7 +21,7 @@ using Xarial.Docify.Core.Loader;
 
 namespace Core.Tests
 {
-    public class LocalFileSystemFragmentsLoaderTest
+    public class LocalFileSystemComponentsLoaderTest
     {
         private ILoader m_Loader;
 
@@ -41,12 +41,12 @@ namespace Core.Tests
         }
 
         [Test]
-        public async Task Load_Fragments() 
+        public async Task Load_Components() 
         {
-            var frgLoader = new LocalFileSystemFragmentsLoader(m_Loader, new Configuration()
+            var frgLoader = new LocalFileSystemComponentsLoader(m_Loader, new Configuration()
             {
-                Fragments = new string[] { "A" }.ToList(),
-                FragmentsFolder = Location.FromPath("C:\\fragments")
+                Components = new string[] { "A" }.ToList(),
+                ComponentsFolder = Location.FromPath("C:\\components")
             });
 
             var res = await frgLoader.Load(new ISourceFile[] 
@@ -72,7 +72,7 @@ namespace Core.Tests
 
             conf.ThemesHierarchy.Add("A");
 
-            var frgLoader = new LocalFileSystemFragmentsLoader(m_Loader, conf);
+            var frgLoader = new LocalFileSystemComponentsLoader(m_Loader, conf);
 
             var res = await frgLoader.Load(new ISourceFile[]
             {
@@ -130,7 +130,7 @@ namespace Core.Tests
             conf.ThemesHierarchy.Add("A");
             conf.ThemesHierarchy.Add("B");
 
-            var frgLoader = new LocalFileSystemFragmentsLoader(loaderMock.Object, conf);
+            var frgLoader = new LocalFileSystemComponentsLoader(loaderMock.Object, conf);
 
             var res = await frgLoader.Load(new ISourceFile[]
             {
@@ -158,13 +158,13 @@ namespace Core.Tests
         [Test]
         public void Load_Duplicate()
         {
-            var frgLoader = new LocalFileSystemFragmentsLoader(m_Loader, new Configuration()
+            var compLoader = new LocalFileSystemComponentsLoader(m_Loader, new Configuration()
             {
-                Fragments = new string[] { "A" }.ToList(),
-                FragmentsFolder = Location.FromPath("C:\\fragments")
+                Components = new string[] { "A" }.ToList(),
+                ComponentsFolder = Location.FromPath("C:\\components")
             });
 
-            Assert.ThrowsAsync<DuplicateFragmentSourceFileException>(() => frgLoader.Load(new ISourceFile[]
+            Assert.ThrowsAsync<DuplicateComponentSourceFileException>(() => compLoader.Load(new ISourceFile[]
             {
                 new TextSourceFile(Location.FromPath("dir\\file2.txt"), "")
             }));

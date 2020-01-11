@@ -15,7 +15,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Core.Compiler.Context;
 
-namespace Fragments.Tests
+namespace Components.Tests
 {
     public class NavTest
     {
@@ -24,21 +24,21 @@ namespace Fragments.Tests
         [Test]
         public async Task DefinedMenuTest() 
         {
-            var site = FragmentTest.NewSite(null, FragmentTest.GetData<Configuration>("nav:\r\n  menu:\r\n    - Page1:\r\n      - SubPage1\r\n      - SubPage2\r\n    - Page2"));
-            var res = await FragmentTest.RenderIncludeNormalize(INCLUDE_PATH, null, site, site.MainPage);
+            var site = ComponentsTest.NewSite(null, ComponentsTest.GetData<Configuration>("nav:\r\n  menu:\r\n    - Page1:\r\n      - SubPage1\r\n      - SubPage2\r\n    - Page2"));
+            var res = await ComponentsTest.RenderIncludeNormalize(INCLUDE_PATH, null, site, site.MainPage);
         }
 
         [Test]
         public async Task AutoMenuTest()
         {
-            var site = FragmentTest.NewSite();
+            var site = ComponentsTest.NewSite();
             var p1 = new Page(Location.FromPath("Page1.html"), "");
             p1.SubPages.Add(new Page(Location.FromPath("SubPage1.html"), ""));
             p1.SubPages.Add(new Page(Location.FromPath("SubPage2.html"), ""));
             site.MainPage.SubPages.Add(p1);
             site.MainPage.SubPages.Add(new Page(Location.FromPath("Page2.html"), ""));
 
-            var res = await FragmentTest.RenderIncludeNormalize(INCLUDE_PATH, null, site, site.MainPage);
+            var res = await ComponentsTest.RenderIncludeNormalize(INCLUDE_PATH, null, site, site.MainPage);
         }
     }
 }

@@ -19,12 +19,12 @@ using Xarial.Docify.Core.Exceptions;
 
 namespace Xarial.Docify.Core.Loader
 {
-    public class LocalFileSystemFragmentsLoader : IFragmentsLoader
+    public class LocalFileSystemComponentsLoader : IComponentsLoader
     {
         private readonly ILoader m_Loader;
         private readonly Configuration m_Config;
 
-        public LocalFileSystemFragmentsLoader(ILoader loader, Configuration conf)
+        public LocalFileSystemComponentsLoader(ILoader loader, Configuration conf)
         {
             m_Loader = loader;
             m_Config = conf;
@@ -39,11 +39,11 @@ namespace Xarial.Docify.Core.Loader
 
             var resFiles = srcFiles.ToDictionary(f => f.Location.ToId(), f => f, StringComparer.CurrentCultureIgnoreCase);
 
-            if (m_Config.Fragments?.Any() == true)
+            if (m_Config.Components?.Any() == true)
             {
-                foreach (var fragment in m_Config.Fragments)
+                foreach (var comp in m_Config.Components)
                 {
-                    await AddFiles(resFiles, m_Config.FragmentsFolder.Combine(fragment), fragment, false);
+                    await AddFiles(resFiles, m_Config.ComponentsFolder.Combine(comp), comp, false);
                 }
             }
 
@@ -73,7 +73,7 @@ namespace Xarial.Docify.Core.Loader
                     {
                         if (!allowInherit)
                         {
-                            throw new DuplicateFragmentSourceFileException(fragName, id);
+                            throw new DuplicateComponentSourceFileException(fragName, id);
                         }
                     }
                 }

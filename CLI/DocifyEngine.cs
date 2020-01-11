@@ -68,7 +68,7 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<ConsoleLogger>().As<ILogger>();
 
-            builder.RegisterType<LocalFileSystemFragmentsLoader>().As<IFragmentsLoader>();
+            builder.RegisterType<LocalFileSystemComponentsLoader>().As<IComponentsLoader>();
 
             builder.RegisterType<IncludesHandler>().As<IIncludesHandler>().WithParameter(
                 new TypedParameter(typeof(IContentTransformer), new RazorLightContentTransformer()))
@@ -97,8 +97,8 @@ namespace Xarial.Docify.CLI
 
             var srcFiles = await loader.Load(Location.FromPath(m_SrcDir));
 
-            var fragmentsLoader = Resove<IFragmentsLoader>();
-            srcFiles = await fragmentsLoader.Load(srcFiles);
+            var compsLoader = Resove<IComponentsLoader>();
+            srcFiles = await compsLoader.Load(srcFiles);
 
             var site = composer.ComposeSite(srcFiles, m_SiteUrl);
 

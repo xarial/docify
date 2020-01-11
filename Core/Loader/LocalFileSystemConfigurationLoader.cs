@@ -25,14 +25,14 @@ namespace Xarial.Docify.Core.Loader
         private class Params
         {
             internal const string WorkDir = "work_dir";
-            internal const string FragmentsDir = "fragments_dir";
-            internal const string Fragments = "fragments";
+            internal const string ComponentsDir = "components_dir";
+            internal const string Components = "components";
             internal const string ThemesDir = "themes_dir";
             internal const string Theme = "theme";
         }
 
         private const string CONF_FILE_NAME = "_config.yml";
-        private const string DEFAULT_FRAGMENTS_DIR = "Fragments";
+        private const string DEFAULT_COMPONENTS_DIR = "Components";
         private const string DEFAULT_THEMES_DIR = "Themes";
 
         private readonly IFileSystem m_FileSystem;
@@ -97,8 +97,8 @@ namespace Xarial.Docify.Core.Loader
             conf.ThemesHierarchy.AddRange(themesHierarchy);
             
             conf.WorkingFolder = NormalizeDirFunc(conf.GetRemoveParameterOrDefault<string>(Params.WorkDir), Path.GetTempPath());
-            conf.FragmentsFolder = Location.FromPath(NormalizeDirFunc(conf.GetRemoveParameterOrDefault<string>(Params.FragmentsDir), DEFAULT_FRAGMENTS_DIR));
-            conf.Fragments = conf.GetRemoveParameterOrDefault<IEnumerable<object>>(Params.Fragments)?.Cast<string>()?.ToList();
+            conf.ComponentsFolder = Location.FromPath(NormalizeDirFunc(conf.GetRemoveParameterOrDefault<string>(Params.ComponentsDir), DEFAULT_COMPONENTS_DIR));
+            conf.Components = conf.GetRemoveParameterOrDefault<IEnumerable<object>>(Params.Components)?.Cast<string>()?.ToList();
             
             return conf;
         }

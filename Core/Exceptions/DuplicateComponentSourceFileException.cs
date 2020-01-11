@@ -11,10 +11,10 @@ using System.Text;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class DuplicateFragmentSourceFileException : Exception
+    public class DuplicateComponentSourceFileException : Exception
     {
-        public DuplicateFragmentSourceFileException(string fragmentName, string id)
-            : base($"Specified file '{id}' from '{fragmentName}' fragment already present in the source files")
+        public DuplicateComponentSourceFileException(string compName, string id)
+            : base($"Specified file '{id}' from '{compName}' component already present in the source files")
         {
         }
     }

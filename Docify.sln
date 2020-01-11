@@ -20,11 +20,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8FBE598C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Base", "Base\Base.csproj", "{21F92DA2-6ECB-408B-91DA-984834827B21}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fragments", "Fragments\Fragments.csproj", "{545F0EB5-9058-4F0A-B0B6-9902C4BA6C26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Components", "Components\Components.csproj", "{545F0EB5-9058-4F0A-B0B6-9902C4BA6C26}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fragments.Tests", "Fragments.Tests\Fragments.Tests.csproj", "{ABD8EB0B-3803-4A26-83FD-DC9E45FBF2F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Components.Tests", "Components.Tests\Components.Tests.csproj", "{ABD8EB0B-3803-4A26-83FD-DC9E45FBF2F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Themes", "Themes\Themes.csproj", "{1A78EEA8-38A0-4EA2-AE61-04CD610C0A88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Themes", "Themes\Themes.csproj", "{1A78EEA8-38A0-4EA2-AE61-04CD610C0A88}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{672CBA85-8BB8-47C8-B2CB-B42633C7BCB0}"
 EndProject

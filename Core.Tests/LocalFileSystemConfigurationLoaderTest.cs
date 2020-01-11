@@ -34,21 +34,21 @@ namespace Core.Tests
         }
 
         [Test]
-        public async Task Load_FragmentsLocations() 
+        public async Task Load_ComponentsLocations() 
         {
             var fs = new MockFileSystem();
             fs.AddFile("C:\\site\\page.html", null);
-            fs.AddFile("C:\\site\\_config.yml", new MockFileData("fragments_dir: D:\\fragments\r\nfragments:\r\n  - fragment1\r\n  - fragment2"));
+            fs.AddFile("C:\\site\\_config.yml", new MockFileData("components_dir: D:\\components\r\ncomponents:\r\n  - component1\r\n  - component2"));
 
             var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
 
             var conf = await confLoader.Load(Location.FromPath("C:\\site"));
 
             Assert.AreEqual(0, conf.Count);
-            Assert.AreEqual("D:\\fragments", conf.FragmentsFolder.ToPath());
-            Assert.AreEqual(2, conf.Fragments.Count);
-            Assert.Contains("fragment1", conf.Fragments);
-            Assert.Contains("fragment2", conf.Fragments);
+            Assert.AreEqual("D:\\components", conf.ComponentsFolder.ToPath());
+            Assert.AreEqual(2, conf.Components.Count);
+            Assert.Contains("component1", conf.Components);
+            Assert.Contains("component2", conf.Components);
             Assert.AreEqual(0, conf.ThemesHierarchy.Count);
         }
 
@@ -72,7 +72,7 @@ namespace Core.Tests
         }
 
         [Test]
-        public async Task Load_DefaultThemesWorkingFragmentsFolder()
+        public async Task Load_DefaultThemesWorkingComponentsFolder()
         {
             var fs = new MockFileSystem();
             fs.AddFile("C:\\site\\page.html", null);
@@ -83,11 +83,11 @@ namespace Core.Tests
 
             Assert.That(!string.IsNullOrEmpty(conf.WorkingFolder));
             Assert.That(!conf.ThemesFolder.IsEmpty);
-            Assert.That(!conf.FragmentsFolder.IsEmpty);
+            Assert.That(!conf.ComponentsFolder.IsEmpty);
 
             Assert.That(System.IO.Path.IsPathRooted(conf.WorkingFolder));
             Assert.That(System.IO.Path.IsPathRooted(conf.ThemesFolder.ToPath()));
-            Assert.That(System.IO.Path.IsPathRooted(conf.FragmentsFolder.ToPath()));
+            Assert.That(System.IO.Path.IsPathRooted(conf.ComponentsFolder.ToPath()));
         }
 
         [Test]

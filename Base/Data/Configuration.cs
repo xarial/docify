@@ -19,8 +19,8 @@ namespace Xarial.Docify.Base.Data
     {
         public Environment_e Environment { get; set; }
         public string WorkingFolder { get; set; }
-        public Location FragmentsFolder { get; set; }
-        public List<string> Fragments { get; set; }
+        public Location ComponentsFolder { get; set; }
+        public List<string> Components { get; set; }
         public Location ThemesFolder { get; set; }
         public List<string> ThemesHierarchy { get; }
         

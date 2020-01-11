@@ -21,24 +21,24 @@ using Xarial.Docify.Core.Compiler.Context;
 using Xarial.Docify.Core.Data;
 using YamlDotNet.Serialization;
 
-namespace Fragments.Tests
+namespace Components.Tests
 {
-    public static class FragmentTest
+    public static class ComponentsTest
     {
         public static string GetPath(string relPath) 
         {
             const string SOLUTION_FILE_NAME = "docify.sln";
 
-            var solDir = Path.GetDirectoryName(typeof(FragmentTest).Assembly.Location);
+            var solDir = Path.GetDirectoryName(typeof(ComponentsTest).Assembly.Location);
 
             while (!File.Exists(Path.Combine(solDir, SOLUTION_FILE_NAME)))
             {
                 solDir = Path.GetDirectoryName(solDir);
             }
 
-            var fragDir = Path.Combine(solDir, "Fragments\\Lib");
+            var compDir = Path.Combine(solDir, "Components\\Lib");
 
-            return Path.Combine(fragDir, relPath);
+            return Path.Combine(compDir, relPath);
         }
 
         public static T GetData<T>(string paramStr)

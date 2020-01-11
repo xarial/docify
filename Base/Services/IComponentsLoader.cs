@@ -13,7 +13,7 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Services
 {
-    public interface IFragmentsLoader
+    public interface IComponentsLoader
     {
         Task<IEnumerable<ISourceFile>> Load(IEnumerable<ISourceFile> srcFiles);
     }

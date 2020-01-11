@@ -5,7 +5,7 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using Fragments.Tests.Properties;
+using Components.Tests.Properties;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ using Xarial.Docify.CLI;
 using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Data;
 
-namespace Fragments.Tests
+namespace Components.Tests
 {
     public class GoogleAnalyticsTest
     {
@@ -27,23 +27,23 @@ namespace Fragments.Tests
 
         private Task<string> Render(Environment_e env, Metadata param) 
         {
-            var site = FragmentTest.NewSite(null, new Configuration { Environment = env });
+            var site = ComponentsTest.NewSite(null, new Configuration { Environment = env });
 
-            return FragmentTest.RenderIncludeNormalize(INCLUDE_PATH,
+            return ComponentsTest.RenderIncludeNormalize(INCLUDE_PATH,
                 param, site, site.MainPage);
         }
 
         private Task<string> Transform(Environment_e env, string content)
         {
-            var site = FragmentTest.NewSite(null, new Configuration { Environment = env });
+            var site = ComponentsTest.NewSite(null, new Configuration { Environment = env });
 
-            return FragmentTest.TransformContentNormalize(INCLUDE_PATH, content, site, site.MainPage);
+            return ComponentsTest.TransformContentNormalize(INCLUDE_PATH, content, site, site.MainPage);
         }
 
         [Test]
         public async Task DefaultParamsTestEnvTest()
         {
-            var res = await Render(Environment_e.Test, FragmentTest.GetData<Metadata>("traking_code: "));
+            var res = await Render(Environment_e.Test, ComponentsTest.GetData<Metadata>("traking_code: "));
 
             Assert.IsEmpty(res);
         }
@@ -51,7 +51,7 @@ namespace Fragments.Tests
         [Test]
         public async Task ProdEnvTest()
         {
-            var res = await Render(Environment_e.Production, FragmentTest.GetData<Metadata>("traking_code: ABC"));
+            var res = await Render(Environment_e.Production, ComponentsTest.GetData<Metadata>("traking_code: ABC"));
 
             Assert.AreEqual(Resources.google_analytics1, res);
         }
@@ -59,7 +59,7 @@ namespace Fragments.Tests
         [Test]
         public async Task TestEnvIgnoreEnvTest()
         {
-            var res = await Render(Environment_e.Test, FragmentTest.GetData<Metadata>("production_only: false\r\ntraking_code: ABC"));
+            var res = await Render(Environment_e.Test, ComponentsTest.GetData<Metadata>("production_only: false\r\ntraking_code: ABC"));
 
             Assert.AreEqual(Resources.google_analytics1, res);
         }

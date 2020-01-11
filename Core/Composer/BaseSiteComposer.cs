@@ -185,12 +185,11 @@ namespace Xarial.Docify.Core.Composer
         {
             var layouts = new Dictionary<string, Template>(StringComparer.CurrentCultureIgnoreCase);
 
-            var layoutSrcList = layoutFiles
-                .ToList();
+            var layoutSrcList = layoutFiles.ToList();
 
             while (layoutSrcList.Any()) 
             {
-                var layoutName = Path.GetFileNameWithoutExtension(layoutSrcList.First().Location.FileName);
+                var layoutName = GetTemplateName(layoutSrcList.First().Location);
                 CreateLayout(layouts, layoutSrcList, layoutName);
             }
 
@@ -211,7 +210,7 @@ namespace Xarial.Docify.Core.Composer
                 string layoutName;
                 ParseTextFile(s, out rawContent, out data, out layoutName);
 
-                var name = Path.GetFileNameWithoutExtension(s.Location.FileName);
+                var name = GetTemplateName(s.Location);
 
                 if (usedIncludes.Contains(name, StringComparer.CurrentCultureIgnoreCase)) 
                 {
@@ -224,13 +223,21 @@ namespace Xarial.Docify.Core.Composer
             }).ToList();
         }
 
+        private string GetTemplateName(Location loc) 
+        {
+            var path = loc.Path.Skip(1).ToList();
+            path.Add(Path.GetFileNameWithoutExtension(loc.FileName));
+            
+            return string.Join(Base.LocationExtension.ID_SEP, path.ToArray());
+        }
+
         private Template CreateLayout(Dictionary<string, Template> layouts, 
             List<ITextSourceFile> layoutsSrcList, string layoutName) 
         {
             //TODO: detect circular dependencies
 
             var layoutFile = layoutsSrcList.Find(
-                l => string.Equals(Path.GetFileNameWithoutExtension(l.Location.FileName), 
+                l => string.Equals(GetTemplateName(l.Location), 
                 layoutName, 
                 StringComparison.CurrentCultureIgnoreCase));
 

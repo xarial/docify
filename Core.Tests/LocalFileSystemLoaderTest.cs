@@ -41,16 +41,16 @@ namespace Core.Tests
             Assert.AreEqual(5, res.Count());
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "page1.md"));
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "page2.html"));
-            Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "folder-1.txt"));
-            Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "img-img1.png"));
+            Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "folder::1.txt"));
+            Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "img::img1.png"));
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "test1.xlsx"));
             Assert.IsInstanceOf<ITextSourceFile>(res.FirstOrDefault(f => f.Location.ToId() == "page1.md"));
             Assert.IsInstanceOf<ITextSourceFile>(res.FirstOrDefault(f => f.Location.ToId() == "page2.html"));
-            Assert.IsInstanceOf<ITextSourceFile>(res.FirstOrDefault(f => f.Location.ToId() == "folder-1.txt"));
-            Assert.IsInstanceOf<IBinarySourceFile>(res.FirstOrDefault(f => f.Location.ToId() == "img-img1.png"));
+            Assert.IsInstanceOf<ITextSourceFile>(res.FirstOrDefault(f => f.Location.ToId() == "folder::1.txt"));
+            Assert.IsInstanceOf<IBinarySourceFile>(res.FirstOrDefault(f => f.Location.ToId() == "img::img1.png"));
             Assert.IsInstanceOf<IBinarySourceFile>(res.FirstOrDefault(f => f.Location.ToId() == "test1.xlsx"));
             Assert.AreEqual("abc", (res.FirstOrDefault(f => f.Location.ToId() == "page1.md") as ITextSourceFile).Content);
-            Assert.IsTrue(new byte[] { 1, 2, 3 }.SequenceEqual((res.FirstOrDefault(f => f.Location.ToId() == "img-img1.png") as IBinarySourceFile).Content));
+            Assert.IsTrue(new byte[] { 1, 2, 3 }.SequenceEqual((res.FirstOrDefault(f => f.Location.ToId() == "img::img1.png") as IBinarySourceFile).Content));
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace Core.Tests
 
             Assert.AreEqual(2, res.Count());
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "page1.md"));
-            Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "img1-img1.png"));
+            Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "img1::img1.png"));
         }
 
         [Test]

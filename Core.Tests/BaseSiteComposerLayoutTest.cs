@@ -119,5 +119,21 @@ namespace Core.Tests
 
             Assert.Throws<LayoutMissingContentPlaceholderException>(() => m_Composer.ComposeSite(src, ""));
         }
+
+        [Test]
+        public void ComposeSite_SubFolderLayout()
+        {
+            var src = new TextSourceFile[]
+            {
+                new TextSourceFile(Location.FromPath(@"_layouts\\dir1\\l1.md"), "_C_"),
+                new TextSourceFile(Location.FromPath(@"index.md"), ""),
+            };
+
+            var site = m_Composer.ComposeSite(src, "");
+
+            Assert.AreEqual(1, site.Layouts.Count);
+            Assert.AreEqual("dir1::l1", site.Layouts[0].Name);
+            Assert.AreEqual("_C_", site.Layouts[0].RawContent);
+        }
     }
 }

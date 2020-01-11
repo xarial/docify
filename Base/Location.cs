@@ -41,11 +41,11 @@ namespace Xarial.Docify.Base
                 dir = path;
             }
 
-            string[] blocks = null;
+            string[] blocks;
 
             if (!string.IsNullOrEmpty(dir))
             {
-                blocks = dir.Split(LocationExtension.PATH_SEP).ToArray();
+                blocks = dir.Split(new string[] { LocationExtension.PATH_SEP }, StringSplitOptions.None).ToArray();
             }
             else
             {
@@ -110,9 +110,9 @@ namespace Xarial.Docify.Base
 
     public static class LocationExtension
     {
-        internal const char PATH_SEP = '\\';
-        private const char URL_SEP = '/';
-        private const char ID_SEP = '-';
+        internal const string PATH_SEP = "\\";
+        private const string URL_SEP = "/";
+        public const string ID_SEP = "::";
 
         public static string ToPath(this Location loc, string root = "")
         {
@@ -134,7 +134,7 @@ namespace Xarial.Docify.Base
             return new Location(loc.Path.Union(blocks));
         }
 
-        private static string FormFullLocation(Location loc, string basePart, char sep)
+        private static string FormFullLocation(Location loc, string basePart, string sep)
         {
             var fullLoc = new StringBuilder();
 

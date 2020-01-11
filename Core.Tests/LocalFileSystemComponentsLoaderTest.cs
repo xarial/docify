@@ -57,9 +57,9 @@ namespace Core.Tests
 
             Assert.AreEqual(4, res.Count());
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file1.txt"));
-            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir-file2.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file2.txt"));
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file2.txt"));
-            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir-file3.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file3.txt"));
         }
 
         [Test]
@@ -83,11 +83,11 @@ namespace Core.Tests
 
             Assert.AreEqual(4, res.Count());
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file1.txt"));
-            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir-file2.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file2.txt"));
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file2.txt"));
-            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir-file3.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file3.txt"));
             Assert.AreEqual("f1", (res.First(f => f.Location.ToId() == "file1.txt") as TextSourceFile).Content);
-            Assert.AreEqual("A_theme_f2", (res.First(f => f.Location.ToId() == "dir-file2.txt") as TextSourceFile).Content);
+            Assert.AreEqual("A_theme_f2", (res.First(f => f.Location.ToId() == "dir::file2.txt") as TextSourceFile).Content);
         }
 
         [Test]
@@ -141,18 +141,18 @@ namespace Core.Tests
 
             Assert.AreEqual(6, res.Count());
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file1.txt"));
-            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir-file2.txt"));
-            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir-file3.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file2.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file3.txt"));
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file4.txt"));
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file5.txt"));
-            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir-file4.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file4.txt"));
 
             Assert.AreEqual("B_theme_f1", (res.First(f => f.Location.ToId() == "file1.txt") as TextSourceFile).Content);
-            Assert.AreEqual("f2", (res.First(f => f.Location.ToId() == "dir-file2.txt") as TextSourceFile).Content);
-            Assert.AreEqual("f3", (res.First(f => f.Location.ToId() == "dir-file3.txt") as TextSourceFile).Content);
+            Assert.AreEqual("f2", (res.First(f => f.Location.ToId() == "dir::file2.txt") as TextSourceFile).Content);
+            Assert.AreEqual("f3", (res.First(f => f.Location.ToId() == "dir::file3.txt") as TextSourceFile).Content);
             Assert.AreEqual("A_theme_f4", (res.First(f => f.Location.ToId() == "file4.txt") as TextSourceFile).Content);
             Assert.AreEqual("f5", (res.First(f => f.Location.ToId() == "file5.txt") as TextSourceFile).Content);
-            Assert.AreEqual("A_theme_dir-f4", (res.First(f => f.Location.ToId() == "dir-file4.txt") as TextSourceFile).Content);
+            Assert.AreEqual("A_theme_dir-f4", (res.First(f => f.Location.ToId() == "dir::file4.txt") as TextSourceFile).Content);
         }
 
         [Test]

@@ -28,9 +28,9 @@ namespace Core.Tests
             Assert.AreEqual("index.md", r3.FileName);
             Assert.AreEqual("index.md", r4.FileName);
             Assert.AreEqual("index.md", r1.ToId());
-            Assert.AreEqual("page1-index.md", r2.ToId());
-            Assert.AreEqual("page2-index.md", r3.ToId());
-            Assert.AreEqual("page3-subpage3-index.md", r4.ToId());
+            Assert.AreEqual("page1::index.md", r2.ToId());
+            Assert.AreEqual("page2::index.md", r3.ToId());
+            Assert.AreEqual("page3::subpage3::index.md", r4.ToId());
         }
 
         [Test]
@@ -42,8 +42,8 @@ namespace Core.Tests
             Assert.IsEmpty(r1.FileName);
             Assert.IsEmpty(r2.FileName);
 
-            Assert.AreEqual("dir1-dir2", r1.ToId());
-            Assert.AreEqual("dir1-dir2", r2.ToId());
+            Assert.AreEqual("dir1::dir2", r1.ToId());
+            Assert.AreEqual("dir1::dir2", r2.ToId());
         }
     }
 }

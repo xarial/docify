@@ -97,5 +97,22 @@ namespace Core.Tests
 
             Assert.Throws<DuplicateTemplateException>(() => m_Composer.ComposeSite(src, ""));
         }
+
+        [Test]
+        public void ComposeSite_SubFolderInclude()
+        {
+            var src = new TextSourceFile[]
+            {
+                new TextSourceFile(Location.FromPath(@"_includes\\dir1\\i1.md"), "Include"),
+                new TextSourceFile(Location.FromPath(@"index.md"), ""),
+            };
+
+            var site = m_Composer.ComposeSite(src, "");
+
+            Assert.AreEqual(1, site.Includes.Count);
+            Assert.AreEqual("dir1::i1", site.Includes[0].Name);
+            Assert.AreEqual(0, site.Includes[0].Data.Count);
+            Assert.AreEqual("Include", site.Includes[0].RawContent);
+        }
     }
 };

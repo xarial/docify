@@ -1,3 +1,4 @@
 ﻿fragments:
   - seo
   - google-analytics
+  - page-lang

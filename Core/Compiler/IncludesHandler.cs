@@ -49,8 +49,10 @@ namespace Xarial.Docify.Core.Compiler
                 throw new MissingIncludeException(name);
             }
 
-            return await m_Transformer.Transform(include.RawContent, include.Key, 
+            var res = await m_Transformer.Transform(include.RawContent, include.Key, 
                 new IncludeContextModel(site, page, param.Merge(include.Data)));
+
+            return res;
         }
 
         public Task ParseParameters(string includeRawContent, out string name, out Metadata param) 
@@ -85,11 +87,13 @@ namespace Xarial.Docify.Core.Compiler
                 ParseParameters(includeRawContent, out name, out data);
                 var replace = Render(name, data, site, page);
                 return replace;
-            });
+            }, site, page);
         }
 
-        private async Task<string> ReplaceAsync(string input, string pattern, Func<Match, Task<string>> evaluator)
+        private async Task<string> ReplaceAsync(string input, string pattern, Func<Match, Task<string>> evaluator, Site site, Page page)
         {
+            var hasMatch = false;
+
             var sb = new StringBuilder();
             var lastIndex = 0;
 
@@ -97,6 +101,7 @@ namespace Xarial.Docify.Core.Compiler
 
             foreach (Match match in regex.Matches(input))
             {
+                hasMatch = true;
                 sb.Append(input, lastIndex, match.Index - lastIndex)
                   .Append(await evaluator.Invoke(match).ConfigureAwait(false));
 
@@ -105,7 +110,16 @@ namespace Xarial.Docify.Core.Compiler
 
             sb.Append(input, lastIndex, input.Length - lastIndex);
 
-            return sb.ToString();
+            var replacement = sb.ToString();
+
+            if (hasMatch)
+            {
+                return await ReplaceAll(replacement, site, page);
+            }
+            else 
+            {
+                return replacement;
+            }
         }
     }
 }

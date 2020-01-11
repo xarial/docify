@@ -43,7 +43,7 @@ namespace Xarial.Docify.CLI
 
                 if (buildOpts != null || serveOpts != null)
                 {
-                    engine = new DocifyEngine(buildOpts.SourceDirectory, buildOpts.OutputDirectory, buildOpts.SiteUrl, Base.Environment_e.Test);
+                    engine = new DocifyEngine(buildOpts.SourceDirectory, buildOpts.OutputDirectory, buildOpts.SiteUrl, buildOpts.Environment);
                 }
 
                 if (buildOpts != null)

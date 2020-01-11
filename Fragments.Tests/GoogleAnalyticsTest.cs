@@ -5,7 +5,6 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using Fragments.Exceptions;
 using Fragments.Tests.Properties;
 using NUnit.Framework;
 using System;
@@ -59,7 +58,7 @@ namespace Fragments.Tests
         [Test]
         public void NoAnalyticsIdTest()
         {
-            Assert.ThrowsAsync<GoogleAnalyticsTrackingCodeNotSpecifiedException>(() => Insert(Environment_e.Production, null));
+            Assert.ThrowsAsync<NullReferenceException>(() => Insert(Environment_e.Production, null));
         }
     }
 }

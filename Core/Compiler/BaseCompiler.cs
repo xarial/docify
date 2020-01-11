@@ -28,18 +28,15 @@ namespace Xarial.Docify.Core.Compiler
         private readonly IContentTransformer m_ContentTransformer;
         private readonly BaseCompilerConfig m_Config;
         private readonly ILayoutParser m_LayoutParser;
-        private readonly IIncludesHandler m_IncludesHandler;
 
         public BaseCompiler(BaseCompilerConfig config,
             ILogger logger, ILayoutParser layoutParser,
-            IContentTransformer contentTransformer, 
-            IIncludesHandler includesHandler) 
+            IContentTransformer contentTransformer) 
         {
             m_Config = config;
             m_Logger = logger;
             m_LayoutParser = layoutParser;
             m_ContentTransformer = contentTransformer;
-            m_IncludesHandler = includesHandler;
         }
 
         public async Task Compile(Site site)
@@ -96,11 +93,9 @@ namespace Xarial.Docify.Core.Compiler
 
         private async Task CompilePage(Page page, Site site)
         {
-            var rawContent = await m_IncludesHandler.ReplaceAll(page.RawContent, site, page);
-
             var model = new ContextModel(site, page);
 
-            var content = await m_ContentTransformer.Transform(rawContent, page.Key, model);
+            var content = await m_ContentTransformer.Transform(page.RawContent, page.Key, model);
 
             var layout = page.Layout;
 

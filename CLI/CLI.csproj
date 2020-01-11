@@ -25,6 +25,10 @@
      <LibDir Include="$(SolutionDir)\Fragments\Lib\**\*" TargetPath="$(OutDir)\Fragments\%(RecursiveDir)%(Filename)%(Extension)" />
 	 <LibDir Include="$(SolutionDir)\Themes\Lib\**\*" TargetPath="$(OutDir)\Themes\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
+  <Target Name="RemoveLib" BeforeTargets="CopyLib">
+    <RemoveDir ContinueOnError="true"
+        Directories="$(OutDir)\Fragments;$(OutDir)\Themes" />
+  </Target>
   <Target Name="CopyLib" AfterTargets="AfterBuild">
     <Copy SourceFiles="@(LibDir)"
       DestinationFiles="@(LibDir->'%(TargetPath)')"

@@ -1,0 +1,26 @@
+﻿---
+default_lang: en
+---
+@using RazorLight
+@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@{
+    string GetLanguage()
+    {
+        const string LANG_VAR = "lang";
+
+        var lang = Model.Page.Data.GetOrDefault<string>(LANG_VAR);
+
+        if (string.IsNullOrEmpty(lang))
+        {
+            lang = Model.Site.Configuration.GetOrDefault<string>(LANG_VAR);
+        }
+
+        if (string.IsNullOrEmpty(lang))
+        {
+            lang = Model.Data.Get<string>("default_lang");
+        }
+
+        return lang;
+    }
+}
+@GetLanguage()

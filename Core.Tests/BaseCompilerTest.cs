@@ -57,17 +57,11 @@ namespace Core.Tests
 
                     return Task.FromResult(r);
                 });
-
-
-            var includesHandlerMock = new Mock<IIncludesHandler>();
-            includesHandlerMock.Setup(m => m.ReplaceAll(It.IsAny<string>(), It.IsAny<Site>(), It.IsAny<Page>()))
-                .Returns<string, Site, Page>((c, s, p) => Task.FromResult(c));
-
+            
             m_Compiler = new BaseCompiler(new BaseCompilerConfig(),
                 new Mock<ILogger>().Object,
                 layoutMock.Object,
-                contTransMock.Object,
-                includesHandlerMock.Object);
+                contTransMock.Object);
         }
 
         [Test]

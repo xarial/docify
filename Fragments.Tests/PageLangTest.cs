@@ -32,7 +32,7 @@ namespace Fragments.Tests
         [Test]
         public async Task Page_Lang()
         {
-            var site = FragmentTest.NewSite(new Metadata() { { "lang", "ru" } });
+            var site = FragmentTest.NewSite(FragmentTest.GetData<Metadata>("lang: ru"));
 
             var res = await FragmentTest.RenderIncludeNormalize(INCLUDE_PATH, null, site, site.MainPage);
 
@@ -42,13 +42,7 @@ namespace Fragments.Tests
         [Test]
         public async Task Page_SiteDefLang()
         {
-            var conf = new Configuration();
-            conf.Add("page-lang", new Dictionary<object, object>()
-            {
-                { "default_lang", "fr" }
-            });
-
-            var site = FragmentTest.NewSite(null, conf);
+            var site = FragmentTest.NewSite(null, FragmentTest.GetData<Configuration>("page-lang:\r\n  default_lang: fr"));
 
             var res = await FragmentTest.RenderIncludeNormalize(INCLUDE_PATH, null, site, site.MainPage);
 

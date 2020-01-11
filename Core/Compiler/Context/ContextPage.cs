@@ -16,7 +16,16 @@ using Xarial.Docify.Core.Data;
 
 namespace Xarial.Docify.Core.Compiler.Context
 {
-    public class ContextPage
+    public interface IContextPage
+    {
+        string Url { get; }
+        string FullUrl { get; }
+        string Name { get; }
+        ContextMetadata Data { get; }
+        IReadOnlyList<IContextPage> SubPages { get; }
+    }
+
+    public class ContextPage : IContextPage
     {
         private readonly Site m_Site;
 
@@ -64,7 +73,7 @@ namespace Xarial.Docify.Core.Compiler.Context
             }
         }
 
-        public IReadOnlyList<ContextPage> SubPages
+        public IReadOnlyList<IContextPage> SubPages
         {
             get
             {

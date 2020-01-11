@@ -19,6 +19,7 @@ using Xarial.Docify.CLI;
 using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Compiler.Context;
 using Xarial.Docify.Core.Data;
+using YamlDotNet.Serialization;
 
 namespace Fragments.Tests
 {
@@ -38,6 +39,14 @@ namespace Fragments.Tests
             var fragDir = Path.Combine(solDir, "Fragments\\Lib");
 
             return Path.Combine(fragDir, relPath);
+        }
+
+        public static T GetData<T>(string paramStr)
+            where T : Metadata
+        {
+            var yamlDeserializer = new DeserializerBuilder().Build();
+
+            return yamlDeserializer.Deserialize<T>(paramStr);
         }
 
         public static string Normalize(string content) 

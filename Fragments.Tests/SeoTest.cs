@@ -25,16 +25,8 @@ namespace Fragments.Tests
         private Task<string> Insert(Metadata param)
         {
             var site = FragmentTest.NewSite(
-                new Metadata()
-                {
-                    { "title", "p1" },
-                    { "description", "d1" }
-                },
-                new Configuration()
-                {
-                    { "title", "t1" }, 
-                    { "description", "sd1" }
-                });
+                FragmentTest.GetData<Metadata>("title: p1\r\ndescription: d1"),
+                FragmentTest.GetData<Configuration>("title: t1\r\ndescription: sd1"));
                         
             return FragmentTest.RenderIncludeNormalize(@"seo\_includes\seo.cshtml", param, site, site.MainPage);
         }
@@ -51,12 +43,7 @@ namespace Fragments.Tests
         public async Task OgParamsTest()
         {
             var res = await Insert(
-                new Metadata() 
-                {
-                    { "og", true },
-                    { "twitter", false },
-                    { "linkedin", false }
-                });
+                FragmentTest.GetData<Metadata>("og: true\r\ntwitter: false\r\nlinkedin: false"));
             
             Assert.AreEqual(Resources.seo2, res);
         }
@@ -65,12 +52,7 @@ namespace Fragments.Tests
         public async Task TwitterParamsTest()
         {
             var res = await Insert(
-                new Metadata()
-                {
-                    { "og", false },
-                    { "twitter", true },
-                    { "linkedin", false }
-                });
+                FragmentTest.GetData<Metadata>("og: false\r\ntwitter: true\r\nlinkedin: false"));
 
             Assert.AreEqual(Resources.seo3, res);
         }
@@ -79,12 +61,7 @@ namespace Fragments.Tests
         public async Task LiParamsTest()
         {
             var res = await Insert(
-                new Metadata()
-                {
-                    { "og", false },
-                    { "twitter", false },
-                    { "linkedin", true }
-                });
+                FragmentTest.GetData<Metadata>("og: false\r\ntwitter: false\r\nlinkedin: true"));
 
             Assert.AreEqual(Resources.seo4, res);
         }

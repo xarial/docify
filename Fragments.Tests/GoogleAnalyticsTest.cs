@@ -43,7 +43,7 @@ namespace Fragments.Tests
         [Test]
         public async Task DefaultParamsTestEnvTest()
         {
-            var res = await Render(Environment_e.Test, new Metadata() { { "traking_code", "" } });
+            var res = await Render(Environment_e.Test, FragmentTest.GetData<Metadata>("traking_code: "));
 
             Assert.IsEmpty(res);
         }
@@ -51,7 +51,7 @@ namespace Fragments.Tests
         [Test]
         public async Task ProdEnvTest()
         {
-            var res = await Render(Environment_e.Production, new Metadata() { { "traking_code", "ABC" } });
+            var res = await Render(Environment_e.Production, FragmentTest.GetData<Metadata>("traking_code: ABC"));
 
             Assert.AreEqual(Resources.google_analytics1, res);
         }
@@ -59,7 +59,7 @@ namespace Fragments.Tests
         [Test]
         public async Task TestEnvIgnoreEnvTest()
         {
-            var res = await Render(Environment_e.Test, new Metadata() { { "production_only", "false" }, { "traking_code", "ABC" } });
+            var res = await Render(Environment_e.Test, FragmentTest.GetData<Metadata>("production_only: false\r\ntraking_code: ABC"));
 
             Assert.AreEqual(Resources.google_analytics1, res);
         }

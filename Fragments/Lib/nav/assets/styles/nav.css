@@ -1,0 +1,116 @@
+﻿/*based on https://codepen.io/twodogstar/pen/FwedC*/
+
+.sub-menu-item-container {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.menu {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.sub-menu-item-container .menu-item {
+    display: block;
+    position: relative;
+    float: left;
+}
+
+.menu-item .sub-menu-item-container {
+    display: none;
+}
+
+.sub-menu-item-container .menu-item a {
+    display: block;
+    padding: 1em;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.menu-item:hover > .sub-menu-item-container {
+    display: block;
+    position: absolute;
+    margin-left: 0.1em;
+}
+
+.menu-item:hover .menu-item {
+    float: none;
+}
+
+.sub-menu-item-container .sub-menu-item-container .sub-menu-item-container {
+    left: 100%;
+    top: 0;
+}
+
+.sub-menu-item-container:before,
+.sub-menu-item-container:after {
+    content: " ";
+    display: table;
+}
+
+.sub-menu-item-container:after {
+    clear: both;
+}
+
+/*---hover---*/
+.sub-menu-item-container .menu-item a:hover {
+    text-decoration: underline;
+}
+
+.menu-item:hover .menu-item a:hover {
+    text-decoration: underline;
+}
+/*---*/
+
+/*---responsive---*/
+.menu-icon {
+    display: none;
+    z-index: 1;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 600px) {
+    .menu li.menu-item {
+        display: none;
+    }
+
+    .menu a.menu-icon {
+        float: right;
+        display: block;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .menu.responsive {
+        position: relative;
+    }
+
+    .menu.responsive .menu-icon {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .menu.responsive li {
+        float: none;
+        display: block;
+        text-align: left;
+    }
+
+    .menu.responsive {
+        background-color: #f9f9f9;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    }
+}
+/*---*/
+
+.bar {
+    width: 25px;
+    height: 4px;
+    margin: 4px 0;
+    background-color: black;
+}

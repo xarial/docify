@@ -1,0 +1,139 @@
+﻿---
+name_attribute: title
+menu:
+---
+@using RazorLight
+@using System
+@using System.Linq
+@using System.Collections.Generic
+@using Xarial.Docify.Core.Compiler.Context
+@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@functions{
+    public class MenuPage : IContextPage
+    {
+        public string Url { get; } = "";
+        public string FullUrl { get; }
+        public string Name { get; }
+        public ContextMetadata Data { get; }
+        public IReadOnlyList<IContextPage> SubPages => SubPagesList;
+        public List<MenuPage> SubPagesList { get; }
+
+        public MenuPage(IContextPage page) : this(page.Name)
+        {
+            FullUrl = page.FullUrl;
+            Data = page.Data;
+        }
+
+        public MenuPage(string name)
+        {
+            Name = name;
+            SubPagesList = new List<MenuPage>();
+        }
+    }
+}
+@{
+    var menu = Model.Data["menu"];
+
+    IEnumerable<IContextPage> menuPages = null;
+
+    var allPages = GetAllSubPages(Model.Site.MainPage).ToList();
+
+    if (menu != null)
+    {
+        var menuPagesList = new List<MenuPage>();
+        ParsePages(menu, menuPagesList);
+        menuPages = menuPagesList;
+    }
+    else
+    {
+        menuPages = Model.Site.MainPage.SubPages;
+    }
+
+    IEnumerable<IContextPage> GetAllSubPages(IContextPage page)
+    {
+        if (page.SubPages != null)
+        {
+            foreach (var childPage in page.SubPages)
+            {
+                yield return childPage;
+
+                foreach (var subChildPage in GetAllSubPages(childPage))
+                {
+                    yield return subChildPage;
+                }
+            }
+        }
+    }
+
+    MenuPage CreateMenuPage(string name)
+    {
+        var page = allPages.FirstOrDefault(p => string.Equals(System.IO.Path.GetFileNameWithoutExtension(p.Name),
+            name, StringComparison.CurrentCultureIgnoreCase));
+
+        if (page != null)
+        {
+            return new MenuPage(page);
+        }
+        else
+        {
+            return new MenuPage(name);
+        }
+    }
+
+    void ParsePages(List<object> menuList, List<MenuPage> menuPagesList)
+    {
+        foreach (var menuItem in menuList)
+        {
+            if (menuItem is string)
+            {
+                menuPagesList.Add(CreateMenuPage((string)menuItem));
+            }
+            else if (menuItem is Dictionary<object, object>)
+            {
+                foreach (var parentMenuItem in menuItem as Dictionary<object, object>)
+                {
+                    var menuPage = CreateMenuPage((string)parentMenuItem.Key);
+                    menuPagesList.Add(menuPage);
+                    ParsePages(parentMenuItem.Value as List<object>, menuPage.SubPagesList);
+                }
+            }
+            else
+            {
+                throw new NotSupportedException("Invalid type of menu item");
+            }
+        }
+    }
+}
+@{
+    string RenderMenu(IEnumerable<IContextPage> pages)
+    {
+        var html = new System.Text.StringBuilder();
+        
+        foreach (var menuPage in pages)
+        {
+            html.AppendLine("<li class=\"menu-item\">");
+            html.AppendLine($"<a href=\"{menuPage.FullUrl}\">{menuPage.Name}</a>");
+
+            if (menuPage.SubPages.Any())
+            {
+                html.AppendLine("<ul class=\"sub-menu-item-container\">");
+                html.AppendLine(@RenderMenu(menuPage.SubPages));
+                html.AppendLine("</ul>");
+            }
+            html.AppendLine("</li>");
+        }
+
+        return html.ToString();
+    }
+}
+
+<ul class="menu sub-menu-item-container" id="top-menu">
+    <a class="menu-icon" onclick="OpenMenu()">
+        <div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </a>
+    @Raw(RenderMenu(menuPages).ToString())
+</ul>

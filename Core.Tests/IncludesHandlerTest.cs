@@ -271,5 +271,19 @@ namespace Core.Tests
 
             Assert.AreEqual("__abc_page1.html_a1=x__xyzabc_page1.html_a1=z_page1.html_a2=y", res1);
         }
+
+        [Test]
+        public async Task ReplaceAll_NestedMultiLevelIncludes()
+        {
+            var p1 = new Page(Location.FromPath("page1.html"), "");
+            var s = new Site("", p1, null);
+            s.Includes.Add(new Template("i1", "abc"));
+            s.Includes.Add(new Template("i2", "xyz{% i1 a1: z %}"));
+            s.Includes.Add(new Template("i3", "abc{% i2 %}"));
+
+            var res1 = await m_Handler.ReplaceAll("{% i3 %}__{% i1 %}", s, p1);
+
+            Assert.AreEqual("abcxyzabc_page1.html_a1=z_page1.html__page1.html___abc_page1.html_", res1);
+        }
     }
 }

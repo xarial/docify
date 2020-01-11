@@ -18,6 +18,7 @@ using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Compiler.Context;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
+using Xarial.Docify.Core.Helpers;
 using YamlDotNet.Serialization;
 
 namespace Xarial.Docify.Core.Compiler
@@ -26,16 +27,17 @@ namespace Xarial.Docify.Core.Compiler
     {
         private const string START_TAG = "{%";
         private const string END_TAG = "%}";
-
-        private const string INCLUDE_REGEX = @"(?:" + START_TAG + @")[.\s\S]*?(:?" + END_TAG + ")";
-
+        
         private const string NAME_PARAMS_SPLIT_SYMBOL = " ";
 
         private readonly IContentTransformer m_Transformer;
 
+        private readonly PlaceholdersParser m_PlcParser;
+
         public IncludesHandler(IContentTransformer transformer) 
         {
             m_Transformer = transformer;
+            m_PlcParser = new PlaceholdersParser(START_TAG, END_TAG);
         }
         
         public async Task<string> Render(string name, Metadata param, 
@@ -95,49 +97,18 @@ namespace Xarial.Docify.Core.Compiler
             return Task.CompletedTask;
         }
 
-        public Task<string> ReplaceAll(string rawContent, Site site, Page page)
+        public async Task<string> ReplaceAll(string rawContent, Site site, Page page)
         {
-            return ReplaceAsync(rawContent, INCLUDE_REGEX, m => 
+            var replacement = await m_PlcParser.ReplaceAsync(rawContent, async (string includeRawContent) => 
             {
-                var includeRawContent = m.Value.Substring(START_TAG.Length, m.Value.Length - START_TAG.Length - END_TAG.Length).Trim();
                 string name;
                 Metadata data;
-                ParseParameters(includeRawContent, out name, out data);
-                var replace = Render(name, data, site, page);
-                return replace;
-            }, site, page);
-        }
+                await ParseParameters(includeRawContent, out name, out data);
+                var replace = await Render(name, data, site, page);
+                return await ReplaceAll(replace, site, page);
+            });
 
-        private async Task<string> ReplaceAsync(string input, string pattern, Func<Match, Task<string>> evaluator, Site site, Page page)
-        {
-            var hasMatch = false;
-
-            var sb = new StringBuilder();
-            var lastIndex = 0;
-
-            var regex = new Regex(pattern);
-
-            foreach (Match match in regex.Matches(input))
-            {
-                hasMatch = true;
-                sb.Append(input, lastIndex, match.Index - lastIndex)
-                  .Append(await evaluator.Invoke(match).ConfigureAwait(false));
-
-                lastIndex = match.Index + match.Length;
-            }
-
-            sb.Append(input, lastIndex, input.Length - lastIndex);
-
-            var replacement = sb.ToString();
-
-            if (hasMatch)
-            {
-                return await ReplaceAll(replacement, site, page);
-            }
-            else 
-            {
-                return replacement;
-            }
+            return replacement;
         }
     }
 }

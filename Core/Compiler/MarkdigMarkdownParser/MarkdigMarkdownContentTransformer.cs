@@ -22,16 +22,12 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
         internal const string CONTEXT_MODEL_PARAM_NAME = "_DocifyContextModel_";
 
         private readonly MarkdownPipeline m_MarkdownEngine;
-        private readonly IIncludesHandler m_IncludesHandler;
 
-        public MarkdigMarkdownContentTransformer(IIncludesHandler includesHandler)
+        public MarkdigMarkdownContentTransformer()
         {
-            m_IncludesHandler = includesHandler;
-
             m_MarkdownEngine = new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
                 .UseObservableLinks()
-                .UseIncludes(m_IncludesHandler)
                 .Build();
         }
 

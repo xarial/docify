@@ -46,7 +46,7 @@ namespace Fragments.Tests
             return string.Join(Environment.NewLine, lines.Select(l => l.Trim()).Where(l => !string.IsNullOrEmpty(l)));
         }
 
-        public static async Task<string> InsertIncludeToPageNormalize(string relPath, Metadata param, Site site, Page page)
+        public static async Task<string> RenderIncludeNormalize(string relPath, Metadata param, Site site, Page page)
         {
             var includesHandler = new DocifyEngine("", "", "", Environment_e.Test).Resove<IIncludesHandler>();
 
@@ -59,7 +59,7 @@ namespace Fragments.Tests
 
             site.Includes.Add(new Template(name, rawContent, data));
 
-            var res = await includesHandler.Insert(name, param, site, page);
+            var res = await includesHandler.Render(name, param, site, page);
 
             res = Normalize(res);
 

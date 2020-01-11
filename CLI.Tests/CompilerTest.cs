@@ -104,7 +104,7 @@ namespace CLI.Tests
             await m_Compiler.Compile(site);
 
             Assert.AreEqual("<p><em>1</em> <p>Some Value\nA</p></p>", site.MainPage.Content);
-            Assert.AreEqual("<p>page2.html\n<p>Some Value\nB</p>\n<p><strong>page2.html</strong>\n2</p></p>", site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page2.html").Content);
+            Assert.AreEqual("<p>page2.html</p>\n<p>Some Value\nB</p>\n<p><strong>page2.html</strong>\n2</p>", site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page2.html").Content);
         }
     }
 }

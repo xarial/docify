@@ -18,27 +18,33 @@ namespace Xarial.Docify.Core.Compiler
 {
     public class MarkdigRazorLightTransformer : IContentTransformer
     {
-        private readonly IContentTransformer m_MarkdownTransformer;
+        private readonly MarkdigMarkdownContentTransformer m_MarkdownTransformer;
         private readonly RazorLightContentTransformer m_RazorTransformer;
 
-        public MarkdigRazorLightTransformer(IIncludesHandler includesHandler) 
-            : this(c => includesHandler)
-        {
-        }
+        //public MarkdigRazorLightTransformer(IIncludesHandler includesHandler) 
+        //    : this(c => includesHandler)
+        //{
+        //}
 
-        public MarkdigRazorLightTransformer(Func<IContentTransformer, IIncludesHandler> includesHandlerFact) 
+        //public MarkdigRazorLightTransformer(Func<IContentTransformer, IIncludesHandler> includesHandlerFact) 
+        //{
+        //    var includesHandler = includesHandlerFact.Invoke(this);
+        //    m_MarkdownTransformer = new MarkdigMarkdownContentTransformer(includesHandler);
+        //    m_RazorTransformer = new RazorLightContentTransformer();
+        //}
+
+        public MarkdigRazorLightTransformer() 
         {
-            var includesHandler = includesHandlerFact.Invoke(this);
-            m_MarkdownTransformer = new MarkdigMarkdownContentTransformer(includesHandler);
+            m_MarkdownTransformer = new MarkdigMarkdownContentTransformer();
             m_RazorTransformer = new RazorLightContentTransformer();
         }
 
-        public MarkdigRazorLightTransformer(MarkdigMarkdownContentTransformer markDownTransformer, 
-            RazorLightContentTransformer razorTransformer)
-        {
-            m_MarkdownTransformer = markDownTransformer;
-            m_RazorTransformer = razorTransformer;
-        }
+        //public MarkdigRazorLightTransformer(MarkdigMarkdownContentTransformer markDownTransformer, 
+        //    RazorLightContentTransformer razorTransformer)
+        //{
+        //    m_MarkdownTransformer = markDownTransformer;
+        //    m_RazorTransformer = razorTransformer;
+        //}
 
         public async Task<string> Transform(string content, string key, IContextModel model)
         {

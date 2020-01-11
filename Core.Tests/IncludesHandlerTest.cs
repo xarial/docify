@@ -93,7 +93,7 @@ namespace Core.Tests
         }
 
         [Test]
-        public async Task Insert_SimpleParameters()
+        public async Task Render_SimpleParameters()
         {
             var p1 = new Page(Location.FromPath("page1.html"), "");
             var p2 = new Page(Location.FromPath("page2.html"), "");
@@ -101,33 +101,109 @@ namespace Core.Tests
             s.Includes.Add(new Template("i1", "abc"));
             p1.SubPages.Add(p2);
 
-            var res1 = await m_Handler.Insert("i1", new Metadata() { { "a1", "A" } }, s, p1);
-            var res2 = await m_Handler.Insert("i1", new Metadata() { { "a2", "B" } }, s, p2);
+            var res1 = await m_Handler.Render("i1", new Metadata() { { "a1", "A" } }, s, p1);
+            var res2 = await m_Handler.Render("i1", new Metadata() { { "a2", "B" } }, s, p2);
 
             Assert.AreEqual("abc_page1.html_a1=A", res1);
             Assert.AreEqual("abc_page2.html_a2=B", res2);
         }
 
         [Test]
-        public async Task Insert_MergedParameters()
+        public async Task Render_MergedParameters()
         {
             var p1 = new Page(Location.FromPath("page1.html"), "");
             var s = new Site("", p1, null);
             s.Includes.Add(new Template("i1", "abc", new Metadata() { { "a1", "A" }, { "a2", "B" } }));
 
-            var res1 = await m_Handler.Insert("i1", new Metadata() { { "a1", "X" }, { "a3", "Y" } }, s, p1);
+            var res1 = await m_Handler.Render("i1", new Metadata() { { "a1", "X" }, { "a3", "Y" } }, s, p1);
 
             Assert.AreEqual("abc_page1.html_a1=X,a2=B,a3=Y", res1);
         }
 
         [Test]
-        public void Insert_MissingIncludes()
+        public void Render_MissingIncludes()
         {
             var p1 = new Page(Location.FromPath("page1.html"), "");
             var s = new Site("", p1, null);
             s.Includes.Add(new Template("i1", "abc"));
 
-            Assert.ThrowsAsync<MissingIncludeException>(() => m_Handler.Insert("i2", new Metadata(), s, p1));
+            Assert.ThrowsAsync<MissingIncludeException>(() => m_Handler.Render("i2", new Metadata(), s, p1));
+        }
+
+        [Test]
+        public async Task ReplaceAll_NewLineSingleLineInclude()
+        {
+            var p1 = new Page(Location.FromPath("page1.html"), "");
+            var s = new Site("", p1, null);
+            s.Includes.Add(new Template("i1", "abc"));
+
+            var res = await m_Handler.ReplaceAll("abc\r\n{% i1 a1: x %}\r\nxyz", s, p1);
+
+            Assert.AreEqual("abc\r\nabc_page1.html_a1=x\r\nxyz", res);
+        }
+
+        [Test]
+        public async Task ReplaceAll_InlineInclude()
+        {
+            var p1 = new Page(Location.FromPath("page1.html"), "");
+            var s = new Site("", p1, null);
+            s.Includes.Add(new Template("i1", "abc"));
+
+            var res = await m_Handler.ReplaceAll("abc{% i1 a1: x %}xyz", s, p1);
+
+            Assert.AreEqual("abcabc_page1.html_a1=xxyz", res);
+        }
+
+        [Test]
+        public async Task ReplaceAll_MultilineInlineInclude()
+        {
+            var p1 = new Page(Location.FromPath("page1.html"), "");
+            var s = new Site("", p1, null);
+            s.Includes.Add(new Template("i1", "abc"));
+
+            var res = await m_Handler.ReplaceAll("abc{% i1 a1: x\r\na2: y %}xyz", s, p1);
+
+            Assert.AreEqual("abcabc_page1.html_a1=x,a2=yxyz", res);
+        }
+
+        [Test]
+        public async Task ReplaceAll_HtmlTagsInclude()
+        {
+            var p1 = new Page(Location.FromPath("page1.html"), "");
+            var s = new Site("", p1, null);
+            s.Includes.Add(new Template("i1", "abc"));
+
+            var res1 = await m_Handler.ReplaceAll("<div>{% i1 a1: x %}</div>", s, p1);
+            var res2 = await m_Handler.ReplaceAll("<div>\r\n{% i1 a1: x %}\r\n</div>", s, p1);
+
+            Assert.AreEqual("<div>abc_page1.html_a1=x</div>", res1);
+            Assert.AreEqual("<div>\r\nabc_page1.html_a1=x\r\n</div>", res2);
+        }
+
+        [Test]
+        public async Task ReplaceAll_MultipleIncludes()
+        {
+            var p1 = new Page(Location.FromPath("page1.html"), "");
+            var s = new Site("", p1, null);
+            s.Includes.Add(new Template("i1", "abc"));
+            s.Includes.Add(new Template("i2", "xyz"));
+
+            var res1 = await m_Handler.ReplaceAll("__{% i1 a1: x %}__{% i2 a2: y %}++{% i1 a1: z %}--", s, p1);
+
+            Assert.AreEqual("__abc_page1.html_a1=x__xyz_page1.html_a2=y++abc_page1.html_a1=z--", res1);
+        }
+
+        [Test]
+        public async Task ReplaceAll_NestedIncludes()
+        {
+            var p1 = new Page(Location.FromPath("page1.html"), "");
+            var s = new Site("", p1, null);
+            s.Includes.Add(new Template("i1", "abc"));
+            s.Includes.Add(new Template("i2", "xyz{% i1 a1: z %}"));
+
+            var res1 = await m_Handler.ReplaceAll("__{% i1 a1: x %}__{% i2 a2: y %}", s, p1);
+
+            Assert.AreEqual("__abc_page1.html_a1=x__xyzabc_page1.html_a1=z_page1.html_a2=y", res1);
         }
     }
 }

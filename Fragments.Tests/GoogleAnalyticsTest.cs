@@ -29,7 +29,7 @@ namespace Fragments.Tests
             
             var site = new Site("www.example.com", null, new Configuration() { Environment = env });
 
-            return FragmentTest.InsertIncludeToPageNormalize(@"google-analytics\_includes\google-analytics.cshtml", param, site, p1);
+            return FragmentTest.RenderIncludeNormalize(@"google-analytics\_includes\google-analytics.cshtml", param, site, p1);
         }
 
         [Test]

@@ -32,7 +32,7 @@ namespace Fragments.Tests
             var site = new Site("www.example.com", null, new Configuration()
             { { "title", "t1" }, { "description", "d1" } });
             
-            return FragmentTest.InsertIncludeToPageNormalize(@"seo\_includes\seo.cshtml", param, site, p2);
+            return FragmentTest.RenderIncludeNormalize(@"seo\_includes\seo.cshtml", param, site, p2);
         }
 
         [Test]

@@ -1,0 +1,44 @@
+﻿@using RazorLight
+@using System.Collections.Generic
+@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.ContextModel>
+@{ 
+    string GetLanguage()
+    {
+        const string LANG_VAR = "lang";
+
+        var lang = Model.Page.Data.GetOrDefault<string>(LANG_VAR);
+
+        if (string.IsNullOrEmpty(lang))
+        {
+            lang = Model.Site.Configuration.GetOrDefault<string>(LANG_VAR);
+        }
+
+        if (string.IsNullOrEmpty(lang))
+        {
+            lang = "en";
+        }
+
+        return lang;
+    }
+}
+<!DOCTYPE html>
+<html lang="@GetLanguage()">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="@string.Format("{0}/{1}", Model.Site.BaseUrl, "favicon.ico")">
+    {% seo %}
+    @{
+        var ga = Model.Site.Configuration.GetOrDefault<Dictionary<string, dynamic>>("google_analytics");
+
+        if (ga != null)
+        {
+            var gaData = new Xarial.Docify.Core.Compiler.Context.ContextMetadata(ga);
+            @Raw(string.Format("{{% google-analytics {{ production_only: true, traking_code: {0} }} %}}", gaData["traking_code"]))
+        }
+    }
+</head>
+<body>
+    {{ content }}
+</body>
+</html>

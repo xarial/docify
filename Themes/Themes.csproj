@@ -11,4 +11,13 @@
     <OutputPath />
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="RazorLight" Version="2.0.0-beta2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Base\Base.csproj" />
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
 </Project>

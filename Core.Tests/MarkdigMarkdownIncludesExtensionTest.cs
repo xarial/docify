@@ -78,6 +78,16 @@ namespace Core.Tests
         }
 
         [Test]
+        public async Task Transform_HtmlTagsInclude()
+        {
+            var res1 = await m_Parser.Transform("<div>{% include some\r\nvalue %}</div>", "", new ContextModel(null, null));
+            var res2 = await m_Parser.Transform("<div>\r\n{% include some\r\nvalue %}\r\n</div>", "", new ContextModel(null, null));
+
+            Assert.AreEqual("<div>[include some value: A=B]</div>", res1);
+            Assert.AreEqual("<div>\r\n[include some value: A=B]\r\n</div>", res2);
+        }
+
+        [Test]
         public void Transform_NotClosedInclude()
         {
             Assert.ThrowsAsync<NotClosedIncludeException>(() => m_Parser.Transform("abc{% include some\r\nvalue xyz", "", new ContextModel(null, null)));

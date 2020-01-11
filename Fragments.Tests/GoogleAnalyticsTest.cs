@@ -35,7 +35,7 @@ namespace Fragments.Tests
         [Test]
         public async Task DefaultParamsTestEnvTest()
         {
-            var res = await Insert(Environment_e.Test, new Metadata() { { "google_analytics", "" } });
+            var res = await Insert(Environment_e.Test, new Metadata() { { "traking_code", "" } });
 
             Assert.IsEmpty(res);
         }
@@ -43,7 +43,7 @@ namespace Fragments.Tests
         [Test]
         public async Task ProdEnvTest()
         {
-            var res = await Insert(Environment_e.Production, new Metadata() { { "google_analytics", "ABC" } });
+            var res = await Insert(Environment_e.Production, new Metadata() { { "traking_code", "ABC" } });
 
             Assert.AreEqual(Resources.google_analytics1, res);
         }
@@ -51,7 +51,7 @@ namespace Fragments.Tests
         [Test]
         public async Task TestEnvIgnoreEnvTest()
         {
-            var res = await Insert(Environment_e.Test, new Metadata() { { "production_only", "false" }, { "google_analytics", "ABC" } });
+            var res = await Insert(Environment_e.Test, new Metadata() { { "production_only", "false" }, { "traking_code", "ABC" } });
 
             Assert.AreEqual(Resources.google_analytics1, res);
         }
@@ -59,7 +59,7 @@ namespace Fragments.Tests
         [Test]
         public void NoAnalyticsIdTest()
         {
-            Assert.ThrowsAsync<GoogleAnalyticsIdNotSpecifiedException>(() => Insert(Environment_e.Production, null));
+            Assert.ThrowsAsync<GoogleAnalyticsTrackingCodeNotSpecifiedException>(() => Insert(Environment_e.Production, null));
         }
     }
 }

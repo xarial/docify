@@ -70,15 +70,11 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<LocalFileSystemFragmentsLoader>().As<IFragmentsLoader>();
 
-            builder.RegisterType<IncludesHandler>().As<IIncludesHandler>()
-                .WithParameter((pi, ctx) => pi.ParameterType == typeof(IContentTransformer),
-                          (pi, ctx) => ctx.Resolve<RazorLightContentTransformer>());
+            builder.RegisterType<IncludesHandler>().As<IIncludesHandler>();
 
-            builder.RegisterType<MarkdigMarkdownContentTransformer>();
-            builder.RegisterType<RazorLightContentTransformer>();
             builder.RegisterType<MarkdigRazorLightTransformer>()
                 .As<IContentTransformer>()
-                .UsingConstructor(typeof(MarkdigMarkdownContentTransformer), typeof(RazorLightContentTransformer));
+                .UsingConstructor(typeof(Func<IContentTransformer, IIncludesHandler>));
 
             builder.RegisterType<LocalFileSystemConfigurationLoader>().As<IConfigurationLoader>()
                 .WithParameter(new TypedParameter(typeof(Environment_e), env));

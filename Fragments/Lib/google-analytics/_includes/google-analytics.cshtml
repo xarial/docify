@@ -1,32 +1,31 @@
 ﻿---
-google_analytics:
+traking_code:
 production_only: true
 ---
 @using RazorLight
-@using System;
 @inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
 @{
-    string googleAnalyticsId = "";
+    string trackingCode = "";
 
     var enable = Model.Data.Get<bool>("production_only") ? Model.Site.Configuration.Environment == Xarial.Docify.Base.Environment_e.Production : true;
 
     if (enable)
     {
-        googleAnalyticsId = Model.Data["google_analytics"];
+        trackingCode = Model.Data.GetOrDefault<string>("traking_code");
 
-        if (string.IsNullOrEmpty(googleAnalyticsId))
+        if (string.IsNullOrEmpty(trackingCode))
         {
-            throw new Fragments.Exceptions.GoogleAnalyticsIdNotSpecifiedException();
+            throw new Fragments.Exceptions.GoogleAnalyticsTrackingCodeNotSpecifiedException();
         }
     }
 }
 @if (enable)
 {
-    <script async src="https://www.googletagmanager.com/gtag/js?id=@googleAnalyticsId"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=@trackingCode"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-        gtag('config', @googleAnalyticsId);
+        gtag('config', @trackingCode);
     </script>
 }

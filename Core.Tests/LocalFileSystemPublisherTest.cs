@@ -63,5 +63,26 @@ namespace Core.Tests
             Assert.IsTrue(fs.File.Exists("C:\\site\\file.bin"));
             Assert.IsTrue(new byte[] { 1, 2, 3 }.SequenceEqual(await fs.File.ReadAllBytesAsync("C:\\site\\file.bin")));
         }
+
+        [Test]
+        public async Task Write_ClearFolder()
+        {
+            var fs = new MockFileSystem();
+            fs.AddFile("C:\\site\\page1.html", new MockFileData("xyz"));
+            fs.AddFile("C:\\site\\page2.html", new MockFileData("klm"));
+
+            var publisher = new LocalFileSystemPublisher(new LocalFileSystemPublisherConfig(), fs);
+
+            var pages = new Page[]
+            {
+                new Page(Location.FromPath("page1.html"), "") { Content  = "abc" }
+            };
+
+            await publisher.Write(Location.FromPath("C:\\site"), pages);
+
+            Assert.AreEqual(1, fs.Directory.GetFiles("C:\\site", "*.*", System.IO.SearchOption.AllDirectories).Length);
+            Assert.IsTrue(fs.File.Exists("C:\\site\\page1.html"));
+            Assert.AreEqual("abc", await fs.File.ReadAllTextAsync("C:\\site\\page1.html"));
+        }
     }
 }

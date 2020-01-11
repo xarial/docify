@@ -17,7 +17,7 @@ namespace Xarial.Docify.Core.Compiler.Context
     {
         public ContextMetadata Data { get; }
 
-        public IncludeContextModel(Site site, Page page, Metadata data)
+        internal IncludeContextModel(Site site, Page page, Metadata data)
             : base(site, page)
         {
             Data = new ContextMetadata(data);

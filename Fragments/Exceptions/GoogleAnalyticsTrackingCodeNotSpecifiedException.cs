@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace Fragments.Exceptions
 {
-    public class GoogleAnalyticsIdNotSpecifiedException : Exception
+    public class GoogleAnalyticsTrackingCodeNotSpecifiedException : Exception
     {
-        public GoogleAnalyticsIdNotSpecifiedException() : base("Specify the ID for google analytics via 'google_analytics' parameter in the configuration file") 
+        public GoogleAnalyticsTrackingCodeNotSpecifiedException() : base("Specify the tracking code for google analytics via 'google_analytics' parameter in the configuration file") 
         {
         }
     }

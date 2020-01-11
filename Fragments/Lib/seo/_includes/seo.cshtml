@@ -21,24 +21,13 @@ linkedin: true
 @{
     const string VERSION = "0.1";
 
-    dynamic title = "";
-    dynamic description = "";
-    dynamic image = "";
-    dynamic lang = "";
+    var title = Model.Page.Data.GetOrDefault<string>("title");
+    var description = Model.Page.Data.GetOrDefault<string>("description");
+    var lang = Model.Page.Data.GetOrDefault<string>("lang");
+    var image = Model.Page.Data.GetOrDefault<string>("image");
 
-    dynamic siteTitle = "";
-    dynamic siteDescription = "";
-
-    Model.Page.Data.TryGetValue("title", out title);
-    Model.Page.Data.TryGetValue("description", out description);
-    Model.Page.Data.TryGetValue("lang", out lang);
-
-    if (Model.Page.Data.TryGetValue("image", out image))
-    {
-    }
-
-    Model.Site.Configuration.TryGetValue("title", out siteTitle);
-    Model.Site.Configuration.TryGetValue("description", out siteDescription);
+    var siteTitle = Model.Site.Configuration.GetOrDefault<string>("title");
+    var siteDescription = Model.Site.Configuration.GetOrDefault<string>("description");
 
     var og = Model.Data.Get<bool>("og");
     var twitter = Model.Data.Get<bool>("twitter");

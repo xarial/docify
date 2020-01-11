@@ -109,7 +109,7 @@ namespace Core.Tests
         }
 
         [Test]
-        public async Task Render_MergedParameters()
+        public async Task Render_MergedIncludeParameters()
         {
             var p1 = new Page(Location.FromPath("page1.html"), "");
             var s = new Site("", p1, null);
@@ -118,6 +118,72 @@ namespace Core.Tests
             var res1 = await m_Handler.Render("i1", new Metadata() { { "a1", "X" }, { "a3", "Y" } }, s, p1);
 
             Assert.AreEqual("abc_page1.html_a1=X,a2=B,a3=Y", res1);
+        }
+
+        [Test]
+        public async Task Render_MergedPageParameters()
+        {
+            var md = new Metadata();
+            md.Add("i1", new Dictionary<object, object>() 
+            {
+                { "a1", "Z" },
+                { "a4", "J" }
+            });
+
+            var p1 = new Page(Location.FromPath("page1.html"), "", md);
+            var s = new Site("", p1, null);
+            s.Includes.Add(new Template("i1", "abc", new Metadata() { { "a1", "A" }, { "a2", "B" } }));
+
+            var res1 = await m_Handler.Render("i1", new Metadata() { { "a1", "X" }, { "a3", "Y" } }, s, p1);
+
+            Assert.AreEqual("abc_page1.html_a1=X,a2=B,a3=Y,a4=J", res1);
+        }
+
+        [Test]
+        public async Task Render_MergedSiteParameters()
+        {
+            var conf = new Configuration();
+            conf.Add("i1", new Dictionary<object, object>()
+            {
+                { "a1", "Z" },
+                { "a4", "J" }
+            });
+
+            var p1 = new Page(Location.FromPath("page1.html"), "");
+            var s = new Site("", p1, conf);
+            s.Includes.Add(new Template("i1", "abc", new Metadata() { { "a1", "A" }, { "a2", "B" } }));
+
+            var res1 = await m_Handler.Render("i1", new Metadata() { { "a1", "X" }, { "a3", "Y" } }, s, p1);
+
+            Assert.AreEqual("abc_page1.html_a1=X,a2=B,a3=Y,a4=J", res1);
+        }
+
+        [Test]
+        public async Task Render_MergedParametersHierarchy()
+        {
+            var conf = new Configuration();
+            conf.Add("i1", new Dictionary<object, object>()
+            {
+                { "a1", "S1" },
+                { "a2", "S2" },
+                { "a3", "S3" }
+            });
+
+            var md = new Metadata();
+            md.Add("i1", new Dictionary<object, object>()
+            {
+                { "a1", "P1" },
+                { "a2", "P2" },
+                { "a3", "" }
+            });
+
+            var p1 = new Page(Location.FromPath("page1.html"), "", md);
+            var s = new Site("", p1, conf);
+            s.Includes.Add(new Template("i1", "abc", new Metadata() { { "a1", "T1" }, { "a2", "T2" }, { "a3", "" }, { "a4", "T4" } }));
+
+            var res1 = await m_Handler.Render("i1", new Metadata() { { "a1", "I1" }, { "a2", null }, { "a4", "" } }, s, p1);
+
+            Assert.AreEqual("abc_page1.html_a1=I1,a2=P2,a3=S3,a4=T4", res1);
         }
 
         [Test]

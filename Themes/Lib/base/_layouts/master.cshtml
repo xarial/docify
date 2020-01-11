@@ -7,15 +7,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="@string.Format("{0}/{1}", Model.Site.BaseUrl, "favicon.ico")">
-    {% seo %}
-    @{
-        var ga = Model.Site.Configuration.GetOrDefault<Dictionary<object, object>>("google_analytics");
-
-        if (ga != null)
-        {
-            @Raw("{% google-analytics { production_only: true, traking_code: " + ga["traking_code"] + " } %}")
-        }
-    }
+{% seo %}
+{% google-analytics %}
 </head>
 <body>
     {{ content }}

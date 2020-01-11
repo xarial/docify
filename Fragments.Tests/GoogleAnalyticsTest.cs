@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.CLI;
 using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Data;
 
@@ -22,19 +23,27 @@ namespace Fragments.Tests
 {
     public class GoogleAnalyticsTest
     {
-        private Task<string> Insert(Environment_e env, Metadata param) 
-        {
-            var p1 = new Page(Location.FromPath("index.html"), "");
-            
-            var site = new Site("www.example.com", null, new Configuration() { Environment = env });
+        private const string INCLUDE_PATH = @"google-analytics\_includes\google-analytics.cshtml";
 
-            return FragmentTest.RenderIncludeNormalize(@"google-analytics\_includes\google-analytics.cshtml", param, site, p1);
+        private Task<string> Render(Environment_e env, Metadata param) 
+        {
+            var site = FragmentTest.NewSite(null, new Configuration { Environment = env });
+
+            return FragmentTest.RenderIncludeNormalize(INCLUDE_PATH,
+                param, site, site.MainPage);
+        }
+
+        private Task<string> Transform(Environment_e env, string content)
+        {
+            var site = FragmentTest.NewSite(null, new Configuration { Environment = env });
+
+            return FragmentTest.TransformContentNormalize(INCLUDE_PATH, content, site, site.MainPage);
         }
 
         [Test]
         public async Task DefaultParamsTestEnvTest()
         {
-            var res = await Insert(Environment_e.Test, new Metadata() { { "traking_code", "" } });
+            var res = await Render(Environment_e.Test, new Metadata() { { "traking_code", "" } });
 
             Assert.IsEmpty(res);
         }
@@ -42,7 +51,7 @@ namespace Fragments.Tests
         [Test]
         public async Task ProdEnvTest()
         {
-            var res = await Insert(Environment_e.Production, new Metadata() { { "traking_code", "ABC" } });
+            var res = await Render(Environment_e.Production, new Metadata() { { "traking_code", "ABC" } });
 
             Assert.AreEqual(Resources.google_analytics1, res);
         }
@@ -50,15 +59,25 @@ namespace Fragments.Tests
         [Test]
         public async Task TestEnvIgnoreEnvTest()
         {
-            var res = await Insert(Environment_e.Test, new Metadata() { { "production_only", "false" }, { "traking_code", "ABC" } });
+            var res = await Render(Environment_e.Test, new Metadata() { { "production_only", "false" }, { "traking_code", "ABC" } });
 
             Assert.AreEqual(Resources.google_analytics1, res);
         }
 
         [Test]
-        public void NoAnalyticsIdTest()
+        public async Task NoAnalyticsIdTest()
         {
-            Assert.ThrowsAsync<NullReferenceException>(() => Insert(Environment_e.Production, null));
+            var res = await Render(Environment_e.Production, null);
+
+            Assert.IsEmpty(res);
+        }
+
+        [Test]
+        public async Task ProdEnvTransformTest()
+        {
+            var res = await Transform(Environment_e.Production, "{% google-analytics { traking_code: ABC } %}");
+                       
+            Assert.AreEqual(Resources.google_analytics1, res);
         }
     }
 }

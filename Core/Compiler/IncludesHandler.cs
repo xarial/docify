@@ -49,8 +49,26 @@ namespace Xarial.Docify.Core.Compiler
                 throw new MissingIncludeException(name);
             }
 
+            Dictionary<string, dynamic> GetData(Metadata data, string name)
+            {
+                var extrData = data.GetParameterOrDefault<Dictionary<object, object>>(name);
+
+                if (extrData != null)
+                {
+                    return extrData.ToDictionary(k => k.Key.ToString(), k => (dynamic)k.Value);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            param = param.Merge(GetData(page.Data, name));
+            param = param.Merge(GetData(site.Configuration, name));
+            param = param.Merge(include.Data);
+
             var res = await m_Transformer.Transform(include.RawContent, include.Key, 
-                new IncludeContextModel(site, page, param.Merge(include.Data)));
+                new IncludeContextModel(site, page, param));
 
             return res;
         }

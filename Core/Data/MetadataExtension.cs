@@ -30,13 +30,20 @@ namespace Xarial.Docify.Core.Data
 
             foreach (var thisParam in thisParams ?? new T())
             {
-                if (resParams.ContainsKey(thisParam.Key))
+                var val = thisParam.Value;
+
+                var isDef = val != null && (!(val is string) || !string.IsNullOrEmpty(val));
+
+                if (isDef)
                 {
-                    resParams[thisParam.Key] = thisParam.Value;
-                }
-                else
-                {
-                    resParams.Add(thisParam.Key, thisParam.Value);
+                    if (resParams.ContainsKey(thisParam.Key))
+                    {
+                        resParams[thisParam.Key] = val;
+                    }
+                    else
+                    {
+                        resParams.Add(thisParam.Key, val);
+                    }
                 }
             }
 

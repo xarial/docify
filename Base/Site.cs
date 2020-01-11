@@ -29,7 +29,7 @@ namespace Xarial.Docify.Base
             Assets = new List<Asset>();
             Layouts = new List<Template>();
             Includes = new List<Template>();
-            Configuration = config;
+            Configuration = config ?? new Configuration();
         }
     }
 

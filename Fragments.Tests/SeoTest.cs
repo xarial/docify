@@ -23,16 +23,20 @@ namespace Fragments.Tests
     public class SeoTest
     {
         private Task<string> Insert(Metadata param)
-        {            
-            var p1 = new Page(Location.FromPath("index.html"), "");
-            var p2 = new Page(Location.FromPath("p2\\index.html"), "");
-            p2.Data["title"] = "p2";
-            p1.SubPages.Add(p2);
-
-            var site = new Site("www.example.com", null, new Configuration()
-            { { "title", "t1" }, { "description", "d1" } });
-            
-            return FragmentTest.RenderIncludeNormalize(@"seo\_includes\seo.cshtml", param, site, p2);
+        {
+            var site = FragmentTest.NewSite(
+                new Metadata()
+                {
+                    { "title", "p1" },
+                    { "description", "d1" }
+                },
+                new Configuration()
+                {
+                    { "title", "t1" }, 
+                    { "description", "sd1" }
+                });
+                        
+            return FragmentTest.RenderIncludeNormalize(@"seo\_includes\seo.cshtml", param, site, site.MainPage);
         }
 
         [Test]

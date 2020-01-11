@@ -77,17 +77,16 @@ namespace Fragments.Tests.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify v0.1&quot; /&gt;
-        ///&lt;meta name=&quot;description&quot; /&gt;
-        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com/p2/index.html&quot; /&gt;
-        ///&lt;meta property=&quot;og:title&quot; content=&quot;p2&quot; /&gt;
+        ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
+        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com/index.html&quot; /&gt;
+        ///&lt;meta property=&quot;og:title&quot; content=&quot;p1&quot; /&gt;
         ///&lt;meta property=&quot;og:locale&quot; /&gt;
-        ///&lt;meta property=&quot;og:description&quot; /&gt;
-        ///&lt;meta property=&quot;og:url&quot; content=&quot;www.example.com/p2/index.html&quot; /&gt;
+        ///&lt;meta property=&quot;og:description&quot; content=&quot;d1&quot; /&gt;
+        ///&lt;meta property=&quot;og:url&quot; content=&quot;www.example.com/index.html&quot; /&gt;
         ///&lt;meta property=&quot;og:site_name&quot; content=&quot;t1&quot; /&gt;
         ///&lt;meta property=&quot;og:image&quot; /&gt;
-        ///&lt;meta name=&quot;twitter:card&quot; /&gt;
-        ///&lt;meta name=&quot;twitter:site&quot; content=&quot;www.example.com/p2/index.html&quot; /&gt;
-        ///&lt;meta name=&quot;twit [rest of string was truncated]&quot;;.
+        ///&lt;meta name=&quot;twitter:card&quot; content=&quot;d1&quot; /&gt;
+        ///&lt;meta name=&quot;twitter:site&quot; content=&quot;www.example.com/in [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string seo1 {
             get {
@@ -97,12 +96,12 @@ namespace Fragments.Tests.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify v0.1&quot; /&gt;
-        ///&lt;meta name=&quot;description&quot; /&gt;
-        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com/p2/index.html&quot; /&gt;
-        ///&lt;meta property=&quot;og:title&quot; content=&quot;p2&quot; /&gt;
+        ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
+        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com/index.html&quot; /&gt;
+        ///&lt;meta property=&quot;og:title&quot; content=&quot;p1&quot; /&gt;
         ///&lt;meta property=&quot;og:locale&quot; /&gt;
-        ///&lt;meta property=&quot;og:description&quot; /&gt;
-        ///&lt;meta property=&quot;og:url&quot; content=&quot;www.example.com/p2/index.html&quot; /&gt;
+        ///&lt;meta property=&quot;og:description&quot; content=&quot;d1&quot; /&gt;
+        ///&lt;meta property=&quot;og:url&quot; content=&quot;www.example.com/index.html&quot; /&gt;
         ///&lt;meta property=&quot;og:site_name&quot; content=&quot;t1&quot; /&gt;
         ///&lt;meta property=&quot;og:image&quot; /&gt;.
         /// </summary>
@@ -114,12 +113,12 @@ namespace Fragments.Tests.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify v0.1&quot; /&gt;
-        ///&lt;meta name=&quot;description&quot; /&gt;
-        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com/p2/index.html&quot; /&gt;
-        ///&lt;meta name=&quot;twitter:card&quot; /&gt;
-        ///&lt;meta name=&quot;twitter:site&quot; content=&quot;www.example.com/p2/index.html&quot; /&gt;
-        ///&lt;meta name=&quot;twitter:title&quot; content=&quot;p2&quot; /&gt;
-        ///&lt;meta name=&quot;twitter:description&quot; /&gt;
+        ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
+        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com/index.html&quot; /&gt;
+        ///&lt;meta name=&quot;twitter:card&quot; content=&quot;d1&quot; /&gt;
+        ///&lt;meta name=&quot;twitter:site&quot; content=&quot;www.example.com/index.html&quot; /&gt;
+        ///&lt;meta name=&quot;twitter:title&quot; content=&quot;p1&quot; /&gt;
+        ///&lt;meta name=&quot;twitter:description&quot; content=&quot;d1&quot; /&gt;
         ///&lt;meta name=&quot;twitter:image&quot; /&gt;.
         /// </summary>
         internal static string seo3 {
@@ -130,10 +129,10 @@ namespace Fragments.Tests.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify v0.1&quot; /&gt;
-        ///&lt;meta name=&quot;description&quot; /&gt;
-        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com/p2/index.html&quot; /&gt;
+        ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
+        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com/index.html&quot; /&gt;
         ///&lt;script type=&quot;application/ld+json&quot;&gt;
-        ///{&quot;url&quot;:&quot;www.example.com/p2/index.html&quot;,&quot;description&quot;:null,&quot;headline&quot;:&quot;d1&quot;,&quot;image&quot;:null,&quot;@type&quot;:&quot;WebPage&quot;,&quot;@context&quot;:&quot;http://schema.org&quot;}
+        ///{&quot;url&quot;:&quot;www.example.com/index.html&quot;,&quot;description&quot;:&quot;d1&quot;,&quot;headline&quot;:&quot;sd1&quot;,&quot;image&quot;:null,&quot;@type&quot;:&quot;WebPage&quot;,&quot;@context&quot;:&quot;http://schema.org&quot;}
         ///&lt;/script&gt;.
         /// </summary>
         internal static string seo4 {

@@ -12,9 +12,11 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Data
 {
-    public static class MetadataExtension
+    internal static class MetadataExtension
     {
-        public static T Merge<T>(this T thisParams,
+        private const string INHERIT_LIST_SYMBOL = "$";
+
+        internal static T Merge<T>(this T thisParams,
             Dictionary<string, dynamic> baseParams)
             where T : Metadata, new()
         {
@@ -38,6 +40,7 @@ namespace Xarial.Docify.Core.Data
                 {
                     if (resParams.ContainsKey(thisParam.Key))
                     {
+                        val = UpdateValue(baseParams, thisParam.Key, val);
                         resParams[thisParam.Key] = val;
                     }
                     else
@@ -50,14 +53,35 @@ namespace Xarial.Docify.Core.Data
             return resParams;
         }
 
-        public static T GetParameterOrDefault<T>(this Metadata data, string name) 
+        private static dynamic UpdateValue(Dictionary<string, dynamic> baseParams, string thisParamName, dynamic val)
+        {
+            if (val is List<object>)
+            {
+                var inheritPlc = (val as List<object>).IndexOf(INHERIT_LIST_SYMBOL);
+                if (inheritPlc != -1)
+                {
+                    (val as List<object>).RemoveAt(inheritPlc);
+
+                    if (!(baseParams[thisParamName] is List<object>))
+                    {
+                        throw new InvalidCastException($"Cannot inherit list parameters from the base metadata");
+                    }
+
+                    (val as List<object>).InsertRange(0, baseParams[thisParamName]);
+                }
+            }
+
+            return val;
+        }
+
+        internal static T GetParameterOrDefault<T>(this Metadata data, string name) 
         {
             T val;
             TryGetParameter(data, name, out val);
             return val;
         }
 
-        public static T GetRemoveParameterOrDefault<T>(this Metadata data, string name) 
+        internal static T GetRemoveParameterOrDefault<T>(this Metadata data, string name) 
         {
             T val;
             

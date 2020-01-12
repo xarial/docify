@@ -8,9 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="@string.Format("{0}/{1}", Model.Site.BaseUrl, "favicon.ico")">
 {% seo %}
+{% layout::head %}
 {% google-analytics %}
 </head>
 <body>
-    {{ content }}
+{{ content }}
 </body>
+{% layout::foot %}
 </html>

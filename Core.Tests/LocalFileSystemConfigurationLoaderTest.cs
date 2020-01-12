@@ -15,6 +15,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Loader;
+using System.Linq;
 
 namespace Core.Tests
 {
@@ -151,6 +152,24 @@ namespace Core.Tests
             Assert.AreEqual("5", conf["b"]);
             Assert.AreEqual("4", conf["c"]);
             Assert.AreEqual("6", conf["d"]);
+        }
+
+        [Test]
+        public async Task Load_ConfigWithNestedThemeInheritList()
+        {
+            var fs = new MockFileSystem();
+            fs.AddFile("C:\\site\\page.html", null);
+            fs.AddFile("C:\\themes\\theme1\\_config.yml", new MockFileData("a:\r\n  - 1\r\n  - 2"));
+            fs.AddFile("C:\\themes\\theme2\\_config.yml", new MockFileData("a:\r\n  - $\r\n  - 3\r\n  - 4\r\ntheme: theme1"));
+            fs.AddFile("C:\\site\\_config.yml", new MockFileData("theme: theme2\r\nb: 5\r\nthemes_dir: C:\\themes"));
+
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
+
+            var conf = await confLoader.Load(Location.FromPath("C:\\site"));
+            
+            Assert.AreEqual(2, conf.Count);
+            Assert.AreEqual("5", conf["b"]);
+            Assert.That((conf["a"] as IEnumerable<object>).SequenceEqual(new string[] { "1", "2", "3", "4" }));
         }
     }
 }

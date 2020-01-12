@@ -110,6 +110,8 @@ namespace Xarial.Docify.Base
 
     public static class LocationExtension
     {
+        public const string INDEX_PAGE_NAME = "index.html";
+
         internal const string PATH_SEP = "\\";
         private const string URL_SEP = "/";
         public const string ID_SEP = "::";
@@ -126,7 +128,25 @@ namespace Xarial.Docify.Base
 
         public static string ToUrl(this Location loc, string baseUrl = "")
         {
-            return (string.IsNullOrEmpty(baseUrl) ? "/" : "") + FormFullLocation(loc, baseUrl, URL_SEP);
+            var url = FormFullLocation(loc, baseUrl, URL_SEP);
+            if (url.EndsWith(INDEX_PAGE_NAME, StringComparison.CurrentCultureIgnoreCase)) 
+            {
+                if (string.Equals(url, INDEX_PAGE_NAME))
+                {
+                    url = "";
+                }
+                else 
+                {
+                    url = url.Substring(0, url.Length - INDEX_PAGE_NAME.Length - 1);
+                }
+            }
+
+            if (string.IsNullOrEmpty(baseUrl))
+            {
+                url = "/" + url;
+            }
+
+            return url;
         }
 
         public static Location Combine(this Location loc, params string[] blocks) 

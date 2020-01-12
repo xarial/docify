@@ -45,5 +45,32 @@ namespace Core.Tests
             Assert.AreEqual("dir1::dir2", r1.ToId());
             Assert.AreEqual("dir1::dir2", r2.ToId());
         }
+
+        [Test]
+        public void ToUrlTest() 
+        {
+            var u1 = new Location("page.html", "dir1", "dir2");
+            var u2 = new Location("page.html");
+            var u3 = new Location("index.html", "dir1", "dir2");
+            var u4 = new Location("index.html");
+
+            var r1 = u1.ToUrl();
+            var r2 = u2.ToUrl();
+            var r3 = u3.ToUrl();
+            var r4 = u4.ToUrl();
+            var r5 = u1.ToUrl("www.site.com");
+            var r6 = u2.ToUrl("www.site.com");
+            var r7 = u3.ToUrl("www.site.com");
+            var r8 = u4.ToUrl("www.site.com");
+
+            Assert.AreEqual("/dir1/dir2/page.html", r1);
+            Assert.AreEqual("/page.html", r2);
+            Assert.AreEqual("/dir1/dir2", r3);
+            Assert.AreEqual("/", r4);
+            Assert.AreEqual("www.site.com/dir1/dir2/page.html", r5);
+            Assert.AreEqual("www.site.com/page.html", r6);
+            Assert.AreEqual("www.site.com/dir1/dir2", r7);
+            Assert.AreEqual("www.site.com", r8);
+        }
     }
 }

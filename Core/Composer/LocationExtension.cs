@@ -28,7 +28,7 @@ namespace Xarial.Docify.Core.Composer
 
             if (string.IsNullOrEmpty(fileName))
             {
-                fileName = "index.html";
+                fileName = Base.LocationExtension.INDEX_PAGE_NAME;
             }
             else
             {

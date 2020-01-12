@@ -76,17 +76,123 @@ namespace Components.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify v0.1&quot; /&gt;
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;ul class=&quot;menu sub-menu-item-container&quot; id=&quot;top-menu&quot;&gt;
+        ///&lt;a class=&quot;menu-icon&quot; onclick=&quot;OpenMenu(this)&quot;&gt;
+        ///&lt;div class=&quot;bar1&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar2&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar3&quot;&gt;&lt;/div&gt;
+        ///&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item&quot;&gt;
+        ///&lt;a href=&quot;&quot;&gt;Page1&lt;/a&gt;
+        ///&lt;ul class=&quot;sub-menu-item-container&quot;&gt;
+        ///&lt;li class=&quot;menu-item&quot;&gt;
+        ///&lt;a href=&quot;/p2.html&quot;&gt;p2&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li class=&quot;menu-item&quot;&gt;
+        ///&lt;a href=&quot;&quot;&gt;SubPage2&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/li&gt;
+        ///&lt;li class=&quot;menu-item&quot;&gt;
+        ///&lt;a href=&quot;&quot;&gt;Page2&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string nav1 {
+            get {
+                return ResourceManager.GetString("nav1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;ul class=&quot;menu sub-menu-item-container&quot; id=&quot;top-menu&quot;&gt;
+        ///&lt;a class=&quot;menu-icon&quot; onclick=&quot;OpenMenu(this)&quot;&gt;
+        ///&lt;div class=&quot;bar1&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar2&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar3&quot;&gt;&lt;/div&gt;
+        ///&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item&quot;&gt;
+        ///&lt;a href=&quot;/Page1.html&quot;&gt;p1&lt;/a&gt;
+        ///&lt;ul class=&quot;sub-menu-item-container&quot;&gt;
+        ///&lt;li class=&quot;menu-item&quot;&gt;
+        ///&lt;a href=&quot;/SubPage1.html&quot;&gt;sp1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li class=&quot;menu-item&quot;&gt;
+        ///&lt;a href=&quot;/SubPage2.html&quot;&gt;sp2&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/li&gt;
+        ///&lt;li class=&quot;menu-item&quot;&gt;
+        ///&lt;a href=&quot;/Page2.html&quot;&gt;p2&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string nav2 {
+            get {
+                return ResourceManager.GetString("nav2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;ul class=&quot;menu sub-menu-item-container&quot; id=&quot;top-menu&quot;&gt;
+        ///&lt;a class=&quot;menu-icon&quot; onclick=&quot;OpenMenu(this)&quot;&gt;
+        ///&lt;div class=&quot;bar1&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar2&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar3&quot;&gt;&lt;/div&gt;
+        ///&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item&quot;&gt;
+        ///&lt;a href=&quot;/&quot;&gt;Home&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li class=&quot;menu-item&quot;&gt;
+        ///&lt;a href=&quot;/Page1.html&quot;&gt;p1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string nav3 {
+            get {
+                return ResourceManager.GetString("nav3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;ul class=&quot;menu sub-menu-item-container&quot; id=&quot;top-menu&quot;&gt;
+        ///&lt;a class=&quot;menu-icon&quot; onclick=&quot;OpenMenu(this)&quot;&gt;
+        ///&lt;div class=&quot;bar1&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar2&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar3&quot;&gt;&lt;/div&gt;
+        ///&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item&quot;&gt;
+        ///&lt;a href=&quot;/Page1.html&quot;&gt;x1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string nav4 {
+            get {
+                return ResourceManager.GetString("nav4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
         ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
-        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com/index.html&quot; /&gt;
+        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com&quot; /&gt;
         ///&lt;meta property=&quot;og:title&quot; content=&quot;p1&quot; /&gt;
         ///&lt;meta property=&quot;og:locale&quot; /&gt;
         ///&lt;meta property=&quot;og:description&quot; content=&quot;d1&quot; /&gt;
-        ///&lt;meta property=&quot;og:url&quot; content=&quot;www.example.com/index.html&quot; /&gt;
+        ///&lt;meta property=&quot;og:url&quot; content=&quot;www.example.com&quot; /&gt;
         ///&lt;meta property=&quot;og:site_name&quot; content=&quot;t1&quot; /&gt;
         ///&lt;meta property=&quot;og:image&quot; /&gt;
         ///&lt;meta name=&quot;twitter:card&quot; content=&quot;d1&quot; /&gt;
-        ///&lt;meta name=&quot;twitter:site&quot; content=&quot;www.example.com/in [rest of string was truncated]&quot;;.
+        ///&lt;meta name=&quot;twitter:site&quot; content=&quot;www.example.com&quot; /&gt;
+        ///&lt;meta name=&quot;twitter:titl [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string seo1 {
             get {
@@ -95,13 +201,13 @@ namespace Components.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify v0.1&quot; /&gt;
+        ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
         ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
-        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com/index.html&quot; /&gt;
+        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com&quot; /&gt;
         ///&lt;meta property=&quot;og:title&quot; content=&quot;p1&quot; /&gt;
         ///&lt;meta property=&quot;og:locale&quot; /&gt;
         ///&lt;meta property=&quot;og:description&quot; content=&quot;d1&quot; /&gt;
-        ///&lt;meta property=&quot;og:url&quot; content=&quot;www.example.com/index.html&quot; /&gt;
+        ///&lt;meta property=&quot;og:url&quot; content=&quot;www.example.com&quot; /&gt;
         ///&lt;meta property=&quot;og:site_name&quot; content=&quot;t1&quot; /&gt;
         ///&lt;meta property=&quot;og:image&quot; /&gt;.
         /// </summary>
@@ -112,11 +218,11 @@ namespace Components.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify v0.1&quot; /&gt;
+        ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
         ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
-        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com/index.html&quot; /&gt;
+        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com&quot; /&gt;
         ///&lt;meta name=&quot;twitter:card&quot; content=&quot;d1&quot; /&gt;
-        ///&lt;meta name=&quot;twitter:site&quot; content=&quot;www.example.com/index.html&quot; /&gt;
+        ///&lt;meta name=&quot;twitter:site&quot; content=&quot;www.example.com&quot; /&gt;
         ///&lt;meta name=&quot;twitter:title&quot; content=&quot;p1&quot; /&gt;
         ///&lt;meta name=&quot;twitter:description&quot; content=&quot;d1&quot; /&gt;
         ///&lt;meta name=&quot;twitter:image&quot; /&gt;.
@@ -128,11 +234,11 @@ namespace Components.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify v0.1&quot; /&gt;
+        ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
         ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
-        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com/index.html&quot; /&gt;
+        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com&quot; /&gt;
         ///&lt;script type=&quot;application/ld+json&quot;&gt;
-        ///{&quot;url&quot;:&quot;www.example.com/index.html&quot;,&quot;description&quot;:&quot;d1&quot;,&quot;headline&quot;:&quot;sd1&quot;,&quot;image&quot;:null,&quot;@type&quot;:&quot;WebPage&quot;,&quot;@context&quot;:&quot;http://schema.org&quot;}
+        ///{&quot;url&quot;:&quot;www.example.com&quot;,&quot;description&quot;:&quot;d1&quot;,&quot;headline&quot;:&quot;sd1&quot;,&quot;image&quot;:null,&quot;@type&quot;:&quot;WebPage&quot;,&quot;@context&quot;:&quot;http://schema.org&quot;}
         ///&lt;/script&gt;.
         /// </summary>
         internal static string seo4 {

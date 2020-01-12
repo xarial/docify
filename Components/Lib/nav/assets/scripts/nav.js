@@ -1,8 +1,9 @@
-﻿function OpenMenu() {
-    var x = document.getElementById("top-menu");
-    if (x.className === "menu sub-menu-item-container") {
-        x.className += " responsive";
+﻿function OpenMenu(toggle) {
+    var menu = document.getElementById("top-menu");
+    if (menu.className === "menu sub-menu-item-container") {
+        menu.className += " responsive";
     } else {
-        x.className = "menu sub-menu-item-container";
+        menu.className = "menu sub-menu-item-container";
     }
+    toggle.classList.toggle("change");
 }

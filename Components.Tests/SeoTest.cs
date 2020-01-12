@@ -22,15 +22,6 @@ namespace Components.Tests
 {
     public class SeoTest
     {
-        //private Task<string> Insert(Metadata param)
-        //{
-        //    var site = ComponentsTest.NewSite(
-        //        ComponentsTest.GetData<Metadata>("title: p1\r\ndescription: d1"),
-        //        ComponentsTest.GetData<Configuration>("title: t1\r\ndescription: sd1"));
-
-        //    return ComponentsTest.RenderIncludeNormalize(@"seo\_includes\seo.cshtml", param, site, site.MainPage);
-        //}
-
         private const string INCLUDE_PATH = @"seo\_includes\seo.cshtml";
 
         [Test]

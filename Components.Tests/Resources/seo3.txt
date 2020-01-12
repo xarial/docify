@@ -1,8 +1,8 @@
-<meta name="generator" content="Docify v0.1" />
+<meta name="generator" content="Docify" />
 <meta name="description" content="d1" />
-<link rel="canonical" href="www.example.com/index.html" />
+<link rel="canonical" href="www.example.com" />
 <meta name="twitter:card" content="d1" />
-<meta name="twitter:site" content="www.example.com/index.html" />
+<meta name="twitter:site" content="www.example.com" />
 <meta name="twitter:title" content="p1" />
 <meta name="twitter:description" content="d1" />
 <meta name="twitter:image" />

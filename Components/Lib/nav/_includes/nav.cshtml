@@ -1,5 +1,6 @@
 ﻿---
 name_attribute: title
+home_menu: true
 menu:
 ---
 @using RazorLight
@@ -11,8 +12,8 @@ menu:
 @functions{
     public class MenuPage : IContextPage
     {
-        public string Url { get; } = "";
-        public string FullUrl { get; }
+        public string Url { get; set; } = "";
+        public string FullUrl { get; set; }
         public string Name { get; }
         public ContextMetadata Data { get; }
         public IReadOnlyList<IContextPage> SubPages => SubPagesList;
@@ -35,7 +36,7 @@ menu:
 @{
     var menu = Model.Data["menu"];
 
-    IEnumerable<IContextPage> menuPages = null;
+    List<IContextPage> menuPages = null;
 
     var allPages = GetAllSubPages(Model.Site.MainPage).ToList();
 
@@ -43,11 +44,19 @@ menu:
     {
         var menuPagesList = new List<MenuPage>();
         ParsePages(menu, menuPagesList);
-        menuPages = menuPagesList;
+        menuPages = menuPagesList.ConvertAll<IContextPage>(p => p);
     }
     else
     {
-        menuPages = Model.Site.MainPage.SubPages;
+        menuPages = Model.Site.MainPage.SubPages.ToList();
+    }
+
+    if (Model.Data.GetOrDefault<bool>("home_menu") && menu == null) 
+    {
+        var homeMenu = CreateMenuPage("Home");
+        homeMenu.Url = Model.Site.MainPage.Url;
+        homeMenu.FullUrl = Model.Site.MainPage.FullUrl;
+        menuPages.Insert(0, homeMenu);
     }
 
     IEnumerable<IContextPage> GetAllSubPages(IContextPage page)
@@ -66,10 +75,10 @@ menu:
         }
     }
 
-    MenuPage CreateMenuPage(string name)
+    MenuPage CreateMenuPage(string url)
     {
         var page = allPages.FirstOrDefault(p => string.Equals(p.Url,
-            name, StringComparison.CurrentCultureIgnoreCase));
+            url, StringComparison.CurrentCultureIgnoreCase));
 
         if (page != null)
         {
@@ -77,9 +86,9 @@ menu:
         }
         else
         {
-            return new MenuPage(name, new ContextMetadata(
-                new Dictionary<string, dynamic>() 
-                { { Model.Data["name_attribute"] , name } }));
+            return new MenuPage(url, new ContextMetadata(
+                new Dictionary<string, dynamic>()
+                { { Model.Data["name_attribute"] , url } }));
         }
     }
 
@@ -136,12 +145,10 @@ menu:
 }
 
 <ul class="menu sub-menu-item-container" id="top-menu">
-    <a class="menu-icon" onclick="OpenMenu()">
-        <div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
+    <a class="menu-icon" onclick="OpenMenu(this)">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
     </a>
-    @Raw(RenderMenu(menuPages).ToString())
+    @Raw(RenderMenu(menuPages))
 </ul>

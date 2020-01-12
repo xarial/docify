@@ -1,0 +1,25 @@
+<div>
+<div class="social-share-list">
+<i>Share</i>
+<a href="https://www.linkedin.com/shareArticle?mini=true&url=www.example.com" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn">
+<svg alt="Share on LinkedIn" class="social-share-link" fill="black" xmlns:xlink="http://www.w3.org/1999/xlink">
+<use xlink:href="/assets/images/social-share.svg#linkedin" />
+</svg>
+</a>
+<a href="https://www.facebook.com/sharer/sharer.php?u=www.example.com" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook" target="_blank">
+<svg alt="Share on Facebook" class="social-share-link" fill="black">
+<use xlink:href="/assets/images/social-share.svg#facebook" />
+</svg>
+</a>
+<a href="https://www.pinterest.com/pin/create/button/?url=www.example.com" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest" target="_blank">
+<svg alt="Share on Pinterest" class="social-share-link" fill="black">
+<use xlink:href="/assets/images/social-share.svg#pinterest" />
+</svg>
+</a>
+<a href="http://www.reddit.com/submit?url=www.example.com" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Reddit" target="_blank">
+<svg alt="Share on Reddit" class="social-share-link" fill="black">
+<use xlink:href="/assets/images/social-share.svg#reddit" />
+</svg>
+</a>
+</div>
+</div>

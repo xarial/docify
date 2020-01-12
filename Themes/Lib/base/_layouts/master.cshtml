@@ -9,11 +9,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="@string.Format("{0}/{1}", Model.Site.BaseUrl, "favicon.ico")">
     <link rel="alternate" type="application/rss+xml" title="@PageHelper.GetTitle(Model.Site.MainPage, null) - Feed" href="@Model.Site.BaseUrl/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/styles/social-share.css" />
     {% seo %}
     {% layout::head %}
     {% google-analytics %}
 </head>
 <body>
+{% social-share %}
 {{ content }}
 </body>
 {% layout::foot %}

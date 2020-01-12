@@ -340,6 +340,112 @@ namespace Components.Tests.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div class=&quot;social-share-list&quot;&gt;
+        ///&lt;i&gt;Share&lt;/i&gt;
+        ///&lt;a href=&quot;https://www.linkedin.com/shareArticle?mini=true&amp;url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on LinkedIn&quot;&gt;
+        ///&lt;svg alt=&quot;Share on LinkedIn&quot; class=&quot;social-share-link&quot; fill=&quot;black&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
+        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#linkedin&quot; /&gt;
+        ///&lt;/svg&gt;
+        ///&lt;/a&gt;
+        ///&lt;a href=&quot;https://www.facebook.com/sharer/sh [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string social_share1 {
+            get {
+                return ResourceManager.GetString("social-share1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div class=&quot;social-share-list&quot;&gt;
+        ///&lt;i&gt;Share&lt;/i&gt;
+        ///&lt;a href=&quot;https://www.linkedin.com/shareArticle?mini=true&amp;url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on LinkedIn&quot;&gt;
+        ///&lt;svg alt=&quot;Share on LinkedIn&quot; class=&quot;social-share-link&quot; fill=&quot;black&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
+        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#linkedin&quot; /&gt;
+        ///&lt;/svg&gt;
+        ///&lt;/a&gt;
+        ///&lt;/div&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string social_share2 {
+            get {
+                return ResourceManager.GetString("social-share2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div class=&quot;social-share-list&quot;&gt;
+        ///&lt;i&gt;Share&lt;/i&gt;
+        ///&lt;a href=&quot;https://www.facebook.com/sharer/sharer.php?u=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on Facebook&quot; target=&quot;_blank&quot;&gt;
+        ///&lt;svg alt=&quot;Share on Facebook&quot; class=&quot;social-share-link&quot; fill=&quot;black&quot;&gt;
+        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#facebook&quot; /&gt;
+        ///&lt;/svg&gt;
+        ///&lt;/a&gt;
+        ///&lt;/div&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string social_share3 {
+            get {
+                return ResourceManager.GetString("social-share3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div class=&quot;social-share-list&quot;&gt;
+        ///&lt;i&gt;Share&lt;/i&gt;
+        ///&lt;a href=&quot;https://www.pinterest.com/pin/create/button/?url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on Pinterest&quot; target=&quot;_blank&quot;&gt;
+        ///&lt;svg alt=&quot;Share on Pinterest&quot; class=&quot;social-share-link&quot; fill=&quot;black&quot;&gt;
+        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#pinterest&quot; /&gt;
+        ///&lt;/svg&gt;
+        ///&lt;/a&gt;
+        ///&lt;/div&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string social_share4 {
+            get {
+                return ResourceManager.GetString("social-share4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div class=&quot;social-share-list&quot;&gt;
+        ///&lt;i&gt;Share&lt;/i&gt;
+        ///&lt;a href=&quot;http://www.reddit.com/submit?url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on Reddit&quot; target=&quot;_blank&quot;&gt;
+        ///&lt;svg alt=&quot;Share on Reddit&quot; class=&quot;social-share-link&quot; fill=&quot;black&quot;&gt;
+        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#reddit&quot; /&gt;
+        ///&lt;/svg&gt;
+        ///&lt;/a&gt;
+        ///&lt;/div&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string social_share5 {
+            get {
+                return ResourceManager.GetString("social-share5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div class=&quot;social-share-list&quot;&gt;
+        ///&lt;i&gt;Share&lt;/i&gt;
+        ///&lt;a href=&quot;https://www.linkedin.com/shareArticle?mini=true&amp;url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on LinkedIn&quot;&gt;
+        ///&lt;svg alt=&quot;Share on LinkedIn&quot; class=&quot;social-share-link&quot; fill=&quot;green&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
+        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#linkedin&quot; /&gt;
+        ///&lt;/svg&gt;
+        ///&lt;/a&gt;
+        ///&lt;a href=&quot;https://www.facebook.com/sharer/sh [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string social_share6 {
+            get {
+                return ResourceManager.GetString("social-share6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
         ///&lt;div id=&quot;toc&quot;&gt;
         ///&lt;ul style=&quot;margin: 0px&quot; class=&quot;toc-container collapse in&quot;&gt;
         ///&lt;li&gt;

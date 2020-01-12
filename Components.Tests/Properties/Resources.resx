@@ -157,6 +157,24 @@
   <data name="seo4" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\seo4.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="social-share1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\social-share1.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
+  </data>
+  <data name="social-share2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\social-share2.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="social-share3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\social-share3.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="social-share4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\social-share4.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="social-share5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\social-share5.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="social-share6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\social-share6.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="toc1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\toc1.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>

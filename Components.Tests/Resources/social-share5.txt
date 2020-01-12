@@ -1,0 +1,10 @@
+<div>
+<div class="social-share-list">
+<i>Share</i>
+<a href="http://www.reddit.com/submit?url=www.example.com" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Reddit" target="_blank">
+<svg alt="Share on Reddit" class="social-share-link" fill="black">
+<use xlink:href="/assets/images/social-share.svg#reddit" />
+</svg>
+</a>
+</div>
+</div>

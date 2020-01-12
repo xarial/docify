@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Components\Components.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
   </ItemGroup>
 
@@ -26,13 +27,10 @@
 	 <LibDir Include="$(SolutionDir)\Themes\Lib\**\*" TargetPath="$(OutDir)\Themes\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <Target Name="RemoveLib" BeforeTargets="CopyLib">
-    <RemoveDir ContinueOnError="true"
-        Directories="$(OutDir)\Components;$(OutDir)\Themes" />
+    <RemoveDir ContinueOnError="true" Directories="$(OutDir)\Components;$(OutDir)\Themes" />
   </Target>
   <Target Name="CopyLib" AfterTargets="AfterBuild">
-    <Copy SourceFiles="@(LibDir)"
-      DestinationFiles="@(LibDir->'%(TargetPath)')"
-      OverwriteReadOnlyFiles="true"/>
+    <Copy SourceFiles="@(LibDir)" DestinationFiles="@(LibDir->'%(TargetPath)')" OverwriteReadOnlyFiles="true" />
   </Target>
   
 </Project>

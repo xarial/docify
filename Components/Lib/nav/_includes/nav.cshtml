@@ -8,118 +8,22 @@ menu:
 @using System.Linq
 @using System.Collections.Generic
 @using Xarial.Docify.Core.Compiler.Context
+@using Components.Shared
 @inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
-@functions{
-    public class MenuPage : IContextPage
-    {
-        public string Url { get; set; } = "";
-        public string FullUrl { get; set; }
-        public string Name { get; }
-        public ContextMetadata Data { get; }
-        public IReadOnlyList<IContextPage> SubPages => SubPagesList;
-        public List<MenuPage> SubPagesList { get; }
-
-        public MenuPage(IContextPage page) : this(page.Name, page.Data)
-        {
-            FullUrl = page.FullUrl;
-            Url = page.Url;
-        }
-
-        public MenuPage(string name, ContextMetadata data)
-        {
-            Name = name;
-            SubPagesList = new List<MenuPage>();
-            Data = data;
-        }
-    }
-}
 @{
-    var menu = Model.Data["menu"];
+    const string MENU_OPT = "menu";
+    const string HOME_MENU_OPT = "home_menu";
 
-    List<IContextPage> menuPages = null;
+    var menu = NavigationMenuHelper.BuildPredefinedMenu(MENU_OPT, Model.Site, Model.Data)?.ToList();
 
-    var allPages = GetAllSubPages(Model.Site.MainPage).ToList();
-
-    if (menu != null)
+    if (menu == null)
     {
-        var menuPagesList = new List<MenuPage>();
-        ParsePages(menu, menuPagesList);
-        menuPages = menuPagesList.ConvertAll<IContextPage>(p => p);
-    }
-    else
-    {
-        menuPages = Model.Site.MainPage.SubPages.ToList();
-    }
+        menu = Model.Site.MainPage.SubPages.ToList();
 
-    if (Model.Data.GetOrDefault<bool>("home_menu") && menu == null) 
-    {
-        var homeMenu = CreateMenuPage("Home");
-        homeMenu.Url = Model.Site.MainPage.Url;
-        homeMenu.FullUrl = Model.Site.MainPage.FullUrl;
-        menuPages.Insert(0, homeMenu);
-    }
-
-    IEnumerable<IContextPage> GetAllSubPages(IContextPage page)
-    {
-        if (page.SubPages != null)
+        if (Model.Data.GetOrDefault<bool>(HOME_MENU_OPT)) 
         {
-            foreach (var childPage in page.SubPages)
-            {
-                yield return childPage;
-
-                foreach (var subChildPage in GetAllSubPages(childPage))
-                {
-                    yield return subChildPage;
-                }
-            }
+            menu.Insert(0, NavigationMenuHelper.BuildPage(Model.Site.MainPage, Model.Data, "Home"));
         }
-    }
-
-    MenuPage CreateMenuPage(string url)
-    {
-        var page = allPages.FirstOrDefault(p => string.Equals(p.Url,
-            url, StringComparison.CurrentCultureIgnoreCase));
-
-        if (page != null)
-        {
-            return new MenuPage(page);
-        }
-        else
-        {
-            return new MenuPage(url, new ContextMetadata(
-                new Dictionary<string, dynamic>()
-                { { Model.Data["name_attribute"] , url } }));
-        }
-    }
-
-    void ParsePages(List<object> menuList, List<MenuPage> menuPagesList)
-    {
-        foreach (var menuItem in menuList)
-        {
-            if (menuItem is string)
-            {
-                menuPagesList.Add(CreateMenuPage((string)menuItem));
-            }
-            else if (menuItem is Dictionary<object, object>)
-            {
-                foreach (var parentMenuItem in menuItem as Dictionary<object, object>)
-                {
-                    var menuPage = CreateMenuPage((string)parentMenuItem.Key);
-                    menuPagesList.Add(menuPage);
-                    ParsePages(parentMenuItem.Value as List<object>, menuPage.SubPagesList);
-                }
-            }
-            else
-            {
-                throw new NotSupportedException("Invalid type of menu item");
-            }
-        }
-    }
-}
-@{
-    string GetTitle(IContextPage page) 
-    {
-        return page.Data.Get<string>(Model.Data["name_attribute"]);
     }
 
     string RenderMenu(IEnumerable<IContextPage> pages)
@@ -129,7 +33,7 @@ menu:
         foreach (var menuPage in pages)
         {
             html.AppendLine("<li class=\"menu-item\">");
-            html.AppendLine($"<a href=\"{menuPage.Url}\">{GetTitle(menuPage)}</a>");
+            html.AppendLine($"<a href=\"{menuPage.Url}\">{NavigationMenuHelper.GetTitle(menuPage, Model.Data)}</a>");
 
             if (menuPage.SubPages.Any())
             {
@@ -150,5 +54,5 @@ menu:
         <div class="bar2"></div>
         <div class="bar3"></div>
     </a>
-    @Raw(RenderMenu(menuPages))
+    @Raw(RenderMenu(menu))
 </ul>

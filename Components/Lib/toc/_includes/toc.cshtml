@@ -1,0 +1,82 @@
+﻿---
+name_attribute: title
+home_menu: true
+menu:
+---
+@using RazorLight
+@using System
+@using System.Linq
+@using System.Collections.Generic
+@using Xarial.Docify.Core.Compiler.Context
+@using Components.Shared
+@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@{
+    const string MENU_OPT = "menu";
+    const string HOME_MENU_OPT = "home_menu";
+    const string PAGE_DISABLED_ATT = "disabled";
+
+    var menu = NavigationMenuHelper.BuildPredefinedMenu(MENU_OPT, Model.Site, Model.Data)?.ToList();
+
+    IContextPage homePage = null;
+
+    if (menu == null)
+    {
+        menu = Model.Site.MainPage.SubPages.ToList();
+
+        if (Model.Data.GetOrDefault<bool>(HOME_MENU_OPT))
+        {
+            homePage = NavigationMenuHelper.BuildPage(Model.Site.MainPage, Model.Data, "Home");
+        }
+    }
+
+    string RenderToc(IEnumerable<IContextPage> pages, string parentId = "")
+    {
+        var html = new System.Text.StringBuilder();
+
+        foreach (var menuPage in pages)
+        {
+            var entryId = menuPage.Url.Replace('/', '_').Replace('-', '_');
+            html.AppendLine("<li>");
+            
+            var onClick = menuPage.SubPages.Any() ? $"onclick=\"javascript:toggle({entryId}Span, {entryId});\"" : "";
+            html.AppendLine($"<div class=\"tree-toc-node pointer\" {onClick}>");
+            
+            if (menuPage.SubPages.Any())
+            {
+                html.AppendLine($"<span class=\"expbutton\" id=\"{entryId}Span\">&#9656;</span>");
+            }
+            
+            var pageType = menuPage.SubPages.Any() ? "section" : "article";
+            html.AppendLine($"<span class=\"{pageType}\"></span>");
+            var title = NavigationMenuHelper.GetTitle(menuPage, Model.Data);
+
+            if (!menuPage.Data.GetOrDefault<bool>(PAGE_DISABLED_ATT))
+            {
+                html.AppendLine($"<a href=\"{menuPage.Url}\" class=\"tocEntry\">{title}</a>");
+            }
+            else
+            {
+                html.AppendLine($"<span class=\"unavailable\">{title}</span>");
+            }
+            html.AppendLine("</li>");
+
+            if (menuPage.SubPages.Any())
+            {
+                html.AppendLine($"<ul id=\"{entryId}\" class=\"toc-container collapse\">");
+                html.AppendLine(RenderToc(menuPage.SubPages, entryId));
+                html.AppendLine("</ul>");
+            }
+        }
+
+        return html.ToString();
+    }
+}
+<div id="toc">
+    @if (homePage != null)
+    {
+        <a href="@homePage.Url" class="tocEntry">Welcome</a>
+    }
+    <ul @Raw(homePage != null ? "style=\"margin: 0px\"" : "") class="toc-container collapse @Raw(homePage != null ? "in" : "")">
+        @Raw(RenderToc(menu))
+    </ul>
+</div>

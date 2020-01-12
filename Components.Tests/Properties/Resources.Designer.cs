@@ -61,6 +61,74 @@ namespace Components.Tests.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;channel&gt;
+        ///&lt;title&gt;index.html&lt;/title&gt;
+        ///&lt;description&gt;&lt;/description&gt;
+        ///&lt;link&gt;www.example.com&lt;/link&gt;
+        ///&lt;lastBuildDate&gt;-&lt;/lastBuildDate&gt;
+        ///&lt;atom:link href=&quot;www.example.com/feed.xml&quot; rel=&quot;self&quot; type=&quot;application/rss+xml&quot; /&gt;
+        ///&lt;item&gt;
+        ///&lt;title&gt;p1&lt;/title&gt;
+        ///&lt;description&gt;desc1&lt;/description&gt;
+        ///&lt;link&gt;www.example.com/Page1.html&lt;/link&gt;
+        ///&lt;guid isPermaLink=&quot;true&quot;&gt;www.example.com/Page1.html&lt;/guid&gt;
+        ///&lt;/item&gt;
+        ///&lt;item&gt;
+        ///&lt;title&gt;sp1&lt;/title&gt;
+        ///&lt;description&gt;&lt;/description&gt;
+        ///&lt;link&gt;www.example.com/SubPage1.html&lt;/link&gt;
+        ///&lt;guid isPermaLink=&quot;true&quot; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string feed1 {
+            get {
+                return ResourceManager.GetString("feed1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;channel&gt;
+        ///&lt;title&gt;index.html&lt;/title&gt;
+        ///&lt;description&gt;&lt;/description&gt;
+        ///&lt;link&gt;www.example.com&lt;/link&gt;
+        ///&lt;image&gt;
+        ///&lt;url&gt;www.example.com/img1.png &lt;/url&gt;
+        ///&lt;title&gt;index.html&lt;/title&gt;
+        ///&lt;link&gt;www.example.com&lt;/link&gt;
+        ///&lt;/image&gt;
+        ///&lt;lastBuildDate&gt;-&lt;/lastBuildDate&gt;
+        ///&lt;atom:link href=&quot;www.example.com/feed.xml&quot; rel=&quot;self&quot; type=&quot;application/rss+xml&quot; /&gt;
+        ///&lt;/channel&gt;.
+        /// </summary>
+        internal static string feed2 {
+            get {
+                return ResourceManager.GetString("feed2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;channel&gt;
+        ///&lt;title&gt;index.html&lt;/title&gt;
+        ///&lt;description&gt;&lt;/description&gt;
+        ///&lt;link&gt;www.example.com&lt;/link&gt;
+        ///&lt;lastBuildDate&gt;-&lt;/lastBuildDate&gt;
+        ///&lt;atom:link href=&quot;www.example.com/feed.xml&quot; rel=&quot;self&quot; type=&quot;application/rss+xml&quot; /&gt;
+        ///&lt;item&gt;
+        ///&lt;title&gt;p1&lt;/title&gt;
+        ///&lt;description&gt;&lt;/description&gt;
+        ///&lt;link&gt;www.example.com/Page1.html&lt;/link&gt;
+        ///&lt;guid isPermaLink=&quot;true&quot;&gt;www.example.com/Page1.html&lt;/guid&gt;
+        ///&lt;category&gt;cat1&lt;/category&gt;
+        ///&lt;category&gt;cat2&lt;/category&gt;
+        ///&lt;/item&gt;
+        ///&lt;/channel&gt;.
+        /// </summary>
+        internal static string feed3 {
+            get {
+                return ResourceManager.GetString("feed3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;script async src=&quot;https://www.googletagmanager.com/gtag/js?id=ABC&quot;&gt;&lt;/script&gt;
         ///&lt;script&gt;
         ///window.dataLayer = window.dataLayer || [];

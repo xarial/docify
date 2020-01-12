@@ -7,10 +7,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Xarial.Docify.Base.Content
 {
+    [DebuggerDisplay("{" + nameof(Location) + "}")]
     public abstract class Asset : IWritable
     {
         public Location Location { get; }

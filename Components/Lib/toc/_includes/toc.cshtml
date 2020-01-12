@@ -1,5 +1,5 @@
 ﻿---
-name_attribute: title
+title_attribute: title
 home_menu: true
 menu:
 ---
@@ -68,7 +68,7 @@ menu:
 
             var pageType = menuPage.SubPages.Any() ? "section" : "article";
             html.AppendLine($"<span class=\"{pageType}\"></span>");
-            var title = NavigationMenuHelper.GetTitle(menuPage, Model.Data);
+            var title = PageHelper.GetTitle(menuPage, Model.Data);
 
             if (!menuPage.Data.GetOrDefault<bool>(PAGE_DISABLED_ATT))
             {

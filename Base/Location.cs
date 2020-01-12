@@ -8,6 +8,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -15,6 +16,7 @@ using System.Text;
 
 namespace Xarial.Docify.Base
 {
+    [DebuggerDisplay("{" + nameof(FileName) + "}")]
     public class Location
     {
         public static Location FromPath(string path, string relTo = "")

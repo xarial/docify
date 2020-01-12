@@ -1,0 +1,31 @@
+<channel>
+<title>index.html</title>
+<description></description>
+<link>www.example.com</link>
+<lastBuildDate>-</lastBuildDate>
+<atom:link href="www.example.com/feed.xml" rel="self" type="application/rss+xml" />
+<item>
+<title>p1</title>
+<description>desc1</description>
+<link>www.example.com/Page1.html</link>
+<guid isPermaLink="true">www.example.com/Page1.html</guid>
+</item>
+<item>
+<title>sp1</title>
+<description></description>
+<link>www.example.com/SubPage1.html</link>
+<guid isPermaLink="true">www.example.com/SubPage1.html</guid>
+</item>
+<item>
+<title>sp2</title>
+<description></description>
+<link>www.example.com/SubPage2.html</link>
+<guid isPermaLink="true">www.example.com/SubPage2.html</guid>
+</item>
+<item>
+<title>p2</title>
+<description></description>
+<link>www.example.com/Page2.html</link>
+<guid isPermaLink="true">www.example.com/Page2.html</guid>
+</item>
+</channel>

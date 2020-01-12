@@ -65,7 +65,12 @@ namespace Xarial.Docify.Core.Compiler
                 }
             }
 
-            param = param.Merge(GetData(page.Data, name));
+            //page can be null if the include used on asset file
+            if (page != null)
+            {
+                param = param.Merge(GetData(page.Data, name));
+            }
+
             param = param.Merge(GetData(site.Configuration, name));
             param = param.Merge(include.Data);
 

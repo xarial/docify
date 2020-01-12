@@ -14,8 +14,7 @@ using Xarial.Docify.Core.Compiler.Context;
 namespace Xarial.Docify.Components.Shared
 {
     public static class NavigationMenuHelper
-    {
-        private const string NAME_ATT = "name_attribute";
+    {   
         private const string ROOT_PAGE_ATT = "root_page";
 
         public class MenuPage : IContextPage
@@ -47,7 +46,7 @@ namespace Xarial.Docify.Components.Shared
 
             if (menu != null)
             {
-                var allPages = GetAllSubPages(site.MainPage);
+                var allPages = PageHelper.GetAllPages(site.MainPage);
                 var menuPagesList = new List<MenuPage>();
                 ParsePages(menu, menuPagesList, allPages, data);
                 return menuPagesList;
@@ -72,7 +71,7 @@ namespace Xarial.Docify.Components.Shared
 
             if (!string.IsNullOrEmpty(rootPageUrl))
             {
-                var rootPage = new IContextPage[] { model.Site.MainPage }.Union(GetAllSubPages(model.Site.MainPage))
+                var rootPage = new IContextPage[] { model.Site.MainPage }.Union(PageHelper.GetAllPages(model.Site.MainPage))
                     .FirstOrDefault(p => string.Equals(p.Url, rootPageUrl, StringComparison.CurrentCultureIgnoreCase));
 
                 if (rootPage != null)
@@ -89,34 +88,6 @@ namespace Xarial.Docify.Components.Shared
                 return model.Site.MainPage;
             }
         }
-        
-        public static string GetTitle(IContextPage page, ContextMetadata data)
-        {
-            var title = page.Data.Get<string>(data[NAME_ATT]);
-
-            if (string.IsNullOrEmpty(title)) 
-            {
-                title = page.Name;
-            }
-
-            return title;
-        }
-
-        private static IEnumerable<IContextPage> GetAllSubPages(IContextPage page)
-        {
-            if (page.SubPages != null)
-            {
-                foreach (var childPage in page.SubPages)
-                {
-                    yield return childPage;
-
-                    foreach (var subChildPage in GetAllSubPages(childPage))
-                    {
-                        yield return subChildPage;
-                    }
-                }
-            }
-        }
 
         private static MenuPage CreateMenuPage(IEnumerable<IContextPage> allPages, ContextMetadata data, string url)
         {
@@ -131,7 +102,7 @@ namespace Xarial.Docify.Components.Shared
             {
                 return new MenuPage(url, new ContextMetadata(
                     new Dictionary<string, dynamic>()
-                    { { data[NAME_ATT] , url } }));
+                    { { data[PageHelper.TITLE_ATT] , url } }));
             }
         }
 

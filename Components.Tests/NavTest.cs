@@ -67,7 +67,7 @@ namespace Components.Tests
         public async Task CustomTitleTest()
         {
             var site = ComponentsTest.NewSite("<div>\r\n{% nav %}\r\n</div>", INCLUDE_PATH, null,
-                ComponentsTest.GetData<Configuration>("nav:\r\n  home_menu: false\r\n  name_attribute: abc"));
+                ComponentsTest.GetData<Configuration>("nav:\r\n  home_menu: false\r\n  title_attribute: abc"));
             var p1 = new Page(Location.FromPath("Page1.html"), "", ComponentsTest.GetData<Metadata>("title: p1\r\nabc: x1"));
             site.MainPage.SubPages.Add(p1);
             

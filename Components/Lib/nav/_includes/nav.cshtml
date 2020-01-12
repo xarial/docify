@@ -1,5 +1,5 @@
 ﻿---
-name_attribute: title
+title_attribute: title
 home_menu: true
 menu:
 root_page:
@@ -35,7 +35,7 @@ root_page:
         {
             var active = string.Equals(menuPage.Url, Model.Page?.Url, StringComparison.CurrentCultureIgnoreCase) ? " active" : "";
             html.AppendLine($"<li class=\"menu-item{active}\">");
-            html.AppendLine($"<a href=\"{menuPage.Url}\">{NavigationMenuHelper.GetTitle(menuPage, Model.Data)}</a>");
+            html.AppendLine($"<a href=\"{menuPage.Url}\">{PageHelper.GetTitle(menuPage, Model.Data)}</a>");
 
             if (menuPage.SubPages.Any())
             {

@@ -1,5 +1,6 @@
 ﻿@using RazorLight
 @using System.Collections.Generic
+@using Xarial.Docify.Components.Shared
 @inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.ContextModel>
 <!DOCTYPE html>
 <html lang="{% page-lang %}">
@@ -7,9 +8,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="@string.Format("{0}/{1}", Model.Site.BaseUrl, "favicon.ico")">
-{% seo %}
-{% layout::head %}
-{% google-analytics %}
+    <link rel="alternate" type="application/rss+xml" title="@PageHelper.GetTitle(Model.Site.MainPage, null) - Feed" href="@Model.Site.BaseUrl/feed.xml">
+    {% seo %}
+    {% layout::head %}
+    {% google-analytics %}
 </head>
 <body>
 {{ content }}

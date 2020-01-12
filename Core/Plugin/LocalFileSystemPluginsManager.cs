@@ -21,46 +21,24 @@ using Xarial.Docify.Base;
 using System.Composition.Convention;
 using System.Composition;
 using System.Collections;
+using System.Composition.Hosting.Core;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
+using System.Text.RegularExpressions;
 
 namespace Xarial.Docify.Core.Plugin
 {
     public class LocalFileSystemPluginsManager : IPluginsManager
     {
-        private class PluginSelectorAttributedModelProvider : AttributedModelProvider
+        private class SettingsNamingConvention : INamingConvention
         {
-            private readonly IEnumerable<string> m_Plugins;
-
-            internal PluginSelectorAttributedModelProvider(IEnumerable<string> plugins) 
+            public string Apply(string value)
             {
-                m_Plugins = plugins;
-            }
+                var words = Regex.Split(value, "(?<=[a-z])(?=[A-Z])");
 
-            public override IEnumerable<Attribute> GetCustomAttributes(Type reflectedType, MemberInfo member)
-            {
-                return ProcessType(reflectedType);
-            }
+                var res = string.Join("-", words.Select(w => w.ToLower()));
 
-            public override IEnumerable<Attribute> GetCustomAttributes(Type reflectedType, ParameterInfo parameter)
-            {
-                return ProcessType(reflectedType);
-            }
-
-            private IEnumerable<Attribute> ProcessType(Type reflectedType) 
-            {
-                if (typeof(IPlugin).IsAssignableFrom(reflectedType))
-                {
-                    var id = reflectedType.GetCustomAttribute<PluginAttribute>()?.Id;
-
-                    if (string.IsNullOrEmpty(id)) 
-                    {
-                        id = reflectedType.FullName;
-                    }
-
-                    if (m_Plugins.Contains(id, StringComparer.InvariantCultureIgnoreCase))
-                    {
-                        yield return new ExportAttribute(typeof(IPlugin));
-                    }
-                }
+                return res;
             }
         }
 
@@ -79,17 +57,73 @@ namespace Xarial.Docify.Core.Plugin
             
             if (conf.Plugins?.Any() == true)
             {
+                var cb = new ConventionBuilder();
+
+                cb.ForTypesMatching(t =>
+                {
+                    if (typeof(IPlugin).IsAssignableFrom(t))
+                    {
+                        var id = GetPluginId(t);
+
+                        return conf.Plugins.Contains(id, StringComparer.InvariantCultureIgnoreCase);
+                    }
+
+                    return false;
+                }).Export<IPlugin>();
+                                
                 var pluginAssemblies = m_FileSystem.Directory.GetFiles(conf.PluginsFolder.ToPath(), "*.dll", SearchOption.TopDirectoryOnly)
                     .Select(f => AssemblyLoadContext.Default.LoadFromStream(m_FileSystem.File.OpenRead(f)))
                     .Where(s => s.GetTypes().Where(p => typeof(IPlugin).IsAssignableFrom(p)).Any());
-                
+
                 var configuration = new ContainerConfiguration()
                     .WithAssemblies(pluginAssemblies)
-                    .WithDefaultConventions(new PluginSelectorAttributedModelProvider(conf.Plugins));
+                    .WithDefaultConventions(cb);
 
                 using (var host = configuration.CreateContainer()) 
                 {
                     m_Plugins = host.GetExports<IPlugin>();
+                }
+
+                LoadPluginSettings(conf);
+            }
+        }
+
+        private void LoadPluginSettings(Configuration conf)
+        {
+            if (m_Plugins != null)
+            {
+                var yamlSerializer = new SerializerBuilder().Build();
+                var yamlDeserializer = new DeserializerBuilder()
+                    .WithNamingConvention(new SettingsNamingConvention())
+                    .Build();
+
+                foreach (var plugin in m_Plugins)
+                {
+                    var pluginSpecType = plugin.GetType();
+
+                    if (IsAssignableToGenericType(pluginSpecType, typeof(IPlugin<>)))
+                    {
+                        var prp = pluginSpecType.GetProperty(nameof(IPlugin<object>.Settings));
+                        var settsType = prp.PropertyType;
+
+                        var pluginId = GetPluginId(pluginSpecType);
+
+                        dynamic settsData;
+
+                        object setts = null;
+
+                        if (conf.TryGetValue(pluginId, out settsData))
+                        {
+                            var yaml = yamlSerializer.Serialize(settsData);
+                            setts = yamlDeserializer.Deserialize(yaml, settsType);
+                        }
+                        else
+                        {
+                            setts = Activator.CreateInstance(settsType);
+                        }
+
+                        prp.SetValue(plugin, setts);
+                    }
                 }
             }
         }
@@ -109,7 +143,7 @@ namespace Xarial.Docify.Core.Plugin
                         var pluginsListType = typeof(List<>).MakeGenericType(pluginType);
                         var pluginsList = Activator.CreateInstance(pluginsListType) as IList;
 
-                        foreach (var importPlugin in importPlugins)
+                        foreach (var importPlugin in importPlugins) 
                         {
                             pluginsList.Add(importPlugin);
                         }
@@ -118,6 +152,45 @@ namespace Xarial.Docify.Core.Plugin
                     }
                 }
             }
+        }
+
+        private string GetPluginId(Type pluginType)
+        {
+            var id = pluginType.GetCustomAttribute<PluginAttribute>()?.Id;
+
+            if (string.IsNullOrEmpty(id))
+            {
+                id = pluginType.FullName;
+            }
+
+            return id;
+        }
+
+        private bool IsAssignableToGenericType(Type givenType, Type genericType)
+        {
+            var interfaceTypes = givenType.GetInterfaces();
+
+            foreach (var it in interfaceTypes)
+            {
+                if (it.IsGenericType && it.GetGenericTypeDefinition() == genericType)
+                {
+                    return true;
+                }
+            }
+
+            if (givenType.IsGenericType && givenType.GetGenericTypeDefinition() == genericType)
+            {
+                return true;
+            }
+
+            var baseType = givenType.BaseType;
+
+            if (baseType == null)
+            {
+                return false; 
+            }
+
+            return IsAssignableToGenericType(baseType, genericType);
         }
     }
 }

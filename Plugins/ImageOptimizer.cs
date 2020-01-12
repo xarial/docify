@@ -12,23 +12,37 @@ using System.Linq;
 using System.IO;
 using nQuant;
 using System.Drawing;
+using System.Text.RegularExpressions;
+using System.Runtime.Serialization;
 
-namespace Plugins
+namespace Xarial.Docify.Plugins
 {
-    [Plugin("image-optimizer")]
-    public class ImageOptimizer : IPrePublishBinaryAssetPlugin
+    public class ImageOptimizerSettings 
     {
-        private readonly string[] m_ImageExtensions = new string[]
+        [DataMember(Name = "match-pattern")]
+        public string[] MatchPatterns { get; set; } = new string[]
         {
-            ".png", ".jpg", ".jpeg", ".bmp"
+            "\\.png$", "\\.jpg$", "\\.jpeg$", "\\.bmp$", "\\.tif$", "\\.tiff$"
         };
+
+        [DataMember(Name = "ignore-match-case")]
+        public bool IgnoreMatchCase { get; set; } = true;
+    }
+
+    [Plugin("image-optimizer")]
+    public class ImageOptimizer : IPrePublishBinaryAssetPlugin, IPlugin<ImageOptimizerSettings>
+    {        
+        public ImageOptimizerSettings Settings { get; set; }
 
         public void PrePublishBinaryAsset(ref Location loc, ref byte[] content, out bool cancel)
         {
             cancel = false;
 
-            if (m_ImageExtensions.Contains(Path.GetExtension(loc.FileName),
-                StringComparer.CurrentCultureIgnoreCase)) 
+            var path = loc.ToPath();
+
+            var opts = Settings.IgnoreMatchCase ? RegexOptions.IgnoreCase : RegexOptions.None;
+
+            if (Settings.MatchPatterns.Any(p => Regex.IsMatch(path, p, opts)))
             {
                 var quantizer = new WuQuantizer();
 

@@ -17,43 +17,44 @@ using Xarial.Docify.Base.Plugins;
 
 namespace Xarial.Docify.Plugins
 {
-    [Plugin("code-syntax-highlighter")]
-    public class CodeSyntaxHighlighter : IRenderCodeBlockPlugin, IPreCompilePlugin, IPrePublishTextAssetPlugin
+    public class CodeSyntaxHighlighterSettings
     {
-        private readonly HtmlClassFormatter m_Formatter;
+        public bool EmbedStyle { get; set; } = true;
+    }
+
+    [Plugin("code-syntax-highlighter")]
+    public class CodeSyntaxHighlighter : IRenderCodeBlockPlugin, IPreCompilePlugin, IPrePublishTextAssetPlugin, IPlugin<CodeSyntaxHighlighterSettings>
+    {
+        public CodeSyntaxHighlighterSettings Settings { get; set; }
+
+        private CodeColorizerBase m_Formatter;
 
         private const string CSS_FILE_NAME = "syntax-highlight.css";
         private readonly string[] CSS_FILE_PATH = new string[] { "assets", "styles" };
-
-        public CodeSyntaxHighlighter() 
-        {
-            var styles = StyleDictionary.DefaultLight;
-
-            for (int i = 0; i < styles.Count; i++)
-            {
-                styles[i].ReferenceName = "c" + i;
-            }
-
-            m_Formatter = new HtmlClassFormatter(styles);
-        }
-
+        
         public void PreCompile(Site site)
         {
-            var css = m_Formatter.GetCSSString();
-            site.Assets.Add(new TextAsset(css, new Location(CSS_FILE_NAME, CSS_FILE_PATH)));
+            if (!Settings.EmbedStyle)
+            {
+                var css = (Formatter as HtmlClassFormatter).GetCSSString();
+                site.Assets.Add(new TextAsset(css, new Location(CSS_FILE_NAME, CSS_FILE_PATH)));
+            }
         }
 
         public void PrePublishTextAsset(ref Location loc, ref string content, out bool cancel)
         {
             cancel = false;
 
-            if (string.Equals(Path.GetExtension(loc.FileName), ".html", StringComparison.InvariantCultureIgnoreCase)) 
+            if (!Settings.EmbedStyle)
             {
-                var headInd = content.IndexOf("</head>");
-
-                if (headInd != -1) 
+                if (string.Equals(Path.GetExtension(loc.FileName), ".html", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    content = content.Insert(headInd, $"<link rel=\"stylesheet\" type=\"text/css\" href=\"/{string.Join('/', CSS_FILE_PATH)}/{CSS_FILE_NAME}\" />\r\n");
+                    var headInd = content.IndexOf("</head>");
+
+                    if (headInd != -1)
+                    {
+                        content = content.Insert(headInd, $"<link rel=\"stylesheet\" type=\"text/css\" href=\"/{string.Join('/', CSS_FILE_PATH)}/{CSS_FILE_NAME}\" />\r\n");
+                    }
                 }
             }
         }
@@ -62,9 +63,49 @@ namespace Xarial.Docify.Plugins
         {
             var codeLang = Languages.FindById(lang);
 
-            var formattedCode = m_Formatter.GetHtmlString(rawCode, codeLang);
-            
+            var formattedCode = "";
+
+            if (Formatter is HtmlFormatter)
+            {
+                formattedCode = (Formatter as HtmlFormatter).GetHtmlString(rawCode, codeLang);
+            }
+            else if (Formatter is HtmlClassFormatter)
+            {
+                formattedCode = (Formatter as HtmlClassFormatter).GetHtmlString(rawCode, codeLang);
+            }
+            else
+            {
+                throw new NotSupportedException("Incorrect formatted");
+            }
+
             result = new StringBuilder($"<pre><code>{formattedCode}</code></pre>");
+        }
+
+        private CodeColorizerBase Formatter
+        {
+            get
+            {
+                if (m_Formatter == null)
+                {
+                    var styles = StyleDictionary.DefaultLight;
+
+                    for (int i = 0; i < styles.Count; i++)
+                    {
+                        styles[i].ReferenceName = "c" + i;
+                    }
+
+                    if (Settings.EmbedStyle)
+                    {
+                        m_Formatter = new HtmlFormatter(styles);
+                    }
+                    else
+                    {
+                        m_Formatter = new HtmlClassFormatter(styles);
+                    }
+                }
+
+                return m_Formatter;
+            }
         }
     }
 }

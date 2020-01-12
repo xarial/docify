@@ -34,7 +34,7 @@ namespace CLI.Tests
                 "<div>@Model.Site.MainPage.SubPages.Count <a href=\"@Model.Page.Name\">Test</a></div>");
                         
             var p2 = new Page(new Location("page2.html"),
-                "<p>@Model.Site.MainPage.SubPages.Count</p>\n\n[page](@Model.Site.BaseUrl/@Model.Page.Url)");
+                "<p>@Model.Site.MainPage.SubPages.Count</p>\n\n[page](@Model.Site.BaseUrl@Model.Page.Url)");
             
             p1.SubPages.Add(p2);
 

@@ -21,25 +21,33 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
     public class MarkdigMarkdownContentTransformer : IContentTransformer
     {
-        private readonly MarkdownPipeline m_MarkdownEngine;
+        private MarkdownPipeline m_MarkdownEngine;
+        
+        [ImportPlugin]
+        private IEnumerable<IRenderUrlPlugin> m_RenderUrlPlugins = null;
 
         [ImportPlugin]
-        private IEnumerable<IRenderUrlPlugin> m_RenderUrlPlugins;
+        private IEnumerable<IRenderImagePlugin> m_RenderImagePlugins = null;
 
         [ImportPlugin]
-        private IEnumerable<IRenderImagePlugin> m_RenderImagePlugins;
+        private IEnumerable<IRenderCodeBlockPlugin> m_RenderCodeBlockPlugins = null;
 
-        [ImportPlugin]
-        private IEnumerable<IRenderCodeBlockPlugin> m_RenderCodeBlockPlugins;
-
-        public MarkdigMarkdownContentTransformer()
+        private MarkdownPipeline MarkdownEngine
         {
-            m_MarkdownEngine = new MarkdownPipelineBuilder()
-                .UseAdvancedExtensions()
-                .UseObservableLinks() //TODO: handle plugins for image and url
-                //TODO: add observable for code blocks plugins
-                .UseProtectedTags(IncludesHandler.START_TAG, IncludesHandler.END_TAG) //TODO: should be a dependency
-                .Build();
+            get
+            {
+                if (m_MarkdownEngine == null)
+                {
+                    m_MarkdownEngine = new MarkdownPipelineBuilder()
+                        .UseAdvancedExtensions()
+                        .UseObservableLinks() //TODO: handle plugins for image and url
+                        .UseObservableCodeBlocks(m_RenderCodeBlockPlugins)
+                        .UseProtectedTags(IncludesHandler.START_TAG, IncludesHandler.END_TAG) //TODO: should be a dependency
+                        .Build();
+                }
+
+                return m_MarkdownEngine;
+            }
         }
 
         public Task<string> Transform(string content, string key, IContextModel model)
@@ -49,7 +57,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
             var htmlStr = new StringBuilder();
 
             Markdown.ToHtml(content, new StringWriter(htmlStr),
-                m_MarkdownEngine, context);
+                MarkdownEngine, context);
 
             //NOTE: by some reasons extra new line symbol is added to the output
             var html = htmlStr.ToString().Trim('\n');

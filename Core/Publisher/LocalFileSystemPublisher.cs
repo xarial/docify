@@ -26,10 +26,10 @@ namespace Xarial.Docify.Core.Publisher
         private readonly IFileSystem m_FileSystem;
 
         [ImportPlugin]
-        private IEnumerable<IPrePublishBinaryAssetPlugin> m_PrePublishBinaryPlugins;
+        private IEnumerable<IPrePublishBinaryAssetPlugin> m_PrePublishBinaryPlugins = null;
 
         [ImportPlugin]
-        private IEnumerable<IPrePublishTextAssetPlugin> m_PrePublishTextPlugins;
+        private IEnumerable<IPrePublishTextAssetPlugin> m_PrePublishTextPlugins = null;
 
         public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config) :
             this(config, new FileSystem())

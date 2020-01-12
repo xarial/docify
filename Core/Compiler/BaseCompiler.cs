@@ -34,10 +34,10 @@ namespace Xarial.Docify.Core.Compiler
         private readonly IIncludesHandler m_IncludesHandler;
 
         [ImportPlugin]
-        private IEnumerable<IPreCompilePlugin> m_PreCompilePlugins;
+        private IEnumerable<IPreCompilePlugin> m_PreCompilePlugins = null;
 
         [ImportPlugin]
-        private IEnumerable<IPostCompilePlugin> m_PostCompilePlugins;
+        private IEnumerable<IPostCompilePlugin> m_PostCompilePlugins = null;
 
         public BaseCompiler(BaseCompilerConfig config,
             ILogger logger, ILayoutParser layoutParser,

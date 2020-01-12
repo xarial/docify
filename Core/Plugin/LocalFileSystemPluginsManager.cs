@@ -79,7 +79,7 @@ namespace Xarial.Docify.Core.Plugin
             
             if (conf.Plugins?.Any() == true)
             {
-                var pluginAssemblies = m_FileSystem.Directory.GetFiles(conf.PluginsFolder.ToPath(), "*.dll", SearchOption.AllDirectories)
+                var pluginAssemblies = m_FileSystem.Directory.GetFiles(conf.PluginsFolder.ToPath(), "*.dll", SearchOption.TopDirectoryOnly)
                     .Select(f => AssemblyLoadContext.Default.LoadFromStream(m_FileSystem.File.OpenRead(f)))
                     .Where(s => s.GetTypes().Where(p => typeof(IPlugin).IsAssignableFrom(p)).Any());
                 

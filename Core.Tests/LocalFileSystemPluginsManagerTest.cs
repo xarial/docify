@@ -42,7 +42,9 @@ namespace Core.Tests
 
         public class ServiceMock1 
         {
+#pragma warning disable CS0169 // Add readonly modifier
             private IEnumerable<IPlugin1> m_Plugins1;
+#pragma warning restore CS0169 // Add readonly modifier
             protected IEnumerable<IPlugin2> m_Plugins2;
         }
 

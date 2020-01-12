@@ -13,7 +13,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core.Plugin;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
@@ -21,11 +23,21 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
     {
         private readonly MarkdownPipeline m_MarkdownEngine;
 
+        [ImportPlugin]
+        private IEnumerable<IRenderUrlPlugin> m_RenderUrlPlugins;
+
+        [ImportPlugin]
+        private IEnumerable<IRenderImagePlugin> m_RenderImagePlugins;
+
+        [ImportPlugin]
+        private IEnumerable<IRenderCodeBlockPlugin> m_RenderCodeBlockPlugins;
+
         public MarkdigMarkdownContentTransformer()
         {
             m_MarkdownEngine = new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
-                .UseObservableLinks()
+                .UseObservableLinks() //TODO: handle plugins for image and url
+                //TODO: add observable for code blocks plugins
                 .UseProtectedTags(IncludesHandler.START_TAG, IncludesHandler.END_TAG) //TODO: should be a dependency
                 .Build();
         }

@@ -21,6 +21,8 @@ namespace Xarial.Docify.Base.Data
         public string WorkingFolder { get; set; }
         public Location ComponentsFolder { get; set; }
         public List<string> Components { get; set; }
+        public Location PluginsFolder { get; set; }
+        public List<string> Plugins { get; set; }
         public Location ThemesFolder { get; set; }
         public List<string> ThemesHierarchy { get; }
         

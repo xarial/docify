@@ -2,3 +2,6 @@
 components:
   - $
   - toc
+plugins:
+  - $
+  - code-syntax-highlighter

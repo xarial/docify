@@ -22,10 +22,14 @@ namespace Xarial.Docify.Core.Compiler
         private readonly MarkdigMarkdownContentTransformer m_MarkdownTransformer;
         private readonly RazorLightContentTransformer m_RazorTransformer;
         
-        public MarkdigRazorLightTransformer()
+        public MarkdigRazorLightTransformer() : this(new MarkdigMarkdownContentTransformer(), new RazorLightContentTransformer())
         {
-            m_MarkdownTransformer = new MarkdigMarkdownContentTransformer();
-            m_RazorTransformer = new RazorLightContentTransformer();
+        }
+
+        public MarkdigRazorLightTransformer(MarkdigMarkdownContentTransformer markdown, RazorLightContentTransformer razor)
+        {
+            m_MarkdownTransformer = markdown;
+            m_RazorTransformer = razor;
         }
 
         public async Task<string> Transform(string content, string key, IContextModel model)

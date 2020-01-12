@@ -7,13 +7,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.IO;
 using System.IO.Abstractions;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core.Plugin;
 
 namespace Xarial.Docify.Core.Publisher
 {
@@ -21,6 +24,12 @@ namespace Xarial.Docify.Core.Publisher
     {
         private readonly LocalFileSystemPublisherConfig m_Config;
         private readonly IFileSystem m_FileSystem;
+
+        [ImportPlugin]
+        private IEnumerable<IPrePublishBinaryAssetPlugin> m_PrePublishBinaryPlugins;
+
+        [ImportPlugin]
+        private IEnumerable<IPrePublishTextAssetPlugin> m_PrePublishTextPlugins;
 
         public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config) :
             this(config, new FileSystem())
@@ -50,22 +59,43 @@ namespace Xarial.Docify.Core.Publisher
                 {
                     outFilePath = Path.Combine(outDir, outFilePath);
                 }
-                
-                var dir = Path.GetDirectoryName(outFilePath);
 
-                if (!m_FileSystem.Directory.Exists(dir))
+                var outLoc = Location.FromPath(outFilePath);
+                
+                void CreateDirectoryIfNeeded()
                 {
-                    m_FileSystem.Directory.CreateDirectory(dir);
+                    var dir = Path.GetDirectoryName(outFilePath);
+
+                    if (!m_FileSystem.Directory.Exists(dir))
+                    {
+                        m_FileSystem.Directory.CreateDirectory(dir);
+                    }
                 }
+
+                bool cancel = false;
 
                 switch (writable)
                 {
                     case ITextWritable text:
-                        await m_FileSystem.File.WriteAllTextAsync(outFilePath, text.Content);
+                        var txtContent = text.Content;
+                        m_PrePublishTextPlugins.InvokePluginsIfAny(p => p.PrePublishTextAsset(ref outLoc, ref txtContent, out cancel));
+                        if (!cancel)
+                        {
+                            outFilePath = outLoc.ToPath();
+                            CreateDirectoryIfNeeded();
+                            await m_FileSystem.File.WriteAllTextAsync(outFilePath, txtContent);
+                        }
                         break;
 
                     case IBinaryWritable bin:
-                        await m_FileSystem.File.WriteAllBytesAsync(outFilePath, bin.Content);
+                        var binContent = bin.Content;
+                        m_PrePublishBinaryPlugins.InvokePluginsIfAny(p => p.PrePublishBinaryAsset(ref outLoc, ref binContent, out cancel));
+                        if (!cancel)
+                        {
+                            outFilePath = outLoc.ToPath();
+                            CreateDirectoryIfNeeded();
+                            await m_FileSystem.File.WriteAllBytesAsync(outFilePath, binContent);
+                        }
                         break;
 
                     default:

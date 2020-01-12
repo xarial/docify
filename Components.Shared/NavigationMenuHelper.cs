@@ -71,7 +71,8 @@ namespace Xarial.Docify.Components.Shared
 
             if (!string.IsNullOrEmpty(rootPageUrl))
             {
-                var rootPage = new IContextPage[] { model.Site.MainPage }.Union(PageHelper.GetAllPages(model.Site.MainPage))
+
+                var rootPage = PageHelper.GetAllPages(model.Site.MainPage).Prepend(model.Site.MainPage)
                     .FirstOrDefault(p => string.Equals(p.Url, rootPageUrl, StringComparison.CurrentCultureIgnoreCase));
 
                 if (rootPage != null)

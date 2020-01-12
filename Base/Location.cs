@@ -16,7 +16,6 @@ using System.Text;
 
 namespace Xarial.Docify.Base
 {
-    [DebuggerDisplay("{" + nameof(FileName) + "}")]
     public class Location
     {
         public static Location FromPath(string path, string relTo = "")

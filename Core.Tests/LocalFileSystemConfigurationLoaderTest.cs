@@ -54,6 +54,24 @@ namespace Core.Tests
         }
 
         [Test]
+        public async Task Load_PluginsLocations()
+        {
+            var fs = new MockFileSystem();
+            fs.AddFile("C:\\site\\page.html", null);
+            fs.AddFile("C:\\site\\_config.yml", new MockFileData("plugins_dir: D:\\plugins\r\rplugins:\r\n  - plugin1\r\n  - plugin2"));
+
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
+
+            var conf = await confLoader.Load(Location.FromPath("C:\\site"));
+
+            Assert.AreEqual(0, conf.Count);
+            Assert.AreEqual("D:\\plugins", conf.PluginsFolder.ToPath());
+            Assert.AreEqual(2, conf.Plugins.Count);
+            Assert.Contains("plugin1", conf.Plugins);
+            Assert.Contains("plugin2", conf.Plugins);
+        }
+
+        [Test]
         public async Task Load_WorkDirAndThemeLocations()
         {
             var fs = new MockFileSystem();

@@ -4,3 +4,5 @@
   - page-lang
   - feed
   - social-share
+plugins:
+  - image-optimizer

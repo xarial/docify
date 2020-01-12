@@ -20,6 +20,8 @@ using Xarial.Docify.Base.Services;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Core.Compiler.Context;
 using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Plugins;
+using Xarial.Docify.Core.Plugin;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -30,6 +32,12 @@ namespace Xarial.Docify.Core.Compiler
         private readonly BaseCompilerConfig m_Config;
         private readonly ILayoutParser m_LayoutParser;
         private readonly IIncludesHandler m_IncludesHandler;
+
+        [ImportPlugin]
+        private IEnumerable<IPreCompilePlugin> m_PreCompilePlugins;
+
+        [ImportPlugin]
+        private IEnumerable<IPostCompilePlugin> m_PostCompilePlugins;
 
         public BaseCompiler(BaseCompilerConfig config,
             ILogger logger, ILayoutParser layoutParser,
@@ -45,6 +53,8 @@ namespace Xarial.Docify.Core.Compiler
 
         public async Task Compile(Site site)
         {
+            m_PreCompilePlugins.InvokePluginsIfAny(p => p.PreCompile(site));
+
             var allPages = site.GetAllPages();
             var allAssets = site.Assets.OfType<TextAsset>();
 
@@ -79,6 +89,8 @@ namespace Xarial.Docify.Core.Compiler
                 await ForEachAsync(allPages, async p => await CompilePage(p, site), partitionsCount);
                 await ForEachAsync(allAssets, async a => await CompileAsset(a, site), partitionsCount);
             }
+
+            m_PostCompilePlugins.InvokePluginsIfAny(p => p.PostCompile(site));
         }
 
         private Task ForEachAsync<T>(IEnumerable<T> source, Func<T, Task> body, int partitionsCount)

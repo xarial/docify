@@ -22,6 +22,7 @@ using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
 using Xarial.Docify.Core.Composer;
 using Xarial.Docify.Core.Loader;
 using Xarial.Docify.Core.Logger;
+using Xarial.Docify.Core.Plugin;
 using Xarial.Docify.Core.Publisher;
 
 namespace Xarial.Docify.CLI
@@ -40,7 +41,7 @@ namespace Xarial.Docify.CLI
         private readonly string m_SrcDir;
         private readonly string m_OutDir;
 
-        public DocifyEngine(string srcDir, string outDir, string siteUrl, Environment_e env) 
+        public DocifyEngine(string srcDir, string outDir, string siteUrl, Environment_e env)
         {
             var builder = new ContainerBuilder();
             m_SiteUrl = siteUrl;
@@ -54,7 +55,7 @@ namespace Xarial.Docify.CLI
                 .WithParameter(new TypedParameter(typeof(string), ""));
 
             builder.RegisterType<LocalFileSystemPublisherConfig>();
-            
+
             builder.RegisterType<LocalFileSystemPublisher>()
                 .As<IPublisher>();
 
@@ -70,8 +71,13 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<LocalFileSystemComponentsLoader>().As<IComponentsLoader>();
 
+            builder.RegisterType<RazorLightContentTransformer>();
+            builder.RegisterType<MarkdigMarkdownContentTransformer>();
+
             builder.RegisterType<IncludesHandler>().As<IIncludesHandler>().WithParameter(
-                new TypedParameter(typeof(IContentTransformer), new RazorLightContentTransformer()))
+                new ResolvedParameter(
+                    (pi, ctx) => pi.ParameterType == typeof(IContentTransformer),
+                    (pi, ctx) => ctx.Resolve<RazorLightContentTransformer>()))
                 .SingleInstance();
 
             builder.RegisterType<MarkdigRazorLightTransformer>().As<IContentTransformer>()
@@ -84,7 +90,11 @@ namespace Xarial.Docify.CLI
 
             builder.Register(c => c.Resolve<IConfigurationLoader>().Load(Location.FromPath(m_SrcDir)).Result);
 
+            builder.RegisterType<LocalFileSystemPluginsManager>().As<IPluginsManager>();
+
             m_Container = builder.Build();
+
+            LoadPlugins();
         }
 
         public async Task Build()
@@ -113,6 +123,22 @@ namespace Xarial.Docify.CLI
         public T Resove<T>() 
         {
             return m_Container.Resolve<T>();
+        }
+
+        private void LoadPlugins()
+        {
+            var plugMgr = m_Container.Resolve<IPluginsManager>();
+
+            foreach (var reg in m_Container.ComponentRegistry.Registrations)
+            {
+                reg.Activated += (o, eventArgs) =>
+                {
+                    if (plugMgr != null)
+                    {
+                        plugMgr.LoadPlugins(eventArgs.Instance);
+                    }
+                };
+            }
         }
     }
 }

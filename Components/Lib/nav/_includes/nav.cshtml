@@ -2,13 +2,14 @@
 name_attribute: title
 home_menu: true
 menu:
+root_page:
 ---
 @using RazorLight
 @using System
 @using System.Linq
 @using System.Collections.Generic
 @using Xarial.Docify.Core.Compiler.Context
-@using Components.Shared
+@using Xarial.Docify.Components.Shared
 @inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
 @{
     const string MENU_OPT = "menu";
@@ -18,9 +19,9 @@ menu:
 
     if (menu == null)
     {
-        menu = Model.Site.MainPage.SubPages.ToList();
+        menu = NavigationMenuHelper.GetRootPage(Model).SubPages.ToList();
 
-        if (Model.Data.GetOrDefault<bool>(HOME_MENU_OPT)) 
+        if (Model.Data.GetOrDefault<bool>(HOME_MENU_OPT))
         {
             menu.Insert(0, NavigationMenuHelper.BuildPage(Model.Site.MainPage, Model.Data, "Home"));
         }
@@ -32,7 +33,8 @@ menu:
 
         foreach (var menuPage in pages)
         {
-            html.AppendLine("<li class=\"menu-item\">");
+            var active = string.Equals(menuPage.Url, Model.Page?.Url, StringComparison.CurrentCultureIgnoreCase) ? " active" : "";
+            html.AppendLine($"<li class=\"menu-item{active}\">");
             html.AppendLine($"<a href=\"{menuPage.Url}\">{NavigationMenuHelper.GetTitle(menuPage, Model.Data)}</a>");
 
             if (menuPage.SubPages.Any())

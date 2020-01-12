@@ -11,11 +11,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xarial.Docify.Core.Compiler.Context;
 
-namespace Components.Shared
+namespace Xarial.Docify.Components.Shared
 {
     public static class NavigationMenuHelper
     {
         private const string NAME_ATT = "name_attribute";
+        private const string ROOT_PAGE_ATT = "root_page";
 
         public class MenuPage : IContextPage
         {
@@ -63,6 +64,30 @@ namespace Components.Shared
             page.Url = srcPage.Url;
             page.FullUrl = srcPage.FullUrl;
             return page;
+        }
+
+        public static IContextPage GetRootPage(IncludeContextModel model) 
+        {
+            var rootPageUrl = model.Data.GetOrDefault<string>(ROOT_PAGE_ATT);
+
+            if (!string.IsNullOrEmpty(rootPageUrl))
+            {
+                var rootPage = new IContextPage[] { model.Site.MainPage }.Union(GetAllSubPages(model.Site.MainPage))
+                    .FirstOrDefault(p => string.Equals(p.Url, rootPageUrl, StringComparison.CurrentCultureIgnoreCase));
+
+                if (rootPage != null)
+                {
+                    return rootPage;
+                }
+                else
+                {
+                    throw new NullReferenceException("Specified root page is not found");
+                }
+            }
+            else 
+            {
+                return model.Site.MainPage;
+            }
         }
         
         public static string GetTitle(IContextPage page, ContextMetadata data)

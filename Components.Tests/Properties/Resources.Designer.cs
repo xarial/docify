@@ -145,7 +145,7 @@ namespace Components.Tests.Properties {
         ///&lt;div class=&quot;bar2&quot;&gt;&lt;/div&gt;
         ///&lt;div class=&quot;bar3&quot;&gt;&lt;/div&gt;
         ///&lt;/a&gt;
-        ///&lt;li class=&quot;menu-item&quot;&gt;
+        ///&lt;li class=&quot;menu-item active&quot;&gt;
         ///&lt;a href=&quot;/&quot;&gt;Home&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;li class=&quot;menu-item&quot;&gt;
@@ -177,6 +177,29 @@ namespace Components.Tests.Properties {
         internal static string nav4 {
             get {
                 return ResourceManager.GetString("nav4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;ul class=&quot;menu sub-menu-item-container&quot; id=&quot;top-menu&quot;&gt;
+        ///&lt;a class=&quot;menu-icon&quot; onclick=&quot;OpenMenu(this)&quot;&gt;
+        ///&lt;div class=&quot;bar1&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar2&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar3&quot;&gt;&lt;/div&gt;
+        ///&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item&quot;&gt;
+        ///&lt;a href=&quot;/SubPage1.html&quot;&gt;sp1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li class=&quot;menu-item&quot;&gt;
+        ///&lt;a href=&quot;/SubPage2.html&quot;&gt;sp2&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string nav5 {
+            get {
+                return ResourceManager.GetString("nav5", resourceCulture);
             }
         }
         
@@ -244,6 +267,119 @@ namespace Components.Tests.Properties {
         internal static string seo4 {
             get {
                 return ResourceManager.GetString("seo4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div id=&quot;toc&quot;&gt;
+        ///&lt;ul style=&quot;margin: 0px&quot; class=&quot;toc-container collapse in&quot;&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; onclick=&quot;javascript:toggle(n1Span, n1);&quot;&gt;
+        ///&lt;span class=&quot;expbutton&quot; id=&quot;n1Span&quot;&gt;&amp;#9656;&lt;/span&gt;
+        ///&lt;span class=&quot;section&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;&quot; class=&quot;toc-entry&quot;&gt;Page1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;ul id=&quot;n1&quot; class=&quot;toc-container collapse &quot;&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/p2.html&quot; class=&quot;toc-entry&quot;&gt;p2&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string toc1 {
+            get {
+                return ResourceManager.GetString("toc1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div id=&quot;toc&quot;&gt;
+        ///&lt;ul style=&quot;margin: 0px&quot; class=&quot;toc-container collapse in&quot;&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; onclick=&quot;javascript:toggle(n1Span, n1);&quot;&gt;
+        ///&lt;span class=&quot;expbutton&quot; id=&quot;n1Span&quot;&gt;&amp;#9656;&lt;/span&gt;
+        ///&lt;span class=&quot;section&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/Page1.html&quot; class=&quot;toc-entry&quot;&gt;p1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;ul id=&quot;n1&quot; class=&quot;toc-container collapse &quot;&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/SubPage1.html&quot; class=&quot;toc-entry&quot;&gt;sp1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc- [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string toc2 {
+            get {
+                return ResourceManager.GetString("toc2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div id=&quot;toc&quot;&gt;
+        ///&lt;a href=&quot;/&quot; class=&quot;toc-entry  active&quot;&gt;Welcome&lt;/a&gt;
+        ///&lt;ul style=&quot;margin: 0px&quot; class=&quot;toc-container collapse in&quot;&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/Page1.html&quot; class=&quot;toc-entry&quot;&gt;p1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/div&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string toc3 {
+            get {
+                return ResourceManager.GetString("toc3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div id=&quot;toc&quot;&gt;
+        ///&lt;ul style=&quot;margin: 0px&quot; class=&quot;toc-container collapse in&quot;&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/Page1.html&quot; class=&quot;toc-entry&quot;&gt;x1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/div&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string toc4 {
+            get {
+                return ResourceManager.GetString("toc4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div id=&quot;toc&quot;&gt;
+        ///&lt;ul style=&quot;margin: 0px&quot; class=&quot;toc-container collapse in&quot;&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/SubPage1.html&quot; class=&quot;toc-entry&quot;&gt;sp1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/SubPage2.html&quot; class=&quot;toc-entry&quot;&gt;sp2&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/div&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string toc5 {
+            get {
+                return ResourceManager.GetString("toc5", resourceCulture);
             }
         }
     }

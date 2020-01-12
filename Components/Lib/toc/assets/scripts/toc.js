@@ -15,7 +15,7 @@ function findParentNav (el) {
 	}
 
 function expandNode(toc, url) {
-	var elems = toc.getElementsByClassName("tocEntry");
+	var elems = toc.getElementsByClassName("toc-entry");
 	
 	for (var i = 0; i < elems.length; i++) {
 		var link = elems[i];

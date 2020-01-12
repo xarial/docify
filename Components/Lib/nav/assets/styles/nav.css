@@ -56,6 +56,10 @@
     clear: both;
 }
 
+.menu-item.active {
+    font-weight: bold;
+}
+
 /*---hover---*/
 .sub-menu-item-container .menu-item a:hover {
     text-decoration: underline;

@@ -21,7 +21,7 @@
     display: block;
   }
 
-a.active {
+.toc-entry.active {
     font-weight: bold;
   }
 

@@ -8,7 +8,7 @@ menu:
 @using System.Linq
 @using System.Collections.Generic
 @using Xarial.Docify.Core.Compiler.Context
-@using Components.Shared
+@using Xarial.Docify.Components.Shared
 @inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
 @{
     const string MENU_OPT = "menu";
@@ -21,7 +21,7 @@ menu:
 
     if (menu == null)
     {
-        menu = Model.Site.MainPage.SubPages.ToList();
+        menu = NavigationMenuHelper.GetRootPage(Model).SubPages.ToList();
 
         if (Model.Data.GetOrDefault<bool>(HOME_MENU_OPT))
         {
@@ -29,30 +29,50 @@ menu:
         }
     }
 
-    string RenderToc(IEnumerable<IContextPage> pages, string parentId = "")
+    int idCounter = 0;
+
+    bool IsActive(IContextPage page)
+    {
+        return string.Equals(page.Url, Model.Page?.Url, StringComparison.CurrentCultureIgnoreCase);
+    }
+
+    string GetActiveAttribute(IContextPage page)
+    {
+        return IsActive(page) ? " active" : "";
+    }
+
+    string RenderToc(IEnumerable<IContextPage> pages, out bool hasActive, string parentId = "")
     {
         var html = new System.Text.StringBuilder();
 
+        hasActive = false;
+
         foreach (var menuPage in pages)
         {
-            var entryId = menuPage.Url.Replace('/', '_').Replace('-', '_');
-            html.AppendLine("<li>");
+            var entryId = "";
             
+            if (menuPage.SubPages.Any())
+            {
+                entryId = $"n{++idCounter}";
+            }
+
+            html.AppendLine("<li>");
+
             var onClick = menuPage.SubPages.Any() ? $"onclick=\"javascript:toggle({entryId}Span, {entryId});\"" : "";
             html.AppendLine($"<div class=\"tree-toc-node pointer\" {onClick}>");
-            
+
             if (menuPage.SubPages.Any())
             {
                 html.AppendLine($"<span class=\"expbutton\" id=\"{entryId}Span\">&#9656;</span>");
             }
-            
+
             var pageType = menuPage.SubPages.Any() ? "section" : "article";
             html.AppendLine($"<span class=\"{pageType}\"></span>");
             var title = NavigationMenuHelper.GetTitle(menuPage, Model.Data);
 
             if (!menuPage.Data.GetOrDefault<bool>(PAGE_DISABLED_ATT))
             {
-                html.AppendLine($"<a href=\"{menuPage.Url}\" class=\"tocEntry\">{title}</a>");
+                html.AppendLine($"<a href=\"{menuPage.Url}\" class=\"toc-entry{GetActiveAttribute(menuPage)}\">{title}</a>");
             }
             else
             {
@@ -60,10 +80,27 @@ menu:
             }
             html.AppendLine("</li>");
 
+            var isActive = IsActive(menuPage);
+
+            if (isActive)
+            {
+                hasActive = true;
+            }
+
             if (menuPage.SubPages.Any())
             {
-                html.AppendLine($"<ul id=\"{entryId}\" class=\"toc-container collapse\">");
-                html.AppendLine(RenderToc(menuPage.SubPages, entryId));
+                var hasChildActive = false;
+
+                var toc = RenderToc(menuPage.SubPages, out hasChildActive, entryId);
+                var exp = hasChildActive || isActive ? " in" : "";
+
+                if (hasChildActive)
+                {
+                    hasActive = true;
+                }
+
+                html.AppendLine($"<ul id=\"{entryId}\" class=\"toc-container collapse {exp}\">");
+                html.AppendLine(toc);
                 html.AppendLine("</ul>");
             }
         }
@@ -74,9 +111,9 @@ menu:
 <div id="toc">
     @if (homePage != null)
     {
-        <a href="@homePage.Url" class="tocEntry">Welcome</a>
+        <a href="@homePage.Url" class="toc-entry @GetActiveAttribute(homePage)">Welcome</a>
     }
-    <ul @Raw(homePage != null ? "style=\"margin: 0px\"" : "") class="toc-container collapse @Raw(homePage != null ? "in" : "")">
-        @Raw(RenderToc(menu))
+    <ul style="margin: 0px" class="toc-container collapse in">
+        @Raw(RenderToc(menu, out bool _))
     </ul>
 </div>

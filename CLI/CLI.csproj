@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Components.Shared\Components.Shared.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Plugins\Plugins.csproj" />
   </ItemGroup>
 
   <ItemGroup>

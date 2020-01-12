@@ -66,7 +66,7 @@ namespace Xarial.Docify.Core.Plugin
 
         private readonly IFileSystem m_FileSystem;
 
-        private IEnumerable<IPlugin> m_Plugins;
+        private readonly IEnumerable<IPlugin> m_Plugins;
 
         public LocalFileSystemPluginsManager(Configuration conf)
             : this(conf, new FileSystem())
@@ -80,9 +80,9 @@ namespace Xarial.Docify.Core.Plugin
             if (conf.Plugins?.Any() == true)
             {
                 var pluginAssemblies = m_FileSystem.Directory.GetFiles(conf.PluginsFolder.ToPath(), "*.dll", SearchOption.AllDirectories)
-                    .Select(AssemblyLoadContext.Default.LoadFromAssemblyPath)
+                    .Select(f => AssemblyLoadContext.Default.LoadFromStream(m_FileSystem.File.OpenRead(f)))
                     .Where(s => s.GetTypes().Where(p => typeof(IPlugin).IsAssignableFrom(p)).Any());
-
+                
                 var configuration = new ContainerConfiguration()
                     .WithAssemblies(pluginAssemblies)
                     .WithDefaultConventions(new PluginSelectorAttributedModelProvider(conf.Plugins));

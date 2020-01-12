@@ -18,16 +18,17 @@ menu:
         public IReadOnlyList<IContextPage> SubPages => SubPagesList;
         public List<MenuPage> SubPagesList { get; }
 
-        public MenuPage(IContextPage page) : this(page.Name)
+        public MenuPage(IContextPage page) : this(page.Name, page.Data)
         {
             FullUrl = page.FullUrl;
-            Data = page.Data;
+            Url = page.Url;
         }
 
-        public MenuPage(string name)
+        public MenuPage(string name, ContextMetadata data)
         {
             Name = name;
             SubPagesList = new List<MenuPage>();
+            Data = data;
         }
     }
 }
@@ -67,7 +68,7 @@ menu:
 
     MenuPage CreateMenuPage(string name)
     {
-        var page = allPages.FirstOrDefault(p => string.Equals(System.IO.Path.GetFileNameWithoutExtension(p.Name),
+        var page = allPages.FirstOrDefault(p => string.Equals(p.Url,
             name, StringComparison.CurrentCultureIgnoreCase));
 
         if (page != null)
@@ -76,7 +77,9 @@ menu:
         }
         else
         {
-            return new MenuPage(name);
+            return new MenuPage(name, new ContextMetadata(
+                new Dictionary<string, dynamic>() 
+                { { Model.Data["name_attribute"] , name } }));
         }
     }
 
@@ -105,14 +108,19 @@ menu:
     }
 }
 @{
+    string GetTitle(IContextPage page) 
+    {
+        return page.Data.Get<string>(Model.Data["name_attribute"]);
+    }
+
     string RenderMenu(IEnumerable<IContextPage> pages)
     {
         var html = new System.Text.StringBuilder();
-        
+
         foreach (var menuPage in pages)
         {
             html.AppendLine("<li class=\"menu-item\">");
-            html.AppendLine($"<a href=\"{menuPage.FullUrl}\">{menuPage.Name}</a>");
+            html.AppendLine($"<a href=\"{menuPage.Url}\">{GetTitle(menuPage)}</a>");
 
             if (menuPage.SubPages.Any())
             {

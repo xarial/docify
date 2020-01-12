@@ -22,48 +22,63 @@ namespace Components.Tests
 {
     public class SeoTest
     {
-        private Task<string> Insert(Metadata param)
-        {
-            var site = ComponentsTest.NewSite(
-                ComponentsTest.GetData<Metadata>("title: p1\r\ndescription: d1"),
-                ComponentsTest.GetData<Configuration>("title: t1\r\ndescription: sd1"));
-                        
-            return ComponentsTest.RenderIncludeNormalize(@"seo\_includes\seo.cshtml", param, site, site.MainPage);
-        }
+        //private Task<string> Insert(Metadata param)
+        //{
+        //    var site = ComponentsTest.NewSite(
+        //        ComponentsTest.GetData<Metadata>("title: p1\r\ndescription: d1"),
+        //        ComponentsTest.GetData<Configuration>("title: t1\r\ndescription: sd1"));
+
+        //    return ComponentsTest.RenderIncludeNormalize(@"seo\_includes\seo.cshtml", param, site, site.MainPage);
+        //}
+
+        private const string INCLUDE_PATH = @"seo\_includes\seo.cshtml";
 
         [Test]
         public async Task DefaultParamsTest()
         {
-            var res = await Insert(null);
+            var site = ComponentsTest.NewSite("<head>\r\n{% seo %}\r\n</head>", INCLUDE_PATH,
+                ComponentsTest.GetData<Metadata>("title: p1\r\ndescription: d1"),
+                ComponentsTest.GetData<Configuration>("title: t1\r\ndescription: sd1"));
 
-            Assert.AreEqual(Resources.seo1, res);
+            var res = await ComponentsTest.CompileMainPageNormalize(site);
+
+            Assert.AreEqual($"<head>\r\n{Resources.seo1}\r\n</head>", res);
         }
 
         [Test]
         public async Task OgParamsTest()
         {
-            var res = await Insert(
-                ComponentsTest.GetData<Metadata>("og: true\r\ntwitter: false\r\nlinkedin: false"));
-            
-            Assert.AreEqual(Resources.seo2, res);
+            var site = ComponentsTest.NewSite("<head>\r\n{% seo { og: true, twitter: false, linkedin: false} %}\r\n</head>", INCLUDE_PATH,
+                ComponentsTest.GetData<Metadata>("title: p1\r\ndescription: d1"),
+                ComponentsTest.GetData<Configuration>("title: t1\r\ndescription: sd1"));
+
+            var res = await ComponentsTest.CompileMainPageNormalize(site);
+
+            Assert.AreEqual($"<head>\r\n{Resources.seo2}\r\n</head>", res);
         }
 
         [Test]
         public async Task TwitterParamsTest()
         {
-            var res = await Insert(
-                ComponentsTest.GetData<Metadata>("og: false\r\ntwitter: true\r\nlinkedin: false"));
+            var site = ComponentsTest.NewSite("<head>\r\n{% seo { og: false, twitter: true, linkedin: false} %}\r\n</head>", INCLUDE_PATH,
+                ComponentsTest.GetData<Metadata>("title: p1\r\ndescription: d1"),
+                ComponentsTest.GetData<Configuration>("title: t1\r\ndescription: sd1"));
 
-            Assert.AreEqual(Resources.seo3, res);
+            var res = await ComponentsTest.CompileMainPageNormalize(site);
+
+            Assert.AreEqual($"<head>\r\n{Resources.seo3}\r\n</head>", res);
         }
 
         [Test]
         public async Task LiParamsTest()
         {
-            var res = await Insert(
-                ComponentsTest.GetData<Metadata>("og: false\r\ntwitter: false\r\nlinkedin: true"));
+            var site = ComponentsTest.NewSite("<head>\r\n{% seo { og: false, twitter: false, linkedin: true} %}\r\n</head>", INCLUDE_PATH,
+                ComponentsTest.GetData<Metadata>("title: p1\r\ndescription: d1"),
+                ComponentsTest.GetData<Configuration>("title: t1\r\ndescription: sd1"));
 
-            Assert.AreEqual(Resources.seo4, res);
+            var res = await ComponentsTest.CompileMainPageNormalize(site);
+
+            Assert.AreEqual($"<head>\r\n{Resources.seo4}\r\n</head>", res);
         }
     }
 }

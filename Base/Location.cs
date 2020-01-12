@@ -126,7 +126,7 @@ namespace Xarial.Docify.Base
 
         public static string ToUrl(this Location loc, string baseUrl = "")
         {
-            return FormFullLocation(loc, baseUrl, URL_SEP);
+            return (string.IsNullOrEmpty(baseUrl) ? "/" : "") + FormFullLocation(loc, baseUrl, URL_SEP);
         }
 
         public static Location Combine(this Location loc, params string[] blocks) 

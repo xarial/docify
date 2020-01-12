@@ -21,24 +21,24 @@ namespace Components.Tests
     {
         private const string INCLUDE_PATH = @"nav\_includes\nav.cshtml";
         
-        [Test]
-        public async Task DefinedMenuTest() 
-        {
-            var site = ComponentsTest.NewSite(null, ComponentsTest.GetData<Configuration>("nav:\r\n  menu:\r\n    - Page1:\r\n      - SubPage1\r\n      - SubPage2\r\n    - Page2"));
-            var res = await ComponentsTest.RenderIncludeNormalize(INCLUDE_PATH, null, site, site.MainPage);
-        }
+        //[Test]
+        //public async Task DefinedMenuTest() 
+        //{
+        //    var site = ComponentsTest.NewSite(null, ComponentsTest.GetData<Configuration>("nav:\r\n  menu:\r\n    - Page1:\r\n      - SubPage1\r\n      - SubPage2\r\n    - Page2"));
+        //    var res = await ComponentsTest.RenderIncludeNormalize(INCLUDE_PATH, null, site, site.MainPage);
+        //}
 
-        [Test]
-        public async Task AutoMenuTest()
-        {
-            var site = ComponentsTest.NewSite();
-            var p1 = new Page(Location.FromPath("Page1.html"), "");
-            p1.SubPages.Add(new Page(Location.FromPath("SubPage1.html"), ""));
-            p1.SubPages.Add(new Page(Location.FromPath("SubPage2.html"), ""));
-            site.MainPage.SubPages.Add(p1);
-            site.MainPage.SubPages.Add(new Page(Location.FromPath("Page2.html"), ""));
+        //[Test]
+        //public async Task AutoMenuTest()
+        //{
+        //    var site = ComponentsTest.NewSite();
+        //    var p1 = new Page(Location.FromPath("Page1.html"), "");
+        //    p1.SubPages.Add(new Page(Location.FromPath("SubPage1.html"), ""));
+        //    p1.SubPages.Add(new Page(Location.FromPath("SubPage2.html"), ""));
+        //    site.MainPage.SubPages.Add(p1);
+        //    site.MainPage.SubPages.Add(new Page(Location.FromPath("Page2.html"), ""));
 
-            var res = await ComponentsTest.RenderIncludeNormalize(INCLUDE_PATH, null, site, site.MainPage);
-        }
+        //    var res = await ComponentsTest.RenderIncludeNormalize(INCLUDE_PATH, null, site, site.MainPage);
+        //}
     }
 }

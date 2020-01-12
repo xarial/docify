@@ -25,8 +25,8 @@ namespace Xarial.Docify.Core.Compiler
 {
     public class IncludesHandler : IIncludesHandler
     {
-        private const string START_TAG = "{%";
-        private const string END_TAG = "%}";
+        public const string START_TAG = "{%";
+        public const string END_TAG = "%}";
         
         private const string NAME_PARAMS_SPLIT_SYMBOL = " ";
 

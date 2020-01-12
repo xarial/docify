@@ -75,7 +75,6 @@ namespace Xarial.Docify.CLI
                 .SingleInstance();
 
             builder.RegisterType<MarkdigRazorLightTransformer>().As<IContentTransformer>()
-                .UsingConstructor(typeof(IIncludesHandler)/*typeof(Func<IContentTransformer, IIncludesHandler>)*/)
                 .SingleInstance();
 
             builder.RegisterType<LocalFileSystemConfigurationLoader>().As<IConfigurationLoader>()

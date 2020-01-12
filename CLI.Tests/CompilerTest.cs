@@ -103,8 +103,72 @@ namespace CLI.Tests
 
             await m_Compiler.Compile(site);
 
-            Assert.AreEqual("<p><em>1</em> Some Value\nA</p>", site.MainPage.Content);
-            Assert.AreEqual("<p>page2.html\nSome Value\nB\n<strong>page2.html</strong>\n2</p>", site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page2.html").Content);
+            Assert.AreEqual("<p><em>1</em> Some Value\r\nA</p>", site.MainPage.Content);
+            Assert.AreEqual("<p>page2.html\nSome Value\r\nB\n**page2.html**\r\n2</p>", site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page2.html").Content);
+        }
+
+        [Test]
+        public async Task IncludeMultilineTest()
+        {
+            var p1 = new Page(new Location("page1.html"),
+                "abc {% i1 \r\n %}");
+            
+            var site = new Site("", p1, null);
+            site.Includes.Add(new Template("i1", "Some Value"));
+
+            await m_Compiler.Compile(site);
+
+            Assert.AreEqual("<p>abc Some Value</p>", site.MainPage.Content);
+        }
+
+        [Test]
+        public async Task IncludeLayoutTest()
+        {
+            var l1 = new Template("l1", "abc {% i1 { p1: B } %} klm {{ content }} xyz");
+
+            var p1 = new Page(new Location("page1.html"),
+                "p1 {% i1 %}", l1);
+
+            var site = new Site("", p1, null);
+            site.Includes.Add(new Template("i1", "Some Value: @Model.Data[\"p1\"]", new Metadata() { { "p1", "A" } }));
+            
+            await m_Compiler.Compile(site);
+
+            Assert.AreEqual("<p>abc Some Value: B klm <p>p1 Some Value: A</p> xyz</p>", p1.Content);
+        }
+
+        [Test]
+        public async Task BinaryAssetTest()
+        {
+            var site = new Site("", new Page(new Location("page1.html"), ""), null);
+            site.Assets.Add(new BinaryAsset(new byte[] { 1, 2, 3 }, Location.FromPath("file.bin")));
+
+            await m_Compiler.Compile(site);
+
+            Assert.AreEqual(1, site.Assets.OfType<IBinaryWritable>().Count());
+            Assert.That(new byte[] { 1, 2, 3 }.SequenceEqual(site.Assets.OfType<IBinaryWritable>().First().Content));
+        }
+
+        [Test]
+        public async Task TextAssetTest()
+        {
+            var site = new Site("", new Page(new Location("page1.html"), ""), null);
+            site.Assets.Add(new TextAsset("test", Location.FromPath("file.txt")));
+
+            await m_Compiler.Compile(site);
+
+            Assert.AreEqual(1, site.Assets.OfType<ITextWritable>().Count());
+            Assert.AreEqual("test", site.Assets.OfType<ITextWritable>().First().Content);
+        }
+
+        [Test]
+        public async Task OpenIncludeTest()
+        {
+            var site = new Site("", new Page(new Location("page1.html"), "abc {% x *test*"), null);
+
+            await m_Compiler.Compile(site);
+
+            Assert.AreEqual("<p>abc {% x <em>test</em></p>", site.MainPage.Content);
         }
     }
 }

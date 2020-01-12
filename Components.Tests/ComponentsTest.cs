@@ -56,37 +56,23 @@ namespace Components.Tests
             return string.Join(Environment.NewLine, lines.Select(l => l.Trim()).Where(l => !string.IsNullOrEmpty(l)));
         }
 
-        public static Site NewSite(Metadata pageData = null, Configuration siteConfig = null)
+        public static Site NewSite(string pageContent, string includePath, Metadata pageData = null, Configuration siteConfig = null)
         {
-            var page = new Page(Location.FromPath("index.html"), "", pageData);
-
+            var page = new Page(Location.FromPath("index.html"), pageContent, pageData);
             var site = new Site("www.example.com", page, siteConfig);
+
+            LoadInclude(includePath, site);
 
             return site;
         }
 
-        public static async Task<string> RenderIncludeNormalize(string relPath, Metadata param, Site site, Page page)
+        public static async Task<string> CompileMainPageNormalize(Site site)
         {
-            var includesHandler = new DocifyEngine("", "", "", Environment_e.Test).Resove<IIncludesHandler>();
+            var compiler = new DocifyEngine("", "", "", Environment_e.Test).Resove<ICompiler>();
 
-            LoadInclude(relPath, site);
-
-            var name = Path.GetFileNameWithoutExtension(relPath);
-
-            var res = await includesHandler.Render(name, param, site, page);
-
-            res = Normalize(res);
-
-            return res;
-        }
-
-        public static async Task<string> TransformContentNormalize(string includeRelPath, string content, Site site, Page page)
-        {
-            var transformer = new DocifyEngine("", "", "", Environment_e.Test).Resove<IContentTransformer>();
-
-            LoadInclude(includeRelPath, site);
-
-            var res = await transformer.Transform(content, Guid.NewGuid().ToString(), new ContextModel(site, page));
+            await compiler.Compile(site);
+            
+            var res = site.MainPage.Content;
 
             res = Normalize(res);
 

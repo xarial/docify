@@ -19,8 +19,6 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
     public class MarkdigMarkdownContentTransformer : IContentTransformer
     {
-        internal const string CONTEXT_MODEL_PARAM_NAME = "_DocifyContextModel_";
-
         private readonly MarkdownPipeline m_MarkdownEngine;
 
         public MarkdigMarkdownContentTransformer()
@@ -28,13 +26,13 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
             m_MarkdownEngine = new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
                 .UseObservableLinks()
+                .UseProtectedTags(IncludesHandler.START_TAG, IncludesHandler.END_TAG) //TODO: should be a dependency
                 .Build();
         }
 
         public Task<string> Transform(string content, string key, IContextModel model)
         {
             var context = new MarkdownParserContext();
-            context.Properties.Add(CONTEXT_MODEL_PARAM_NAME, model);
 
             var htmlStr = new StringBuilder();
 

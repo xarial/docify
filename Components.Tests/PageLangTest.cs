@@ -17,36 +17,36 @@ namespace Components.Tests
 {
     public class PageLangTest
     {
-        const string INCLUDE_PATH = @"page-lang\_includes\page-lang.cshtml";
+        private const string INCLUDE_PATH = @"page-lang\_includes\page-lang.cshtml";
 
         [Test]
         public async Task Default_Lang()
         {
-            var site = ComponentsTest.NewSite();
+            var site = ComponentsTest.NewSite("<html lang=\"{% page-lang %}\"/>", INCLUDE_PATH);
 
-            var res = await ComponentsTest.RenderIncludeNormalize(INCLUDE_PATH, null, site, site.MainPage);
+            var res = await ComponentsTest.CompileMainPageNormalize(site);
 
-            Assert.AreEqual("en", res);
+            Assert.AreEqual("<html lang=\"en\"/>", res);
         }
-        
+
         [Test]
         public async Task Page_Lang()
         {
-            var site = ComponentsTest.NewSite(ComponentsTest.GetData<Metadata>("lang: ru"));
+            var site = ComponentsTest.NewSite("<html lang=\"{% page-lang %}\"/>", INCLUDE_PATH, ComponentsTest.GetData<Metadata>("lang: ru"));
 
-            var res = await ComponentsTest.RenderIncludeNormalize(INCLUDE_PATH, null, site, site.MainPage);
+            var res = await ComponentsTest.CompileMainPageNormalize(site);
 
-            Assert.AreEqual("ru", res);
+            Assert.AreEqual("<html lang=\"ru\"/>", res);
         }
 
         [Test]
         public async Task Page_SiteDefLang()
         {
-            var site = ComponentsTest.NewSite(null, ComponentsTest.GetData<Configuration>("page-lang:\r\n  default_lang: fr"));
+            var site = ComponentsTest.NewSite("<html lang=\"{% page-lang %}\"/>", INCLUDE_PATH, null, ComponentsTest.GetData<Configuration>("page-lang:\r\n  default_lang: fr"));
 
-            var res = await ComponentsTest.RenderIncludeNormalize(INCLUDE_PATH, null, site, site.MainPage);
+            var res = await ComponentsTest.CompileMainPageNormalize(site);
 
-            Assert.AreEqual("fr", res);
+            Assert.AreEqual("<html lang=\"fr\"/>", res);
         }
     }
 }

@@ -21,21 +21,8 @@ namespace Xarial.Docify.Core.Compiler
     {
         private readonly MarkdigMarkdownContentTransformer m_MarkdownTransformer;
         private readonly RazorLightContentTransformer m_RazorTransformer;
-        private readonly IIncludesHandler m_IncludesHandler;
-
-        public MarkdigRazorLightTransformer(IIncludesHandler includesHandler)
-            : this(c => includesHandler)
-        {
-        }
-
-        public MarkdigRazorLightTransformer(Func<IContentTransformer, IIncludesHandler> includesHandlerFact)
-        {
-            m_IncludesHandler = includesHandlerFact.Invoke(this);
-            m_MarkdownTransformer = new MarkdigMarkdownContentTransformer();
-            m_RazorTransformer = new RazorLightContentTransformer();
-        }
-
-        public MarkdigRazorLightTransformer() 
+        
+        public MarkdigRazorLightTransformer()
         {
             m_MarkdownTransformer = new MarkdigMarkdownContentTransformer();
             m_RazorTransformer = new RazorLightContentTransformer();
@@ -43,10 +30,8 @@ namespace Xarial.Docify.Core.Compiler
 
         public async Task<string> Transform(string content, string key, IContextModel model)
         {
-            //TODO: think of a better way of passing site and page
             var res = content;
             res = await m_RazorTransformer.Transform(res, key, model);
-            res = await m_IncludesHandler.ReplaceAll(res, (model as ContextModel).Site.BaseSite, (model as ContextModel).Page.BasePage);
             res = await m_MarkdownTransformer.Transform(res, key, model);
 
             return res;

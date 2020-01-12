@@ -6,21 +6,33 @@
 //*********************************************************************
 
 using Markdig;
+using Markdig.Extensions.GenericAttributes;
 using Markdig.Renderers;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
-    public class ObservableLinkExtension : IMarkdownExtension
+    public class ProtectedTagsExtension : IMarkdownExtension
     {
-        public ObservableLinkExtension()
+        private readonly string m_StartTag;
+        private readonly string m_EndTag;
+
+        public ProtectedTagsExtension(string startTag, string endTag) 
         {
+            m_StartTag = startTag;
+            m_EndTag = endTag;
         }
 
         public void Setup(MarkdownPipelineBuilder pipeline)
         {
+            if (!pipeline.InlineParsers.Contains<ProtectedTagsInlineParser>())
+            {
+                pipeline.InlineParsers.InsertBefore<GenericAttributesParser>(
+                    new ProtectedTagsInlineParser(m_StartTag, m_EndTag));
+            }
         }
 
         public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
@@ -29,8 +41,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 
             if (htmlRenderer != null)
             {
-                htmlRenderer.ObjectRenderers.ReplaceOrAdd<Markdig.Renderers.Html.Inlines.LinkInlineRenderer>(
-                    new ObservableLinkInlineRenderer());
+                htmlRenderer.ObjectRenderers.AddIfNotAlready<ProtectedTagsRenderer>();
             }
             else 
             {

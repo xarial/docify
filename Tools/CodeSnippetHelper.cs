@@ -67,60 +67,56 @@ namespace Xarial.Docify.Lib.Tools
 
             var parser = SelectParser(codeLang);
 
-            if (opts.Regions?.Any() == true)
+            void ProcessRegions(string[] regs, bool inner) 
             {
-                var newResult = new List<string[]>();
+                if (regs?.Any() == true)
+                {
+                    var newResult = new List<string[]>();
 
+                    for (int i = 0; i < result.Count; i++)
+                    {
+                        var lineGroups = SelectRegionLines(result[i], parser, regs, inner);
+                        newResult.AddRange(lineGroups);
+                    }
+
+                    result = newResult;
+                }
+            }
+
+            ProcessRegions(opts.Regions, true);
+            ProcessRegions(opts.ExcludeRegions, false);
+            
+            if (opts.HideRegions)
+            {
                 for (int i = 0; i < result.Count; i++)
                 {
                     var lines = result[i];
-                    var indices = SelectRegionLines(lines, parser, opts.Regions, false);
-                    
-                    var curGroup = new List<string>();
-
-                    for (int j = 0; j < indices.Length; j++) 
+                    lines = result[i].Where(l =>
                     {
-                        if (!(j == 0 || indices[j] - indices[j - 1] == 1))
-                        {
-                            newResult.Add(curGroup.ToArray());
-                            curGroup.Clear();
-                        }
+                        string regName;
+                        return !(IsRegionEnd(l, parser) || IsRegionStart(l, parser, out regName));
+                     }).ToArray();
 
-                        curGroup.Add(lines[indices[j]]);
-                    }
-
-                    if (curGroup.Any())
+                    if (result[i].Length != lines.Length)
                     {
-                        newResult.Add(curGroup.ToArray());
+                        result[i] = lines;
                     }
                 }
-
-                result = newResult;
-            }
-
-            if (opts.ExcludeRegions?.Any() == true)
-            {
-                //var indices = SelectRegionLines(lines, parser, opts.ExcludeRegions, true);
-                //lines = lines.Where((l, i) => !indices.Contains(i)).ToArray();
-            }
-
-            if (opts.HideRegions)
-            {
-                //lines = lines.Where(l =>
-                //{
-                //    string regName;
-                //    return !(IsRegionEnd(l, parser) || IsRegionStart(l, parser, out regName));
-                //}).ToArray();
             }
 
             if (opts.LeftAlign)
             {
-                //var indent = lines.Min(l => string.IsNullOrEmpty(l) ? int.MaxValue : l.TakeWhile(Char.IsWhiteSpace).Count());
+                for (int i = 0; i < result.Count; i++)
+                {
+                    var lines = result[i];
+                    var indent = lines.Min(l => string.IsNullOrEmpty(l) ? int.MaxValue : l.TakeWhile(Char.IsWhiteSpace).Count());
 
-                //if (indent > 0)
-                //{
-                //    lines = lines.Select(l => string.IsNullOrEmpty(l) ? l : l.Substring(indent)).ToArray();
-                //}
+                    if (indent > 0)
+                    {
+                        lines = lines.Select(l => string.IsNullOrEmpty(l) ? l : l.Substring(indent)).ToArray();
+                        result[i] = lines;
+                    }
+                }
             }
 
             return result.Select(lines => string.Join(Environment.NewLine, lines)).ToArray();
@@ -131,14 +127,25 @@ namespace Xarial.Docify.Lib.Tools
             return m_Parsers.First(p => p.CodeTokens == null || p.CodeTokens.Contains(codeLang, StringComparer.CurrentCultureIgnoreCase));
         }
 
-        private static int[] SelectRegionLines(string[] lines, IRegionParser parser, string[] regions, bool inclusive)
+        private static IEnumerable<string[]> SelectRegionLines(string[] lines, IRegionParser parser, string[] regions, bool inner)
         {
-            var foundRegions = new List<string>();
+            var result = new List<string[]>();
+            
+            var curGroup = new List<string>();
 
-            var resLinesIndices = new List<int>();
+            var foundRegions = new List<string>();
 
             bool isRecordingRegion = false;
             int relRegLevel = 0;
+
+            void FlushCurrentGroup() 
+            {
+                if (curGroup.Any())
+                {
+                    result.Add(curGroup.ToArray());
+                    curGroup.Clear();
+                }
+            }
 
             for (int i = 0; i < lines.Length; i++)
             {
@@ -154,9 +161,9 @@ namespace Xarial.Docify.Lib.Tools
 
                 if (isStart)
                 {
-                    if (inclusive)
+                    if (!inner)
                     {
-                        resLinesIndices.Add(i);
+                        FlushCurrentGroup();
                     }
 
                     if (!foundRegions.Contains(regName, StringComparer.CurrentCultureIgnoreCase))
@@ -169,9 +176,12 @@ namespace Xarial.Docify.Lib.Tools
                 }
                 else if (isRecordingRegion)
                 {
-                    if (!isEnd || inclusive)
-                    {
-                        resLinesIndices.Add(i);
+                    if (!isEnd)
+                    {   
+                        if (inner)
+                        {
+                            curGroup.Add(lines[i]);
+                        }
                     }
 
                     if (isRegEnd)
@@ -182,6 +192,7 @@ namespace Xarial.Docify.Lib.Tools
                     if (isEnd)
                     {
                         isRecordingRegion = false;
+                        FlushCurrentGroup();
                     }
 
                     if (isRegStart)
@@ -189,6 +200,15 @@ namespace Xarial.Docify.Lib.Tools
                         relRegLevel++;
                     }
                 }
+                else if(!inner)
+                {
+                    curGroup.Add(lines[i]);
+                }
+            }
+
+            if (!inner) 
+            {
+                FlushCurrentGroup();
             }
 
             var missingRegs = regions.Except(foundRegions, StringComparer.CurrentCultureIgnoreCase);
@@ -198,7 +218,7 @@ namespace Xarial.Docify.Lib.Tools
                 throw new Exception($"Missing regions: {string.Join(',', missingRegs)}");
             }
 
-            return resLinesIndices.ToArray();
+            return result;
         }
 
         private static bool IsRegionStart(string line, IRegionParser parser, out string name)

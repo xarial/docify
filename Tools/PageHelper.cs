@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Core.Compiler.Context;
 
-namespace Xarial.Docify.Components.Shared
+namespace Xarial.Docify.Lib.Tools
 {
     public static class PageHelper
     {

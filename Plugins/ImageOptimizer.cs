@@ -15,7 +15,7 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 
-namespace Xarial.Docify.Plugins
+namespace Xarial.Docify.Lib.Plugins
 {
     public class ImageOptimizerSettings 
     {

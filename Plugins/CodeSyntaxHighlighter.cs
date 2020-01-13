@@ -15,7 +15,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Plugins;
 
-namespace Xarial.Docify.Plugins
+namespace Xarial.Docify.Lib.Plugins
 {
     public class CodeSyntaxHighlighterSettings
     {

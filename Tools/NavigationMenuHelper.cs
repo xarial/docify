@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xarial.Docify.Core.Compiler.Context;
 
-namespace Xarial.Docify.Components.Shared
+namespace Xarial.Docify.Lib.Tools
 {
     public static class NavigationMenuHelper
     {   

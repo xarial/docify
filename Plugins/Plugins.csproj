@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AssemblyName>Xarial.Docify.Plugins</AssemblyName>
-    <RootNamespace>Xarial.Docify.Plugins</RootNamespace>
+    <RootNamespace>Xarial.Docify.Lib.Plugins</RootNamespace>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 

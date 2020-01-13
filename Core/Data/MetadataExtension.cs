@@ -5,19 +5,50 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Data
 {
-    internal static class MetadataExtension
+    public static class MetadataExtension
     {
         private const string INHERIT_LIST_SYMBOL = "$";
 
+        private static readonly JsonSerializer m_JsonSerializer = new JsonSerializer() 
+        {
+            ContractResolver = new YamlNameResolver() 
+        };
+
+        private class YamlNameResolver : DefaultContractResolver
+        {
+            protected override string ResolvePropertyName(string propertyName)
+            {
+                var newPrpName = string.Join("", propertyName.Split('-').Select(w => char.ToUpper(w[0]) + w.Substring(1)));
+                return newPrpName;
+            }
+        }
+
+        public static T ToObject<T>(IDictionary data)
+        {
+            return (T)ToObject(data, typeof(T));
+        }
+
+        internal static object ToObject(IDictionary data, Type type)
+        {
+            var obj = JObject.FromObject(data, m_JsonSerializer);
+            var res = obj.ToObject(type);
+            return res;
+        }
+
         internal static T Merge<T>(this T thisParams,
-            Dictionary<string, dynamic> baseParams)
+            IDictionary<string, dynamic> baseParams)
             where T : Metadata, new()
         {
             var resParams = new T();
@@ -53,7 +84,7 @@ namespace Xarial.Docify.Core.Data
             return resParams;
         }
 
-        private static dynamic UpdateValue(Dictionary<string, dynamic> baseParams, string thisParamName, dynamic val)
+        private static dynamic UpdateValue(IDictionary<string, dynamic> baseParams, string thisParamName, dynamic val)
         {
             if (val is List<object>)
             {

@@ -25,23 +25,12 @@ using System.Composition.Hosting.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using System.Text.RegularExpressions;
+using Xarial.Docify.Core.Data;
 
 namespace Xarial.Docify.Core.Plugin
 {
     public class LocalFileSystemPluginsManager : IPluginsManager
     {
-        private class SettingsNamingConvention : INamingConvention
-        {
-            public string Apply(string value)
-            {
-                var words = Regex.Split(value, "(?<=[a-z])(?=[A-Z])");
-
-                var res = string.Join("-", words.Select(w => w.ToLower()));
-
-                return res;
-            }
-        }
-
         private readonly IFileSystem m_FileSystem;
 
         private readonly IEnumerable<IPlugin> m_Plugins;
@@ -92,11 +81,6 @@ namespace Xarial.Docify.Core.Plugin
         {
             if (m_Plugins != null)
             {
-                var yamlSerializer = new SerializerBuilder().Build();
-                var yamlDeserializer = new DeserializerBuilder()
-                    .WithNamingConvention(new SettingsNamingConvention())
-                    .Build();
-
                 foreach (var plugin in m_Plugins)
                 {
                     var pluginSpecType = plugin.GetType();
@@ -114,8 +98,7 @@ namespace Xarial.Docify.Core.Plugin
 
                         if (conf.TryGetValue(pluginId, out settsData))
                         {
-                            var yaml = yamlSerializer.Serialize(settsData);
-                            setts = yamlDeserializer.Deserialize(yaml, settsType);
+                            setts = MetadataExtension.ToObject(settsData, settsType);
                         }
                         else
                         {

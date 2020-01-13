@@ -2,6 +2,7 @@
 components:
   - $
   - toc
+  - code-snippet
 plugins:
   - $
   - code-syntax-highlighter

@@ -1,0 +1,33 @@
+﻿---
+path:
+tabs:
+regions:
+excl-regions:
+hide-regions: false
+left-align: false
+lang:
+---
+@using RazorLight
+@using System
+@using System.Linq
+@using System.Collections.Generic
+@using Xarial.Docify.Core.Compiler.Context
+@using Xarial.Docify.Lib.Tools
+@using System.Runtime.Serialization
+@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@functions{
+    public class CodeSnippetData
+    {
+        public string Path { get; set; }
+        public Dictionary<string, string> Tabs { get; set; }
+        public string[] Regions { get; set; }
+        public string[] ExclRegions { get; set; }
+        public bool HideRegions { get; set; }
+        public bool LeftAlign { get; set; }
+        public string Lang { get; set; }
+    }
+}
+@{ 
+    var data = DataDeserializer.Deserialize<CodeSnippetData>(Model.Data);
+}
+@Raw($"~~~{data.Lang}\r\nvar a = \"Code Snippet!\";\r\n~~~")

@@ -27,7 +27,8 @@ lang:
         public string Lang { get; set; }
     }
 }
-@{ 
+@{
     var data = DataDeserializer.Deserialize<CodeSnippetData>(Model.Data);
+    var md = await MarkdownHelper.ToHtml($"~~~{data.Lang}\r\nvar a = \"Code Snippet!\";\r\nvar b = 10;\r\n~~~");
 }
-@Raw($"~~~{data.Lang}\r\nvar a = \"Code Snippet!\";\r\n~~~")
+@Raw(md)

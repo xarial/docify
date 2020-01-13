@@ -24,6 +24,7 @@ using Xarial.Docify.Core.Loader;
 using Xarial.Docify.Core.Logger;
 using Xarial.Docify.Core.Plugin;
 using Xarial.Docify.Core.Publisher;
+using Xarial.Docify.Lib.Tools;
 
 namespace Xarial.Docify.CLI
 {
@@ -95,6 +96,8 @@ namespace Xarial.Docify.CLI
             m_Container = builder.Build();
 
             LoadPlugins();
+
+            MarkdownHelper.MarkdownTransformer = m_Container.Resolve<MarkdigMarkdownContentTransformer>();
         }
 
         public async Task Build()

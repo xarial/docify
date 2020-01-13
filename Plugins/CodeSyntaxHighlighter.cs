@@ -78,7 +78,7 @@ namespace Xarial.Docify.Lib.Plugins
                 throw new NotSupportedException("Incorrect formatted");
             }
 
-            result = new StringBuilder($"<pre><code>{formattedCode}</code></pre>");
+            result = new StringBuilder($"<pre class=\"code-snippet\"><code>{formattedCode}</code></pre>");
         }
 
         private CodeColorizerBase Formatter

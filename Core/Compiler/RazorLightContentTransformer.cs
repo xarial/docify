@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -26,7 +27,7 @@ namespace Xarial.Docify.Core.Compiler
             m_RazorEngine = new RazorLightEngineBuilder()
                 .AddDefaultNamespaces(typeof(Site).Namespace)
                 .UseMemoryCachingProvider()
-                .UseEmbeddedResourcesProject(typeof(Site))
+                .UseEmbeddedResourcesProject(typeof(RazorLightContentTransformer))
                 .Build();
         }
         

@@ -4,5 +4,6 @@
   - page-lang
   - feed
   - social-share
+  - youtube
 plugins:
   - image-optimizer

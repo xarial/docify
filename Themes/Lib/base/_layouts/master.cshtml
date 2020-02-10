@@ -1,6 +1,7 @@
 ﻿@using RazorLight
 @using System.Collections.Generic
 @using Xarial.Docify.Lib.Tools
+@using System.Linq
 @inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.ContextModel>
 <!DOCTYPE html>
 <html lang="{% page-lang %}">
@@ -10,12 +11,31 @@
     <link rel="shortcut icon" type="image/x-icon" href="@string.Format("{0}/{1}", Model.Site.BaseUrl, "favicon.ico")">
     <link rel="alternate" type="application/rss+xml" title="@PageHelper.GetTitle(Model.Site.MainPage, null) - Feed" href="@Model.Site.BaseUrl/feed.xml">
     <link rel="stylesheet" type="text/css" href="/assets/styles/social-share.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/styles/youtube.css" />
+    @{
+        var styles = Model.Page.Data.GetOrDefault<IEnumerable<object>>("styles");
+        if (styles?.Any() == true)
+        {
+            foreach (var style in styles)
+            {
+                <link rel="stylesheet" type="text/css" href="@style" />
+            }
+        }
+
+        var scripts = Model.Page.Data.GetOrDefault<IEnumerable<object>>("scripts");
+        if (scripts?.Any() == true)
+        {
+            foreach (var script in scripts)
+            {
+                <script src="@script"></script>
+            }
+        }
+    }
     {% seo %}
     {% layout::head %}
     {% google-analytics %}
 </head>
 <body>
-{% social-share %}
 {{ content }}
 </body>
 {% layout::foot %}

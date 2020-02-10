@@ -98,5 +98,17 @@ namespace Components.Tests
 
             Assert.ThrowsAsync<NullReferenceException>(() => ComponentsTest.CompileMainPageNormalize(site));
         }
+
+        [Test]
+        public void OrderPagesTest() 
+        {
+            throw new NotImplementedException();
+        }
+
+        [Test]
+        public void ExcludePageTest() 
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,0 +1,34 @@
+﻿---
+layout: master
+---
+@using RazorLight
+@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.ContextModel>
+@{
+    var pageTitle = Model.Page.Data.GetOrDefault<string>("caption");
+
+    if(string.IsNullOrEmpty(pageTitle))
+    {
+        pageTitle = Model.Page.Data.GetOrDefault<string>("title");
+    }
+
+    if (string.IsNullOrEmpty(pageTitle))
+    {
+        pageTitle = Model.Page.Name;
+    }
+}
+<div class="layout">
+    <div class="toc">
+        {% toc %}
+    </div>
+
+    <article class="post">
+        <header>
+            <h1 class="page-title">@pageTitle</h1>
+            {% social-share %}
+        </header>
+
+        <div>
+            {{ content }}
+        </div>
+    </article>
+</div>

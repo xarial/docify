@@ -21,6 +21,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 
         public void Setup(MarkdownPipelineBuilder pipeline)
         {
+            pipeline.BlockParsers.TryRemove<Markdig.Parsers.IndentedCodeBlockParser>();
         }
 
         public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)

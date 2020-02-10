@@ -1,0 +1,50 @@
+
+.toc, .post {
+    box-sizing: border-box;
+}
+
+.toc {
+    float: left;
+    width: 30%;
+    padding: 10px;
+}
+
+.post {
+    float: left;
+    width: 70%;
+    padding: 10px;
+}
+
+.page-title {
+    margin-top: 0px;
+}
+
+.layout:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.layout {
+    max-width: 1200px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+@media screen and (max-width: 600px) {
+    .toc {
+        width: 100%;
+    }
+
+    .post {
+        width: 100%;
+    }
+
+    .layout {
+        max-width: 1170px;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+}

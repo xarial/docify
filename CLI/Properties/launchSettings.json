@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "CLI": {
-      "commandName": "Project",
-      "commandLineArgs": "build --src \"D:\\Git\\OpenSource\\docify\\test\\site1\" --out \"D:\\Git\\OpenSource\\docify\\test\\out\" --url https://www.test.com --env production"
-    }
-  }
-}

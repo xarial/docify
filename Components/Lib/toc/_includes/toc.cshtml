@@ -14,6 +14,8 @@ menu:
     const string MENU_OPT = "menu";
     const string HOME_MENU_OPT = "home_menu";
     const string PAGE_DISABLED_ATT = "disabled";
+    const string PAGE_EXCLUDE_ATT = "toc";
+    const string PAGE_ORDER_ATT = "order";
 
     var menu = NavigationMenuHelper.BuildPredefinedMenu(MENU_OPT, Model.Site, Model.Data)?.ToList();
 
@@ -47,10 +49,30 @@ menu:
 
         hasActive = false;
 
-        foreach (var menuPage in pages)
+        foreach (var menuPage in pages.OrderBy(p=>
         {
+            int order = -1;
+            if (p.Data.TryGet<int>(PAGE_ORDER_ATT, out order))
+            {
+                return order;
+            }
+            else 
+            {
+                return int.MaxValue;
+            }
+        }))
+        {
+            bool includeToc = false;
+            if (menuPage.Data.TryGet<bool>(PAGE_EXCLUDE_ATT, out includeToc))
+            {
+                if (!includeToc)
+                {
+                    continue;
+                }
+            }
+
             var entryId = "";
-            
+
             if (menuPage.SubPages.Any())
             {
                 entryId = $"n{++idCounter}";

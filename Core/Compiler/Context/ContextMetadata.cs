@@ -45,7 +45,7 @@ namespace Xarial.Docify.Core.Compiler.Context
             return val;
         }
 
-        private bool TryGet<T>(string prpName, out T val) 
+        public bool TryGet<T>(string prpName, out T val) 
         {
             dynamic dynVal;
 

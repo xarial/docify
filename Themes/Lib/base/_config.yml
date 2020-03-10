@@ -5,5 +5,8 @@
   - feed
   - social-share
   - youtube
+  - date
+  - legal
 plugins:
   - image-optimizer
+title_attribute: caption

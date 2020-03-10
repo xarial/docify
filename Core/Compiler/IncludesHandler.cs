@@ -53,7 +53,7 @@ namespace Xarial.Docify.Core.Compiler
 
             Dictionary<string, dynamic> GetData(Metadata data, string name)
             {
-                var extrData = data.GetParameterOrDefault<Dictionary<object, object>>(name);
+                var extrData = data.GetParameterOrDefault<Dictionary<object, object>>("$" + name);
 
                 if (extrData != null)
                 {

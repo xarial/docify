@@ -1,1 +1,8 @@
-﻿
+﻿theme: base
+components:
+  - $
+  - toc
+  - code-snippet
+plugins:
+  - $
+  - code-syntax-highlighter

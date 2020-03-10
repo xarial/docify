@@ -64,8 +64,7 @@ namespace Xarial.Docify.Lib.Plugins
         {
             var codeLang = Languages.FindById(lang);
 
-            var formattedCode = "";
-
+            string formattedCode;
             if (Formatter is HtmlFormatter)
             {
                 formattedCode = (Formatter as HtmlFormatter).GetHtmlString(rawCode, codeLang);

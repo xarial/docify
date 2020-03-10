@@ -1,0 +1,61 @@
+﻿---
+company:
+links:
+---
+@using RazorLight
+@using Xarial.Docify.Lib.Tools
+@using System.Collections.Generic
+@using System.Linq
+@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@functions{
+    public class LegalData
+    {
+        public string Company { get; set; }
+        public Dictionary<string, string> Links { get; set; }
+    }
+}
+@{
+    string GetCopyright()
+    {
+        var data = DataDeserializer.Deserialize<LegalData>(Model.Data);
+
+        var comp = data.Company;
+
+        if (string.IsNullOrEmpty(comp))
+        {
+            comp = Model.Site.Configuration.GetOrDefault<string>("company");
+
+            if (string.IsNullOrEmpty(comp))
+            {
+                comp = Model.Site.BaseUrl;
+            }
+        }
+
+        var year = System.DateTime.Now.ToString("yyyy");
+
+        return $"{year} {comp}";
+    }
+
+    IEnumerable<KeyValuePair<string, string>> GetLinks()
+    {
+        var data = DataDeserializer.Deserialize<LegalData>(Model.Data);
+
+        if (data.Links != null)
+        {
+            return data.Links;
+        }
+        else
+        {
+            return Enumerable.Empty<KeyValuePair<string, string>>();
+        }
+    }
+}
+<div>
+    <div>&copy; @GetCopyright(). All rights reserved.</div>
+    <span>
+        @foreach (var link in GetLinks())
+        {
+            <a style="margin-left: 10px;margin-right: 10px;" href="@link.Value ">@link.Key </a>
+        }
+    </span>
+</div>

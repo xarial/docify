@@ -42,7 +42,7 @@ namespace Components.Tests
         [Test]
         public async Task Page_SiteDefLang()
         {
-            var site = ComponentsTest.NewSite("<html lang=\"{% page-lang %}\"/>", INCLUDE_PATH, null, ComponentsTest.GetData<Configuration>("page-lang:\r\n  default_lang: fr"));
+            var site = ComponentsTest.NewSite("<html lang=\"{% page-lang %}\"/>", INCLUDE_PATH, null, ComponentsTest.GetData<Configuration>("$page-lang:\r\n  default_lang: fr"));
 
             var res = await ComponentsTest.CompileMainPageNormalize(site);
 

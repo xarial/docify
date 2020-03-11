@@ -1,0 +1,43 @@
+﻿---
+layout: master
+logo: http://docify.net/logo.svg
+title: MyBlog
+description: My Blog description
+---
+@using RazorLight
+@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@{ 
+    var logo = Model.Data.Get<string>("logo");
+    var title = Model.Data.Get<string>("title");
+    var description = Model.Data.Get<string>("description");
+}
+<style>
+    .header-icon {
+        grid-area: icon;
+    }
+
+    .header-title {
+        grid-area: title;
+        font-size: 30px;
+    }
+
+    .header-description {
+        grid-area: description;
+    }
+
+    .header {
+        display: grid;
+        grid-template-areas: 'icon title description';
+        grid-template-columns: max-content max-content auto;
+        grid-gap: 10px;
+        padding: 10px;
+        justify-content: left;
+        align-items: center;
+    }
+</style>
+<div class="header">
+    <div class="header-icon"><img src="@logo" width="75px" /></div>
+    <div class="header-title">@title</div>
+    <div class="header-description">@description</div>
+</div>
+<hr>

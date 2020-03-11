@@ -4,27 +4,22 @@ layout: master
 @using RazorLight
 @inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.ContextModel>
 <div class="layout">
-    <div class="side-column">
-        <div class="toc">
-            {% toc %}
-        </div>
+    <div class="layout-header">{% header %}</div>
+    <div class="layout-left-pane">
+        {% layout::left-panel %}
     </div>
-
-    <div class="content-column">
+    <div class="layout-main">
         <article class="post">
             <header>
                 <h1 class="page-title">@Xarial.Docify.Lib.Tools.PageHelper.GetTitle(Model.Page, Model.Site.Configuration)</h1>
                 {% social-share %}
             </header>
-
             <div>
                 {{ content }}
             </div>
         </article>
     </div>
-
-    <div class="side-column">
-        <p>Subscribe!</p>
+    <div class="layout-right-pane">
+        {% layout::right-panel %}
     </div>
-        
 </div>

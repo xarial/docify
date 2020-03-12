@@ -2,14 +2,16 @@
 layout: default
 ---
 @using RazorLight
+@using System
 @inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.ContextModel>
 @{ 
-    var postDate = "Mar, 12 2020";
+    var postDateStr = Model.Page.Data.GetOrDefault<string>("date");
+    var date = DateTime.ParseExact(postDateStr, "yyyy-MM-dd", null);
 }
 <article class="post">
     <header>
         <h1 class="page-title">@Xarial.Docify.Lib.Tools.PageHelper.GetTitle(Model.Page, Model.Site.Configuration)</h1>
-        <div class="page-date">@postDate</div>
+        <div class="page-date">@date.ToString("dd MMM, yyyy")</div>
         {% social-share %}
     </header>
     <div>

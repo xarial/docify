@@ -33,6 +33,36 @@
     margin-bottom: 20px;
 }
 
+.header-icon {
+    cursor: pointer;
+}
+
+.post-preview-icon {
+    grid-area: icon;
+}
+
+.post-preview-date {
+    color: gray;
+}
+
+.post-preview-title {
+    grid-area: title;
+}
+
+.post-preview-description {
+    grid-area: description;
+}
+
+.post-preview {
+    display: grid;
+    grid-template-areas: 'icon title' 'icon description';
+    grid-template-columns: max-content auto;
+    grid-gap: 10px;
+    padding: 10px 10px 50px 10px;
+    justify-content: left;
+    align-items: center;
+}
+
 @media screen and (max-width: 1500px) and (min-width: 1200px) {
     .layout {
         padding: 10px 100px 10px 100px;

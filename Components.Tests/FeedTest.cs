@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using System.Text.RegularExpressions;
+using System;
 
 namespace Components.Tests
 {
@@ -58,6 +59,13 @@ namespace Components.Tests
             var res = UpdateBuildDate(await ComponentsTest.CompileMainPageNormalize(site));
 
             Assert.AreEqual(Resources.feed3, res);
+        }
+
+        [Test]
+        public async Task IgnorePagesTest()
+        {
+            //sitemap: false
+            throw new NotImplementedException();
         }
     }
 }

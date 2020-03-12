@@ -9,11 +9,13 @@ title_attribute: title
 @using Xarial.Docify.Lib.Tools
 @inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
 @{
-    var img = Model.Data.GetOrDefault<string>("image");
+    var img = Model.Site.MainPage.Data.GetOrDefault<string>("image");
     if (!string.IsNullOrEmpty(img))
     {
         img = Model.Site.BaseUrl + img;
     }
+
+    var pages = PageHelper.GetAllPages(Model.Site.MainPage).Where(p => !p.Data.ContainsKey("sitemap") || p.Data.Get<bool>("sitemap"));
 }
 <title>@PageHelper.GetTitle(Model.Site.MainPage, Model.Data)</title>
 <description>@(Model.Site.MainPage.Data.GetOrDefault<string>("description"))</description>
@@ -28,7 +30,7 @@ title_attribute: title
 }
 <lastBuildDate>@DateTime.UtcNow.ToString("r")</lastBuildDate>
 <atom:link href="@Model.Site.BaseUrl/feed.xml" rel="self" type="application/rss+xml" />
-@foreach (var page in PageHelper.GetAllPages(Model.Site.MainPage))
+@foreach (var page in pages)
 {
     <item>
         <title>@PageHelper.GetTitle(page, Model.Data)</title>

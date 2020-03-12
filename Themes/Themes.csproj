@@ -12,6 +12,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Lib\blog\_layouts\default.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Lib\blog\_layouts\default.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="RazorLight" Version="2.0.0-beta2" />
   </ItemGroup>
 

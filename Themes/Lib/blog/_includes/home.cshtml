@@ -1,0 +1,39 @@
+﻿---
+layout: default
+pageIndex: 0
+---
+@using RazorLight
+@using System
+@using System.Linq
+@using Xarial.Docify.Core.Compiler.Context
+@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@{
+    var posts = Model.Page.SubPages.Where(p => !p.Data.ContainsKey("toc") || p.Data.GetOrDefault<bool>("toc"));
+
+    string GetDescription(IContextPage post)
+    {
+        return post.Data.GetOrDefault<string>("description");
+    }
+
+    string GetIconUrl(IContextPage post)
+    {
+        return post.Data.GetOrDefault<string>("image");
+    }
+
+    string GetDate(IContextPage post)
+    {
+        var postDateStr = post.Data.GetOrDefault<string>("date");
+        return DateTime.ParseExact(postDateStr, "yyyy-MM-dd", null).ToString("dd MMM, yyyy");
+    }
+}
+<div>
+    @foreach (var post in posts)
+    {
+        <div class="post-preview-date">@GetDate(post)</div>
+        <div class="post-preview">
+            <div class="post-preview-icon"><a href="/"><img src="@GetIconUrl(post)" width="150px" /></a></div>
+            <div class="post-preview-title"><a href="@post.Url">@Xarial.Docify.Lib.Tools.PageHelper.GetTitle(post, null)</a></div>
+            <div class="post-preview-description">@GetDescription(post)</div>
+        </div>
+    }
+</div>

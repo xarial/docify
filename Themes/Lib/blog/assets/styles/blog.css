@@ -9,7 +9,6 @@
 .layout-main {
     grid-area: main;
     min-height: 800px;
-    padding: 10px;
 }
 
 .layout-right-pane {
@@ -24,7 +23,23 @@
     padding: 10px 200px 10px 200px;
 }
 
-@media screen and (max-width: 1000px) {
+.page-title {
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+.page-date {
+    color: gray;
+    margin-bottom: 20px;
+}
+
+@media screen and (max-width: 1500px) and (min-width: 1200px) {
+    .layout {
+        padding: 10px 100px 10px 100px;
+    }
+}
+
+@media screen and (max-width: 1200px) {
     .layout {
         grid-template-areas: 'header' 'left' 'main' 'right';
         grid-template-columns: auto;
@@ -33,11 +48,5 @@
 
     .layout-main {
         min-height: 400px;
-    }
-}
-
-@media screen and (max-width: 1500px) {
-    .layout {
-        padding: 10px 100px 10px 100px;
     }
 }

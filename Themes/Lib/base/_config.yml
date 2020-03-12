@@ -7,6 +7,7 @@
   - youtube
   - date
   - legal
+  - cookie-consent
 plugins:
   - image-optimizer
 title_attribute: caption

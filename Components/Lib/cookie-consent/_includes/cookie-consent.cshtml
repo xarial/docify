@@ -1,0 +1,45 @@
+﻿---
+enable: false
+message: This website uses cookies to ensure you get the best experience on our website. By using our website you agree on the Terms and Conditions
+---
+@using RazorLight
+@using System
+@using System.Linq
+@using System.Collections.Generic
+@using Xarial.Docify.Core.Compiler.Context
+@using Xarial.Docify.Lib.Tools
+@using System.Runtime.Serialization
+@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@{
+    var enable = Model.Data.Get<bool>("enable");
+    var msg = Model.Data.Get<string>("message");
+}
+@if (enable)
+{
+<link rel="stylesheet" type="text/css" href="/assets/styles/cookieconsent.min.css" />
+<script src="/assets/scripts/cookieconsent.min.js"></script>
+<script>
+    window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+        layout: 'policies-layout',
+        layouts: {
+            'policies-layout': '<div class="policies-layout" style="margin-right:10px;content-alignment: center;">@Raw(msg)</div>\{\{compliance\}\}',
+        },
+        palette: {
+            popup: {
+            background: "#efefef",
+            text: "#404040"
+            },
+            button: {
+            background: "#8ec760",
+            text: "#ffffff"
+            }
+        },
+        position: "bottom",
+        content: {
+            message: 'Message!',
+            dismiss: "Agree"
+        }
+    })});
+</script>
+}

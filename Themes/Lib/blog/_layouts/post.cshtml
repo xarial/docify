@@ -1,0 +1,18 @@
+﻿---
+layout: default
+---
+@using RazorLight
+@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.ContextModel>
+@{ 
+    var postDate = "Mar, 12 2020";
+}
+<article class="post">
+    <header>
+        <h1 class="page-title">@Xarial.Docify.Lib.Tools.PageHelper.GetTitle(Model.Page, Model.Site.Configuration)</h1>
+        <div class="page-date">@postDate</div>
+        {% social-share %}
+    </header>
+    <div>
+        {{ content }}
+    </div>
+</article>

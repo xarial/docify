@@ -19,12 +19,9 @@ production_only: true
             enable = false;
         }
     }
-
-    if (!enable)
-    {
-        return;
-    }
 }
+@if(enable)
+{
 <script async src="https://www.googletagmanager.com/gtag/js?id=@trackingCode"></script>
 <script>
     window.dataLayer = window.dataLayer || [];
@@ -32,3 +29,4 @@ production_only: true
     gtag('js', new Date());
     gtag('config', @trackingCode);
 </script>
+}

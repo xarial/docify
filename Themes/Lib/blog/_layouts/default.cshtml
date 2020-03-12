@@ -3,21 +3,16 @@ layout: master
 ---
 @using RazorLight
 @inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.ContextModel>
+@{ 
+    var postDate = "Mar, 12 2020";
+}
 <div class="layout">
     <div class="layout-header">{% header %}</div>
     <div class="layout-left-pane">
         {% layout::left-panel %}
     </div>
     <div class="layout-main">
-        <article class="post">
-            <header>
-                <h1 class="page-title">@Xarial.Docify.Lib.Tools.PageHelper.GetTitle(Model.Page, Model.Site.Configuration)</h1>
-                {% social-share %}
-            </header>
-            <div>
-                {{ content }}
-            </div>
-        </article>
+        {{ content }}
     </div>
     <div class="layout-right-pane">
         {% layout::right-panel %}

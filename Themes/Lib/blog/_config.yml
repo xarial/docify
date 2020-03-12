@@ -6,3 +6,5 @@ components:
 plugins:
   - $
   - code-syntax-highlighter
+code-syntax-highlighter:
+  embed-style: false

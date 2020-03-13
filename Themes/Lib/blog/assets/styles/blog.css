@@ -81,3 +81,18 @@
         min-width: 0;
     }
 }
+
+@media screen and (max-width: 700px) {
+    .post-preview {
+        grid-template-areas: 'icon' 'title' 'description';
+        grid-template-columns: auto;
+    }
+    .post-preview-icon {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .post-preview-title {
+        text-align: center;
+    }
+}

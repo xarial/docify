@@ -75,15 +75,14 @@ namespace Xarial.Docify.Lib.Plugins
                 throw new NotSupportedException("Incorrect formatted");
             }
 
-            var node = XDocument.Parse(formattedCode);
+            var node = XDocument.Parse(formattedCode, LoadOptions.PreserveWhitespace);
 
-            var div = node.Element("div");
-            var pre = div.Element("pre");
+            var pre = node.Element("div").Element("pre");
 
             pre.Add(new XAttribute("class", $"code-snippet {lang}"));
 
             html.Clear();
-            html.Append(div);
+            html.Append(pre);
         }
 
         private CodeColorizerBase Formatter

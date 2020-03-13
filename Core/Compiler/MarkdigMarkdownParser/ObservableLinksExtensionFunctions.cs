@@ -9,14 +9,18 @@ using Markdig;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xarial.Docify.Base.Plugins;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
     public static class ObservableLinksExtensionFunctions
     {
-        public static MarkdownPipelineBuilder UseObservableLinks(this MarkdownPipelineBuilder pipeline)
+        public static MarkdownPipelineBuilder UseObservableLinks(this MarkdownPipelineBuilder pipeline,
+            IEnumerable<IRenderUrlPlugin> urlPlugins,
+            IEnumerable<IRenderImagePlugin> imagePlugins)
         {
-            pipeline.Extensions.AddIfNotAlready<ObservableLinkExtension>();
+            pipeline.Extensions.AddIfNotAlready(
+                new ObservableLinkExtension(urlPlugins, imagePlugins));
 
             return pipeline;
         }

@@ -35,7 +35,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
                 var fencedCodeBlock = obj as FencedCodeBlock;
 
                 var lang = fencedCodeBlock.Info;
-                var code = fencedCodeBlock.Lines.ToSlice().Text;
+                var code = fencedCodeBlock.Lines.ToString();
 
                 var codeOut = new StringBuilder();
                 using (var strWriter = new StringWriter(codeOut)) 
@@ -43,7 +43,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
                     base.Write(new HtmlRenderer(strWriter), obj);
                 }
                 
-                m_Plugins.InvokePluginsIfAny(p => p.RenderCodeBlock(code, lang, ref codeOut));
+                m_Plugins.InvokePluginsIfAny(p => p.RenderCodeBlock(code, lang, codeOut));
 
                 renderer.Write(codeOut.ToString());
             }

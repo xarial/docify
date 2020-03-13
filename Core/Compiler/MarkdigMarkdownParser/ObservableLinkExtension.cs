@@ -10,13 +10,20 @@ using Markdig.Renderers;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xarial.Docify.Base.Plugins;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
     public class ObservableLinkExtension : IMarkdownExtension
     {
-        public ObservableLinkExtension()
+        private readonly IEnumerable<IRenderUrlPlugin> m_UrlPlugins;
+        private readonly IEnumerable<IRenderImagePlugin> m_ImagePlugins;
+
+        public ObservableLinkExtension(IEnumerable<IRenderUrlPlugin> urlPlugins,
+            IEnumerable<IRenderImagePlugin> imagePlugins)
         {
+            m_UrlPlugins = urlPlugins;
+            m_ImagePlugins = imagePlugins;
         }
 
         public void Setup(MarkdownPipelineBuilder pipeline)
@@ -31,7 +38,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
             if (htmlRenderer != null)
             {
                 htmlRenderer.ObjectRenderers.ReplaceOrAdd<Markdig.Renderers.Html.Inlines.LinkInlineRenderer>(
-                    new ObservableLinkInlineRenderer());
+                    new ObservableLinkInlineRenderer(m_UrlPlugins, m_ImagePlugins));
             }
             else 
             {

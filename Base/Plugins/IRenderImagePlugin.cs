@@ -13,6 +13,6 @@ namespace Xarial.Docify.Base.Plugins
 {
     public interface IRenderImagePlugin : IPlugin
     {
-        void RenderImage(string content, ref string result);
+        void RenderImage(StringBuilder html);
     }
 }

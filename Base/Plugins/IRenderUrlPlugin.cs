@@ -13,6 +13,6 @@ namespace Xarial.Docify.Base.Plugins
 {
     public interface IRenderUrlPlugin : IPlugin
     {
-        void RenderUrl(string content, ref string result);
+        void RenderUrl(StringBuilder html);
     }
 }

@@ -50,17 +50,13 @@ namespace Xarial.Docify.Lib.Plugins
             {
                 if (string.Equals(Path.GetExtension(loc.FileName), ".html", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var headInd = content.IndexOf("</head>");
-
-                    if (headInd != -1)
-                    {
-                        content = content.Insert(headInd, $"<link rel=\"stylesheet\" type=\"text/css\" href=\"/{string.Join('/', CSS_FILE_PATH)}/{CSS_FILE_NAME}\" />\r\n");
-                    }
+                    Helper.InjectDataIntoHtmlHead(ref content,
+                        string.Format(Helper.CSS_LINK_TEMPLATE, string.Join('/', CSS_FILE_PATH) + "/" + CSS_FILE_NAME));
                 }
             }
         }
 
-        public void RenderCodeBlock(string rawCode, string lang, ref StringBuilder result)
+        public void RenderCodeBlock(string rawCode, string lang, StringBuilder html)
         {
             var codeLang = Languages.FindById(lang);
 
@@ -78,7 +74,8 @@ namespace Xarial.Docify.Lib.Plugins
                 throw new NotSupportedException("Incorrect formatted");
             }
 
-            result = new StringBuilder($"<pre class=\"code-snippet\"><code>{formattedCode}</code></pre>");
+            html.Clear();
+            html.Append($"<pre class=\"code-snippet\"><code>{formattedCode}</code></pre>");
         }
 
         private CodeColorizerBase Formatter

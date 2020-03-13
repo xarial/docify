@@ -10,5 +10,5 @@
   - cookie-consent
 plugins:
   - image-optimizer
-  - image-aligner
+  - responsive-image
 title_attribute: caption

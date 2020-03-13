@@ -40,7 +40,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
                 {
                     m_MarkdownEngine = new MarkdownPipelineBuilder()
                         .UseAdvancedExtensions()
-                        .UseObservableLinks() //TODO: handle plugins for image and url
+                        .UseObservableLinks(m_RenderUrlPlugins, m_RenderImagePlugins)
                         .UseObservableCodeBlocks(m_RenderCodeBlockPlugins)
                         .UseProtectedTags(IncludesHandler.START_TAG, IncludesHandler.END_TAG) //TODO: should be a dependency
                         .Build();

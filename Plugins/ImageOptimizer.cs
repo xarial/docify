@@ -14,25 +14,104 @@ using nQuant;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
+using Xarial.Docify.Base.Content;
+using Svg;
+using System.Drawing.Imaging;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Xarial.Docify.Lib.Plugins
 {
     public class ImageOptimizerSettings 
     {
-        [DataMember(Name = "match-pattern")]
-        public string[] MatchPatterns { get; set; } = new string[]
+        public string[] MatchPattern { get; set; } = new string[]
         {
             "\\.png$", "\\.jpg$", "\\.jpeg$", "\\.bmp$", "\\.tif$", "\\.tiff$"
         };
 
-        [DataMember(Name = "ignore-match-case")]
         public bool IgnoreMatchCase { get; set; } = true;
+
+        public bool ImageTagConvertSvgToPng { get; set; } = true;
+
+        /// <remarks>
+        /// 0 to maintain aspect ration
+        /// </remarks>
+        public int SvgPngWidth { get; set; } = 1200;
+
+        /// <remarks>
+        /// 0 to maintain aspect ration
+        /// </remarks>
+        public int SvgPngHeight { get; set; } = 0;
     }
 
     [Plugin("image-optimizer")]
-    public class ImageOptimizer : IPrePublishBinaryAssetPlugin, IPlugin<ImageOptimizerSettings>
-    {        
+    public class ImageOptimizer : IPreCompilePlugin, IPrePublishBinaryAssetPlugin, IPlugin<ImageOptimizerSettings>
+    {
+        private const string IMAGE_TAG_NAME = "image";
+        private const string REPLACE_IMAGE_TAG_NAME = "image-png";
+        private const string SVG_EXT = ".svg";
+        private const string PNG_EXT = ".png";
+
         public ImageOptimizerSettings Settings { get; set; }
+
+        public void PreCompile(Site site)
+        {
+            foreach (var page in site.GetAllPages()) 
+            {
+                dynamic imageVal;
+                if (page.Data.TryGetValue(IMAGE_TAG_NAME, out imageVal)) 
+                {
+                    var image = imageVal as string;
+
+                    if (!string.IsNullOrEmpty(image))
+                    {
+                        if (string.Equals(Path.GetExtension(image), 
+                            SVG_EXT, StringComparison.CurrentCultureIgnoreCase)) 
+                        {
+                            var imgAsset = TryFindImageAsset(site, page, image);
+
+                            if (imgAsset == null)
+                            {
+                                throw new NullReferenceException($"Failed to find image asset: {image}");
+                            }
+
+                            var imgName = Path.GetFileNameWithoutExtension(image) + PNG_EXT;
+
+                            byte[] pngBuffer = null;
+                            
+                            using (var svgStream = new MemoryStream(imgAsset.Content))
+                            {
+                                var svgDocument = SvgDocument.Open<SvgDocument>(svgStream);
+                                var bitmap = svgDocument.Draw(Settings.SvgPngWidth, Settings.SvgPngHeight);
+
+                                using (var pngStream = new MemoryStream()) 
+                                {
+                                    bitmap.Save(pngStream, ImageFormat.Png);
+                                    pngBuffer = pngStream.ToArray();
+                                }
+                            }
+
+                            page.Data.Add(REPLACE_IMAGE_TAG_NAME, imgName);
+                            var imgPngAsset = new BinaryAsset(pngBuffer, new Location(imgName, page.Location.Path.ToArray()));
+                            page.Assets.Add(imgPngAsset);
+                            site.Assets.Add(imgPngAsset);
+                        }
+                    }
+                }
+            }
+        }
+
+        private BinaryAsset TryFindImageAsset(Site site, Page page, string path)
+        {
+            if (!path.StartsWith('/')) 
+            {
+                path = page.Location.ToUrl().TrimEnd('/') + "/" + path;
+            }
+
+            return site.Assets.FirstOrDefault(
+                    p => string.Equals(p.Location.ToUrl(), path)
+                    || string.Equals(p.Location.ToUrl(site.BaseUrl), path)) as BinaryAsset;
+        }
 
         public void PrePublishBinaryAsset(ref Location loc, ref byte[] content, out bool cancel)
         {
@@ -42,7 +121,7 @@ namespace Xarial.Docify.Lib.Plugins
 
             var opts = Settings.IgnoreMatchCase ? RegexOptions.IgnoreCase : RegexOptions.None;
 
-            if (Settings.MatchPatterns.Any(p => Regex.IsMatch(path, p, opts)))
+            if (Settings.MatchPattern.Any(p => Regex.IsMatch(path, p, opts)))
             {
                 var quantizer = new WuQuantizer();
 

@@ -22,7 +22,20 @@ linkedin: true
     var title = Model.Page.Data.GetOrDefault<string>("title");
     var description = Model.Page.Data.GetOrDefault<string>("description");
     var lang = Model.Page.Data.GetOrDefault<string>("lang");
-    var image = Model.Page.Data.GetOrDefault<string>("image");
+    var image = Model.Page.Data.GetOrDefault<string>("image-png");
+
+    if (string.IsNullOrEmpty(image)) 
+    { 
+        image = Model.Page.Data.GetOrDefault<string>("image");
+    }
+
+    if (!string.IsNullOrEmpty(image))
+    {
+        if (!image.StartsWith("/"))
+        {
+            image = Model.Page.FullUrl.TrimEnd('/') + "/" + image;
+        }
+    }
 
     var siteTitle = Model.Site.Configuration.GetOrDefault<string>("title");
     var siteDescription = Model.Site.Configuration.GetOrDefault<string>("description");

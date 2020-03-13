@@ -14,10 +14,12 @@
 
   <ItemGroup>
     <None Remove="Lib\feed\feed.xml" />
+    <None Remove="Lib\sitemap\sitemap.xml" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Lib\feed\feed.xml" />
+    <Content Include="Lib\sitemap\sitemap.xml" />
   </ItemGroup>
 
   <ItemGroup>

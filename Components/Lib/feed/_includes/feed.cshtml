@@ -35,7 +35,7 @@ title_attribute: title
     <item>
         <title>@PageHelper.GetTitle(page, Model.Data)</title>
         <description>@(page.Data.GetOrDefault<string>("description"))</description>
-        @Raw($"<link>{page.FullUrl}</link>")
+        @Raw("<link>")@(page.FullUrl)@Raw("</link>")
         <guid isPermaLink="true">@(page.FullUrl)</guid>
         @{
             var categories = page.Data.GetOrDefault<IEnumerable<dynamic>>("categories");

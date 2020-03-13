@@ -71,5 +71,11 @@ namespace Components.Tests
 
             Assert.AreEqual($"<head>\r\n{Resources.seo4}\r\n</head>", res);
         }
+
+        [Test]
+        public async Task ImageAndImagePngTest()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

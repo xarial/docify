@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Xml.Linq;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Plugins;
@@ -74,8 +75,15 @@ namespace Xarial.Docify.Lib.Plugins
                 throw new NotSupportedException("Incorrect formatted");
             }
 
+            var node = XDocument.Parse(formattedCode);
+
+            var div = node.Element("div");
+            var pre = div.Element("pre");
+
+            pre.Add(new XAttribute("class", $"code-snippet {lang}"));
+
             html.Clear();
-            html.Append($"<pre class=\"code-snippet\"><code>{formattedCode}</code></pre>");
+            html.Append(div);
         }
 
         private CodeColorizerBase Formatter

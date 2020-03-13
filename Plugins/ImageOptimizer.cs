@@ -42,6 +42,8 @@ namespace Xarial.Docify.Lib.Plugins
         /// 0 to maintain aspect ration
         /// </remarks>
         public int SvgPngHeight { get; set; } = 0;
+
+        public bool GenerateFavIcon { get; set; } = false;
     }
 
     [Plugin("image-optimizer")]
@@ -98,6 +100,23 @@ namespace Xarial.Docify.Lib.Plugins
                         }
                     }
                 }
+            }
+
+            if (Settings.GenerateFavIcon)
+            {
+                GenerateFavIcon(site);
+            }
+        }
+
+        private void GenerateFavIcon(Site site) 
+        {
+            //TODO: implement
+            throw new NotImplementedException();
+
+            using (var stream = new MemoryStream())
+            {
+                Bitmap bitmap = null;
+                Icon.FromHandle(bitmap.GetHicon()).Save(stream);
             }
         }
 

@@ -30,9 +30,17 @@ layout: master
         justify-content: left;
         align-items: center;
     }
+    
+    @@media screen and (max-width: 700px) {
+    .header
+    {
+        grid-template-areas: 'icon title' 'description description';
+        grid-template-columns: min-content auto;
+    }
+}
 </style>
 <div class="header">
-    <div class="header-icon"><a href="/"><img src="@logo" width="75px"/></a></div>
+    <div class="header-icon"><a href="/"><img src="@logo" width="75px" alt="@title"/></a></div>
     <div class="header-title">@title</div>
     <div class="header-description">@description</div>
 </div>

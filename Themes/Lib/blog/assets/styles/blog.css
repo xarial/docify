@@ -78,5 +78,6 @@
 
     .layout-main {
         min-height: 400px;
+        min-width: 0;
     }
 }

@@ -9,13 +9,33 @@ title_attribute: title
 @using Xarial.Docify.Lib.Tools
 @inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
 @{
-    var img = Model.Site.MainPage.Data.GetOrDefault<string>("image");
+    var img = Model.Site.MainPage.Data.GetOrDefault<string>("image-png");
+
+    if (string.IsNullOrEmpty(img)) 
+    { 
+        img = Model.Site.MainPage.Data.GetOrDefault<string>("image");
+    }
+
     if (!string.IsNullOrEmpty(img))
     {
         img = Model.Site.BaseUrl + img;
     }
 
     var pages = PageHelper.GetAllPages(Model.Site.MainPage).Where(p => !p.Data.ContainsKey("sitemap") || p.Data.Get<bool>("sitemap"));
+
+    bool HasPubDate(Xarial.Docify.Core.Compiler.Context.IContextPage page, out DateTime date)
+    {
+        if (page.Data.ContainsKey("date"))
+        {
+            date = DateTime.Parse(page.Data.GetOrDefault<string>("date"));
+            return true;
+        }
+        else
+        {
+            date = default(DateTime);
+            return false;
+        }
+    }
 }
 <title>@PageHelper.GetTitle(Model.Site.MainPage, Model.Data)</title>
 <description>@(Model.Site.MainPage.Data.GetOrDefault<string>("description"))</description>
@@ -23,7 +43,7 @@ title_attribute: title
 @if (!string.IsNullOrEmpty(img))
 {
     <image>
-        <url>@img </url>
+        <url>@img</url>
         <title>@PageHelper.GetTitle(Model.Site.MainPage, Model.Data)</title>
         @Raw($"<link>{Model.Site.BaseUrl}</link>")
     </image>
@@ -37,6 +57,10 @@ title_attribute: title
         <description>@(page.Data.GetOrDefault<string>("description"))</description>
         @Raw("<link>")@(page.FullUrl)@Raw("</link>")
         <guid isPermaLink="true">@(page.FullUrl)</guid>
+        @if (HasPubDate(page, out DateTime pubDate)) 
+        {
+        <pubDate>@pubDate.ToString("r")</pubDate>
+        }
         @{
             var categories = page.Data.GetOrDefault<IEnumerable<dynamic>>("categories");
             if (categories == null)

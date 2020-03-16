@@ -67,5 +67,12 @@ namespace Components.Tests
             //sitemap: false
             throw new NotImplementedException();
         }
+
+        [Test]
+        public async Task PubDateTest()
+        {
+            //date: yyyy-MM-dd
+            throw new NotImplementedException();
+        }
     }
 }

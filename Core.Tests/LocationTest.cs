@@ -65,11 +65,11 @@ namespace Core.Tests
 
             Assert.AreEqual("/dir1/dir2/page.html", r1);
             Assert.AreEqual("/page.html", r2);
-            Assert.AreEqual("/dir1/dir2", r3);
+            Assert.AreEqual("/dir1/dir2/", r3);
             Assert.AreEqual("/", r4);
             Assert.AreEqual("www.site.com/dir1/dir2/page.html", r5);
             Assert.AreEqual("www.site.com/page.html", r6);
-            Assert.AreEqual("www.site.com/dir1/dir2", r7);
+            Assert.AreEqual("www.site.com/dir1/dir2/", r7);
             Assert.AreEqual("www.site.com", r8);
         }
     }

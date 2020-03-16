@@ -3,6 +3,7 @@ components:
   - $
   - toc
   - code-snippet
+  - disqus
 plugins:
   - $
   - code-syntax-highlighter

@@ -130,6 +130,7 @@ namespace Xarial.Docify.Base
         public static string ToUrl(this Location loc, string baseUrl = "")
         {
             var url = FormFullLocation(loc, baseUrl, URL_SEP);
+
             if (url.EndsWith(INDEX_PAGE_NAME, StringComparison.CurrentCultureIgnoreCase)) 
             {
                 if (string.Equals(url, INDEX_PAGE_NAME))
@@ -140,11 +141,16 @@ namespace Xarial.Docify.Base
                 {
                     url = url.Substring(0, url.Length - INDEX_PAGE_NAME.Length - 1);
                 }
+
+                if (!string.Equals(url, baseUrl, StringComparison.CurrentCultureIgnoreCase)) 
+                {
+                    url += "/";
+                }
             }
 
             if (string.IsNullOrEmpty(baseUrl))
             {
-                url = "/" + url;
+                url = "/" + url.TrimStart('/');
             }
 
             return url;

@@ -38,4 +38,8 @@
     <ProjectReference Include="..\Tools\Tools.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Lib\tipue-search\assets\tipuesearch\" />
+  </ItemGroup>
+
 </Project>

@@ -26,6 +26,8 @@ namespace Xarial.Docify.Lib.Tools
             public IReadOnlyList<IContextPage> SubPages => SubPagesList;
             public List<MenuPage> SubPagesList { get; }
 
+            public string RawContent { get; }
+
             public MenuPage(IContextPage page) : this(page.Name, page.Data)
             {
                 FullUrl = page.FullUrl;

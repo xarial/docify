@@ -9,6 +9,7 @@
   - date
   - legal
   - cookie-consent
+  - tipue-search
 plugins:
   - image-optimizer
   - responsive-image

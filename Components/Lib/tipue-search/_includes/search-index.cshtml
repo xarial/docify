@@ -1,0 +1,40 @@
+﻿---
+short-name:
+count: true
+---
+@using RazorLight
+@using System.Linq
+@functions{
+    public class PageSearchData
+    {
+        public string title { get; set; }
+        public string text { get; set; }
+        public string url { get; set; }
+        public string tags { get; set; }
+        public string img { get; set; }
+        public string note { get; set; }
+    }
+}
+@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@{
+    string IndexPages()
+    {
+        var pages = Xarial.Docify.Lib.Tools.PageHelper.GetAllPages(Model.Site.MainPage)
+            .Where(p => !p.Data.ContainsKey("sitemap") || p.Data.Get<bool>("sitemap"));
+
+        var pageSearchData = pages.Select(p => new PageSearchData()
+        {
+            title = Xarial.Docify.Lib.Tools.PageHelper.GetTitle(p, null),
+            text = p.RawContent,
+            url = p.FullUrl
+        });
+
+        var opts = new System.Text.Json.JsonSerializerOptions()
+        {
+            IgnoreNullValues = true
+        };
+
+        return System.Text.Json.JsonSerializer.Serialize(pageSearchData, opts).ToString();
+    }
+}
+@Raw(IndexPages())

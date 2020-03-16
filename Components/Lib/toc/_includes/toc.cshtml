@@ -49,81 +49,80 @@ menu:
 
         hasActive = false;
 
-        foreach (var menuPage in pages.OrderBy(p=>
+        var orderedPages = pages.OrderBy(p =>
         {
             int order = -1;
             if (p.Data.TryGet<int>(PAGE_ORDER_ATT, out order))
             {
                 return order;
             }
-            else 
+            else
             {
                 return int.MaxValue;
             }
-        }))
+        });
+
+        foreach (var menuPage in orderedPages)
         {
-            bool includeToc = false;
-            if (menuPage.Data.TryGet<bool>(PAGE_EXCLUDE_ATT, out includeToc))
+            var includeToc = !menuPage.Data.ContainsKey(PAGE_EXCLUDE_ATT) || menuPage.Data.Get<bool>(PAGE_EXCLUDE_ATT);
+            var includeSitemap = !menuPage.Data.ContainsKey("sitemap") || menuPage.Data.Get<bool>("sitemap");
+            
+            if (includeToc && includeSitemap)
             {
-                if (!includeToc)
+                var entryId = "";
+
+                if (menuPage.SubPages.Any())
                 {
-                    continue;
+                    entryId = $"n{++idCounter}";
                 }
-            }
 
-            var entryId = "";
+                html.AppendLine("<li>");
 
-            if (menuPage.SubPages.Any())
-            {
-                entryId = $"n{++idCounter}";
-            }
+                var onClick = menuPage.SubPages.Any() ? $"onclick=\"javascript:toggle({entryId}Span, {entryId});\"" : "";
+                html.AppendLine($"<div class=\"tree-toc-node pointer\" {onClick}>");
 
-            html.AppendLine("<li>");
+                if (menuPage.SubPages.Any())
+                {
+                    html.AppendLine($"<span class=\"expbutton\" id=\"{entryId}Span\">&#9656;</span>");
+                }
 
-            var onClick = menuPage.SubPages.Any() ? $"onclick=\"javascript:toggle({entryId}Span, {entryId});\"" : "";
-            html.AppendLine($"<div class=\"tree-toc-node pointer\" {onClick}>");
+                var pageType = menuPage.SubPages.Any() ? "section" : "article";
+                html.AppendLine($"<span class=\"{pageType}\"></span>");
+                var title = PageHelper.GetTitle(menuPage, Model.Data);
 
-            if (menuPage.SubPages.Any())
-            {
-                html.AppendLine($"<span class=\"expbutton\" id=\"{entryId}Span\">&#9656;</span>");
-            }
+                if (!menuPage.Data.GetOrDefault<bool>(PAGE_DISABLED_ATT))
+                {
+                    html.AppendLine($"<a href=\"{menuPage.Url}\" class=\"toc-entry{GetActiveAttribute(menuPage)}\">{title}</a>");
+                }
+                else
+                {
+                    html.AppendLine($"<span class=\"unavailable\">{title}</span>");
+                }
+                html.AppendLine("</li>");
 
-            var pageType = menuPage.SubPages.Any() ? "section" : "article";
-            html.AppendLine($"<span class=\"{pageType}\"></span>");
-            var title = PageHelper.GetTitle(menuPage, Model.Data);
+                var isActive = IsActive(menuPage);
 
-            if (!menuPage.Data.GetOrDefault<bool>(PAGE_DISABLED_ATT))
-            {
-                html.AppendLine($"<a href=\"{menuPage.Url}\" class=\"toc-entry{GetActiveAttribute(menuPage)}\">{title}</a>");
-            }
-            else
-            {
-                html.AppendLine($"<span class=\"unavailable\">{title}</span>");
-            }
-            html.AppendLine("</li>");
-
-            var isActive = IsActive(menuPage);
-
-            if (isActive)
-            {
-                hasActive = true;
-            }
-
-            if (menuPage.SubPages.Any())
-            {
-                var hasChildActive = false;
-
-                var toc = RenderToc(menuPage.SubPages, out hasChildActive, entryId);
-                var exp = hasChildActive || isActive ? " in" : "";
-
-                if (hasChildActive)
+                if (isActive)
                 {
                     hasActive = true;
                 }
 
-                html.AppendLine($"<ul id=\"{entryId}\" class=\"toc-container collapse {exp}\">");
-                html.AppendLine(toc);
-                html.AppendLine("</ul>");
+                if (menuPage.SubPages.Any())
+                {
+                    var hasChildActive = false;
+
+                    var toc = RenderToc(menuPage.SubPages, out hasChildActive, entryId);
+                    var exp = hasChildActive || isActive ? " in" : "";
+
+                    if (hasChildActive)
+                    {
+                        hasActive = true;
+                    }
+
+                    html.AppendLine($"<ul id=\"{entryId}\" class=\"toc-container collapse {exp}\">");
+                    html.AppendLine(toc);
+                    html.AppendLine("</ul>");
+                }
             }
         }
 

@@ -21,6 +21,7 @@ namespace Xarial.Docify.Core.Compiler.Context
         string Url { get; }
         string FullUrl { get; }
         string Name { get; }
+        string RawContent { get; }
         ContextMetadata Data { get; }
         IReadOnlyList<IContextPage> SubPages { get; }
     }
@@ -31,29 +32,10 @@ namespace Xarial.Docify.Core.Compiler.Context
 
         internal Page BasePage { get; }
 
-        public string Url
-        {
-            get
-            {
-                return BasePage.Location.ToUrl();
-            }
-        }
-
-        public string FullUrl 
-        {
-            get 
-            {
-                return BasePage.Location.ToUrl(m_Site.BaseUrl);
-            }
-        }
-
-        public string Name 
-        {
-            get 
-            {
-                return BasePage.Location.FileName;
-            }
-        }
+        public string Url => BasePage.Location.ToUrl();
+        public string FullUrl => BasePage.Location.ToUrl(m_Site.BaseUrl);
+        public string Name => BasePage.Location.FileName;
+        public string RawContent => BasePage.RawContent;
 
         public ContextMetadata Data 
         {

@@ -39,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Lib\tipue-search\assets\images\" />
     <Folder Include="Lib\tipue-search\assets\tipuesearch\" />
   </ItemGroup>
 

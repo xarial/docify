@@ -9,3 +9,5 @@ plugins:
   - code-syntax-highlighter
 code-syntax-highlighter:
   embed-style: false
+$toc:
+  home_menu_title: Home

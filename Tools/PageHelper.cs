@@ -35,24 +35,34 @@ namespace Xarial.Docify.Lib.Tools
 
         public static string GetTitle(IContextPage page, ContextMetadata data)
         {
-            var title = "";
-
-            if (data != null)
-            {
-                title = page.Data.GetOrDefault<string>(data[TITLE_ATT]);
-            }
+            var title = page.Data.GetOrDefault<string>(DEFAULT_TITLE_ATT);
 
             if (string.IsNullOrEmpty(title))
             {
-                title = page.Data.GetOrDefault<string>(DEFAULT_TITLE_ATT);
-                
-                if (string.IsNullOrEmpty(title))
-                {
-                    title = page.Name;
-                }
+                title = page.Name;
             }
 
             return title;
+        }
+
+        /// <summary>
+        /// Returns the caption (short title) of the page
+        /// </summary>
+        public static string GetCaption(IContextPage page, ContextMetadata data)
+        {
+            var caption = "";
+
+            if (data != null)
+            {
+                caption = page.Data.GetOrDefault<string>(data[TITLE_ATT]);
+            }
+
+            if (string.IsNullOrEmpty(caption))
+            {
+                caption = GetTitle(page, data);
+            }
+
+            return caption;
         }
     }
 }

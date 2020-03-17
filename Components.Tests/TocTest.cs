@@ -110,5 +110,12 @@ namespace Components.Tests
         {
             throw new NotImplementedException();
         }
+
+        [Test]
+        public void CustomHomeMenuTitleTest()
+        {
+            //home_menu_title: custom
+            throw new NotImplementedException();
+        }
     }
 }

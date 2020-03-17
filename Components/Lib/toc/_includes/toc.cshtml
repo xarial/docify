@@ -2,6 +2,7 @@
 title_attribute: caption
 home_menu: true
 menu:
+home_menu_title: Welcome
 ---
 @using RazorLight
 @using System
@@ -24,12 +25,14 @@ menu:
     if (menu == null)
     {
         menu = NavigationMenuHelper.GetRootPage(Model).SubPages.ToList();
-
-        if (Model.Data.GetOrDefault<bool>(HOME_MENU_OPT))
-        {
-            homePage = NavigationMenuHelper.BuildPage(Model.Site.MainPage, Model.Data, "Home");
-        }
     }
+
+    if (Model.Data.GetOrDefault<bool>(HOME_MENU_OPT))
+    {
+        homePage = NavigationMenuHelper.BuildPage(Model.Site.MainPage, Model.Data, "Home");
+    }
+
+    var homeMenuTitle = Model.Data.Get<string>("home_menu_title");
 
     int idCounter = 0;
 
@@ -88,7 +91,7 @@ menu:
 
                 var pageType = menuPage.SubPages.Any() ? "section" : "article";
                 html.AppendLine($"<span class=\"{pageType}\"></span>");
-                var title = PageHelper.GetTitle(menuPage, Model.Data);
+                var title = PageHelper.GetCaption(menuPage, Model.Data);
 
                 if (!menuPage.Data.GetOrDefault<bool>(PAGE_DISABLED_ATT))
                 {
@@ -132,7 +135,7 @@ menu:
 <div id="toc">
     @if (homePage != null)
     {
-        <a href="@homePage.Url" class="toc-entry @GetActiveAttribute(homePage)">Welcome</a>
+        <a href="@homePage.Url" class="toc-entry @GetActiveAttribute(homePage)">@homeMenuTitle</a>
     }
     <ul style="margin: 0px" class="toc-container collapse in">
         @Raw(RenderToc(menu, out bool _))

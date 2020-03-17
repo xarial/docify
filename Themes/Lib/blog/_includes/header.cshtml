@@ -5,7 +5,7 @@ layout: master
 @inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
 @{ 
     var logo = Model.Site.MainPage.Data.GetOrDefault<string>("image");
-    var title = Xarial.Docify.Lib.Tools.PageHelper.GetTitle(Model.Site.MainPage, Model.Site.Configuration)?.ToUpper();
+    var title = Xarial.Docify.Lib.Tools.PageHelper.GetCaption(Model.Site.MainPage, Model.Site.Configuration)?.ToUpper();
     var description = Model.Site.MainPage.Data.GetOrDefault<string>("description");
 }
 <style>

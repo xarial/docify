@@ -8,9 +8,9 @@ count: true
 }
 <form action="/search/">
     <div class="tipue_search_group">
-        <input type="text" name="q" id="tipue_search_input" pattern=".{3,}" title="At least 3 characters" required>
-        <button type="submit" class="tipue_search_button">
-            <div class="tipue_search_icon">&#9906;</div>
-        </button>
+        <input type="image" src="/assets/images/search.svg" class="tipue_search_button" width="25px" border="0" alt="Submit" />
+        <div style="overflow: hidden;padding-right: .5em;">
+            <input type="text" name="q" id="tipue_search_input" placeholder="Search" pattern=".{3,}" title="At least 3 characters" required>
+        </div>
     </div>
 </form>

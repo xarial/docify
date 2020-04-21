@@ -106,10 +106,10 @@
     cursor: pointer;
 }
 
-    #mc-embedded-subscribe:hover {
-        background-color: red;
-        border: 1px solid red;
-    }
+#mc-embedded-subscribe:hover {
+    background-color: red;
+    border: 1px solid red;
+}
 
 .tipue_search_group {
     text-align: right;

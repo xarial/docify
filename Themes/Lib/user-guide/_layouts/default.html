@@ -3,13 +3,13 @@ layout: master
 ---
 <div class="layout">
     <div class="layout-header">{% site-header %}</div>
-    <div class="layout-left-pane">
-        {% layout::left-panel %}
+    <div class="layout-toc">
+        {% tipue-search %}
+        <div class="toc">
+            {% toc %}
+        </div>
     </div>
     <div class="layout-main">
         {{ content }}
-    </div>
-    <div class="layout-right-pane">
-        {% layout::right-panel %}
     </div>
 </div>

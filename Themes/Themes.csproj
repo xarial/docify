@@ -13,10 +13,12 @@
 
   <ItemGroup>
     <None Remove="Lib\blog\_layouts\default.html" />
+    <None Remove="Lib\user-guide\_layouts\default.html" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Lib\blog\_layouts\default.html" />
+    <Content Include="Lib\user-guide\_layouts\default.html" />
   </ItemGroup>
 
   <ItemGroup>

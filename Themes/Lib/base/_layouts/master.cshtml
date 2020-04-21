@@ -12,6 +12,7 @@
     <link rel="alternate" type="application/rss+xml" title="@PageHelper.GetTitle(Model.Site.MainPage, null) - Feed" href="@Model.Site.BaseUrl/feed.xml">
     <link rel="stylesheet" type="text/css" href="/assets/styles/social-share.css" />
     <link rel="stylesheet" type="text/css" href="/assets/styles/youtube.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/styles/base.css" />
     @{
         var styles = Model.Page.Data.GetOrDefault<IEnumerable<object>>("styles");
         if (styles?.Any() == true)

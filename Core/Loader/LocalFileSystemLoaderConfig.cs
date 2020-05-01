@@ -25,7 +25,8 @@ namespace Xarial.Docify.Core.Loader
             "htm", "html", "cshtml", "md",
             "xml", "json", "yml",
             "css", "js", "ts",
-            "txt", "csv", "tsv"
+            "txt", "csv", "tsv",
+            "cs", "cpp", "vb", "vba", "py"
         });
 
         public LocalFileSystemLoaderConfig(IEnumerable<string> ignore)

@@ -13,6 +13,6 @@ namespace Xarial.Docify.Base.Plugins
 {
     public interface IRenderCodeBlockPlugin : IPlugin
     {
-        void RenderCodeBlock(string rawCode, string lang, StringBuilder html);
+        void RenderCodeBlock(string rawCode, string lang, string args, StringBuilder html);
     }
 }

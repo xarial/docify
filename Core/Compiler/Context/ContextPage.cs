@@ -24,6 +24,7 @@ namespace Xarial.Docify.Core.Compiler.Context
         string RawContent { get; }
         ContextMetadata Data { get; }
         IReadOnlyList<IContextPage> SubPages { get; }
+        IReadOnlyList<IContextAsset> Assets { get; }
     }
 
     public class ContextPage : IContextPage
@@ -55,13 +56,22 @@ namespace Xarial.Docify.Core.Compiler.Context
             }
         }
 
-        public IReadOnlyList<IContextPage> SubPages
+        public IReadOnlyList<IContextPage> SubPages => BasePage.SubPages.ConvertAll(p => new ContextPage(m_Site, p));
+
+        public IReadOnlyList<IContextAsset> Assets => BasePage.Assets.ConvertAll<IContextAsset>(a => 
         {
-            get
+            switch (a) 
             {
-                return BasePage.SubPages.ConvertAll(p => new ContextPage(m_Site, p));
+                case TextAsset text:
+                    return new ContextTextAsset(text.Location.FileName, text.RawContent);
+
+                case BinaryAsset bin:
+                    return new ContextBinaryAsset(bin.Location.FileName, bin.Content);
+
+                default:
+                    throw new NotSupportedException();
             }
-        }
+        });
 
         public ContextPage(Site site, Page page) 
         {

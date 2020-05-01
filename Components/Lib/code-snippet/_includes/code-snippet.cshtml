@@ -18,7 +18,7 @@ lang:
 @functions{
     public class CodeSnippetData
     {
-        public string Path { get; set; }
+        public string FileName { get; set; }
         public Dictionary<string, string> Tabs { get; set; }
         public string[] Regions { get; set; }
         public string[] ExclRegions { get; set; }
@@ -29,6 +29,30 @@ lang:
 }
 @{
     var data = DataDeserializer.Deserialize<CodeSnippetData>(Model.Data);
-    var md = await MarkdownHelper.ToHtml($"~~~{data.Lang}\r\nvar a = \"Code Snippet!\";\r\nvar b = 10;\r\n~~~");
+
+    var snipAsset = Model.Page.Assets.FirstOrDefault(a => string.Equals(
+        a.Name, data.FileName, StringComparison.CurrentCultureIgnoreCase));
+
+    if (snipAsset is ContextTextAsset)
+    {
+        var rawCode = ((ContextTextAsset)snipAsset).Content;
+
+        var snips = CodeSnippetHelper.Select(rawCode, data.Lang, new CodeSelectorOptions()
+        {
+            ExcludeRegions = data.ExclRegions,
+            HideRegions = data.HideRegions,
+            LeftAlign = data.LeftAlign,
+            Regions = data.Regions
+        });
+
+        foreach (var snip in snips) 
+        {
+            var md = await MarkdownHelper.ToHtml($"~~~{data.Lang}\r\n{snip}\r\n~~~");
+            @Raw(md)
+        }
+    }
+    else
+    {
+        throw new InvalidCastException($"Failed to find a text asset at '{data.FileName}'");
+    }
 }
-@Raw(md)

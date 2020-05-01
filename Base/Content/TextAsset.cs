@@ -11,11 +11,10 @@ using System.Text;
 
 namespace Xarial.Docify.Base.Content
 {
-    public class TextAsset : Asset, ICompilable, ITextWritable
+    public class TextAsset : Asset, ITextWritable
     {
         public string RawContent { get; }
         public string Content { get; set; }
-        public string Key => Location.ToId();
 
         public TextAsset(string rawContent, Location loc) : base(loc)
         {

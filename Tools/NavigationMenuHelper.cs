@@ -28,6 +28,8 @@ namespace Xarial.Docify.Lib.Tools
 
             public string RawContent { get; }
 
+            public IReadOnlyList<IContextAsset> Assets => throw new NotSupportedException();
+
             public MenuPage(IContextPage page) : this(page.Name, page.Data)
             {
                 FullUrl = page.FullUrl;

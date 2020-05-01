@@ -31,8 +31,8 @@ namespace Xarial.Docify.Core.Publisher
         [ImportPlugin]
         private IEnumerable<IPrePublishTextAssetPlugin> m_PrePublishTextPlugins = null;
 
-        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config) :
-            this(config, new FileSystem())
+        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config) 
+            : this(config, new FileSystem())
         {
         }
 

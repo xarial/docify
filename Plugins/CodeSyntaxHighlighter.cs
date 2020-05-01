@@ -57,7 +57,7 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        public void RenderCodeBlock(string rawCode, string lang, StringBuilder html)
+        public void RenderCodeBlock(string rawCode, string lang, string args, StringBuilder html)
         {
             var codeLang = Languages.FindById(lang);
 
@@ -79,7 +79,7 @@ namespace Xarial.Docify.Lib.Plugins
 
             var pre = node.Element("div").Element("pre");
 
-            pre.Add(new XAttribute("class", $"code-snippet {lang}"));
+            pre.Add(new XAttribute("class", $"code-snippet {lang} {args}"));
 
             html.Clear();
             html.Append(pre);

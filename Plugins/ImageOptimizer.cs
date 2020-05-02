@@ -47,7 +47,7 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("image-optimizer")]
-    public class ImageOptimizer : IPreCompilePlugin, IPrePublishBinaryAssetPlugin, IPlugin<ImageOptimizerSettings>
+    public class ImageOptimizer : IPreCompilePlugin, IPrePublishAssetPlugin, IPlugin<ImageOptimizerSettings>
     {
         private const string IMAGE_TAG_NAME = "image";
         private const string REPLACE_IMAGE_TAG_NAME = "image-png";
@@ -132,7 +132,7 @@ namespace Xarial.Docify.Lib.Plugins
                     || string.Equals(p.Location.ToUrl(site.BaseUrl), path)) as BinaryAsset;
         }
 
-        public void PrePublishBinaryAsset(ref Location loc, ref byte[] content, out bool cancel)
+        public void PrePublishAsset(ref Location loc, ref byte[] content, out bool cancel)
         {
             cancel = false;
 

@@ -26,11 +26,8 @@ namespace Xarial.Docify.Core.Publisher
         private readonly IFileSystem m_FileSystem;
 
         [ImportPlugin]
-        private IEnumerable<IPrePublishBinaryAssetPlugin> m_PrePublishBinaryPlugins = null;
-
-        [ImportPlugin]
-        private IEnumerable<IPrePublishTextAssetPlugin> m_PrePublishTextPlugins = null;
-
+        private IEnumerable<IPrePublishAssetPlugin> m_PrePublishAssetPlugins = null;
+        
         public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config) 
             : this(config, new FileSystem())
         {
@@ -74,32 +71,14 @@ namespace Xarial.Docify.Core.Publisher
 
                 bool cancel = false;
 
-                switch (writable)
+                var binContent = writable.Content;
+
+                m_PrePublishAssetPlugins.InvokePluginsIfAny(p => p.PrePublishAsset(ref outLoc, ref binContent, out cancel));
+                if (!cancel)
                 {
-                    case ITextWritable text:
-                        var txtContent = text.Content;
-                        m_PrePublishTextPlugins.InvokePluginsIfAny(p => p.PrePublishTextAsset(ref outLoc, ref txtContent, out cancel));
-                        if (!cancel)
-                        {
-                            outFilePath = outLoc.ToPath();
-                            CreateDirectoryIfNeeded();
-                            await m_FileSystem.File.WriteAllTextAsync(outFilePath, txtContent);
-                        }
-                        break;
-
-                    case IBinaryWritable bin:
-                        var binContent = bin.Content;
-                        m_PrePublishBinaryPlugins.InvokePluginsIfAny(p => p.PrePublishBinaryAsset(ref outLoc, ref binContent, out cancel));
-                        if (!cancel)
-                        {
-                            outFilePath = outLoc.ToPath();
-                            CreateDirectoryIfNeeded();
-                            await m_FileSystem.File.WriteAllBytesAsync(outFilePath, binContent);
-                        }
-                        break;
-
-                    default:
-                        throw new NotSupportedException();
+                    outFilePath = outLoc.ToPath();
+                    CreateDirectoryIfNeeded();
+                    await m_FileSystem.File.WriteAllBytesAsync(outFilePath, binContent);
                 }
             }
         }

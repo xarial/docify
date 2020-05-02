@@ -7,12 +7,46 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Xarial.Docify.Base.Content
 {
     public interface IWritable
     {
+        byte[] Content { get; }
         Location Location { get; }
+    }
+
+    public class Writable : IWritable
+    {
+        private static byte[] TextContentToByteArray(string content)
+        {
+            using (var memStr = new MemoryStream())
+            {
+                using (var streamWriter = new StreamWriter(memStr))
+                {
+                    streamWriter.Write(content);
+                }
+
+                memStr.Seek(0, SeekOrigin.Begin);
+                return memStr.ToArray();
+            }
+        }
+
+        public byte[] Content { get; }
+
+        public Location Location { get; }
+
+        public Writable(byte[] content, Location loc) 
+        {
+            Content = content;
+            Location = loc;
+        }
+
+        public Writable(string content, Location loc) 
+            : this(TextContentToByteArray(content), loc)
+        {
+        }
     }
 }

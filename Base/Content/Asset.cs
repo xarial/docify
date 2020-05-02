@@ -13,7 +13,7 @@ using System.Text;
 namespace Xarial.Docify.Base.Content
 {
     [DebuggerDisplay("{" + nameof(Location) + "}")]
-    public abstract class Asset : IWritable
+    public abstract class Asset
     {
         public Location Location { get; }
 

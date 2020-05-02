@@ -15,12 +15,11 @@ using Xarial.Docify.Base.Data;
 namespace Xarial.Docify.Base
 {
     [DebuggerDisplay("{" + nameof(Location) + "}")]
-    public class Page : Frame, ITextWritable
+    public class Page : Frame
     {
         public List<Page> SubPages { get; }
         public List<Asset> Assets { get; }
         public Location Location { get; }
-        public string Content { get; set; }
 
         public override string Key => Location.ToId();
 

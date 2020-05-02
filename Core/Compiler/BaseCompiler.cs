@@ -51,70 +51,38 @@ namespace Xarial.Docify.Core.Compiler
             m_IncludesHandler = includesHandler;
         }
 
-        public async Task Compile(Site site)
+        public async Task<IWritable[]> Compile(Site site)
         {
             m_PreCompilePlugins.InvokePluginsIfAny(p => p.PreCompile(site));
 
+            var writables = new List<IWritable>();
+
             var allPages = site.GetAllPages();
-            var allAssets = site.MainPage.Assets.OfType<TextAsset>();
 
-            if (m_Config.ParallelPartitionsCount == (int)BaseCompilerConfig.ParallelPartitions_e.NoParallelism)
+            foreach (var page in allPages)
             {
-                foreach (var page in allPages)
+                writables.Add(await CompilePage(page, site));
+
+                foreach (var asset in page.Assets)
                 {
-                    await CompilePage(page, site);
+                    if (asset is TextAsset)
+                    {
+                        writables.Add(await CompileAsset((TextAsset)asset, site));
+                    }
+                    else 
+                    {
+                        //TODO: change this
+                        writables.Add(new Writable((asset as BinaryAsset).Content, asset.Location));
+                    }
                 }
-
-                foreach (var asset in allAssets) 
-                {
-                    await CompileAsset(asset, site);
-                }
-            }
-            else 
-            {
-                //this is preview only option as sometimes exception is thrown, perhaps some of the engines are not thread safe
-                int partitionsCount = 1;
-
-                switch ((BaseCompilerConfig.ParallelPartitions_e)m_Config.ParallelPartitionsCount)
-                {
-                    case BaseCompilerConfig.ParallelPartitions_e.Infinite:
-                        partitionsCount = -1;
-                        break;
-
-                    case BaseCompilerConfig.ParallelPartitions_e.AutoDetect:
-                        partitionsCount = Environment.ProcessorCount;
-                        break;
-                }
-
-                await ForEachAsync(allPages, async p => await CompilePage(p, site), partitionsCount);
-                await ForEachAsync(allAssets, async a => await CompileAsset(a, site), partitionsCount);
             }
 
             m_PostCompilePlugins.InvokePluginsIfAny(p => p.PostCompile(site));
+
+            return writables.ToArray();
         }
-
-        private Task ForEachAsync<T>(IEnumerable<T> source, Func<T, Task> body, int partitionsCount)
-        {
-            if (partitionsCount == -1) 
-            {
-                partitionsCount = source.Count();
-            }
-
-            return Task.WhenAll(
-                System.Collections.Concurrent.Partitioner.Create(source).GetPartitions(partitionsCount)
-                .Select(partition => Task.Run(async delegate
-                {
-                    using (partition)
-                    {
-                        while (partition.MoveNext())
-                        {
-                            await body(partition.Current);
-                        }
-                    }
-                })));
-        }
-
-        private async Task CompilePage(Page page, Site site)
+        
+        private async Task<IWritable> CompilePage(Page page, Site site)
         {
             var model = new ContextModel(site, page);
 
@@ -129,16 +97,14 @@ namespace Xarial.Docify.Core.Compiler
 
             content = await m_IncludesHandler.ReplaceAll(content, site, page);
 
-            page.Content = content;
+            return new Writable(content, page.Location);
         }
 
-        private async Task CompileAsset(TextAsset asset, Site site)
+        private async Task<IWritable> CompileAsset(TextAsset asset, Site site)
         {
-            var model = new ContextModel(site, null);
-
             var content = await m_IncludesHandler.ReplaceAll(asset.RawContent, site, null);
 
-            asset.Content = content;
+            return new Writable(content, asset.Location);
         }
     }
 }

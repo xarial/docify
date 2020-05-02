@@ -13,21 +13,8 @@ namespace Xarial.Docify.Core.Compiler
 {
     public class BaseCompilerConfig
     {
-        public enum ParallelPartitions_e
-        {
-            Infinite = -1,
-            AutoDetect = 0,
-            NoParallelism = 1
-        }
-        
-        /// <summary>
-        /// Number of partitions for parallel job. See <see cref="ParallelPartitions_e"/> for options
-        /// </summary>
-        public int ParallelPartitionsCount { get; set; }
-
         public BaseCompilerConfig()
         {
-            ParallelPartitionsCount = (int)ParallelPartitions_e.NoParallelism;
         }
     }
 }

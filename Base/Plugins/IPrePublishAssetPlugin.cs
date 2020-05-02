@@ -8,11 +8,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Xarial.Docify.Base.Content
+namespace Xarial.Docify.Base.Plugins
 {
-    public interface ITextWritable : IWritable
+    public interface IPrePublishAssetPlugin : IPlugin
     {
-        string Content { get; }
+        void PrePublishAsset(ref Location loc, ref byte[] content, out bool cancel);
     }
 }

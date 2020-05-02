@@ -24,7 +24,7 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("code-syntax-highlighter")]
-    public class CodeSyntaxHighlighter : IRenderCodeBlockPlugin, IPreCompilePlugin, IPrePublishTextAssetPlugin, IPlugin<CodeSyntaxHighlighterSettings>
+    public class CodeSyntaxHighlighter : IRenderCodeBlockPlugin, IPreCompilePlugin, IPrePublishAssetPlugin, IPlugin<CodeSyntaxHighlighterSettings>
     {
         public CodeSyntaxHighlighterSettings Settings { get; set; }
 
@@ -43,7 +43,7 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        public void PrePublishTextAsset(ref Location loc, ref string content, out bool cancel)
+        public void PrePublishAsset(ref Location loc, ref byte[] content, out bool cancel)
         {
             cancel = false;
 
@@ -51,8 +51,10 @@ namespace Xarial.Docify.Lib.Plugins
             {
                 if (string.Equals(Path.GetExtension(loc.FileName), ".html", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    Helper.InjectDataIntoHtmlHead(ref content,
+                    var pageContent = Helper.ByteArrayContentToText(content);
+                    Helper.InjectDataIntoHtmlHead(ref pageContent,
                         string.Format(Helper.CSS_LINK_TEMPLATE, string.Join('/', CSS_FILE_PATH) + "/" + CSS_FILE_NAME));
+                    content = Helper.TextContentToByteArray(pageContent);
                 }
             }
         }

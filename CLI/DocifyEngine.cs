@@ -114,12 +114,8 @@ namespace Xarial.Docify.CLI
 
             var site = composer.ComposeSite(srcFiles, m_SiteUrl);
 
-            await compiler.Compile(site);
-
-            var writables = Enumerable.Empty<IWritable>();
-            writables = writables.Union(site.GetAllPages());
-            writables = writables.Union(site.GetAllPages().SelectMany(p => p.Assets));
-
+            var writables = await compiler.Compile(site);
+            
             await publisher.Write(Location.FromPath(m_OutDir), writables);
         }
 

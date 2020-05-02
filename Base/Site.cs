@@ -16,7 +16,10 @@ namespace Xarial.Docify.Base
     public class Site
     {
         public string BaseUrl { get; }
-        public List<Asset> Assets { get; }
+        
+        //TODO: this needs to be removed as it is currently duplicated by page assets
+        //public List<Asset> Assets { get; }
+
         public Page MainPage { get; }
         public List<Template> Layouts { get; }
         public List<Template> Includes { get; }
@@ -26,7 +29,7 @@ namespace Xarial.Docify.Base
         {
             BaseUrl = baseUrl;
             MainPage = mainPage;
-            Assets = new List<Asset>();
+            //Assets = new List<Asset>();
             Layouts = new List<Template>();
             Includes = new List<Template>();
             Configuration = config ?? new Configuration();

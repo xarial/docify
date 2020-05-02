@@ -56,7 +56,7 @@ namespace Xarial.Docify.Core.Compiler
             m_PreCompilePlugins.InvokePluginsIfAny(p => p.PreCompile(site));
 
             var allPages = site.GetAllPages();
-            var allAssets = site.Assets.OfType<TextAsset>();
+            var allAssets = site.MainPage.Assets.OfType<TextAsset>();
 
             if (m_Config.ParallelPartitionsCount == (int)BaseCompilerConfig.ParallelPartitions_e.NoParallelism)
             {

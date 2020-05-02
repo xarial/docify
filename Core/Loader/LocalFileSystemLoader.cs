@@ -53,7 +53,7 @@ namespace Xarial.Docify.Core.Loader
             }
 
             foreach (var filePath in m_FileSystem.Directory.GetFiles(path, 
-                "*.*", System.IO.SearchOption.AllDirectories))
+                "*.*", SearchOption.AllDirectories))
             {
                 var relPath = Path.GetRelativePath(path, filePath);
 

@@ -43,7 +43,7 @@ namespace Core.Tests
 
             var site = m_Composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, site.Assets.Count);
+            Assert.AreEqual(1, site.MainPage.Assets.Count);
             Assert.AreEqual(1, site.MainPage.SubPages[0].Assets.Count);
             Assert.AreEqual("a1", (site.MainPage.SubPages[0].Assets[0] as TextAsset).RawContent);
         }
@@ -59,7 +59,7 @@ namespace Core.Tests
             
             var site = m_Composer.ComposeSite(src, "");
 
-            Assert.AreEqual(1, site.Assets.Count);
+            Assert.AreEqual(1, site.MainPage.Assets.Count);
             Assert.AreEqual(1, site.MainPage.Assets.Count);
             Assert.AreEqual("a1", (site.MainPage.Assets[0] as TextAsset).RawContent);
         }
@@ -77,7 +77,7 @@ namespace Core.Tests
             
             var site = m_Composer.ComposeSite(src, "");
 
-            Assert.AreEqual(2, site.Assets.Count);
+            Assert.AreEqual(2, site.MainPage.Assets.Count);
             Assert.AreEqual(2, site.MainPage.SubPages[0].Assets.Count);
             Assert.AreEqual("a1", (site.MainPage.SubPages[0].Assets.Find(a => a.Location.FileName == "asset.txt") as TextAsset).RawContent);
             Assert.IsTrue(new byte[] { 1, 2, 3 }.SequenceEqual((site.MainPage.SubPages[0].Assets.Find(a => a.Location.FileName == "asset1.bin") as BinaryAsset).Content));
@@ -100,7 +100,7 @@ namespace Core.Tests
 
             var site = m_Composer.ComposeSite(src, "");
 
-            Assert.AreEqual(4, site.Assets.Count);
+            Assert.AreEqual(4, site.MainPage.Assets.Count);
             Assert.AreEqual(1, site.MainPage.SubPages[0].Assets.Count);
             Assert.AreEqual("a1", (site.MainPage.Assets[0] as TextAsset).RawContent);
             Assert.AreEqual("asset.txt", site.MainPage.Assets[0].Location.FileName);

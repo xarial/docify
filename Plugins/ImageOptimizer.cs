@@ -96,7 +96,7 @@ namespace Xarial.Docify.Lib.Plugins
                             page.Data.Add(REPLACE_IMAGE_TAG_NAME, imgName);
                             var imgPngAsset = new BinaryAsset(pngBuffer, new Location(imgName, page.Location.Path.ToArray()));
                             page.Assets.Add(imgPngAsset);
-                            site.Assets.Add(imgPngAsset);
+                            site.MainPage.Assets.Add(imgPngAsset);
                         }
                     }
                 }
@@ -127,7 +127,7 @@ namespace Xarial.Docify.Lib.Plugins
                 path = page.Location.ToUrl().TrimEnd('/') + "/" + path;
             }
 
-            return site.Assets.FirstOrDefault(
+            return site.MainPage.Assets.FirstOrDefault(
                     p => string.Equals(p.Location.ToUrl(), path)
                     || string.Equals(p.Location.ToUrl(site.BaseUrl), path)) as BinaryAsset;
         }

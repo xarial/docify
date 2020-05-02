@@ -197,6 +197,12 @@ namespace Core.Tests
         }
 
         [Test]
+        public void Render_PluginIncludes()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Test]
         public async Task ReplaceAll_NewLineSingleLineInclude()
         {
             var p1 = new Page(Location.FromPath("page1.html"), "");

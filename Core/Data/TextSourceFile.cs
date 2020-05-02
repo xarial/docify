@@ -27,6 +27,11 @@ namespace Xarial.Docify.Core.Data
             Location = path;
             Content = content;
         }
+
+        public override string ToString()
+        {
+            return Location.ToString();
+        }
     }
 
     public static class ITextSourceFileExtension 

@@ -118,7 +118,7 @@ namespace Xarial.Docify.CLI
 
             var writables = Enumerable.Empty<IWritable>();
             writables = writables.Union(site.GetAllPages());
-            writables = writables.Union(site.Assets);
+            writables = writables.Union(site.GetAllPages().SelectMany(p => p.Assets));
 
             await publisher.Write(Location.FromPath(m_OutDir), writables);
         }

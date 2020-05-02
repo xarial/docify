@@ -19,7 +19,7 @@ namespace Xarial.Docify.Lib.Plugins
 
         public void PreCompile(Site site)
         {
-            site.Assets.Add(new TextAsset(Resources.responsive_image, new Location(CSS_FILE_NAME, CSS_FILE_PATH)));
+            site.MainPage.Assets.Add(new TextAsset(Resources.responsive_image, new Location(CSS_FILE_NAME, CSS_FILE_PATH)));
         }
 
         public void PrePublishTextAsset(ref Location loc, ref string content, out bool cancel)

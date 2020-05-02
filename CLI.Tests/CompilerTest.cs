@@ -141,24 +141,24 @@ namespace CLI.Tests
         public async Task BinaryAssetTest()
         {
             var site = new Site("", new Page(new Location("page1.html"), ""), null);
-            site.Assets.Add(new BinaryAsset(new byte[] { 1, 2, 3 }, Location.FromPath("file.bin")));
+            site.MainPage.Assets.Add(new BinaryAsset(new byte[] { 1, 2, 3 }, Location.FromPath("file.bin")));
 
             await m_Compiler.Compile(site);
 
-            Assert.AreEqual(1, site.Assets.OfType<IBinaryWritable>().Count());
-            Assert.That(new byte[] { 1, 2, 3 }.SequenceEqual(site.Assets.OfType<IBinaryWritable>().First().Content));
+            Assert.AreEqual(1, site.MainPage.Assets.OfType<IBinaryWritable>().Count());
+            Assert.That(new byte[] { 1, 2, 3 }.SequenceEqual(site.MainPage.Assets.OfType<IBinaryWritable>().First().Content));
         }
 
         [Test]
         public async Task TextAssetTest()
         {
             var site = new Site("", new Page(new Location("page1.html"), ""), null);
-            site.Assets.Add(new TextAsset("test", Location.FromPath("file.txt")));
+            site.MainPage.Assets.Add(new TextAsset("test", Location.FromPath("file.txt")));
 
             await m_Compiler.Compile(site);
 
-            Assert.AreEqual(1, site.Assets.OfType<ITextWritable>().Count());
-            Assert.AreEqual("test", site.Assets.OfType<ITextWritable>().First().Content);
+            Assert.AreEqual(1, site.MainPage.Assets.OfType<ITextWritable>().Count());
+            Assert.AreEqual("test", site.MainPage.Assets.OfType<ITextWritable>().First().Content);
         }
 
         [Test]

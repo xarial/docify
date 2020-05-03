@@ -20,14 +20,14 @@ namespace Xarial.Docify.Core.Loader
 
         public List<string> Ignore { get; }
 
-        public List<string> TextFileExtensions { get; } = new List<string>(new string[]
-        {
-            "htm", "html", "cshtml", "md",
-            "xml", "json", "yml",
-            "css", "js", "ts",
-            "txt", "csv", "tsv",
-            "cs", "cpp", "vb", "vba", "py"
-        });
+        //public List<string> TextFileExtensions { get; } = new List<string>(new string[]
+        //{
+        //    "htm", "html", "cshtml", "md",
+        //    "xml", "json", "yml",
+        //    "css", "js", "ts",
+        //    "txt", "csv", "tsv",
+        //    "cs", "cpp", "vb", "vba", "py"
+        //});
 
         public LocalFileSystemLoaderConfig(IEnumerable<string> ignore)
         {

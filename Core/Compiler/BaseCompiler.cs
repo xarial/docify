@@ -22,6 +22,7 @@ using Xarial.Docify.Core.Compiler.Context;
 using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Core.Plugin;
+using Xarial.Docify.Core.Helpers;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -38,7 +39,7 @@ namespace Xarial.Docify.Core.Compiler
 
         [ImportPlugin]
         private IEnumerable<IPostCompilePlugin> m_PostCompilePlugins = null;
-
+        
         public BaseCompiler(BaseCompilerConfig config,
             ILogger logger, ILayoutParser layoutParser,
             IIncludesHandler includesHandler,
@@ -51,11 +52,11 @@ namespace Xarial.Docify.Core.Compiler
             m_IncludesHandler = includesHandler;
         }
 
-        public async Task<IWritable[]> Compile(Site site)
+        public async Task<IFile[]> Compile(Site site)
         {
             m_PreCompilePlugins.InvokePluginsIfAny(p => p.PreCompile(site));
 
-            var writables = new List<IWritable>();
+            var writables = new List<IFile>();
 
             var allPages = site.GetAllPages();
 
@@ -65,14 +66,16 @@ namespace Xarial.Docify.Core.Compiler
 
                 foreach (var asset in page.Assets)
                 {
-                    if (asset is TextAsset)
+                    var id = asset.Location.ToId();
+
+                    if (PathMatcher.Matches(m_Config.CompilableAssetsFilter, id))
                     {
-                        writables.Add(await CompileAsset((TextAsset)asset, site));
+                        writables.Add(await CompileAsset(asset, site));
                     }
                     else 
                     {
                         //TODO: change this
-                        writables.Add(new Writable((asset as BinaryAsset).Content, asset.Location));
+                        writables.Add(new Writable(asset.Content, asset.Location));
                     }
                 }
             }
@@ -82,7 +85,7 @@ namespace Xarial.Docify.Core.Compiler
             return writables.ToArray();
         }
         
-        private async Task<IWritable> CompilePage(Page page, Site site)
+        private async Task<IFile> CompilePage(Page page, Site site)
         {
             var model = new ContextModel(site, page);
 
@@ -100,9 +103,10 @@ namespace Xarial.Docify.Core.Compiler
             return new Writable(content, page.Location);
         }
 
-        private async Task<IWritable> CompileAsset(TextAsset asset, Site site)
+        private async Task<IFile> CompileAsset(Asset asset, Site site)
         {
-            var content = await m_IncludesHandler.ReplaceAll(asset.RawContent, site, null);
+            var rawContent = asset.AsTextContent();
+            var content = await m_IncludesHandler.ReplaceAll(rawContent, site, null);
 
             return new Writable(content, asset.Location);
         }

@@ -24,7 +24,7 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("code-syntax-highlighter")]
-    public class CodeSyntaxHighlighter : IRenderCodeBlockPlugin, IPreCompilePlugin, IPrePublishAssetPlugin, IPlugin<CodeSyntaxHighlighterSettings>
+    public class CodeSyntaxHighlighter : IRenderCodeBlockPlugin, IPreCompilePlugin, IPrePublishWritablePlugin, IPlugin<CodeSyntaxHighlighterSettings>
     {
         public CodeSyntaxHighlighterSettings Settings { get; set; }
 
@@ -39,22 +39,22 @@ namespace Xarial.Docify.Lib.Plugins
             {
                 var css = (Formatter as HtmlClassFormatter).GetCSSString();
                 css = css.Substring("body{background-color:#FFFFFFFF;} ".Length);//temp solution - find a better way
-                site.MainPage.Assets.Add(new TextAsset(css, new Location(CSS_FILE_NAME, CSS_FILE_PATH)));
+                site.MainPage.Assets.Add(Asset.FromTextContent(css, new Location(CSS_FILE_NAME, CSS_FILE_PATH)));
             }
         }
 
-        public void PrePublishAsset(ref Location loc, ref byte[] content, out bool cancel)
+        public void PrePublishWritable(ref IFile writable, out bool cancel)
         {
             cancel = false;
 
             if (!Settings.EmbedStyle)
             {
-                if (string.Equals(Path.GetExtension(loc.FileName), ".html", StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals(Path.GetExtension(writable.Location.FileName), ".html", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var pageContent = Helper.ByteArrayContentToText(content);
+                    var pageContent = writable.AsTextContent();
                     Helper.InjectDataIntoHtmlHead(ref pageContent,
                         string.Format(Helper.CSS_LINK_TEMPLATE, string.Join('/', CSS_FILE_PATH) + "/" + CSS_FILE_NAME));
-                    content = Helper.TextContentToByteArray(pageContent);
+                    writable = Writable.FromTextContent(pageContent, writable.Location);
                 }
             }
         }

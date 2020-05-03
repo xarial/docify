@@ -11,7 +11,7 @@ using Xarial.Docify.Lib.Plugins.Properties;
 namespace Xarial.Docify.Lib.Plugins
 {
     [Plugin("responsive-image")]
-    public class ResponsiveImagePlugin : IPreCompilePlugin, IPrePublishAssetPlugin, IRenderImagePlugin
+    public class ResponsiveImagePlugin : IPreCompilePlugin, IPrePublishWritablePlugin, IRenderImagePlugin
     {
         private const string CSS_FILE_NAME = "responsive-image.css";
         private readonly string[] CSS_FILE_PATH = new string[] { "assets", "styles" };
@@ -19,17 +19,17 @@ namespace Xarial.Docify.Lib.Plugins
 
         public void PreCompile(Site site)
         {
-            site.MainPage.Assets.Add(new TextAsset(Resources.responsive_image, new Location(CSS_FILE_NAME, CSS_FILE_PATH)));
+            site.MainPage.Assets.Add(Asset.FromTextContent(Resources.responsive_image, new Location(CSS_FILE_NAME, CSS_FILE_PATH)));
         }
 
-        public void PrePublishAsset(ref Location loc, ref byte[] content, out bool cancel)
+        public void PrePublishWritable(ref IFile writable, out bool cancel)
         {
-            if (string.Equals(Path.GetExtension(loc.FileName), ".html", StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(Path.GetExtension(writable.Location.FileName), ".html", StringComparison.InvariantCultureIgnoreCase))
             {
-                var pageContent = Helper.ByteArrayContentToText(content);
+                var pageContent = writable.AsTextContent();
                 Helper.InjectDataIntoHtmlHead(ref pageContent,
                     string.Format(Helper.CSS_LINK_TEMPLATE, string.Join('/', CSS_FILE_PATH) + "/" + CSS_FILE_NAME));
-                content = Helper.TextContentToByteArray(pageContent);
+                writable = Writable.FromTextContent(pageContent, writable.Location);
             }
 
             cancel = false;

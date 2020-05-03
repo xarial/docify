@@ -8,17 +8,27 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Linq;
 using Xarial.Docify.Base;
+using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Core.Exceptions
+namespace Xarial.Docify.Core.Data
 {
-    public class UnsupportedSourceFileTypesException : Exception
+    public class SourceFile : IFile
     {
-        public UnsupportedSourceFileTypesException(IEnumerable<ISourceFile> srcFiles)
-            : base($"The followin source file are not supported: {string.Join(", ", srcFiles.Select(f => f.GetType()).Distinct().Select(t => t.FullName))}")
+        public byte[] Content { get; }
+
+        public Location Location { get; }
+
+        public SourceFile(Location path, byte[] content)
         {
+            Location = path;
+            Content = content;
+        }
+
+        public override string ToString()
+        {
+            return Location.ToString();
         }
     }
 }

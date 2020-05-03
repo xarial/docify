@@ -6,27 +6,16 @@ namespace Xarial.Docify.Core.Compiler.Context
 {
     public interface IContextAsset 
     {
+        byte[] Content { get; }
         string Name { get; }
     }
 
-    public class ContextTextAsset : IContextAsset
-    {
-        public string Content { get; }
-        public string Name { get; }
-
-        public ContextTextAsset(string name, string content) 
-        {
-            Name = name;
-            Content = content;
-        }
-    }
-
-    public class ContextBinaryAsset : IContextAsset
+    public class ContextAsset : IContextAsset
     {
         public  byte[] Content { get; }
         public string Name { get; }
 
-        public ContextBinaryAsset(string name, byte[] content)
+        public ContextAsset(string name, byte[] content)
         {
             Name = name;
             Content = content;

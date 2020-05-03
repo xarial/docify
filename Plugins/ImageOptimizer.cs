@@ -47,7 +47,7 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("image-optimizer")]
-    public class ImageOptimizer : IPreCompilePlugin, IPrePublishAssetPlugin, IPlugin<ImageOptimizerSettings>
+    public class ImageOptimizer : IPreCompilePlugin, IPlugin<ImageOptimizerSettings>
     {
         private const string IMAGE_TAG_NAME = "image";
         private const string REPLACE_IMAGE_TAG_NAME = "image-png";
@@ -94,7 +94,7 @@ namespace Xarial.Docify.Lib.Plugins
                             }
 
                             page.Data.Add(REPLACE_IMAGE_TAG_NAME, imgName);
-                            var imgPngAsset = new BinaryAsset(pngBuffer, new Location(imgName, page.Location.Path.ToArray()));
+                            var imgPngAsset = new Asset(new Location(imgName, page.Location.Path.ToArray()), pngBuffer);
                             page.Assets.Add(imgPngAsset);
                             site.MainPage.Assets.Add(imgPngAsset);
                         }
@@ -120,7 +120,7 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        private BinaryAsset TryFindImageAsset(Site site, Page page, string path)
+        private Asset TryFindImageAsset(Site site, Page page, string path)
         {
             if (!path.StartsWith('/')) 
             {
@@ -129,7 +129,7 @@ namespace Xarial.Docify.Lib.Plugins
 
             return site.MainPage.Assets.FirstOrDefault(
                     p => string.Equals(p.Location.ToUrl(), path)
-                    || string.Equals(p.Location.ToUrl(site.BaseUrl), path)) as BinaryAsset;
+                    || string.Equals(p.Location.ToUrl(site.BaseUrl), path));
         }
 
         public void PrePublishAsset(ref Location loc, ref byte[] content, out bool cancel)

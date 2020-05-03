@@ -13,6 +13,11 @@ namespace Xarial.Docify.Core.Compiler
 {
     public class BaseCompilerConfig
     {
+        public string[] CompilableAssetsFilter = new string[]
+        {
+            "*.xml", "*.json"
+        };
+
         public BaseCompilerConfig()
         {
         }

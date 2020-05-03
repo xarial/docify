@@ -9,29 +9,31 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Content
 {
-    public interface IWritable
+    public interface IFile
     {
         byte[] Content { get; }
         Location Location { get; }
     }
 
-    public class Writable : IWritable
+    public static class FileExtension
     {
-        private static byte[] TextContentToByteArray(string content)
+        public static string AsTextContent(this IFile writable)
         {
-            using (var memStr = new MemoryStream())
-            {
-                using (var streamWriter = new StreamWriter(memStr))
-                {
-                    streamWriter.Write(content);
-                }
+            return DataConverter.ToText(writable.Content);
+        }
+    }
 
-                memStr.Seek(0, SeekOrigin.Begin);
-                return memStr.ToArray();
-            }
+    public class Writable : IFile
+    {
+        public static Writable FromTextContent(string content, Location loc) 
+        {
+            var buffer = DataConverter.ToByteArray(content);
+
+            return new Writable(buffer, loc);
         }
 
         public byte[] Content { get; }
@@ -45,7 +47,7 @@ namespace Xarial.Docify.Base.Content
         }
 
         public Writable(string content, Location loc) 
-            : this(TextContentToByteArray(content), loc)
+            : this(DataConverter.ToByteArray(content), loc)
         {
         }
     }

@@ -15,6 +15,7 @@ using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
+using Xarial.Docify.Core.Helpers;
 
 namespace Xarial.Docify.Core.Composer
 {
@@ -33,7 +34,7 @@ namespace Xarial.Docify.Core.Composer
             m_Config = config;
         }
 
-        private bool IsPage(ISourceFile srcFile) 
+        private bool IsPage(IFile srcFile) 
         {
             var ext = Path.GetExtension(srcFile.Location.FileName);
 
@@ -47,15 +48,15 @@ namespace Xarial.Docify.Core.Composer
             return htmlExts.Contains(ext, StringComparer.CurrentCultureIgnoreCase);
         }
 
-        private void ParseTextFile(ITextSourceFile src, out string rawContent,
+        private void ParseTextFile(IFile src, out string rawContent,
             out Metadata data, out string layoutName) 
         {
-            src.Parse(out rawContent, out data);
+            FrontMatterParser.Parse(src.AsTextContent(), out rawContent, out data);
 
             layoutName = data.GetRemoveParameterOrDefault<string>(LAYOUT_VAR_NAME);
         }
 
-        private Page CreatePageFromSourceOrDefault(ITextSourceFile src,
+        private Page CreatePageFromSourceOrDefault(IFile src,
             Location loc, 
             IReadOnlyDictionary<string, Template> layoutsMap)
         {
@@ -87,16 +88,15 @@ namespace Xarial.Docify.Core.Composer
             return page;
         }
 
-        public Site ComposeSite(IEnumerable<ISourceFile> files, string baseUrl)
+        public Site ComposeSite(IEnumerable<IFile> files, string baseUrl)
         {
             if (files?.Any() == true)
             {
                 GroupSourceFiles(files, 
-                    out IEnumerable<ITextSourceFile> srcPages, 
-                    out IEnumerable<ITextSourceFile> srcLayouts,
-                    out IEnumerable<ITextSourceFile> srcIncludes, 
-                    out IEnumerable<ITextSourceFile> srcTextAssets,
-                    out IEnumerable<IBinarySourceFile> srcBinaryAssets);
+                    out IEnumerable<IFile> srcPages, 
+                    out IEnumerable<IFile> srcLayouts,
+                    out IEnumerable<IFile> srcIncludes, 
+                    out IEnumerable<IFile> srcAssets);
 
                 if (!srcPages.Any()) 
                 {
@@ -105,13 +105,12 @@ namespace Xarial.Docify.Core.Composer
 
                 var layouts = ParseLayouts(srcLayouts);
                 var includes = ParseIncludes(srcIncludes);
-                var assets = ParseAssets(srcTextAssets, srcBinaryAssets);
+                var assets = ParseAssets(srcAssets);
                 var mainPage = ParsePages(srcPages, layouts, assets);
 
                 var site = new Site(baseUrl, mainPage, m_Config);
                 site.Layouts.AddRange(layouts.Values);
                 site.Includes.AddRange(includes);
-                //site.MainPage.Assets.AddRange(assets);
 
                 return site;
             }
@@ -121,60 +120,39 @@ namespace Xarial.Docify.Core.Composer
             }
         }
 
-        private void GroupSourceFiles(IEnumerable<ISourceFile> files,
-            out IEnumerable<ITextSourceFile> pages, 
-            out IEnumerable<ITextSourceFile> layouts,
-            out IEnumerable<ITextSourceFile> includes,
-            out IEnumerable<ITextSourceFile> textAssets,
-            out IEnumerable<IBinarySourceFile> binaryAssets) 
+        private void GroupSourceFiles(IEnumerable<IFile> files,
+            out IEnumerable<IFile> pages, 
+            out IEnumerable<IFile> layouts,
+            out IEnumerable<IFile> includes,
+            out IEnumerable<IFile> assets) 
         {
             if (files.Any(f => f == null))
             {
                 throw new NullReferenceException("Null reference source file is detected");
             }
 
-            var textFiles = files.OfType<ITextSourceFile>();
-            var binFiles = files.OfType<IBinarySourceFile>();
+            var procFiles = files;
 
-            var notSupported = files.Except(textFiles).Except(binFiles);
-
-            if (notSupported.Any())
-            {
-                throw new UnsupportedSourceFileTypesException(notSupported);
-            }
-
-            layouts = textFiles
+            layouts = procFiles
                 .Where(f => string.Equals(f.Location.Root, LAYOUTS_FOLDER,
                 StringComparison.CurrentCultureIgnoreCase));
 
-            textFiles = textFiles.Except(layouts);
+            procFiles = procFiles.Except(layouts);
 
-            includes = textFiles
+            includes = procFiles
                 .Where(f => string.Equals(f.Location.Root, INCLUDES_FOLDER,
                 StringComparison.CurrentCultureIgnoreCase));
 
-            textFiles = textFiles.Except(includes);
+            procFiles = procFiles.Except(includes);
 
-            pages = textFiles.Where(e => IsPage(e));
+            pages = procFiles.Where(e => IsPage(e));
 
-            textFiles = textFiles.Except(pages);
+            procFiles = procFiles.Except(pages);
 
-            textAssets = textFiles;
-            binaryAssets = binFiles;
+            assets = procFiles;
         }
-
-        private List<Asset> ParseAssets(IEnumerable<ITextSourceFile> textAssets,
-            IEnumerable<IBinarySourceFile> binaryAssets) 
-        {
-            var assets = new List<Asset>();
-
-            assets.AddRange(textAssets.Select(a => new TextAsset(a.Content, a.Location)));
-            assets.AddRange(binaryAssets.Select(a => new BinaryAsset(a.Content, a.Location)));
-
-            return assets;
-        }
-
-        private Dictionary<string, Template> ParseLayouts(IEnumerable<ITextSourceFile> layoutFiles) 
+        
+        private Dictionary<string, Template> ParseLayouts(IEnumerable<IFile> layoutFiles) 
         {
             var layouts = new Dictionary<string, Template>(StringComparer.CurrentCultureIgnoreCase);
 
@@ -189,7 +167,7 @@ namespace Xarial.Docify.Core.Composer
             return layouts;
         }
 
-        private List<Template> ParseIncludes(IEnumerable<ITextSourceFile> includeFiles) 
+        private List<Template> ParseIncludes(IEnumerable<IFile> includeFiles) 
         {
             var usedIncludes = new List<string>();
 
@@ -216,6 +194,11 @@ namespace Xarial.Docify.Core.Composer
             }).ToList();
         }
 
+        private List<Asset> ParseAssets(IEnumerable<IFile> assets) 
+        {
+            return assets.Select(a => new Asset(a.Location, a.Content)).ToList();
+        }
+
         private string GetTemplateName(Location loc) 
         {
             var path = loc.Path.Skip(1).ToList();
@@ -225,7 +208,7 @@ namespace Xarial.Docify.Core.Composer
         }
 
         private Template CreateLayout(Dictionary<string, Template> layouts, 
-            List<ITextSourceFile> layoutsSrcList, string layoutName) 
+            List<IFile> layoutsSrcList, string layoutName) 
         {
             //TODO: detect circular dependencies
 
@@ -272,7 +255,7 @@ namespace Xarial.Docify.Core.Composer
             return layout;
         }
 
-        private Page ParsePages(IEnumerable<ITextSourceFile> srcPages,
+        private Page ParsePages(IEnumerable<IFile> srcPages,
             IReadOnlyDictionary<string, Template> layouts,
             IReadOnlyList<Asset> assets)
         {
@@ -294,7 +277,7 @@ namespace Xarial.Docify.Core.Composer
                 throw new SiteMainPageMissingException();
             }
 
-            srcPages = srcPages.Except(new ITextSourceFile[] { mainSrcPage });
+            srcPages = srcPages.Except(new IFile[] { mainSrcPage });
 
             var mainPage = CreatePageFromSourceOrDefault(mainSrcPage, new Location(""), layouts);
 

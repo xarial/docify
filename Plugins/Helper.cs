@@ -22,32 +22,5 @@ namespace Xarial.Docify.Lib.Plugins
                 throw new Exception("Failed to find </head> tag in the html document");
             }
         }
-
-        internal static string ByteArrayContentToText(byte[] content)
-        {
-            using (var memStr = new MemoryStream(content))
-            {
-                memStr.Seek(0, SeekOrigin.Begin);
-
-                using (var streamReader = new StreamReader(memStr))
-                {
-                    return streamReader.ReadToEnd();
-                }
-            }
-        }
-
-        internal static byte[] TextContentToByteArray(string content)
-        {
-            using (var memStr = new MemoryStream())
-            {
-                using (var streamWriter = new StreamWriter(memStr))
-                {
-                    streamWriter.Write(content);
-                }
-
-                memStr.Seek(0, SeekOrigin.Begin);
-                return memStr.ToArray();
-            }
-        }
     }
 }

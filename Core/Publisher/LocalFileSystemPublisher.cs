@@ -26,7 +26,7 @@ namespace Xarial.Docify.Core.Publisher
         private readonly IFileSystem m_FileSystem;
 
         [ImportPlugin]
-        private IEnumerable<IPrePublishAssetPlugin> m_PrePublishAssetPlugins = null;
+        private IEnumerable<IPrePublishWritablePlugin> m_PrePublishWritablePlugins = null;
         
         public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config) 
             : this(config, new FileSystem())
@@ -39,7 +39,7 @@ namespace Xarial.Docify.Core.Publisher
             m_FileSystem = fileSystem;
         }
 
-        public async Task Write(Location loc, IEnumerable<IWritable> writables)
+        public async Task Write(Location loc, IEnumerable<Base.Content.IFile> writables)
         {
             var outDir = loc.ToPath();
 
@@ -71,14 +71,14 @@ namespace Xarial.Docify.Core.Publisher
 
                 bool cancel = false;
 
-                var binContent = writable.Content;
+                Base.Content.IFile outWritable = new Writable(writable.Content, outLoc);
 
-                m_PrePublishAssetPlugins.InvokePluginsIfAny(p => p.PrePublishAsset(ref outLoc, ref binContent, out cancel));
+                m_PrePublishWritablePlugins.InvokePluginsIfAny(p => p.PrePublishWritable(ref outWritable, out cancel));
                 if (!cancel)
                 {
-                    outFilePath = outLoc.ToPath();
+                    outFilePath = outWritable.Location.ToPath();
                     CreateDirectoryIfNeeded();
-                    await m_FileSystem.File.WriteAllBytesAsync(outFilePath, binContent);
+                    await m_FileSystem.File.WriteAllBytesAsync(outFilePath, outWritable.Content);
                 }
             }
         }

@@ -58,20 +58,8 @@ namespace Xarial.Docify.Core.Compiler.Context
 
         public IReadOnlyList<IContextPage> SubPages => BasePage.SubPages.ConvertAll(p => new ContextPage(m_Site, p));
 
-        public IReadOnlyList<IContextAsset> Assets => BasePage.Assets.ConvertAll<IContextAsset>(a => 
-        {
-            switch (a) 
-            {
-                case TextAsset text:
-                    return new ContextTextAsset(text.Location.FileName, text.RawContent);
-
-                case BinaryAsset bin:
-                    return new ContextBinaryAsset(bin.Location.FileName, bin.Content);
-
-                default:
-                    throw new NotSupportedException();
-            }
-        });
+        public IReadOnlyList<IContextAsset> Assets => BasePage.Assets
+            .ConvertAll<IContextAsset>(a => new ContextAsset(a.Location.FileName, a.Content));
 
         public ContextPage(Site site, Page page) 
         {

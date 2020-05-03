@@ -1,44 +1,18 @@
-﻿//*********************************************************************
-//docify
-//Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
-//*********************************************************************
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Core.Exceptions;
 using YamlDotNet.Serialization;
 
-namespace Xarial.Docify.Core.Data
+namespace Xarial.Docify.Core.Helpers
 {
-    public class TextSourceFile : ITextSourceFile
-    {
-        public Location Location { get; }
-        public string Content { get; }
-
-        public TextSourceFile(Location path, string content)
-        {
-            Location = path;
-            Content = content;
-        }
-
-        public override string ToString()
-        {
-            return Location.ToString();
-        }
-    }
-
-    public static class ITextSourceFileExtension 
+    public static class FrontMatterParser
     {
         private const string FRONT_MATTER_HEADER = "---";
 
-        public static void Parse(this ITextSourceFile src, out string rawContent,
+        public static void Parse(string content, out string rawContent,
             out Metadata data)
         {
             bool isStart = true;
@@ -47,7 +21,7 @@ namespace Xarial.Docify.Core.Data
             rawContent = "";
             var frontMatter = new StringBuilder();
 
-            using (var strReader = new StringReader(src.Content))
+            using (var strReader = new StringReader(content))
             {
                 var line = strReader.ReadLine();
 
@@ -92,7 +66,7 @@ namespace Xarial.Docify.Core.Data
 
                 data = yamlDeserializer.Deserialize<Metadata>(frontMatter.ToString());
             }
-            else 
+            else
             {
                 data = new Metadata();
             }

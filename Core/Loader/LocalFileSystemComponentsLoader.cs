@@ -8,11 +8,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
+using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Exceptions;
@@ -30,11 +30,11 @@ namespace Xarial.Docify.Core.Loader
             m_Config = conf;
         }
 
-        public async Task<IEnumerable<ISourceFile>> Load(IEnumerable<ISourceFile> srcFiles)
+        public async Task<IEnumerable<IFile>> Load(IEnumerable<IFile> srcFiles)
         {
             if (srcFiles == null)
             {
-                srcFiles = Enumerable.Empty<ISourceFile>();
+                srcFiles = Enumerable.Empty<IFile>();
             }
 
             var resFiles = srcFiles.ToDictionary(f => f.Location.ToId(), f => f, StringComparer.CurrentCultureIgnoreCase);
@@ -55,7 +55,7 @@ namespace Xarial.Docify.Core.Loader
             return resFiles.Values;
         }
 
-        private async Task AddFiles(Dictionary<string, ISourceFile> srcFiles, Location loc, string fragName, bool allowInherit) 
+        private async Task AddFiles(Dictionary<string, IFile> srcFiles, Location loc, string fragName, bool allowInherit) 
         {
             var newSrcFiles = await m_Loader.Load(loc);
 

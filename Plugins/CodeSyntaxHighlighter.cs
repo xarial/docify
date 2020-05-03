@@ -13,7 +13,7 @@ using System.IO;
 using System.Text;
 using System.Xml.Linq;
 using Xarial.Docify.Base;
-using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 
 namespace Xarial.Docify.Lib.Plugins

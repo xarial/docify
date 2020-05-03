@@ -11,7 +11,7 @@ using System.IO;
 using System.Text;
 using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Base.Content
+namespace Xarial.Docify.Base.Data
 {
     public interface IFile
     {

@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Services

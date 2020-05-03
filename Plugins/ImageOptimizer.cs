@@ -14,11 +14,11 @@ using nQuant;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
-using Xarial.Docify.Base.Content;
 using Svg;
 using System.Drawing.Imaging;
 using System.Collections;
 using System.Collections.Generic;
+using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Lib.Plugins
 {

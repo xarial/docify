@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using Xarial.Docify.Base;
-using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Data
 {

@@ -16,7 +16,6 @@ using System.Linq;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Core.Publisher;
 using Xarial.Docify.Base;
-using Xarial.Docify.Base.Content;
 using Xarial.Docify.Core.Data;
 
 namespace Core.Tests

@@ -16,7 +16,6 @@ using System.Linq;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base;
 using Xarial.Docify.Core.Exceptions;
-using Xarial.Docify.Base.Content;
 
 namespace Core.Tests
 {

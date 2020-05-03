@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
-using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Data;
@@ -36,7 +36,7 @@ namespace Xarial.Docify.Core.Publisher
             m_FileSystem = fileSystem;
         }
 
-        public async Task Write(Location loc, IEnumerable<Base.Content.IFile> writables)
+        public async Task Write(Location loc, IEnumerable<IFile> writables)
         {
             var outDir = loc.ToPath();
 

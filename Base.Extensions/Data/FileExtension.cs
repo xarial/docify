@@ -5,10 +5,12 @@ using System.Text;
 
 namespace Xarial.Docify.Base.Data
 {
-    internal static class DataConverter
+    public static class FileExtension
     {
-        internal static string ToText(byte[] buffer)
+        public static string AsTextContent(this IFile file)
         {
+            var buffer = file.Content;
+
             if (buffer != null && buffer.Length > 0)
             {
                 using (var memStr = new MemoryStream(buffer))
@@ -27,7 +29,7 @@ namespace Xarial.Docify.Base.Data
             }
         }
 
-        internal static byte[] ToByteArray(string content)
+        public static byte[] ToByteArray(string content)
         {
             byte[] buffer = null;
 

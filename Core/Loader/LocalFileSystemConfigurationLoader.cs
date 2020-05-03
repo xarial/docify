@@ -54,7 +54,7 @@ namespace Xarial.Docify.Core.Loader
             m_Environment = env;
         }
 
-        public async Task<Configuration> Load(Location location)
+        public async Task<Configuration> Load(ILocation location)
         {
             string NormalizeDirFunc(string dir, string defDir)
             {
@@ -108,7 +108,7 @@ namespace Xarial.Docify.Core.Loader
             return conf;
         }
 
-        private async Task<Configuration> GetConfiguration(Location location)
+        private async Task<Configuration> GetConfiguration(ILocation location)
         {
             var srcDir = location.ToPath();
 

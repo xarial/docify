@@ -17,15 +17,15 @@ namespace Xarial.Docify.Core.Data
     {
         public byte[] Content { get; }
 
-        public Location Location { get; }
+        public ILocation Location { get; }
 
-        public SourceFile(Location path, byte[] content)
+        public SourceFile(ILocation path, byte[] content)
         {
             Location = path;
             Content = content;
         }
 
-        public SourceFile(Location path, string content)
+        public SourceFile(ILocation path, string content)
             : this(path, FileExtension.ToByteArray(content))
         {
         }

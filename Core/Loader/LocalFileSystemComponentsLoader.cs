@@ -54,7 +54,7 @@ namespace Xarial.Docify.Core.Loader
             return resFiles.Values;
         }
 
-        private async Task AddFiles(Dictionary<string, IFile> srcFiles, Location loc, string fragName, bool allowInherit) 
+        private async Task AddFiles(Dictionary<string, IFile> srcFiles, ILocation loc, string fragName, bool allowInherit) 
         {
             var newSrcFiles = await m_Loader.Load(loc);
 

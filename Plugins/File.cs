@@ -9,14 +9,14 @@ namespace Xarial.Docify.Lib.Plugins
     public class File : IFile
     {
         public byte[] Content { get; }
-        public Location Location { get; }
+        public ILocation Location { get; }
 
-        public File(string content, Location loc) 
+        public File(string content, ILocation loc) 
             : this(FileExtension.ToByteArray(content), loc)
         {
         }
 
-        public File(byte[] content, Location loc)
+        public File(byte[] content, ILocation loc)
         {
             Content = content;
             Location = loc;

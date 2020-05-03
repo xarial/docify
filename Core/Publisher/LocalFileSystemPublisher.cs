@@ -36,7 +36,7 @@ namespace Xarial.Docify.Core.Publisher
             m_FileSystem = fileSystem;
         }
 
-        public async Task Write(Location loc, IEnumerable<IFile> writables)
+        public async Task Write(ILocation loc, IEnumerable<IFile> writables)
         {
             var outDir = loc.ToPath();
 

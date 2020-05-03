@@ -18,9 +18,9 @@ namespace Xarial.Docify.Core.Data
         }
 
         public byte[] Content { get; }
-        public Location Location { get; }
+        public ILocation Location { get; }
 
-        public Asset(Location loc, byte[] content)
+        public Asset(ILocation loc, byte[] content)
         {
             Location = loc;
             Content = content;

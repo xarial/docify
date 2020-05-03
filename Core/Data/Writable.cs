@@ -10,15 +10,15 @@ namespace Xarial.Docify.Core.Data
     {
         public byte[] Content { get; }
 
-        public Location Location { get; }
+        public ILocation Location { get; }
 
-        public Writable(byte[] content, Location loc)
+        public Writable(byte[] content, ILocation loc)
         {
             Content = content;
             Location = loc;
         }
 
-        public Writable(string content, Location loc)
+        public Writable(string content, ILocation loc)
             : this(FileExtension.ToByteArray(content), loc)
         {
         }

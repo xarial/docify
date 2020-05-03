@@ -16,19 +16,6 @@ namespace Xarial.Docify.Base.Data
     public interface IFile
     {
         byte[] Content { get; }
-        Location Location { get; }
-    }
-
-    public static class FileExtension
-    {
-        public static string AsTextContent(this IFile writable)
-        {
-            return DataConverter.ToText(writable.Content);
-        }
-
-        public static byte[] ToByteArray(string content) 
-        {
-            return DataConverter.ToByteArray(content);
-        }
+        ILocation Location { get; }
     }
 }

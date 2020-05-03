@@ -15,6 +15,7 @@ using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
+using Xarial.Docify.Core;
 using Xarial.Docify.Core.Plugin;
 using YamlDotNet.Serialization;
 

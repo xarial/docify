@@ -6,15 +6,21 @@
 //*********************************************************************
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Base.Services
+namespace Xarial.Docify.Base
 {
-    public interface IConfigurationLoader
+    public interface ILocation 
     {
-        Task<Configuration> Load(ILocation location);
-    }
+        IReadOnlyList<string> Path { get; }
+        string FileName { get; }
+
+        ILocation Copy(string fileName, IEnumerable<string> path);
+    }    
 }

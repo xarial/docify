@@ -37,7 +37,7 @@ namespace Xarial.Docify.Core.Loader
             m_FileSystem = fileSystem;
         }
 
-        public async Task<IEnumerable<IFile>> Load(Location location)
+        public async Task<IEnumerable<IFile>> Load(ILocation location)
         {
             var files = new List<IFile>();
             

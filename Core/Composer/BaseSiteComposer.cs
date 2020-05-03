@@ -56,7 +56,7 @@ namespace Xarial.Docify.Core.Composer
         }
 
         private Page CreatePageFromSourceOrDefault(IFile src,
-            Location loc, 
+            ILocation loc, 
             IReadOnlyDictionary<string, Template> layoutsMap)
         {
             string rawContent = null;
@@ -133,13 +133,13 @@ namespace Xarial.Docify.Core.Composer
             var procFiles = files;
 
             layouts = procFiles
-                .Where(f => string.Equals(f.Location.Root, LAYOUTS_FOLDER,
+                .Where(f => string.Equals(f.Location.GetRoot(), LAYOUTS_FOLDER,
                 StringComparison.CurrentCultureIgnoreCase));
 
             procFiles = procFiles.Except(layouts);
 
             includes = procFiles
-                .Where(f => string.Equals(f.Location.Root, INCLUDES_FOLDER,
+                .Where(f => string.Equals(f.Location.GetRoot(), INCLUDES_FOLDER,
                 StringComparison.CurrentCultureIgnoreCase));
 
             procFiles = procFiles.Except(includes);
@@ -198,7 +198,7 @@ namespace Xarial.Docify.Core.Composer
             return assets.Select(a => new Asset(a.Location, a.Content)).ToList();
         }
 
-        private string GetTemplateName(Location loc) 
+        private string GetTemplateName(ILocation loc) 
         {
             var path = loc.Path.Skip(1).ToList();
             path.Add(Path.GetFileNameWithoutExtension(loc.FileName));
@@ -269,7 +269,7 @@ namespace Xarial.Docify.Core.Composer
                 .GroupBy(a => a.Location.Path, new LocationDictionaryComparer())
                 .ToDictionary(g => g.Key, g => g.ToArray(), new LocationDictionaryComparer());
 
-            var mainSrcPage = srcPages.FirstOrDefault(p => p.Location.IsRoot && p.Location.IsIndexPage());
+            var mainSrcPage = srcPages.FirstOrDefault(p => p.Location.IsRoot() && p.Location.IsIndexPage());
 
             if (mainSrcPage == null)
             {
@@ -282,7 +282,7 @@ namespace Xarial.Docify.Core.Composer
 
             pageMap.Add(new List<string>(), mainPage);
 
-            foreach (var srcPage in srcPages.OrderBy(p => p.Location.TotalLevel))
+            foreach (var srcPage in srcPages.OrderBy(p => p.Location.GetTotalLevel()))
             {
                 var pageLocParts = new List<string>();
                 pageLocParts.AddRange(srcPage.Location.Path);

@@ -19,11 +19,11 @@ namespace Xarial.Docify.Base.Data
     {
         public Environment_e Environment { get; set; }
         public string WorkingFolder { get; set; }
-        public Location ComponentsFolder { get; set; }
+        public ILocation ComponentsFolder { get; set; }
         public List<string> Components { get; set; }
-        public Location PluginsFolder { get; set; }
+        public ILocation PluginsFolder { get; set; }
         public List<string> Plugins { get; set; }
-        public Location ThemesFolder { get; set; }
+        public ILocation ThemesFolder { get; set; }
         public List<string> ThemesHierarchy { get; }
         
         public Configuration() : this(new Dictionary<string, dynamic>())

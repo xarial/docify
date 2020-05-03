@@ -132,7 +132,7 @@ namespace Xarial.Docify.Lib.Plugins
                     || string.Equals(p.Location.ToUrl(site.BaseUrl), path));
         }
 
-        public void PrePublishAsset(ref Location loc, ref byte[] content, out bool cancel)
+        public void PrePublishAsset(ref ILocation loc, ref byte[] content, out bool cancel)
         {
             cancel = false;
 

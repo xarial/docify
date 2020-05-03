@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Loader;

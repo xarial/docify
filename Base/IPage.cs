@@ -17,7 +17,7 @@ namespace Xarial.Docify.Base
     {
         List<IPage> SubPages { get; }
         List<IFile> Assets { get; }
-        Location Location { get; }
+        ILocation Location { get; }
     }
 
     public static class PageExtension

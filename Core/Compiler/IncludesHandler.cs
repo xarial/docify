@@ -44,7 +44,7 @@ namespace Xarial.Docify.Core.Compiler
             m_PlcParser = new PlaceholdersParser(START_TAG, END_TAG);
         }
         
-        public async Task<string> Render(string name, Metadata param, 
+        public async Task<string> Render(string name, IMetadata param, 
             ISite site, IPage page)
         {
             var includePlugins = m_RenderIncludePlugins?.Where(p => string.Equals(p.IncludeName,
@@ -68,6 +68,12 @@ namespace Xarial.Docify.Core.Compiler
                     if (includePlugins.Count() == 1)
                     {
                         var includePlugin = includePlugins.First();
+
+                        if (param == null) 
+                        {
+                            param = new Metadata();
+                        }
+
                         var data = ComposeDataParameters(name, param, site, page);
                         return await includePlugin.GetContent(data, page);
                     }
@@ -84,15 +90,15 @@ namespace Xarial.Docify.Core.Compiler
             }
         }
 
-        private static Metadata ComposeDataParameters(string name, Metadata param, ISite site, IPage page)
+        private static IMetadata ComposeDataParameters(string name, IMetadata param, ISite site, IPage page)
         {
-            Dictionary<string, dynamic> GetData(Metadata data, string name)
+            Dictionary<string, object> GetData(IMetadata data, string name)
             {
                 var extrData = data.GetParameterOrDefault<Dictionary<object, object>>("$" + name);
 
                 if (extrData != null)
                 {
-                    return extrData.ToDictionary(k => k.Key.ToString(), k => (dynamic)k.Value);
+                    return extrData.ToDictionary(k => k.Key.ToString(), k => k.Value);
                 }
                 else
                 {
@@ -111,7 +117,7 @@ namespace Xarial.Docify.Core.Compiler
             return param;
         }
 
-        public Task ParseParameters(string includeRawContent, out string name, out Metadata param) 
+        public Task ParseParameters(string includeRawContent, out string name, out IMetadata param) 
         {
             includeRawContent = includeRawContent.Trim();
 
@@ -138,7 +144,7 @@ namespace Xarial.Docify.Core.Compiler
             var replacement = await m_PlcParser.ReplaceAsync(rawContent, async (string includeRawContent) => 
             {
                 string name;
-                Metadata data;
+                IMetadata data;
                 await ParseParameters(includeRawContent, out name, out data);
                 var replace = await Render(name, data, site, page);
                 return await ReplaceAll(replace, site, page);

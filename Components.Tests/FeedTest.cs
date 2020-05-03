@@ -12,6 +12,8 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using System.Text.RegularExpressions;
 using System;
+using Xarial.Docify.Core.Data;
+using Xarial.Docify.Core;
 
 namespace Components.Tests
 {

@@ -9,11 +9,11 @@ namespace Xarial.Docify.Core.Data
     {
         public string RawContent { get; }
         public ITemplate Layout { get; }
-        public Metadata Data { get; }
+        public IMetadata Data { get; }
 
         public abstract string Key { get; }
 
-        public Frame(string rawContent, Metadata data, Template layout)
+        public Frame(string rawContent, IMetadata data, Template layout)
         {
             RawContent = rawContent;
             Layout = layout;

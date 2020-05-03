@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Xarial.Docify.Core.Compiler.Context
 {
-    public interface IContextAsset 
+    public interface IContextAsset
     {
         byte[] Content { get; }
         string Name { get; }

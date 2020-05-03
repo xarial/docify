@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
 using YamlDotNet.Serialization;
 
@@ -13,7 +14,7 @@ namespace Xarial.Docify.Core.Helpers
         private const string FRONT_MATTER_HEADER = "---";
 
         public static void Parse(string content, out string rawContent,
-            out Metadata data)
+            out IMetadata data)
         {
             bool isStart = true;
             bool readingFrontMatter = false;

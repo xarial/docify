@@ -17,6 +17,7 @@ using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base;
 using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core;
+using Xarial.Docify.Core.Data;
 
 namespace Core.Tests
 {

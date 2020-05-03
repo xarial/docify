@@ -16,6 +16,7 @@ using Xarial.Docify.Base.Services;
 using Xarial.Docify.Base;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Composer;
+using System.Linq;
 
 namespace Core.Tests
 {
@@ -60,8 +61,8 @@ namespace Core.Tests
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(2, site.MainPage.Data.Count);
             Assert.AreEqual("A", site.MainPage.Data["prp1"]);
-            Assert.AreEqual(1, site.MainPage.Data["prp2"].Count);
-            Assert.AreEqual("B", site.MainPage.Data["prp2"]["prp3"]);
+            Assert.AreEqual(1, (site.MainPage.Data["prp2"] as System.Collections.IDictionary).Count);
+            Assert.AreEqual("B", (site.MainPage.Data["prp2"] as System.Collections.IDictionary)["prp3"]);
         }
 
         [Test]
@@ -78,9 +79,9 @@ namespace Core.Tests
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(2, site.MainPage.Data.Count);
             Assert.AreEqual("A", site.MainPage.Data["prp1"]);
-            Assert.AreEqual(2, site.MainPage.Data["prp2"].Count);
-            Assert.AreEqual("B", site.MainPage.Data["prp2"][0]);
-            Assert.AreEqual("C", site.MainPage.Data["prp2"][1]);
+            Assert.AreEqual(2, (site.MainPage.Data["prp2"] as IEnumerable<object>).Count());
+            Assert.AreEqual("B", (site.MainPage.Data["prp2"] as IEnumerable<object>).ElementAt(0));
+            Assert.AreEqual("C", (site.MainPage.Data["prp2"] as IEnumerable<object>).ElementAt(1));
         }
 
         [Test]

@@ -11,14 +11,15 @@ using System.Collections.ObjectModel;
 using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Core.Data;
 
 namespace Xarial.Docify.Core.Compiler.Context
 {
-    public class ContextConfiguration : ContextMetadata, IConfiguration
+    public class ContextConfiguration : ContextMetadata
     {
         public Environment_e Environment { get; set; }
 
-        public ContextConfiguration(Configuration config)
+        public ContextConfiguration(IConfiguration config)
             : base(config) 
         {
             Environment = config.Environment;

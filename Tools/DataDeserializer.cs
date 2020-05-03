@@ -16,7 +16,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using Xarial.Docify.Core.Data;
+using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Lib.Tools
 {

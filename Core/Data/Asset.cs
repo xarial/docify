@@ -10,13 +10,6 @@ namespace Xarial.Docify.Core.Data
     [DebuggerDisplay("{" + nameof(Location) + "}")]
     public class Asset : IFile
     {
-        public static Asset FromTextContent(string content, Location loc)
-        {
-            var buffer = FileExtension.ToByteArray(content);
-
-            return new Asset(loc, buffer);
-        }
-
         public byte[] Content { get; }
         public ILocation Location { get; }
 
@@ -24,6 +17,10 @@ namespace Xarial.Docify.Core.Data
         {
             Location = loc;
             Content = content;
+        }
+
+        public Asset(ILocation loc, string content) : this(loc, FileExtension.ToByteArray(content))
+        {
         }
     }
 }

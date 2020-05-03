@@ -11,7 +11,7 @@ namespace Xarial.Docify.Core.Data
         public override string Key => Name;
 
         public Template(string name, string rawContent,
-            Metadata data = null, Template baseTemplate = null)
+            IMetadata data = null, Template baseTemplate = null)
             : base(rawContent, data, baseTemplate)
         {
             Name = name;

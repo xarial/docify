@@ -43,7 +43,7 @@ namespace Core.Tests
         public void ParseParameters_SingleLine() 
         {
             string n1, n2, n3;
-            Metadata p1, p2, p3;
+            IMetadata p1, p2, p3;
             
             m_Handler.ParseParameters("include a1: A", out n1, out p1);
             m_Handler.ParseParameters(" include  a1: A", out n2, out p2);
@@ -67,7 +67,7 @@ namespace Core.Tests
         public void ParseParameters_MultipleLine()
         {
             string n1;
-            Metadata p1;
+            IMetadata p1;
 
             m_Handler.ParseParameters("include a1: A\r\na2: B\r\na3:\r\n    - X\r\n    - Y", out n1, out p1);
 
@@ -84,7 +84,7 @@ namespace Core.Tests
         public void ParseParameters_NoParameters()
         {
             string n1;
-            Metadata p1;
+            IMetadata p1;
 
             m_Handler.ParseParameters("include", out n1, out p1);
 

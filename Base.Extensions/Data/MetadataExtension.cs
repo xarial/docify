@@ -1,11 +1,4 @@
-﻿//*********************************************************************
-//docify
-//Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
-//*********************************************************************
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -13,24 +6,25 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Core.Data
+namespace Xarial.Docify.Base.Data
 {
     public static class MetadataExtension
     {
         private const string INHERIT_LIST_SYMBOL = "$";
 
-        private static readonly JsonSerializer m_JsonSerializer = new JsonSerializer() 
+        private static readonly JsonSerializer m_JsonSerializer = new JsonSerializer()
         {
-            ContractResolver = new YamlNameResolver() 
+            ContractResolver = new YamlNameResolver()
         };
 
         private class YamlNameResolver : DefaultContractResolver
         {
             protected override string ResolvePropertyName(string propertyName)
             {
-                var newPrpName = string.Join("", propertyName.Split('-').Select(w => char.ToUpper(w[0]) + w.Substring(1)));
+                var newPrpName = string.Join("", propertyName.Split('-')
+                    .Select(w => char.ToUpper(w[0]) + w.Substring(1)));
+
                 return newPrpName;
             }
         }
@@ -40,32 +34,29 @@ namespace Xarial.Docify.Core.Data
             return (T)ToObject(data, typeof(T));
         }
 
-        internal static object ToObject(IDictionary data, Type type)
+        public static object ToObject(IDictionary data, Type type)
         {
             var obj = JObject.FromObject(data, m_JsonSerializer);
             var res = obj.ToObject(type);
             return res;
         }
 
-        internal static T Merge<T>(this T thisParams,
-            IDictionary<string, dynamic> baseParams)
-            where T : Metadata, new()
+        public static T Merge<T>(this T thisParams,
+            IDictionary<string, object> baseParams)
+            where T : IMetadata
         {
-            var resParams = new T();
-
-            if (baseParams != null)
+            if (baseParams == null) 
             {
-                foreach (var baseParam in baseParams)
-                {
-                    resParams.Add(baseParam.Key, baseParam.Value);
-                }
+                baseParams = new Dictionary<string, object>();
             }
 
-            foreach (var thisParam in thisParams ?? new T())
+            var resParams = (T)thisParams.Copy(baseParams);
+
+            foreach (var thisParam in thisParams)
             {
                 var val = thisParam.Value;
 
-                var isDef = val != null && (!(val is string) || !string.IsNullOrEmpty(val));
+                var isDef = val != null && (!(val is string) || !string.IsNullOrEmpty((string)val));
 
                 if (isDef)
                 {
@@ -84,7 +75,7 @@ namespace Xarial.Docify.Core.Data
             return resParams;
         }
 
-        private static dynamic UpdateValue(IDictionary<string, dynamic> baseParams, string thisParamName, dynamic val)
+        private static object UpdateValue(IDictionary<string, object> baseParams, string thisParamName, dynamic val)
         {
             if (val is List<object>)
             {
@@ -98,25 +89,25 @@ namespace Xarial.Docify.Core.Data
                         throw new InvalidCastException($"Cannot inherit list parameters from the base metadata");
                     }
 
-                    (val as List<object>).InsertRange(0, baseParams[thisParamName]);
+                    (val as List<object>).InsertRange(0, (List<object>)baseParams[thisParamName]);
                 }
             }
 
             return val;
         }
 
-        internal static T GetParameterOrDefault<T>(this Metadata data, string name) 
+        public static T GetParameterOrDefault<T>(this IMetadata data, string name)
         {
             T val;
             TryGetParameter(data, name, out val);
             return val;
         }
 
-        internal static T GetRemoveParameterOrDefault<T>(this Metadata data, string name) 
+        public static T GetRemoveParameterOrDefault<T>(this IMetadata data, string name)
         {
             T val;
-            
-            if (TryGetParameter(data, name, out val)) 
+
+            if (TryGetParameter(data, name, out val))
             {
                 data.Remove(name);
             }
@@ -124,9 +115,9 @@ namespace Xarial.Docify.Core.Data
             return val;
         }
 
-        private static bool TryGetParameter<T>(Metadata data, string name, out T val) 
+        private static bool TryGetParameter<T>(IMetadata data, string name, out T val)
         {
-            dynamic dynVal;
+            object dynVal;
 
             if (data.TryGetValue(name, out dynVal))
             {
@@ -136,7 +127,7 @@ namespace Xarial.Docify.Core.Data
                 }
                 else
                 {
-                    val = Convert.ChangeType(dynVal, typeof(T));
+                    val = (T)Convert.ChangeType(dynVal, typeof(T));
                 }
 
                 return true;

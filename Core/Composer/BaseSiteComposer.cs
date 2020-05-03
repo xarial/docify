@@ -48,7 +48,7 @@ namespace Xarial.Docify.Core.Composer
         }
 
         private void ParseTextFile(IFile src, out string rawContent,
-            out Metadata data, out string layoutName) 
+            out IMetadata data, out string layoutName) 
         {
             FrontMatterParser.Parse(src.AsTextContent(), out rawContent, out data);
 
@@ -60,7 +60,7 @@ namespace Xarial.Docify.Core.Composer
             IReadOnlyDictionary<string, Template> layoutsMap)
         {
             string rawContent = null;
-            Metadata pageData = null;
+            IMetadata pageData = null;
             Template layout = null;
 
             if (src != null)
@@ -176,7 +176,7 @@ namespace Xarial.Docify.Core.Composer
             return includesSrcList.Select(s =>
             {
                 string rawContent;
-                Metadata data;
+                IMetadata data;
                 string layoutName;
                 ParseTextFile(s, out rawContent, out data, out layoutName);
 
@@ -222,7 +222,7 @@ namespace Xarial.Docify.Core.Composer
             }
 
             string rawContent;
-            Metadata data;
+            IMetadata data;
             string baseLayoutName;
             ParseTextFile(layoutFile, out rawContent, out data, out baseLayoutName);
 

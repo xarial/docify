@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
 
 namespace Xarial.Docify.Core.Loader
@@ -21,7 +22,7 @@ namespace Xarial.Docify.Core.Loader
     public class LocalFileSystemComponentsLoader : IComponentsLoader
     {
         private readonly ILoader m_Loader;
-        private readonly Configuration m_Config;
+        private readonly IConfiguration m_Config;
 
         public LocalFileSystemComponentsLoader(ILoader loader, Configuration conf)
         {

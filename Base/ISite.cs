@@ -18,7 +18,7 @@ namespace Xarial.Docify.Base
         IPage MainPage { get; }
         List<ITemplate> Layouts { get; }
         List<ITemplate> Includes { get; }
-        Configuration Configuration { get; }
+        IConfiguration Configuration { get; }
     }
 
     public static class SiteExtension 

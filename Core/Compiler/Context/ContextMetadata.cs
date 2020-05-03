@@ -15,7 +15,7 @@ namespace Xarial.Docify.Core.Compiler.Context
 {
     public class ContextMetadata : ReadOnlyDictionary<string, dynamic>
     {
-        internal ContextMetadata(Metadata data) : base(data) 
+        internal ContextMetadata(IMetadata data) : base(data) 
         {
         }
 

@@ -14,7 +14,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler.Context;
+using Xarial.Docify.Core.Data;
 
 namespace Components.Tests
 {

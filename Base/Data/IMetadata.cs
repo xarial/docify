@@ -11,15 +11,8 @@ using System.Text;
 
 namespace Xarial.Docify.Base.Data
 {
-    public class Metadata : Dictionary<string, dynamic>
+    public interface IMetadata : IDictionary<string, object>
     {
-        public Metadata() : base(StringComparer.CurrentCultureIgnoreCase)
-        {
-        }
-
-        public Metadata(IDictionary<string, dynamic> parameters) 
-            : base(parameters, StringComparer.CurrentCultureIgnoreCase)
-        {
-        }
+        IMetadata Copy(IDictionary<string, object> data);
     }
 }

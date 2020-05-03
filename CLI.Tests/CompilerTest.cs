@@ -10,10 +10,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
-using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.CLI;
+using Xarial.Docify.Core;
+using Xarial.Docify.Core.Data;
 
 namespace CLI.Tests
 {
@@ -40,10 +41,10 @@ namespace CLI.Tests
 
             var site = new Site("https://www.mysite.com", p1, null);
 
-            await m_Compiler.Compile(site);
+            var files = await m_Compiler.Compile(site);
 
-            Assert.AreEqual("<div>1 <a href=\"page1.html\">Test</a></div>", site.MainPage.Content);
-            Assert.AreEqual("<p>1</p>\n<p><a href=\"https://www.mysite.com/page2.html\">page</a></p>", site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page2.html").Content);
+            Assert.AreEqual("<div>1 <a href=\"page1.html\">Test</a></div>", files.First(f => f.Location == site.MainPage.Location).Content);
+            Assert.AreEqual("<p>1</p>\n<p><a href=\"https://www.mysite.com/page2.html\">page</a></p>", files.First(f => f.Location == site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page2.html").Location).Content);
         }
         
         [Test]
@@ -54,9 +55,9 @@ namespace CLI.Tests
                 "My Page Content",
                 new Template("t1", "TemplateText1{{ content }}TemplateText2")), null);
             
-            await m_Compiler.Compile(site);
+            var files = await m_Compiler.Compile(site);
 
-            Assert.AreEqual("<p>TemplateText1<p>My Page Content</p>TemplateText2</p>", site.MainPage.Content);
+            Assert.AreEqual("<p>TemplateText1<p>My Page Content</p>TemplateText2</p>", files.First(f => f.Location == site.MainPage.Location).Content);
         }
         
         [Test]
@@ -78,12 +79,12 @@ namespace CLI.Tests
 
             var site = new Site("", p1, null);
 
-            await m_Compiler.Compile(site);
+            var files = await m_Compiler.Compile(site);
 
-            Assert.AreEqual("<p><em>T2</em> page1.html <p><em>T1</em> page1.html <p><strong>Page1</strong> page1.html</p>_T1</p>_T2</p>", site.MainPage.Content);
-            Assert.AreEqual("<p><em>T2</em> page2.html <p><em>T1</em> page2.html <p><strong>Page2</strong> page2.html</p>_T1</p>_T2</p>", site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page2.html").Content);
-            Assert.AreEqual("<p>T3<p>T4<p>Page3</p>T4</p>T3</p>", site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page3.html").Content);
-            Assert.AreEqual("<p>T3<p>T4<p>Page4</p>T4</p>T3</p>", site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page4.html").Content);
+            Assert.AreEqual("<p><em>T2</em> page1.html <p><em>T1</em> page1.html <p><strong>Page1</strong> page1.html</p>_T1</p>_T2</p>", files.First(f=>f.Location == site.MainPage.Location).Content);
+            Assert.AreEqual("<p><em>T2</em> page2.html <p><em>T1</em> page2.html <p><strong>Page2</strong> page2.html</p>_T1</p>_T2</p>", files.First(f => f.Location == site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page2.html").Location).Content);
+            Assert.AreEqual("<p>T3<p>T4<p>Page3</p>T4</p>T3</p>", files.First(f => f.Location == site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page3.html").Location).Content);
+            Assert.AreEqual("<p>T3<p>T4<p>Page4</p>T4</p>T3</p>", files.First(f => f.Location == site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page4.html").Location).Content);
         }
 
         [Test]
@@ -101,10 +102,10 @@ namespace CLI.Tests
             site.Includes.Add(new Template("i1", "Some Value\r\n@Model.Data[\"p1\"]", new Metadata() { { "p1", "A" } }));
             site.Includes.Add(new Template("i2", "**@Model.Page.Name**\r\n@Model.Data.Count", new Metadata() { { "p1", "A" }, { "p2", "X" } }));
 
-            await m_Compiler.Compile(site);
+            var files = await m_Compiler.Compile(site);
 
-            Assert.AreEqual("<p><em>1</em> Some Value\r\nA</p>", site.MainPage.Content);
-            Assert.AreEqual("<p>page2.html\nSome Value\r\nB\n**page2.html**\r\n2</p>", site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page2.html").Content);
+            Assert.AreEqual("<p><em>1</em> Some Value\r\nA</p>", files.First(f => f.Location == site.MainPage.Location).Content);
+            Assert.AreEqual("<p>page2.html\nSome Value\r\nB\n**page2.html**\r\n2</p>", files.First(f => f.Location == site.MainPage.SubPages.FirstOrDefault(p => p.Key == "page2.html").Location).Content);
         }
 
         [Test]
@@ -116,9 +117,9 @@ namespace CLI.Tests
             var site = new Site("", p1, null);
             site.Includes.Add(new Template("i1", "Some Value"));
 
-            await m_Compiler.Compile(site);
+            var files = await m_Compiler.Compile(site);
 
-            Assert.AreEqual("<p>abc Some Value</p>", site.MainPage.Content);
+            Assert.AreEqual("<p>abc Some Value</p>", files.First(f => f.Location == site.MainPage.Location).Content);
         }
 
         [Test]
@@ -132,33 +133,33 @@ namespace CLI.Tests
             var site = new Site("", p1, null);
             site.Includes.Add(new Template("i1", "Some Value: @Model.Data[\"p1\"]", new Metadata() { { "p1", "A" } }));
             
-            await m_Compiler.Compile(site);
+            var files = await m_Compiler.Compile(site);
 
-            Assert.AreEqual("<p>abc Some Value: B klm <p>p1 Some Value: A</p> xyz</p>", p1.Content);
+            Assert.AreEqual("<p>abc Some Value: B klm <p>p1 Some Value: A</p> xyz</p>", files.First(f => f.Location == p1.Location).Content);
         }
 
         [Test]
         public async Task BinaryAssetTest()
         {
             var site = new Site("", new Page(new Location("page1.html"), ""), null);
-            site.MainPage.Assets.Add(new BinaryAsset(new byte[] { 1, 2, 3 }, Location.FromPath("file.bin")));
+            var asset = new Asset(Location.FromPath("file.bin"), new byte[] { 1, 2, 3 });
+            site.MainPage.Assets.Add(asset);
 
-            await m_Compiler.Compile(site);
+            var files = await m_Compiler.Compile(site);
 
-            Assert.AreEqual(1, site.MainPage.Assets.OfType<IBinaryWritable>().Count());
-            Assert.That(new byte[] { 1, 2, 3 }.SequenceEqual(site.MainPage.Assets.OfType<IBinaryWritable>().First().Content));
+            Assert.That(new byte[] { 1, 2, 3 }.SequenceEqual(files.First(a => a.Location == asset.Location).Content));
         }
 
         [Test]
         public async Task TextAssetTest()
         {
             var site = new Site("", new Page(new Location("page1.html"), ""), null);
-            site.MainPage.Assets.Add(new TextAsset("test", Location.FromPath("file.txt")));
+            var asset = new Asset(Location.FromPath("file.txt"), "test");
+            site.MainPage.Assets.Add(asset);
 
-            await m_Compiler.Compile(site);
+            var files = await m_Compiler.Compile(site);
 
-            Assert.AreEqual(1, site.MainPage.Assets.OfType<ITextWritable>().Count());
-            Assert.AreEqual("test", site.MainPage.Assets.OfType<ITextWritable>().First().Content);
+            Assert.AreEqual("test", files.First(f => f.Location == asset.Location).Content);
         }
 
         [Test]
@@ -166,9 +167,9 @@ namespace CLI.Tests
         {
             var site = new Site("", new Page(new Location("page1.html"), "abc {% x *test*"), null);
 
-            await m_Compiler.Compile(site);
+            var files = await m_Compiler.Compile(site);
 
-            Assert.AreEqual("<p>abc {% x <em>test</em></p>", site.MainPage.Content);
+            Assert.AreEqual("<p>abc {% x <em>test</em></p>", files.First(f => f.Location == site.MainPage.Location).Content);
         }
     }
 }

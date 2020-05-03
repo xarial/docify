@@ -54,7 +54,7 @@ namespace Xarial.Docify.Core.Loader
             m_Environment = env;
         }
 
-        public async Task<Configuration> Load(ILocation location)
+        public async Task<IConfiguration> Load(ILocation location)
         {
             string NormalizeDirFunc(string dir, string defDir)
             {

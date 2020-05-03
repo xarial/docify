@@ -16,7 +16,7 @@ namespace Xarial.Docify.Core.Data
         public IPage MainPage { get; }
         public List<ITemplate> Layouts { get; }
         public List<ITemplate> Includes { get; }
-        public Configuration Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         public Site(string baseUrl, Page mainPage, Configuration config)
         {

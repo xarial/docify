@@ -19,6 +19,7 @@ using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
 using Xarial.Docify.Core.Composer;
+using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Loader;
 using Xarial.Docify.Core.Logger;
 using Xarial.Docify.Core.Plugin;
@@ -49,7 +50,7 @@ namespace Xarial.Docify.CLI
             m_OutDir = outDir;
 
             builder.RegisterType<LocalFileSystemLoaderConfig>()
-                .UsingConstructor(typeof(Configuration));
+                .UsingConstructor(typeof(IConfiguration));
 
             builder.RegisterType<BaseCompilerConfig>()
                 .WithParameter(new TypedParameter(typeof(string), ""));

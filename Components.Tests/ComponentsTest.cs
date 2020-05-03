@@ -12,13 +12,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
-using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.CLI;
+using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Compiler.Context;
 using Xarial.Docify.Core.Data;
+using Xarial.Docify.Core.Helpers;
 using YamlDotNet.Serialization;
 
 namespace Components.Tests
@@ -70,9 +71,9 @@ namespace Components.Tests
         {
             var compiler = new DocifyEngine("", "", "", Environment_e.Test).Resove<ICompiler>();
 
-            await compiler.Compile(site);
-            
-            var res = site.MainPage.Content;
+            var files = await compiler.Compile(site);
+
+            var res = files.First(f => f.Location == site.MainPage.Location).AsTextContent();
 
             res = Normalize(res);
 
@@ -81,10 +82,11 @@ namespace Components.Tests
 
         private static void LoadInclude(string includeRelPath, Site site)
         {
-            Metadata data;
+            IMetadata data;
             string rawContent;
             var path = GetPath(includeRelPath);
-            new TextSourceFile(Location.FromPath(path), File.ReadAllText(path)).Parse(out rawContent, out data);
+
+            FrontMatterParser.Parse(File.ReadAllText(path), out rawContent, out data);
 
             var name = Path.GetFileNameWithoutExtension(path);
 

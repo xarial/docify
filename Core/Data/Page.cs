@@ -22,7 +22,7 @@ namespace Xarial.Docify.Core.Data
 
         }
 
-        public Page(ILocation url, string rawContent, Metadata data, Template layout = null)
+        public Page(ILocation url, string rawContent, IMetadata data, Template layout = null)
             : base(rawContent, data, layout)
         {
             Location = url;

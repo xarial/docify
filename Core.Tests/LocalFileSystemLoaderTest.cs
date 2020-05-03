@@ -16,6 +16,7 @@ using System.Linq;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base;
 using Xarial.Docify.Core.Exceptions;
+using Xarial.Docify.Base.Content;
 
 namespace Core.Tests
 {
@@ -44,13 +45,8 @@ namespace Core.Tests
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "folder::1.txt"));
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "img::img1.png"));
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "test1.xlsx"));
-            Assert.IsInstanceOf<ITextSourceFile>(res.FirstOrDefault(f => f.Location.ToId() == "page1.md"));
-            Assert.IsInstanceOf<ITextSourceFile>(res.FirstOrDefault(f => f.Location.ToId() == "page2.html"));
-            Assert.IsInstanceOf<ITextSourceFile>(res.FirstOrDefault(f => f.Location.ToId() == "folder::1.txt"));
-            Assert.IsInstanceOf<IBinarySourceFile>(res.FirstOrDefault(f => f.Location.ToId() == "img::img1.png"));
-            Assert.IsInstanceOf<IBinarySourceFile>(res.FirstOrDefault(f => f.Location.ToId() == "test1.xlsx"));
-            Assert.AreEqual("abc", (res.FirstOrDefault(f => f.Location.ToId() == "page1.md") as ITextSourceFile).Content);
-            Assert.IsTrue(new byte[] { 1, 2, 3 }.SequenceEqual((res.FirstOrDefault(f => f.Location.ToId() == "img::img1.png") as IBinarySourceFile).Content));
+            Assert.AreEqual("abc", res.FirstOrDefault(f => f.Location.ToId() == "page1.md").AsTextContent());
+            Assert.IsTrue(new byte[] { 1, 2, 3 }.SequenceEqual(res.FirstOrDefault(f => f.Location.ToId() == "img::img1.png").Content));
         }
 
         [Test]

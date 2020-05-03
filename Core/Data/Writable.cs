@@ -8,13 +8,6 @@ namespace Xarial.Docify.Core.Data
 {
     public class Writable : IFile
     {
-        public static Writable FromTextContent(string content, Location loc)
-        {
-            var buffer = FileExtension.ToByteArray(content);
-
-            return new Writable(buffer, loc);
-        }
-
         public byte[] Content { get; }
 
         public Location Location { get; }

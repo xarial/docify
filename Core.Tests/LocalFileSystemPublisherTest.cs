@@ -17,6 +17,7 @@ using Xarial.Docify.Base.Data;
 using Xarial.Docify.Core.Publisher;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
+using Xarial.Docify.Core.Data;
 
 namespace Core.Tests
 {
@@ -28,11 +29,11 @@ namespace Core.Tests
             var fs = new MockFileSystem();
             var publisher = new LocalFileSystemPublisher(new LocalFileSystemPublisherConfig(), fs);
 
-            var pages = new Page[]
+            var pages = new Writable[]
             {
-                new Page(Location.FromPath("page1.html"), "") { Content  = "abc" },
-                new Page(Location.FromPath("dir1\\page2.html"), "") { Content  = "def" },
-                new Page(Location.FromPath("C:\\external\\page3.html"), "") { Content  = "xyz" },
+                new Writable("abc", Location.FromPath("page1.html")),
+                new Writable("def", Location.FromPath("dir1\\page2.html")),
+                new Writable("xyz", Location.FromPath("C:\\external\\page3.html")),
             };
 
             await publisher.Write(Location.FromPath("C:\\site"), pages);
@@ -52,9 +53,9 @@ namespace Core.Tests
             var fs = new MockFileSystem();
             var publisher = new LocalFileSystemPublisher(new LocalFileSystemPublisherConfig(), fs);
 
-            var assets = new BinaryAsset[]
+            var assets = new IFile[]
             {
-                new BinaryAsset(new byte[] { 1,2,3 }, Location.FromPath("file.bin"))
+                new Writable(new byte[] { 1,2,3 }, Location.FromPath("file.bin"))
             };
 
             await publisher.Write(Location.FromPath("C:\\site"), assets);
@@ -73,9 +74,9 @@ namespace Core.Tests
 
             var publisher = new LocalFileSystemPublisher(new LocalFileSystemPublisherConfig(), fs);
 
-            var pages = new Page[]
+            var pages = new IFile[]
             {
-                new Page(Location.FromPath("page1.html"), "") { Content  = "abc" }
+                new Writable("abc", Location.FromPath("page1.html"))
             };
 
             await publisher.Write(Location.FromPath("C:\\site"), pages);

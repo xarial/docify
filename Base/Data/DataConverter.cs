@@ -38,10 +38,10 @@ namespace Xarial.Docify.Base.Data
                     using (var streamWriter = new StreamWriter(memStr))
                     {
                         streamWriter.Write(content);
+                        streamWriter.Flush();
+                        memStr.Seek(0, SeekOrigin.Begin);
+                        buffer = memStr.ToArray();
                     }
-
-                    memStr.Seek(0, SeekOrigin.Begin);
-                    buffer = memStr.ToArray();
                 }
             }
 

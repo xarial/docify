@@ -26,6 +26,11 @@ namespace Xarial.Docify.Core.Data
             Content = content;
         }
 
+        public SourceFile(Location path, string content)
+            : this(path, FileExtension.ToByteArray(content))
+        {
+        }
+
         public override string ToString()
         {
             return Location.ToString();

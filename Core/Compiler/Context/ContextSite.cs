@@ -14,7 +14,7 @@ namespace Xarial.Docify.Core.Compiler.Context
 {
     public class ContextSite
     {
-        internal Site BaseSite { get; }
+        internal ISite BaseSite { get; }
 
         public string BaseUrl 
         {
@@ -40,7 +40,7 @@ namespace Xarial.Docify.Core.Compiler.Context
             }
         }
 
-        public ContextSite(Site site) 
+        public ContextSite(ISite site) 
         {
             BaseSite = site;
         }

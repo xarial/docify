@@ -13,32 +13,18 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base
 {
-    public class Site
+    public interface ISite 
     {
-        public string BaseUrl { get; }
-        
-        //TODO: this needs to be removed as it is currently duplicated by page assets
-        //public List<Asset> Assets { get; }
-
-        public Page MainPage { get; }
-        public List<Template> Layouts { get; }
-        public List<Template> Includes { get; }
-        public Configuration Configuration { get; }
-
-        public Site(string baseUrl, Page mainPage, Configuration config)
-        {
-            BaseUrl = baseUrl;
-            MainPage = mainPage;
-            //Assets = new List<Asset>();
-            Layouts = new List<Template>();
-            Includes = new List<Template>();
-            Configuration = config ?? new Configuration();
-        }
+        string BaseUrl { get; }
+        IPage MainPage { get; }
+        List<ITemplate> Layouts { get; }
+        List<ITemplate> Includes { get; }
+        Configuration Configuration { get; }
     }
 
     public static class SiteExtension 
     {
-        public static IEnumerable<Page> GetAllPages(this Site site) 
+        public static IEnumerable<IPage> GetAllPages(this ISite site) 
         {
             yield return site.MainPage;
 

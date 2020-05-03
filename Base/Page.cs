@@ -14,33 +14,16 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base
 {
-    [DebuggerDisplay("{" + nameof(Location) + "}")]
-    public class Page : Frame
+    public interface IPage : IFrame
     {
-        public List<Page> SubPages { get; }
-        public List<Asset> Assets { get; }
-        public Location Location { get; }
-
-        public override string Key => Location.ToId();
-
-        public Page(Location url, string rawContent, Template layout = null)
-            : this(url, rawContent, new Metadata(), layout)
-        {
-
-        }
-
-        public Page(Location url, string rawContent, Metadata data, Template layout = null)
-            : base(rawContent, data, layout)
-        {
-            Location = url;
-            SubPages = new List<Page>();
-            Assets = new List<Asset>();
-        }
+        List<IPage> SubPages { get; }
+        List<IFile> Assets { get; }
+        Location Location { get; }
     }
 
     public static class PageExtension
     {
-        public static IEnumerable<Page> GetAllSubPages(this Page page)
+        public static IEnumerable<IPage> GetAllSubPages(this IPage page)
         {
             if (page.SubPages != null)
             {

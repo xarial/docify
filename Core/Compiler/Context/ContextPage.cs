@@ -29,9 +29,9 @@ namespace Xarial.Docify.Core.Compiler.Context
 
     public class ContextPage : IContextPage
     {
-        private readonly Site m_Site;
+        private readonly ISite m_Site;
 
-        internal Page BasePage { get; }
+        internal IPage BasePage { get; }
 
         public string Url => BasePage.Location.ToUrl();
         public string FullUrl => BasePage.Location.ToUrl(m_Site.BaseUrl);
@@ -44,7 +44,7 @@ namespace Xarial.Docify.Core.Compiler.Context
             {
                 var thisParam = new Metadata();
 
-                Frame frame = BasePage;
+                IFrame frame = BasePage;
 
                 while (frame != null) 
                 {
@@ -61,7 +61,7 @@ namespace Xarial.Docify.Core.Compiler.Context
         public IReadOnlyList<IContextAsset> Assets => BasePage.Assets
             .ConvertAll<IContextAsset>(a => new ContextAsset(a.Location.FileName, a.Content));
 
-        public ContextPage(Site site, Page page) 
+        public ContextPage(ISite site, IPage page) 
         {
             m_Site = site;
             BasePage = page;

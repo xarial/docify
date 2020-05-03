@@ -13,6 +13,6 @@ namespace Xarial.Docify.Base.Plugins
 {
     public interface IPreCompilePlugin : IPlugin
     {
-        void PreCompile(Site site);
+        void PreCompile(ISite site);
     }
 }

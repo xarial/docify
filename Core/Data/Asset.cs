@@ -1,24 +1,18 @@
-﻿//*********************************************************************
-//docify
-//Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
-//*********************************************************************
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base;
+using Xarial.Docify.Base.Content;
 
-namespace Xarial.Docify.Base.Content
+namespace Xarial.Docify.Core.Data
 {
     [DebuggerDisplay("{" + nameof(Location) + "}")]
     public class Asset : IFile
     {
         public static Asset FromTextContent(string content, Location loc)
         {
-            var buffer = DataConverter.ToByteArray(content);
+            var buffer = FileExtension.ToByteArray(content);
 
             return new Asset(loc, buffer);
         }

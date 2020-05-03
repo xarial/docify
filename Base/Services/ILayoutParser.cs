@@ -17,6 +17,6 @@ namespace Xarial.Docify.Base.Services
     public interface ILayoutParser
     {
         bool ContainsPlaceholder(string content);
-        Task<string> InsertContent(Template layout, string content, IContextModel model);
+        Task<string> InsertContent(ITemplate layout, string content, IContextModel model);
     }
 }

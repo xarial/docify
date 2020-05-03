@@ -56,7 +56,7 @@ namespace Xarial.Docify.Lib.Plugins
 
         public ImageOptimizerSettings Settings { get; set; }
 
-        public void PreCompile(Site site)
+        public void PreCompile(ISite site)
         {
             foreach (var page in site.GetAllPages()) 
             {
@@ -94,7 +94,7 @@ namespace Xarial.Docify.Lib.Plugins
                             }
 
                             page.Data.Add(REPLACE_IMAGE_TAG_NAME, imgName);
-                            var imgPngAsset = new Asset(new Location(imgName, page.Location.Path.ToArray()), pngBuffer);
+                            var imgPngAsset = new File(pngBuffer, new Location(imgName, page.Location.Path.ToArray()));
                             page.Assets.Add(imgPngAsset);
                             site.MainPage.Assets.Add(imgPngAsset);
                         }
@@ -108,7 +108,7 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        private void GenerateFavIcon(Site site) 
+        private void GenerateFavIcon(ISite site) 
         {
             //TODO: implement
             throw new NotImplementedException();
@@ -120,7 +120,7 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        private Asset TryFindImageAsset(Site site, Page page, string path)
+        private IFile TryFindImageAsset(ISite site, IPage page, string path)
         {
             if (!path.StartsWith('/')) 
             {

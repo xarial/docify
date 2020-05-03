@@ -13,8 +13,8 @@ using Xarial.Docify.Base.Content;
 
 namespace Xarial.Docify.Base.Plugins
 {
-    public interface IPrePublishWritablePlugin : IPlugin
+    public interface IPrePublishFilePlugin : IPlugin
     {
-        void PrePublishWritable(ref IFile writable, out bool cancel);
+        void PrePublishFile(ref IFile file, out bool cancel);
     }
 }

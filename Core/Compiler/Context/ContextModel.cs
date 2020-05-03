@@ -18,7 +18,7 @@ namespace Xarial.Docify.Core.Compiler.Context
         public ContextSite Site { get; }
         public ContextPage Page { get; }
 
-        public ContextModel(Site site, Page page)
+        public ContextModel(ISite site, IPage page)
         {
             Site = new ContextSite(site);
             Page = new ContextPage(site, page);

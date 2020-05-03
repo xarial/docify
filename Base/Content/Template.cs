@@ -12,16 +12,8 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Content
 {
-    public class Template : Frame
+    public interface ITemplate : IFrame
     {
-        public string Name { get; }
-        public override string Key => Name;
-
-        public Template(string name, string rawContent,
-            Metadata data = null, Template baseTemplate = null)
-            : base(rawContent, data, baseTemplate)
-        {
-            Name = name;
-        }
+        string Name { get; }
     }
 }

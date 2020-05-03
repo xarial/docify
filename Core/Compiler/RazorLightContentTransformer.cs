@@ -15,6 +15,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
+using Xarial.Docify.Core.Data;
 
 namespace Xarial.Docify.Core.Compiler
 {

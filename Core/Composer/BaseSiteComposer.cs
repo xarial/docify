@@ -88,7 +88,7 @@ namespace Xarial.Docify.Core.Composer
             return page;
         }
 
-        public Site ComposeSite(IEnumerable<IFile> files, string baseUrl)
+        public ISite ComposeSite(IEnumerable<IFile> files, string baseUrl)
         {
             if (files?.Any() == true)
             {

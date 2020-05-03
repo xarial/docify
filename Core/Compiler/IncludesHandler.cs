@@ -46,7 +46,7 @@ namespace Xarial.Docify.Core.Compiler
         }
         
         public async Task<string> Render(string name, Metadata param, 
-            Site site, Page page)
+            ISite site, IPage page)
         {
             var includePlugins = m_RenderIncludePlugins?.Where(p => string.Equals(p.IncludeName,
                 name, StringComparison.CurrentCultureIgnoreCase));
@@ -85,7 +85,7 @@ namespace Xarial.Docify.Core.Compiler
             }
         }
 
-        private static Metadata ComposeDataParameters(string name, Metadata param, Site site, Page page)
+        private static Metadata ComposeDataParameters(string name, Metadata param, ISite site, IPage page)
         {
             Dictionary<string, dynamic> GetData(Metadata data, string name)
             {
@@ -134,7 +134,7 @@ namespace Xarial.Docify.Core.Compiler
             return Task.CompletedTask;
         }
 
-        public async Task<string> ReplaceAll(string rawContent, Site site, Page page)
+        public async Task<string> ReplaceAll(string rawContent, ISite site, IPage page)
         {
             var replacement = await m_PlcParser.ReplaceAsync(rawContent, async (string includeRawContent) => 
             {

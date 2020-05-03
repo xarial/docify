@@ -9,6 +9,6 @@ namespace Xarial.Docify.Base.Plugins
     public interface IRenderIncludePlugin : IPlugin
     {
         string IncludeName { get; }
-        Task<string> GetContent(Metadata data, Page page);
+        Task<string> GetContent(Metadata data, IPage page);
     }
 }

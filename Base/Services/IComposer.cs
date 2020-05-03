@@ -15,6 +15,6 @@ namespace Xarial.Docify.Base.Services
 {
     public interface IComposer
     {
-        Site ComposeSite(IEnumerable<IFile> files, string baseUrl);
+        ISite ComposeSite(IEnumerable<IFile> files, string baseUrl);
     }
 }

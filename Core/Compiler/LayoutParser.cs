@@ -32,7 +32,7 @@ namespace Xarial.Docify.Core.Compiler
             return Regex.IsMatch(content, CONTENT_PLACEHOLDER_REGEX);
         }
 
-        public async Task<string> InsertContent(Template layout, string content, IContextModel model)
+        public async Task<string> InsertContent(ITemplate layout, string content, IContextModel model)
         {
             if (layout == null) 
             {

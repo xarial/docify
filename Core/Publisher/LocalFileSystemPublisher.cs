@@ -5,17 +5,14 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using System;
 using System.Collections.Generic;
-using System.Composition;
 using System.IO;
-using System.IO.Abstractions;
-using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Plugin;
 
 namespace Xarial.Docify.Core.Publisher
@@ -23,17 +20,17 @@ namespace Xarial.Docify.Core.Publisher
     public class LocalFileSystemPublisher : IPublisher
     {
         private readonly LocalFileSystemPublisherConfig m_Config;
-        private readonly IFileSystem m_FileSystem;
+        private readonly System.IO.Abstractions.IFileSystem m_FileSystem;
 
         [ImportPlugin]
-        private IEnumerable<IPrePublishWritablePlugin> m_PrePublishWritablePlugins = null;
+        private IEnumerable<IPrePublishFilePlugin> m_PrePublishFilePlugins = null;
         
         public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config) 
-            : this(config, new FileSystem())
+            : this(config, new System.IO.Abstractions.FileSystem())
         {
         }
 
-        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config, IFileSystem fileSystem)
+        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config, System.IO.Abstractions.IFileSystem fileSystem)
         {
             m_Config = config;
             m_FileSystem = fileSystem;
@@ -71,9 +68,9 @@ namespace Xarial.Docify.Core.Publisher
 
                 bool cancel = false;
 
-                Base.Content.IFile outWritable = new Writable(writable.Content, outLoc);
+                IFile outWritable = new Writable(writable.Content, outLoc);
 
-                m_PrePublishWritablePlugins.InvokePluginsIfAny(p => p.PrePublishWritable(ref outWritable, out cancel));
+                m_PrePublishFilePlugins.InvokePluginsIfAny(p => p.PrePublishFile(ref outWritable, out cancel));
                 if (!cancel)
                 {
                     outFilePath = outWritable.Location.ToPath();

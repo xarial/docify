@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
@@ -23,6 +22,7 @@ using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Core.Plugin;
 using Xarial.Docify.Core.Helpers;
+using Xarial.Docify.Core.Data;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -52,7 +52,7 @@ namespace Xarial.Docify.Core.Compiler
             m_IncludesHandler = includesHandler;
         }
 
-        public async Task<IFile[]> Compile(Site site)
+        public async Task<IFile[]> Compile(ISite site)
         {
             m_PreCompilePlugins.InvokePluginsIfAny(p => p.PreCompile(site));
 
@@ -85,7 +85,7 @@ namespace Xarial.Docify.Core.Compiler
             return writables.ToArray();
         }
         
-        private async Task<IFile> CompilePage(Page page, Site site)
+        private async Task<IFile> CompilePage(IPage page, ISite site)
         {
             var model = new ContextModel(site, page);
 
@@ -103,7 +103,7 @@ namespace Xarial.Docify.Core.Compiler
             return new Writable(content, page.Location);
         }
 
-        private async Task<IFile> CompileAsset(Asset asset, Site site)
+        private async Task<IFile> CompileAsset(IFile asset, ISite site)
         {
             var rawContent = asset.AsTextContent();
             var content = await m_IncludesHandler.ReplaceAll(rawContent, site, null);

@@ -7,7 +7,7 @@ color: black
 ---
 @using RazorLight
 @using System
-@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
 @{
     var color = Model.Data.Get<string>("color");
 }

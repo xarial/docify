@@ -9,36 +9,17 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Base;
+using Xarial.Docify.Base.Context;
 
 namespace Xarial.Docify.Core.Compiler.Context
 {
-    public class ContextSite
+    public class ContextSite : IContextSite
     {
         internal ISite BaseSite { get; }
 
-        public string BaseUrl 
-        {
-            get 
-            {
-                return BaseSite.BaseUrl;
-            }
-        }
-
-        public ContextPage MainPage 
-        {
-            get 
-            {
-                return new ContextPage(BaseSite, BaseSite.MainPage);
-            }
-        }
-
-        public ContextConfiguration Configuration 
-        {
-            get 
-            {
-                return new ContextConfiguration(BaseSite.Configuration);
-            }
-        }
+        public string BaseUrl => BaseSite.BaseUrl;
+        public IContextPage MainPage => new ContextPage(BaseSite, BaseSite.MainPage);
+        public IContextConfiguration Configuration => new ContextConfiguration(BaseSite.Configuration);
 
         public ContextSite(ISite site) 
         {

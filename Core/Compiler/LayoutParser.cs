@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Core.Compiler

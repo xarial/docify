@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
+using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
@@ -124,7 +125,7 @@ namespace Core.Tests
         public async Task Render_MergedPageParameters()
         {
             var md = new Metadata();
-            md.Add("$i1", new Dictionary<object, object>() 
+            md.Add("$i1", new Dictionary<string, object>() 
             {
                 { "a1", "Z" },
                 { "a4", "J" }
@@ -143,7 +144,7 @@ namespace Core.Tests
         public async Task Render_MergedSiteParameters()
         {
             var conf = new Configuration();
-            conf.Add("$i1", new Dictionary<object, object>()
+            conf.Add("$i1", new Dictionary<string, object>()
             {
                 { "a1", "Z" },
                 { "a4", "J" }
@@ -162,7 +163,7 @@ namespace Core.Tests
         public async Task Render_MergedParametersHierarchy()
         {
             var conf = new Configuration();
-            conf.Add("$i1", new Dictionary<object, object>()
+            conf.Add("$i1", new Dictionary<string, object>()
             {
                 { "a1", "S1" },
                 { "a2", "S2" },
@@ -170,7 +171,7 @@ namespace Core.Tests
             });
 
             var md = new Metadata();
-            md.Add("$i1", new Dictionary<object, object>()
+            md.Add("$i1", new Dictionary<string, object>()
             {
                 { "a1", "P1" },
                 { "a2", "P2" },

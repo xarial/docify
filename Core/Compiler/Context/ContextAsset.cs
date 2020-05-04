@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Xarial.Docify.Base.Context;
 
 namespace Xarial.Docify.Core.Compiler.Context
 {
-    public interface IContextAsset
-    {
-        byte[] Content { get; }
-        string Name { get; }
-    }
-
     public class ContextAsset : IContextAsset
     {
         public  byte[] Content { get; }

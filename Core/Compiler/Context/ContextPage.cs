@@ -11,21 +11,11 @@ using System.Linq;
 using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Context;
 using Xarial.Docify.Core.Data;
 
 namespace Xarial.Docify.Core.Compiler.Context
 {
-    public interface IContextPage
-    {
-        string Url { get; }
-        string FullUrl { get; }
-        string Name { get; }
-        string RawContent { get; }
-        ContextMetadata Data { get; }
-        IReadOnlyList<IContextPage> SubPages { get; }
-        IReadOnlyList<IContextAsset> Assets { get; }
-    }
-
     public class ContextPage : IContextPage
     {
         private readonly ISite m_Site;
@@ -37,7 +27,7 @@ namespace Xarial.Docify.Core.Compiler.Context
         public string Name => BasePage.Location.FileName;
         public string RawContent => BasePage.RawContent;
 
-        public ContextMetadata Data 
+        public IContextMetadata Data 
         {
             get
             {

@@ -5,8 +5,8 @@ pageIndex: 0
 @using RazorLight
 @using System
 @using System.Linq
-@using Xarial.Docify.Core.Compiler.Context
-@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@using Xarial.Docify.Base.Context
+@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
 @{
     var posts = Model.Page.SubPages.Where(p =>
     {

@@ -8,9 +8,9 @@ root_page:
 @using System
 @using System.Linq
 @using System.Collections.Generic
-@using Xarial.Docify.Core.Compiler.Context
 @using Xarial.Docify.Lib.Tools
-@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@using Xarial.Docify.Base.Context
+@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
 @{
     const string MENU_OPT = "menu";
     const string HOME_MENU_OPT = "home_menu";

@@ -16,15 +16,16 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Lib.Tools
 {
     public static class DataDeserializer
     {
-        public static T Deserialize<T>(IDictionary data)
+        public static T Deserialize<T>(IContextMetadata data)
         {
-            return MetadataExtension.ToObject<T>(data);
+            return MetadataExtension.ToObject<T>(new Dictionary<string, object>(data));
         }
     }
 }

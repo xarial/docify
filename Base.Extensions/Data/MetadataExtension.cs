@@ -29,12 +29,12 @@ namespace Xarial.Docify.Base.Data
             }
         }
 
-        public static T ToObject<T>(IDictionary data)
+        public static T ToObject<T>(IDictionary<string, object> data)
         {
             return (T)ToObject(data, typeof(T));
         }
 
-        public static object ToObject(IDictionary data, Type type)
+        public static object ToObject(IDictionary<string, object> data, Type type)
         {
             var obj = JObject.FromObject(data, m_JsonSerializer);
             var res = obj.ToObject(type);
@@ -115,19 +115,27 @@ namespace Xarial.Docify.Base.Data
             return val;
         }
 
-        private static bool TryGetParameter<T>(IMetadata data, string name, out T val)
+        public static bool TryGetParameter<T>(IDictionary<string, object> data, string name, out T val)
         {
             object dynVal;
 
             if (data.TryGetValue(name, out dynVal))
             {
-                if (dynVal is T)
+                if (object.Equals(dynVal, default(T)))
+                {
+                    val = default(T);
+                }
+                else if (dynVal is T)
                 {
                     val = (T)dynVal;
                 }
-                else
+                else if (dynVal is IConvertible)
                 {
                     val = (T)Convert.ChangeType(dynVal, typeof(T));
+                }
+                else 
+                {
+                    throw new InvalidCastException("Failed to convert parameter");
                 }
 
                 return true;

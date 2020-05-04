@@ -92,11 +92,11 @@ namespace Xarial.Docify.Core.Plugin
 
                         var pluginId = GetPluginId(pluginSpecType);
 
-                        dynamic settsData;
+                        IDictionary<string, object> settsData;
 
                         object setts = null;
 
-                        if (conf.TryGetValue(pluginId, out settsData))
+                        if (MetadataExtension.TryGetParameter(conf, pluginId, out settsData))
                         {
                             setts = MetadataExtension.ToObject(settsData, settsType);
                         }

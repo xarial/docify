@@ -17,6 +17,7 @@ using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Data;
+using Xarial.Docify.Core.Helpers;
 using Xarial.Docify.Core.Plugin;
 using YamlDotNet.Serialization;
 
@@ -185,7 +186,7 @@ namespace Core.Tests
             var fs = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
             fs.AddFile("D:\\Plugins\\mockplugins.dll", new System.IO.Abstractions.TestingHelpers.MockFileData(assmBuffer));
 
-            var conf = new DeserializerBuilder().Build().Deserialize<Configuration>("plg1:\r\n  prop-two: 0.1\r\n  prp3:\r\n    - A\r\n    - B");
+            var conf = new MetadataSerializer().Deserialize<Configuration>("plg1:\r\n  prop-two: 0.1\r\n  prp3:\r\n    - A\r\n    - B");
             conf.PluginsFolder = Location.FromPath("D:\\Plugins");
             conf.Plugins = new List<string>(new string[] { "plg1" });
 

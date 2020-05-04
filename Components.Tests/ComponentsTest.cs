@@ -45,7 +45,7 @@ namespace Components.Tests
         public static T GetData<T>(string paramStr)
             where T : Metadata
         {
-            var yamlDeserializer = new DeserializerBuilder().Build();
+            var yamlDeserializer = new MetadataSerializer();
 
             return yamlDeserializer.Deserialize<T>(paramStr);
         }

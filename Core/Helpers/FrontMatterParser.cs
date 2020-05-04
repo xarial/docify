@@ -63,7 +63,7 @@ namespace Xarial.Docify.Core.Helpers
 
             if (frontMatter.Length > 0)
             {
-                var yamlDeserializer = new DeserializerBuilder().Build();
+                var yamlDeserializer = new MetadataSerializer();
 
                 data = yamlDeserializer.Deserialize<Metadata>(frontMatter.ToString());
             }

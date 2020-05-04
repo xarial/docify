@@ -17,6 +17,7 @@ using Xarial.Docify.Base.Services;
 using YamlDotNet.Serialization;
 using Xarial.Docify.Core.Data;
 using System.Linq;
+using Xarial.Docify.Core.Helpers;
 
 namespace Xarial.Docify.Core.Loader
 {
@@ -39,7 +40,7 @@ namespace Xarial.Docify.Core.Loader
         private const string DEFAULT_PLUGINS_DIR = "Plugins";
 
         private readonly IFileSystem m_FileSystem;
-        private readonly IDeserializer m_YamlSerializer;
+        private readonly MetadataSerializer m_ConfigSerializer;
         private readonly Environment_e m_Environment;
 
         public LocalFileSystemConfigurationLoader(Environment_e env)
@@ -50,7 +51,7 @@ namespace Xarial.Docify.Core.Loader
         public LocalFileSystemConfigurationLoader(IFileSystem fileSystem, Environment_e env) 
         {
             m_FileSystem = fileSystem;
-            m_YamlSerializer = new DeserializerBuilder().Build();
+            m_ConfigSerializer = new MetadataSerializer();
             m_Environment = env;
         }
 
@@ -118,7 +119,7 @@ namespace Xarial.Docify.Core.Loader
             {
                 var confStr = await m_FileSystem.File.ReadAllTextAsync(configFilePath);
 
-                return new Configuration(m_YamlSerializer.Deserialize<Dictionary<string, dynamic>>(confStr));
+                return new Configuration(m_ConfigSerializer.Deserialize<Dictionary<string, object>>(confStr));
             }
             else
             {

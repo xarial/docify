@@ -94,7 +94,7 @@ namespace Xarial.Docify.Core.Compiler
         {
             Dictionary<string, object> GetData(IMetadata data, string name)
             {
-                var extrData = data.GetParameterOrDefault<Dictionary<object, object>>("$" + name);
+                var extrData = data.GetParameterOrDefault<Dictionary<string, object>>("$" + name);
 
                 if (extrData != null)
                 {
@@ -126,7 +126,7 @@ namespace Xarial.Docify.Core.Compiler
                 name = includeRawContent.Substring(0, includeRawContent.IndexOf(NAME_PARAMS_SPLIT_SYMBOL));
                 var paramStr = includeRawContent.Substring(includeRawContent.IndexOf(NAME_PARAMS_SPLIT_SYMBOL) + 1);
 
-                var yamlDeserializer = new DeserializerBuilder().Build();
+                var yamlDeserializer = new MetadataSerializer();
 
                 param = yamlDeserializer.Deserialize<Metadata>(paramStr);
             }

@@ -34,6 +34,11 @@ namespace Xarial.Docify.Base.Data
             return (T)ToObject(data, typeof(T));
         }
 
+        public static T ToObject<T>(this IMetadata data)
+        {
+            return (T)ToObject(data, typeof(T));
+        }
+
         public static object ToObject(IDictionary<string, object> data, Type type)
         {
             var obj = JObject.FromObject(data, m_JsonSerializer);

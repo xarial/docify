@@ -5,13 +5,13 @@ using Xarial.Docify.Base;
 
 namespace Xarial.Docify.Lib.Plugins
 {
-    public class Location : ILocation
+    public class PluginDataFileLocation : ILocation
     {
         public IReadOnlyList<string> Path { get; }
 
         public string FileName { get; }
 
-        public Location(string fileName, IEnumerable<string> path) 
+        public PluginDataFileLocation(string fileName, IEnumerable<string> path) 
         {
             FileName = fileName;
             Path = new List<string>(path);
@@ -19,7 +19,7 @@ namespace Xarial.Docify.Lib.Plugins
 
         public ILocation Copy(string fileName, IEnumerable<string> path)
         {
-            return new Location(fileName, path);
+            return new PluginDataFileLocation(fileName, path);
         }
     }
 }

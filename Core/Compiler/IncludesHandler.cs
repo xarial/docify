@@ -35,7 +35,7 @@ namespace Xarial.Docify.Core.Compiler
 
         private readonly PlaceholdersParser m_PlcParser;
 
-        [ImportPlugin]
+        [ImportPlugins]
         private IEnumerable<IRenderIncludePlugin> m_RenderIncludePlugins = null;
 
         public IncludesHandler(IContentTransformer transformer) 

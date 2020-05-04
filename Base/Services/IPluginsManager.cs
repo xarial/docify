@@ -13,6 +13,6 @@ namespace Xarial.Docify.Base.Services
 {
     public interface IPluginsManager
     {
-        void LoadPlugins<T>(T service);
+        void LoadPlugins<T>(T service, bool importService);
     }
 }

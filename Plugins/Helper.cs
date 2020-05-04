@@ -9,6 +9,7 @@ namespace Xarial.Docify.Lib.Plugins
     {
         internal const string CSS_LINK_TEMPLATE = "<link rel=\"stylesheet\" type=\"text/css\" href=\"/{0}\" />\r\n";
 
+        //TODO: create more generic way for plugin to inject styles and scripts into html pages
         internal static void InjectDataIntoHtmlHead(ref string html, string data) 
         {
             var headInd = html.IndexOf("</head>");

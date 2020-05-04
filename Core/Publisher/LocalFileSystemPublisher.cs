@@ -22,7 +22,7 @@ namespace Xarial.Docify.Core.Publisher
         private readonly LocalFileSystemPublisherConfig m_Config;
         private readonly System.IO.Abstractions.IFileSystem m_FileSystem;
 
-        [ImportPlugin]
+        [ImportPlugins]
         private IEnumerable<IPrePublishFilePlugin> m_PrePublishFilePlugins = null;
         
         public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config) 
@@ -70,7 +70,7 @@ namespace Xarial.Docify.Core.Publisher
 
                 IFile outWritable = new Data.File(outLoc, writable.Content);
 
-                m_PrePublishFilePlugins.InvokePluginsIfAny(p => p.PrePublishFile(ref outWritable, out skip));
+                m_PrePublishFilePlugins.InvokePluginsIfAny(p => p.PrePublishFile(outLoc, ref outWritable, out skip));
                 if (!skip)
                 {
                     outFilePath = outWritable.Location.ToPath();

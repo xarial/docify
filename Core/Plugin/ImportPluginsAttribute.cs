@@ -12,8 +12,8 @@ using System.Text;
 
 namespace Xarial.Docify.Core.Plugin
 {
-    [AttributeUsage(AttributeTargets.Field)]
-    public class ImportPluginAttribute : ImportManyAttribute
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public class ImportPluginsAttribute : ImportManyAttribute
     {
     }
 }

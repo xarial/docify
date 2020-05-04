@@ -2,11 +2,11 @@
 components:
   - $
   - toc
-  - code-snippet
   - disqus
 plugins:
   - $
   - code-syntax-highlighter
+  - code-snippet
 code-syntax-highlighter:
   embed-style: false
 $toc:

@@ -54,7 +54,12 @@ namespace Xarial.Docify.Lib.Plugins
         private const string SVG_EXT = ".svg";
         private const string PNG_EXT = ".png";
 
-        public ImageOptimizerSettings Settings { get; set; }
+        private ImageOptimizerSettings m_Settings;
+
+        public void Init(ImageOptimizerSettings setts)
+        {
+            m_Settings = setts;
+        }
 
         public void PreCompile(ISite site)
         {
@@ -84,7 +89,7 @@ namespace Xarial.Docify.Lib.Plugins
                             using (var svgStream = new MemoryStream(imgAsset.Content))
                             {
                                 var svgDocument = SvgDocument.Open<SvgDocument>(svgStream);
-                                var bitmap = svgDocument.Draw(Settings.SvgPngWidth, Settings.SvgPngHeight);
+                                var bitmap = svgDocument.Draw(m_Settings.SvgPngWidth, m_Settings.SvgPngHeight);
 
                                 using (var pngStream = new MemoryStream()) 
                                 {
@@ -94,7 +99,7 @@ namespace Xarial.Docify.Lib.Plugins
                             }
 
                             page.Data.Add(REPLACE_IMAGE_TAG_NAME, imgName);
-                            var imgPngAsset = new PluginReplacedFile(pngBuffer, new Location(imgName, page.Location.Path.ToArray()));
+                            var imgPngAsset = new PluginDataFile(pngBuffer, new PluginDataFileLocation(imgName, page.Location.Path.ToArray()));
                             page.Assets.Add(imgPngAsset);
                             site.MainPage.Assets.Add(imgPngAsset);
                         }
@@ -102,7 +107,7 @@ namespace Xarial.Docify.Lib.Plugins
                 }
             }
 
-            if (Settings.GenerateFavIcon)
+            if (m_Settings.GenerateFavIcon)
             {
                 GenerateFavIcon(site);
             }
@@ -132,15 +137,15 @@ namespace Xarial.Docify.Lib.Plugins
                     || string.Equals(p.Location.ToUrl(site.BaseUrl), path));
         }
         
-        public void PrePublishFile(ref IFile file, out bool skip)
+        public void PrePublishFile(ILocation outLoc, ref IFile file, out bool skip)
         {
             skip = false;
 
             var path = file.Location.ToPath();
 
-            var opts = Settings.IgnoreMatchCase ? RegexOptions.IgnoreCase : RegexOptions.None;
+            var opts = m_Settings.IgnoreMatchCase ? RegexOptions.IgnoreCase : RegexOptions.None;
 
-            if (Settings.MatchPattern.Any(p => Regex.IsMatch(path, p, opts)))
+            if (m_Settings.MatchPattern.Any(p => Regex.IsMatch(path, p, opts)))
             {
                 var quantizer = new WuQuantizer();
 
@@ -158,7 +163,7 @@ namespace Xarial.Docify.Lib.Plugins
                                 {
                                     quantized.Save(outStr, img.RawFormat);
                                     outStr.Seek(0, SeekOrigin.Begin);
-                                    file = new PluginReplacedFile(outStr.GetBuffer(), file.Location);
+                                    file = new PluginDataFile(outStr.GetBuffer(), file.Location);
                                 }
                             }
                         }

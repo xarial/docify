@@ -6,6 +6,7 @@
 //*********************************************************************
 
 using Autofac;
+using Autofac.Builder;
 using Autofac.Core;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,33 @@ namespace Xarial.Docify.CLI
     {
         T Resove<T>();
         Task Build();
+    }
+
+    public static class AutoFacExtension
+    {
+        private const string IMPORT_SERVICE_TO_PLUGINS = "import_service_to_plugins";
+
+        public static IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> ImportServiceToPlugins<TLimit, TActivatorData, TRegistrationStyle>(
+            this IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> regBuilder)
+        {
+            regBuilder.WithMetadata(IMPORT_SERVICE_TO_PLUGINS, true);
+            return regBuilder;
+        }
+
+        public static bool IsImportServiceToPlugins(this IComponentRegistration compReg) 
+        {
+            object importService;
+            
+            if (compReg.Metadata.TryGetValue(IMPORT_SERVICE_TO_PLUGINS, out importService)) 
+            {
+                if (importService is bool) 
+                {
+                    return (bool)importService;
+                }
+            }
+
+            return false;
+        }
     }
 
     public class DocifyEngine : IDocifyEngine
@@ -93,36 +121,47 @@ namespace Xarial.Docify.CLI
             builder.RegisterType<LocalFileSystemPublisherConfig>();
 
             builder.RegisterType<LocalFileSystemPublisher>()
-                .As<IPublisher>();
+                .As<IPublisher>()
+                .ImportServiceToPlugins();
 
             builder.RegisterType<LocalFileSystemLoader>()
-                .As<ILoader>();
+                .As<ILoader>()
+                .ImportServiceToPlugins();
 
             builder.RegisterType<LayoutParser>()
-                .As<ILayoutParser>();
+                .As<ILayoutParser>()
+                .ImportServiceToPlugins();
 
-            builder.RegisterType<BaseSiteComposer>().As<IComposer>();
+            builder.RegisterType<BaseSiteComposer>().As<IComposer>()
+                .ImportServiceToPlugins();
 
-            builder.RegisterType<ConsoleLogger>().As<ILogger>();
+            builder.RegisterType<ConsoleLogger>().As<ILogger>()
+                .ImportServiceToPlugins();
 
-            builder.RegisterType<LocalFileSystemComponentsLoader>().As<IComponentsLoader>();
+            builder.RegisterType<LocalFileSystemComponentsLoader>().As<IComponentsLoader>()
+                .ImportServiceToPlugins();
 
             builder.RegisterType<RazorLightContentTransformer>();
+
             builder.RegisterType<MarkdigMarkdownContentTransformer>();
 
             builder.RegisterType<IncludesHandler>().As<IIncludesHandler>().WithParameter(
                 new ResolvedParameter(
                     (pi, ctx) => pi.ParameterType == typeof(IContentTransformer),
                     (pi, ctx) => ctx.Resolve<RazorLightContentTransformer>()))
-                .SingleInstance();
+                .SingleInstance()
+                .ImportServiceToPlugins();
 
             builder.RegisterType<MarkdigRazorLightTransformer>().As<IContentTransformer>()
-                .SingleInstance();
+                .SingleInstance()
+                .ImportServiceToPlugins();
 
             builder.RegisterType<LocalFileSystemConfigurationLoader>().As<IConfigurationLoader>()
-                .WithParameter(new TypedParameter(typeof(Environment_e), env));
+                .WithParameter(new TypedParameter(typeof(Environment_e), env))
+                .ImportServiceToPlugins();
 
-            builder.RegisterType<BaseCompiler>().As<ICompiler>();
+            builder.RegisterType<BaseCompiler>().As<ICompiler>()
+                .ImportServiceToPlugins();
 
             builder.Register(c => c.Resolve<IConfigurationLoader>().Load(Location.FromPath(m_SrcDir)).Result);
 
@@ -135,11 +174,13 @@ namespace Xarial.Docify.CLI
 
             foreach (var reg in m_Container.ComponentRegistry.Registrations)
             {
+                //TODO: activated is called on all resolves which makes duplicate calls for the same reference
                 reg.Activated += (o, eventArgs) =>
                 {
                     if (plugMgr != null)
                     {
-                        plugMgr.LoadPlugins(eventArgs.Instance);
+                        plugMgr.LoadPlugins(eventArgs.Instance,
+                            eventArgs.Component.IsImportServiceToPlugins());
                     }
                 };
             }

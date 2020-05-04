@@ -26,35 +26,40 @@ namespace Xarial.Docify.Lib.Plugins
     [Plugin("code-syntax-highlighter")]
     public class CodeSyntaxHighlighter : IRenderCodeBlockPlugin, IPreCompilePlugin, IPrePublishFilePlugin, IPlugin<CodeSyntaxHighlighterSettings>
     {
-        public CodeSyntaxHighlighterSettings Settings { get; set; }
+        private CodeSyntaxHighlighterSettings m_Settings;
 
         private CodeColorizerBase m_Formatter;
 
         private const string CSS_FILE_NAME = "syntax-highlight.css";
         private readonly string[] CSS_FILE_PATH = new string[] { "assets", "styles" };
-        
+
+        public void Init(CodeSyntaxHighlighterSettings setts)
+        {
+            m_Settings = setts;
+        }
+
         public void PreCompile(ISite site)
         {
-            if (!Settings.EmbedStyle)
+            if (!m_Settings.EmbedStyle)
             {
                 var css = (Formatter as HtmlClassFormatter).GetCSSString();
                 css = css.Substring("body{background-color:#FFFFFFFF;} ".Length);//temp solution - find a better way
-                site.MainPage.Assets.Add(new PluginReplacedFile(css, new Location(CSS_FILE_NAME, CSS_FILE_PATH)));
+                site.MainPage.Assets.Add(new PluginDataFile(css, new PluginDataFileLocation(CSS_FILE_NAME, CSS_FILE_PATH)));
             }
         }
 
-        public void PrePublishFile(ref IFile file, out bool skip)
+        public void PrePublishFile(ILocation outLoc, ref IFile file, out bool skip)
         {
             skip = false;
 
-            if (!Settings.EmbedStyle)
+            if (!m_Settings.EmbedStyle)
             {
                 if (string.Equals(Path.GetExtension(file.Location.FileName), ".html", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var pageContent = file.AsTextContent();
                     Helper.InjectDataIntoHtmlHead(ref pageContent,
                         string.Format(Helper.CSS_LINK_TEMPLATE, string.Join('/', CSS_FILE_PATH) + "/" + CSS_FILE_NAME));
-                    file = new PluginReplacedFile(pageContent, file.Location);
+                    file = new PluginDataFile(pageContent, file.Location);
                 }
             }
         }
@@ -100,7 +105,7 @@ namespace Xarial.Docify.Lib.Plugins
                         styles[i].ReferenceName = "c" + i;
                     }
 
-                    if (Settings.EmbedStyle)
+                    if (m_Settings.EmbedStyle)
                     {
                         m_Formatter = new HtmlFormatter(styles);
                     }

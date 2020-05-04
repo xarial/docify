@@ -6,9 +6,9 @@
 //*********************************************************************
 
 using NUnit.Framework;
-using Xarial.Docify.Lib.Tools;
+using Xarial.Docify.Lib.Plugins;
 
-namespace Tools.Tests
+namespace Plugins.Tests
 {
     public class CodeSnippetHelperTest
     {

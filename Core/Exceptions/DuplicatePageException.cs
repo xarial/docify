@@ -14,7 +14,7 @@ namespace Xarial.Docify.Core.Exceptions
 {
     public class DuplicatePageException : Exception
     {
-        public DuplicatePageException(Location loc) 
+        public DuplicatePageException(ILocation loc) 
             : base($"Specified page already exist '{loc.ToId()}'")
         {
         }

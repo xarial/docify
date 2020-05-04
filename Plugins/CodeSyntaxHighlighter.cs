@@ -13,7 +13,7 @@ using System.IO;
 using System.Text;
 using System.Xml.Linq;
 using Xarial.Docify.Base;
-using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 
 namespace Xarial.Docify.Lib.Plugins
@@ -24,7 +24,7 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("code-syntax-highlighter")]
-    public class CodeSyntaxHighlighter : IRenderCodeBlockPlugin, IPreCompilePlugin, IPrePublishTextAssetPlugin, IPlugin<CodeSyntaxHighlighterSettings>
+    public class CodeSyntaxHighlighter : IRenderCodeBlockPlugin, IPreCompilePlugin, IPrePublishFilePlugin, IPlugin<CodeSyntaxHighlighterSettings>
     {
         public CodeSyntaxHighlighterSettings Settings { get; set; }
 
@@ -33,26 +33,28 @@ namespace Xarial.Docify.Lib.Plugins
         private const string CSS_FILE_NAME = "syntax-highlight.css";
         private readonly string[] CSS_FILE_PATH = new string[] { "assets", "styles" };
         
-        public void PreCompile(Site site)
+        public void PreCompile(ISite site)
         {
             if (!Settings.EmbedStyle)
             {
                 var css = (Formatter as HtmlClassFormatter).GetCSSString();
                 css = css.Substring("body{background-color:#FFFFFFFF;} ".Length);//temp solution - find a better way
-                site.Assets.Add(new TextAsset(css, new Location(CSS_FILE_NAME, CSS_FILE_PATH)));
+                site.MainPage.Assets.Add(new PluginReplacedFile(css, new Location(CSS_FILE_NAME, CSS_FILE_PATH)));
             }
         }
 
-        public void PrePublishTextAsset(ref Location loc, ref string content, out bool cancel)
+        public void PrePublishFile(ref IFile file, out bool skip)
         {
-            cancel = false;
+            skip = false;
 
             if (!Settings.EmbedStyle)
             {
-                if (string.Equals(Path.GetExtension(loc.FileName), ".html", StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals(Path.GetExtension(file.Location.FileName), ".html", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    Helper.InjectDataIntoHtmlHead(ref content,
+                    var pageContent = file.AsTextContent();
+                    Helper.InjectDataIntoHtmlHead(ref pageContent,
                         string.Format(Helper.CSS_LINK_TEMPLATE, string.Join('/', CSS_FILE_PATH) + "/" + CSS_FILE_NAME));
+                    file = new PluginReplacedFile(pageContent, file.Location);
                 }
             }
         }

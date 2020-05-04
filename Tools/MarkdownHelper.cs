@@ -9,13 +9,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
+using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Lib.Tools
 {
     public static class MarkdownHelper
     {
-        public static MarkdigMarkdownContentTransformer MarkdownTransformer { get; set; }
+        public static IContentTransformer MarkdownTransformer { get; set; }
 
         public static Task<string> ToHtml(string raw)
         {

@@ -13,12 +13,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
-using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Compiler.Context;
+using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
 
 namespace Core.Tests
@@ -43,7 +44,7 @@ namespace Core.Tests
         public void ParseParameters_SingleLine() 
         {
             string n1, n2, n3;
-            Metadata p1, p2, p3;
+            IMetadata p1, p2, p3;
             
             m_Handler.ParseParameters("include a1: A", out n1, out p1);
             m_Handler.ParseParameters(" include  a1: A", out n2, out p2);
@@ -67,7 +68,7 @@ namespace Core.Tests
         public void ParseParameters_MultipleLine()
         {
             string n1;
-            Metadata p1;
+            IMetadata p1;
 
             m_Handler.ParseParameters("include a1: A\r\na2: B\r\na3:\r\n    - X\r\n    - Y", out n1, out p1);
 
@@ -84,7 +85,7 @@ namespace Core.Tests
         public void ParseParameters_NoParameters()
         {
             string n1;
-            Metadata p1;
+            IMetadata p1;
 
             m_Handler.ParseParameters("include", out n1, out p1);
 
@@ -124,7 +125,7 @@ namespace Core.Tests
         public async Task Render_MergedPageParameters()
         {
             var md = new Metadata();
-            md.Add("$i1", new Dictionary<object, object>() 
+            md.Add("$i1", new Dictionary<string, object>() 
             {
                 { "a1", "Z" },
                 { "a4", "J" }
@@ -143,7 +144,7 @@ namespace Core.Tests
         public async Task Render_MergedSiteParameters()
         {
             var conf = new Configuration();
-            conf.Add("$i1", new Dictionary<object, object>()
+            conf.Add("$i1", new Dictionary<string, object>()
             {
                 { "a1", "Z" },
                 { "a4", "J" }
@@ -162,7 +163,7 @@ namespace Core.Tests
         public async Task Render_MergedParametersHierarchy()
         {
             var conf = new Configuration();
-            conf.Add("$i1", new Dictionary<object, object>()
+            conf.Add("$i1", new Dictionary<string, object>()
             {
                 { "a1", "S1" },
                 { "a2", "S2" },
@@ -170,7 +171,7 @@ namespace Core.Tests
             });
 
             var md = new Metadata();
-            md.Add("$i1", new Dictionary<object, object>()
+            md.Add("$i1", new Dictionary<string, object>()
             {
                 { "a1", "P1" },
                 { "a2", "P2" },
@@ -194,6 +195,12 @@ namespace Core.Tests
             s.Includes.Add(new Template("i1", "abc"));
 
             Assert.ThrowsAsync<MissingIncludeException>(() => m_Handler.Render("i2", new Metadata(), s, p1));
+        }
+
+        [Test]
+        public void Render_PluginIncludes()
+        {
+            throw new NotImplementedException();
         }
 
         [Test]

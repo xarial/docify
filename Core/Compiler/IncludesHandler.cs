@@ -12,13 +12,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
-using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Compiler.Context;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Helpers;
+using Xarial.Docify.Core.Plugin;
 using YamlDotNet.Serialization;
 
 namespace Xarial.Docify.Core.Compiler
@@ -34,30 +35,70 @@ namespace Xarial.Docify.Core.Compiler
 
         private readonly PlaceholdersParser m_PlcParser;
 
+        [ImportPlugin]
+        private IEnumerable<IRenderIncludePlugin> m_RenderIncludePlugins = null;
+
         public IncludesHandler(IContentTransformer transformer) 
         {
             m_Transformer = transformer;
             m_PlcParser = new PlaceholdersParser(START_TAG, END_TAG);
         }
         
-        public async Task<string> Render(string name, Metadata param, 
-            Site site, Page page)
+        public async Task<string> Render(string name, IMetadata param, 
+            ISite site, IPage page)
         {
-            var include = site.Includes.FirstOrDefault(i => string.Equals(i.Name, 
+            var includePlugins = m_RenderIncludePlugins?.Where(p => string.Equals(p.IncludeName,
                 name, StringComparison.CurrentCultureIgnoreCase));
 
-            if (include == null) 
-            {
-                throw new MissingIncludeException(name);
-            }
+            var include = site.Includes.FirstOrDefault(i => string.Equals(i.Name,
+                name, StringComparison.CurrentCultureIgnoreCase));
 
-            Dictionary<string, dynamic> GetData(Metadata data, string name)
+            if (include != null)
             {
-                var extrData = data.GetParameterOrDefault<Dictionary<object, object>>("$" + name);
+                var data = ComposeDataParameters(name, param, site, page);
+                data = data.Merge(include.Data);
+
+                return await m_Transformer.Transform(include.RawContent, include.Key,
+                    new IncludeContextModel(site, page, data));
+            }
+            else 
+            {
+                if (includePlugins != null)
+                {
+                    if (includePlugins.Count() == 1)
+                    {
+                        var includePlugin = includePlugins.First();
+
+                        if (param == null) 
+                        {
+                            param = new Metadata();
+                        }
+
+                        var data = ComposeDataParameters(name, param, site, page);
+                        return await includePlugin.GetContent(data, page);
+                    }
+                    else
+                    {
+                        //TODO: create specific extension
+                        throw new Exception($"Too many plugins registered for the '{name}' include rendering");
+                    }
+                }
+                else 
+                {
+                    throw new MissingIncludeException(name);
+                }
+            }
+        }
+
+        private static IMetadata ComposeDataParameters(string name, IMetadata param, ISite site, IPage page)
+        {
+            Dictionary<string, object> GetData(IMetadata data, string name)
+            {
+                var extrData = data.GetParameterOrDefault<Dictionary<string, object>>("$" + name);
 
                 if (extrData != null)
                 {
-                    return extrData.ToDictionary(k => k.Key.ToString(), k => (dynamic)k.Value);
+                    return extrData.ToDictionary(k => k.Key.ToString(), k => k.Value);
                 }
                 else
                 {
@@ -72,15 +113,11 @@ namespace Xarial.Docify.Core.Compiler
             }
 
             param = param.Merge(GetData(site.Configuration, name));
-            param = param.Merge(include.Data);
-
-            var res = await m_Transformer.Transform(include.RawContent, include.Key, 
-                new IncludeContextModel(site, page, param));
-
-            return res;
+            
+            return param;
         }
 
-        public Task ParseParameters(string includeRawContent, out string name, out Metadata param) 
+        public Task ParseParameters(string includeRawContent, out string name, out IMetadata param) 
         {
             includeRawContent = includeRawContent.Trim();
 
@@ -89,7 +126,7 @@ namespace Xarial.Docify.Core.Compiler
                 name = includeRawContent.Substring(0, includeRawContent.IndexOf(NAME_PARAMS_SPLIT_SYMBOL));
                 var paramStr = includeRawContent.Substring(includeRawContent.IndexOf(NAME_PARAMS_SPLIT_SYMBOL) + 1);
 
-                var yamlDeserializer = new DeserializerBuilder().Build();
+                var yamlDeserializer = new MetadataSerializer();
 
                 param = yamlDeserializer.Deserialize<Metadata>(paramStr);
             }
@@ -102,12 +139,12 @@ namespace Xarial.Docify.Core.Compiler
             return Task.CompletedTask;
         }
 
-        public async Task<string> ReplaceAll(string rawContent, Site site, Page page)
+        public async Task<string> ReplaceAll(string rawContent, ISite site, IPage page)
         {
             var replacement = await m_PlcParser.ReplaceAsync(rawContent, async (string includeRawContent) => 
             {
                 string name;
-                Metadata data;
+                IMetadata data;
                 await ParseParameters(includeRawContent, out name, out data);
                 var replace = await Render(name, data, site, page);
                 return await ReplaceAll(replace, site, page);

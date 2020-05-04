@@ -5,17 +5,14 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using System;
 using System.Collections.Generic;
-using System.Composition;
 using System.IO;
-using System.IO.Abstractions;
-using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
-using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Plugin;
 
 namespace Xarial.Docify.Core.Publisher
@@ -23,26 +20,23 @@ namespace Xarial.Docify.Core.Publisher
     public class LocalFileSystemPublisher : IPublisher
     {
         private readonly LocalFileSystemPublisherConfig m_Config;
-        private readonly IFileSystem m_FileSystem;
+        private readonly System.IO.Abstractions.IFileSystem m_FileSystem;
 
         [ImportPlugin]
-        private IEnumerable<IPrePublishBinaryAssetPlugin> m_PrePublishBinaryPlugins = null;
-
-        [ImportPlugin]
-        private IEnumerable<IPrePublishTextAssetPlugin> m_PrePublishTextPlugins = null;
-
+        private IEnumerable<IPrePublishFilePlugin> m_PrePublishFilePlugins = null;
+        
         public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config) 
-            : this(config, new FileSystem())
+            : this(config, new System.IO.Abstractions.FileSystem())
         {
         }
 
-        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config, IFileSystem fileSystem)
+        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config, System.IO.Abstractions.IFileSystem fileSystem)
         {
             m_Config = config;
             m_FileSystem = fileSystem;
         }
 
-        public async Task Write(Location loc, IEnumerable<IWritable> writables)
+        public async Task Write(ILocation loc, IEnumerable<IFile> writables)
         {
             var outDir = loc.ToPath();
 
@@ -72,34 +66,16 @@ namespace Xarial.Docify.Core.Publisher
                     }
                 }
 
-                bool cancel = false;
+                bool skip = false;
 
-                switch (writable)
+                IFile outWritable = new Writable(writable.Content, outLoc);
+
+                m_PrePublishFilePlugins.InvokePluginsIfAny(p => p.PrePublishFile(ref outWritable, out skip));
+                if (!skip)
                 {
-                    case ITextWritable text:
-                        var txtContent = text.Content;
-                        m_PrePublishTextPlugins.InvokePluginsIfAny(p => p.PrePublishTextAsset(ref outLoc, ref txtContent, out cancel));
-                        if (!cancel)
-                        {
-                            outFilePath = outLoc.ToPath();
-                            CreateDirectoryIfNeeded();
-                            await m_FileSystem.File.WriteAllTextAsync(outFilePath, txtContent);
-                        }
-                        break;
-
-                    case IBinaryWritable bin:
-                        var binContent = bin.Content;
-                        m_PrePublishBinaryPlugins.InvokePluginsIfAny(p => p.PrePublishBinaryAsset(ref outLoc, ref binContent, out cancel));
-                        if (!cancel)
-                        {
-                            outFilePath = outLoc.ToPath();
-                            CreateDirectoryIfNeeded();
-                            await m_FileSystem.File.WriteAllBytesAsync(outFilePath, binContent);
-                        }
-                        break;
-
-                    default:
-                        throw new NotSupportedException();
+                    outFilePath = outWritable.Location.ToPath();
+                    CreateDirectoryIfNeeded();
+                    await m_FileSystem.File.WriteAllBytesAsync(outFilePath, outWritable.Content);
                 }
             }
         }

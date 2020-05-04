@@ -12,6 +12,8 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using System.Text.RegularExpressions;
 using System;
+using Xarial.Docify.Core.Data;
+using Xarial.Docify.Core;
 
 namespace Components.Tests
 {
@@ -42,11 +44,18 @@ namespace Components.Tests
         [Test]
         public async Task ImageTest()
         {
-            var site = ComponentsTest.NewSite("<channel>\r\n{% feed image: /img1.png %}\r\n</channel>", INCLUDE_PATH);
-            
-            var res = UpdateBuildDate(await ComponentsTest.CompileMainPageNormalize(site));
+            var site1 = ComponentsTest.NewSite("<channel>\r\n{% feed image: /img1.png %}\r\n</channel>", INCLUDE_PATH);
+            var res1 = UpdateBuildDate(await ComponentsTest.CompileMainPageNormalize(site1));
 
-            Assert.AreEqual(Resources.feed2, res);
+            var site2 = ComponentsTest.NewSite("---\r\nimage: /img1.svg\r\n\r\nimage-png: /img1.png\r\n---\r\n<channel>\r\n{% feed image: /img1.png %}\r\n</channel>", INCLUDE_PATH);
+            var res2 = UpdateBuildDate(await ComponentsTest.CompileMainPageNormalize(site1));
+
+            var site3 = ComponentsTest.NewSite("---\r\nimage: /img1.png\r\n---\r\n<channel>\r\n{% feed %}\r\n</channel>", INCLUDE_PATH);
+            var res3 = UpdateBuildDate(await ComponentsTest.CompileMainPageNormalize(site1));
+
+            Assert.AreEqual(Resources.feed2, res1);
+            Assert.AreEqual(Resources.feed2, res2);
+            Assert.AreEqual(Resources.feed2, res3);
         }
 
         [Test]

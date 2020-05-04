@@ -101,8 +101,8 @@ namespace Core.Tests
             var conf = await confLoader.Load(Location.FromPath("C:\\site"));
 
             Assert.That(!string.IsNullOrEmpty(conf.WorkingFolder));
-            Assert.That(!conf.ThemesFolder.IsEmpty);
-            Assert.That(!conf.ComponentsFolder.IsEmpty);
+            Assert.That(!conf.ThemesFolder.IsEmpty());
+            Assert.That(!conf.ComponentsFolder.IsEmpty());
 
             Assert.That(System.IO.Path.IsPathRooted(conf.WorkingFolder));
             Assert.That(System.IO.Path.IsPathRooted(conf.ThemesFolder.ToPath()));

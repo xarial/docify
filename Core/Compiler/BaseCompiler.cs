@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
@@ -19,9 +18,10 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Core.Compiler.Context;
-using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Core.Plugin;
+using Xarial.Docify.Core.Helpers;
+using Xarial.Docify.Core.Data;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -38,7 +38,7 @@ namespace Xarial.Docify.Core.Compiler
 
         [ImportPlugin]
         private IEnumerable<IPostCompilePlugin> m_PostCompilePlugins = null;
-
+        
         public BaseCompiler(BaseCompilerConfig config,
             ILogger logger, ILayoutParser layoutParser,
             IIncludesHandler includesHandler,
@@ -51,70 +51,40 @@ namespace Xarial.Docify.Core.Compiler
             m_IncludesHandler = includesHandler;
         }
 
-        public async Task Compile(Site site)
+        public async Task<IFile[]> Compile(ISite site)
         {
             m_PreCompilePlugins.InvokePluginsIfAny(p => p.PreCompile(site));
 
+            var writables = new List<IFile>();
+
             var allPages = site.GetAllPages();
-            var allAssets = site.Assets.OfType<TextAsset>();
 
-            if (m_Config.ParallelPartitionsCount == (int)BaseCompilerConfig.ParallelPartitions_e.NoParallelism)
+            foreach (var page in allPages)
             {
-                foreach (var page in allPages)
+                writables.Add(await CompilePage(page, site));
+
+                foreach (var asset in page.Assets)
                 {
-                    await CompilePage(page, site);
+                    var id = asset.Location.ToId();
+
+                    if (PathMatcher.Matches(m_Config.CompilableAssetsFilter, id))
+                    {
+                        writables.Add(await CompileAsset(asset, site));
+                    }
+                    else 
+                    {
+                        //TODO: change this
+                        writables.Add(new Writable(asset.Content, asset.Location));
+                    }
                 }
-
-                foreach (var asset in allAssets) 
-                {
-                    await CompileAsset(asset, site);
-                }
-            }
-            else 
-            {
-                //this is preview only option as sometimes exception is thrown, perhaps some of the engines are not thread safe
-                int partitionsCount = 1;
-
-                switch ((BaseCompilerConfig.ParallelPartitions_e)m_Config.ParallelPartitionsCount)
-                {
-                    case BaseCompilerConfig.ParallelPartitions_e.Infinite:
-                        partitionsCount = -1;
-                        break;
-
-                    case BaseCompilerConfig.ParallelPartitions_e.AutoDetect:
-                        partitionsCount = Environment.ProcessorCount;
-                        break;
-                }
-
-                await ForEachAsync(allPages, async p => await CompilePage(p, site), partitionsCount);
-                await ForEachAsync(allAssets, async a => await CompileAsset(a, site), partitionsCount);
             }
 
             m_PostCompilePlugins.InvokePluginsIfAny(p => p.PostCompile(site));
+
+            return writables.ToArray();
         }
-
-        private Task ForEachAsync<T>(IEnumerable<T> source, Func<T, Task> body, int partitionsCount)
-        {
-            if (partitionsCount == -1) 
-            {
-                partitionsCount = source.Count();
-            }
-
-            return Task.WhenAll(
-                System.Collections.Concurrent.Partitioner.Create(source).GetPartitions(partitionsCount)
-                .Select(partition => Task.Run(async delegate
-                {
-                    using (partition)
-                    {
-                        while (partition.MoveNext())
-                        {
-                            await body(partition.Current);
-                        }
-                    }
-                })));
-        }
-
-        private async Task CompilePage(Page page, Site site)
+        
+        private async Task<IFile> CompilePage(IPage page, ISite site)
         {
             var model = new ContextModel(site, page);
 
@@ -129,16 +99,15 @@ namespace Xarial.Docify.Core.Compiler
 
             content = await m_IncludesHandler.ReplaceAll(content, site, page);
 
-            page.Content = content;
+            return new Writable(content, page.Location);
         }
 
-        private async Task CompileAsset(TextAsset asset, Site site)
+        private async Task<IFile> CompileAsset(IFile asset, ISite site)
         {
-            var model = new ContextModel(site, null);
+            var rawContent = asset.AsTextContent();
+            var content = await m_IncludesHandler.ReplaceAll(rawContent, site, null);
 
-            var content = await m_IncludesHandler.ReplaceAll(asset.RawContent, site, null);
-
-            asset.Content = content;
+            return new Writable(content, asset.Location);
         }
     }
 }

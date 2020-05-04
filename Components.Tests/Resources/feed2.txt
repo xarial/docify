@@ -3,7 +3,7 @@
 <description></description>
 <link>www.example.com</link>
 <image>
-<url>www.example.com/img1.png </url>
+<url>www.example.com/img1.png</url>
 <title>index.html</title>
 <link>www.example.com</link>
 </image>

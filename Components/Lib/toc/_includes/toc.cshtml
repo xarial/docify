@@ -8,9 +8,9 @@ home_menu_title: Welcome
 @using System
 @using System.Linq
 @using System.Collections.Generic
-@using Xarial.Docify.Core.Compiler.Context
 @using Xarial.Docify.Lib.Tools
-@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@using Xarial.Docify.Base.Context
+@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
 @{
     const string MENU_OPT = "menu";
     const string HOME_MENU_OPT = "home_menu";
@@ -69,7 +69,7 @@ home_menu_title: Welcome
         {
             var includeToc = !menuPage.Data.ContainsKey(PAGE_EXCLUDE_ATT) || menuPage.Data.Get<bool>(PAGE_EXCLUDE_ATT);
             var includeSitemap = !menuPage.Data.ContainsKey("sitemap") || menuPage.Data.Get<bool>("sitemap");
-            
+
             if (includeToc && includeSitemap)
             {
                 var entryId = "";

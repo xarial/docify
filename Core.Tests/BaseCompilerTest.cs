@@ -13,12 +13,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
-using Xarial.Docify.Base.Content;
+using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Compiler.Context;
+using Xarial.Docify.Core.Data;
 
 namespace Core.Tests
 {
@@ -44,7 +45,7 @@ namespace Core.Tests
                 .Returns<Template, string, IContextModel>((t, c, m) =>
                 {
                     string r = c;
-                    Template tt = t;
+                    ITemplate tt = t;
 
                     while (tt != null)
                     {
@@ -76,9 +77,9 @@ namespace Core.Tests
                 new Page(new Location("page.html"),
                 "abc _CC_ _FN_ test"), null);
 
-            await m_Compiler.Compile(site);
+            var files = await m_Compiler.Compile(site);
 
-            Assert.AreEqual("abc 0 page.html test", site.MainPage.Content);
+            Assert.AreEqual("abc 0 page.html test", files.First(f => f.Location == site.MainPage.Location).AsTextContent());
         }
 
         [Test]
@@ -95,13 +96,13 @@ namespace Core.Tests
             p2.SubPages.Add(p4);
             p4.SubPages.Add(new Page(new Location("page5.html"), "P5"));
 
-            await m_Compiler.Compile(site);
+            var files = await m_Compiler.Compile(site);
 
-            Assert.AreEqual("P1", site.MainPage.Content);
-            Assert.AreEqual("P2", site.MainPage.SubPages.First(p => p.Location.ToId() == "page2.html").Content);
-            Assert.AreEqual("P3", site.MainPage.SubPages.First(p => p.Location.ToId() == "page2.html").SubPages.First(p => p.Location.ToId() == "page3.html").Content);
-            Assert.AreEqual("P4", site.MainPage.SubPages.First(p => p.Location.ToId() == "page2.html").SubPages.First(p => p.Location.ToId() == "page4.html").Content);
-            Assert.AreEqual("P5", site.MainPage.SubPages.First(p => p.Location.ToId() == "page2.html").SubPages.First(p => p.Location.ToId() == "page4.html").SubPages.First(p => p.Location.ToId() == "page5.html").Content);
+            Assert.AreEqual("P1", files.First(f => f.Location == site.MainPage.Location).AsTextContent());
+            Assert.AreEqual("P2", files.First(f => f.Location == site.MainPage.SubPages.First(p => p.Location.ToId() == "page2.html").Location).AsTextContent());
+            Assert.AreEqual("P3", files.First(f => f.Location == site.MainPage.SubPages.First(p => p.Location.ToId() == "page2.html").SubPages.First(p => p.Location.ToId() == "page3.html").Location).AsTextContent());
+            Assert.AreEqual("P4", files.First(f => f.Location == site.MainPage.SubPages.First(p => p.Location.ToId() == "page2.html").SubPages.First(p => p.Location.ToId() == "page4.html").Location).AsTextContent());
+            Assert.AreEqual("P5", files.First(f => f.Location == site.MainPage.SubPages.First(p => p.Location.ToId() == "page2.html").SubPages.First(p => p.Location.ToId() == "page4.html").SubPages.First(p => p.Location.ToId() == "page5.html").Location).AsTextContent());
         }
 
         [Test]
@@ -112,9 +113,9 @@ namespace Core.Tests
                 "My Page Content",
                 new Template("t1", "TemplateText1 _C_ TemplateText2")), null);
 
-            await m_Compiler.Compile(site);
+            var files = await m_Compiler.Compile(site);
 
-            Assert.AreEqual("TemplateText1 My Page Content TemplateText2", site.MainPage.Content);
+            Assert.AreEqual("TemplateText1 My Page Content TemplateText2", files.First(f => f.Location == site.MainPage.Location).AsTextContent());
         }
 
         [Test]
@@ -126,9 +127,9 @@ namespace Core.Tests
                 new Template("t1", "T1 _C_ T1", null,
                 new Template("t2", "T2 _C_ T2"))), null);
 
-            await m_Compiler.Compile(site);
+            var files = await m_Compiler.Compile(site);
 
-            Assert.AreEqual("T2 T1 My Page Content T1 T2", site.MainPage.Content);
+            Assert.AreEqual("T2 T1 My Page Content T1 T2", files.First(f => f.Location == site.MainPage.Location).AsTextContent());
         }
 
         [Test]
@@ -143,10 +144,10 @@ namespace Core.Tests
 
             var site = new Site("", p1, null);
 
-            await m_Compiler.Compile(site);
+            var files = await m_Compiler.Compile(site);
 
-            Assert.AreEqual("T2 page1.html T1 page1.html Page1 page1.html T1 T2", site.MainPage.Content);
-            Assert.AreEqual("T2 page2.html T1 page2.html Page2 page2.html T1 T2", site.MainPage.SubPages[0].Content);
+            Assert.AreEqual("T2 page1.html T1 page1.html Page1 page1.html T1 T2", files.First(f => f.Location == site.MainPage.Location).AsTextContent());
+            Assert.AreEqual("T2 page2.html T1 page2.html Page2 page2.html T1 T2", files.First(f => f.Location == site.MainPage.SubPages[0].Location).AsTextContent());
         }
     }
 }

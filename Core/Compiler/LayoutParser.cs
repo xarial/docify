@@ -10,8 +10,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Core.Compiler
@@ -32,7 +32,7 @@ namespace Xarial.Docify.Core.Compiler
             return Regex.IsMatch(content, CONTENT_PLACEHOLDER_REGEX);
         }
 
-        public async Task<string> InsertContent(Template layout, string content, IContextModel model)
+        public async Task<string> InsertContent(ITemplate layout, string content, IContextModel model)
         {
             if (layout == null) 
             {

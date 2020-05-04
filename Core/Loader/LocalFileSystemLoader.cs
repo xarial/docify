@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -18,33 +17,30 @@ using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
+using Xarial.Docify.Core.Helpers;
 
 namespace Xarial.Docify.Core.Loader
 {
     public class LocalFileSystemLoader : ILoader
     {
         private readonly LocalFileSystemLoaderConfig m_Config;
-        private readonly IFileSystem m_FileSystem;
+        private readonly System.IO.Abstractions.IFileSystem m_FileSystem;
 
         public LocalFileSystemLoader(LocalFileSystemLoaderConfig config)
-            : this(config, new FileSystem())
+            : this(config, new System.IO.Abstractions.FileSystem())
         {
         }
 
-        public LocalFileSystemLoader(LocalFileSystemLoaderConfig config, IFileSystem fileSystem)
+        public LocalFileSystemLoader(LocalFileSystemLoaderConfig config, System.IO.Abstractions.IFileSystem fileSystem)
         {
             m_Config = config;
             m_FileSystem = fileSystem;
         }
 
-        public async Task<IEnumerable<ISourceFile>> Load(Location location)
+        public async Task<IEnumerable<IFile>> Load(ILocation location)
         {
-            var files = new List<ISourceFile>();
-
-            //TODO: combine into single regex
-            var ignoreRegex = m_Config.Ignore.Select(
-                i => "^" + Regex.Escape(i).Replace("\\*", ".*").Replace("\\?", ".") + "$").ToArray();
-
+            var files = new List<IFile>();
+            
             var path = location.ToPath();
 
             if (!m_FileSystem.Directory.Exists(path)) 
@@ -53,35 +49,20 @@ namespace Xarial.Docify.Core.Loader
             }
 
             foreach (var filePath in m_FileSystem.Directory.GetFiles(path, 
-                "*.*", System.IO.SearchOption.AllDirectories))
+                "*.*", SearchOption.AllDirectories))
             {
                 var relPath = Path.GetRelativePath(path, filePath);
 
-                if (!ignoreRegex.Any(i => Regex.IsMatch(relPath, i, RegexOptions.IgnoreCase)))
+                if (!PathMatcher.Matches(m_Config.Ignore, relPath))
                 {
                     var loc = Location.FromPath(relPath);
 
-                    if (IsTextFile(filePath))
-                    {
-                        var content = await m_FileSystem.File.ReadAllTextAsync(filePath);
-                        files.Add(new TextSourceFile(loc, content));
-                    }
-                    else
-                    {
-                        var content = await m_FileSystem.File.ReadAllBytesAsync(filePath);
-                        files.Add(new BinarySourceFile(loc, content));
-                    }
+                    var content = await m_FileSystem.File.ReadAllBytesAsync(filePath);
+                    files.Add(new SourceFile(loc, content));
                 }
             }
 
             return files;
-        }
-
-        private bool IsTextFile(string filePath) 
-        {
-            var ext = Path.GetExtension(filePath).TrimStart('.');
-
-            return m_Config.TextFileExtensions.Contains(ext, StringComparer.CurrentCultureIgnoreCase);
         }
     }
 }

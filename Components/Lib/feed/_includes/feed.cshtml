@@ -7,13 +7,19 @@ title_attribute: title
 @using System.Linq
 @using System.Collections.Generic
 @using Xarial.Docify.Lib.Tools
-@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@using Xarial.Docify.Base.Context
+@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
 @{
     var img = Model.Site.MainPage.Data.GetOrDefault<string>("image-png");
 
-    if (string.IsNullOrEmpty(img)) 
-    { 
+    if (string.IsNullOrEmpty(img))
+    {
         img = Model.Site.MainPage.Data.GetOrDefault<string>("image");
+    }
+
+    if (string.IsNullOrEmpty(img)) 
+    {
+        img = Model.Data.Get<string>("image");
     }
 
     if (!string.IsNullOrEmpty(img))
@@ -23,7 +29,7 @@ title_attribute: title
 
     var pages = PageHelper.GetAllPages(Model.Site.MainPage).Where(p => !p.Data.ContainsKey("sitemap") || p.Data.Get<bool>("sitemap"));
 
-    bool HasPubDate(Xarial.Docify.Core.Compiler.Context.IContextPage page, out DateTime date)
+    bool HasPubDate(IContextPage page, out DateTime date)
     {
         if (page.Data.ContainsKey("date"))
         {

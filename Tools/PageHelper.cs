@@ -8,7 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Core.Compiler.Context;
+using Xarial.Docify.Base.Context;
 
 namespace Xarial.Docify.Lib.Tools
 {
@@ -33,7 +33,7 @@ namespace Xarial.Docify.Lib.Tools
             }
         }
 
-        public static string GetTitle(IContextPage page, ContextMetadata data)
+        public static string GetTitle(IContextPage page, IContextMetadata data)
         {
             var title = page.Data.GetOrDefault<string>(DEFAULT_TITLE_ATT);
 
@@ -48,13 +48,13 @@ namespace Xarial.Docify.Lib.Tools
         /// <summary>
         /// Returns the caption (short title) of the page
         /// </summary>
-        public static string GetCaption(IContextPage page, ContextMetadata data)
+        public static string GetCaption(IContextPage page, IContextMetadata data)
         {
             var caption = "";
 
             if (data != null)
             {
-                caption = page.Data.GetOrDefault<string>(data[TITLE_ATT]);
+                caption = page.Data.GetOrDefault<string>(data.Get<string>(TITLE_ATT));
             }
 
             if (string.IsNullOrEmpty(caption))

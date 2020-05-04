@@ -11,10 +11,9 @@ lang:
 @using System
 @using System.Linq
 @using System.Collections.Generic
-@using Xarial.Docify.Core.Compiler.Context
 @using Xarial.Docify.Lib.Tools
 @using System.Runtime.Serialization
-@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
 @functions{
     public class CodeSnippetData
     {
@@ -33,7 +32,7 @@ lang:
     var snipAsset = Model.Page.Assets.FirstOrDefault(a => string.Equals(
         a.Name, data.FileName, StringComparison.CurrentCultureIgnoreCase));
 
-    if (snipAsset is ContextTextAsset)
+    @*if (snipAsset is ContextTextAsset)
     {
         var rawCode = ((ContextTextAsset)snipAsset).Content;
 
@@ -54,5 +53,5 @@ lang:
     else
     {
         throw new InvalidCastException($"Failed to find a text asset at '{data.FileName}'");
-    }
+    }*@
 }

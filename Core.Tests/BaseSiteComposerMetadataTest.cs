@@ -16,6 +16,7 @@ using Xarial.Docify.Base.Services;
 using Xarial.Docify.Base;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Composer;
+using System.Linq;
 
 namespace Core.Tests
 {
@@ -32,9 +33,9 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_ContentMetadataSimpleProperties()
         {
-            var src = new TextSourceFile[]
+            var src = new SourceFile[]
             {
-                new TextSourceFile(Location.FromPath(@"index.md"),
+                new SourceFile(Location.FromPath(@"index.md"),
                 "---\r\nprp1: A\r\nprp2: B\r\n---\r\nText Line1\r\nText Line2"),
             };
 
@@ -49,9 +50,9 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_ContentMetadataNestedProperties()
         {
-            var src = new TextSourceFile[]
+            var src = new SourceFile[]
             {
-                new TextSourceFile(Location.FromPath(@"index.md"),
+                new SourceFile(Location.FromPath(@"index.md"),
                 "---\r\nprp1: A\r\nprp2:\r\n  prp3: B\r\n---\r\nText Line1\r\nText Line2"),
             };
 
@@ -60,16 +61,16 @@ namespace Core.Tests
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(2, site.MainPage.Data.Count);
             Assert.AreEqual("A", site.MainPage.Data["prp1"]);
-            Assert.AreEqual(1, site.MainPage.Data["prp2"].Count);
-            Assert.AreEqual("B", site.MainPage.Data["prp2"]["prp3"]);
+            Assert.AreEqual(1, (site.MainPage.Data["prp2"] as System.Collections.IDictionary).Count);
+            Assert.AreEqual("B", (site.MainPage.Data["prp2"] as System.Collections.IDictionary)["prp3"]);
         }
 
         [Test]
         public void ComposeSite_ContentMetadataArray()
         {
-            var src = new TextSourceFile[]
+            var src = new SourceFile[]
             {
-                new TextSourceFile(Location.FromPath(@"index.md"),
+                new SourceFile(Location.FromPath(@"index.md"),
                 "---\r\nprp1: A\r\nprp2:\r\n  - B\r\n  - C\r\n---\r\nText Line1\r\nText Line2"),
             };
 
@@ -78,17 +79,17 @@ namespace Core.Tests
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(2, site.MainPage.Data.Count);
             Assert.AreEqual("A", site.MainPage.Data["prp1"]);
-            Assert.AreEqual(2, site.MainPage.Data["prp2"].Count);
-            Assert.AreEqual("B", site.MainPage.Data["prp2"][0]);
-            Assert.AreEqual("C", site.MainPage.Data["prp2"][1]);
+            Assert.AreEqual(2, (site.MainPage.Data["prp2"] as IEnumerable<object>).Count());
+            Assert.AreEqual("B", (site.MainPage.Data["prp2"] as IEnumerable<object>).ElementAt(0));
+            Assert.AreEqual("C", (site.MainPage.Data["prp2"] as IEnumerable<object>).ElementAt(1));
         }
 
         [Test]
         public void ComposeSite_ContentNoFrontMatter()
         {
-            var src = new TextSourceFile[]
+            var src = new SourceFile[]
             {
-                new TextSourceFile(Location.FromPath(@"index.md"),
+                new SourceFile(Location.FromPath(@"index.md"),
                 "Text Line1\r\nText Line2"),
             };
 
@@ -101,9 +102,9 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_NotClosedFrontMatter()
         {
-            var src = new TextSourceFile[]
+            var src = new SourceFile[]
             {
-                new TextSourceFile(Location.FromPath(@"index.md"),
+                new SourceFile(Location.FromPath(@"index.md"),
                 "---\r\nText Line1\r\nText Line2"),
             };
 

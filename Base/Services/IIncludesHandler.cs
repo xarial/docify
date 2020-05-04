@@ -15,8 +15,8 @@ namespace Xarial.Docify.Base.Services
 {
     public interface IIncludesHandler
     {
-        Task<string> ReplaceAll(string rawContent, Site site, Page page);
-        Task ParseParameters(string includeRawContent, out string name, out Metadata param);
-        Task<string> Render(string name, Metadata param, Site site, Page page);
+        Task<string> ReplaceAll(string rawContent, ISite site, IPage page);
+        Task ParseParameters(string includeRawContent, out string name, out IMetadata param);
+        Task<string> Render(string name, IMetadata param, ISite site, IPage page);
     }
 }

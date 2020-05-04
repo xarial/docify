@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Loader;
@@ -31,10 +32,10 @@ namespace Core.Tests
             var loaderMock = new Mock<ILoader>();
 
             loaderMock.Setup(m => m.Load(It.IsAny<Location>()))
-                .Returns<Location>(l => Task.FromResult<IEnumerable<ISourceFile>>(new ISourceFile[] 
+                .Returns<Location>(l => Task.FromResult<IEnumerable<IFile>>(new IFile[] 
                 {
-                    new TextSourceFile(Location.FromPath("file1.txt"), $"{l.Path.Last()}_theme_f1"),
-                    new TextSourceFile(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2")
+                    new SourceFile(Location.FromPath("file1.txt"), $"{l.Path.Last()}_theme_f1"),
+                    new SourceFile(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2")
                 }));
 
             m_Loader = loaderMock.Object;
@@ -49,10 +50,10 @@ namespace Core.Tests
                 ComponentsFolder = Location.FromPath("C:\\components")
             });
 
-            var res = await frgLoader.Load(new ISourceFile[] 
+            var res = await frgLoader.Load(new IFile[] 
             {
-                new TextSourceFile(Location.FromPath("file2.txt"), ""),
-                new TextSourceFile(Location.FromPath("dir\\file3.txt"), "")
+                new SourceFile(Location.FromPath("file2.txt"), ""),
+                new SourceFile(Location.FromPath("dir\\file3.txt"), "")
             });
 
             Assert.AreEqual(4, res.Count());
@@ -74,11 +75,11 @@ namespace Core.Tests
 
             var frgLoader = new LocalFileSystemComponentsLoader(m_Loader, conf);
 
-            var res = await frgLoader.Load(new ISourceFile[]
+            var res = await frgLoader.Load(new IFile[]
             {
-                new TextSourceFile(Location.FromPath("file1.txt"), "f1"),
-                new TextSourceFile(Location.FromPath("file2.txt"), ""),
-                new TextSourceFile(Location.FromPath("dir\\file3.txt"), "")
+                new SourceFile(Location.FromPath("file1.txt"), "f1"),
+                new SourceFile(Location.FromPath("file2.txt"), ""),
+                new SourceFile(Location.FromPath("dir\\file3.txt"), "")
             });
 
             Assert.AreEqual(4, res.Count());
@@ -86,8 +87,8 @@ namespace Core.Tests
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file2.txt"));
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file2.txt"));
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file3.txt"));
-            Assert.AreEqual("f1", (res.First(f => f.Location.ToId() == "file1.txt") as TextSourceFile).Content);
-            Assert.AreEqual("A_theme_f2", (res.First(f => f.Location.ToId() == "dir::file2.txt") as TextSourceFile).Content);
+            Assert.AreEqual("f1", res.First(f => f.Location.ToId() == "file1.txt").AsTextContent());
+            Assert.AreEqual("A_theme_f2", res.First(f => f.Location.ToId() == "dir::file2.txt").AsTextContent());
         }
 
         [Test]
@@ -98,28 +99,28 @@ namespace Core.Tests
             loaderMock.Setup(m => m.Load(It.IsAny<Location>()))
                 .Returns<Location>(l =>
                 {
-                    ISourceFile[] res = null;
+                    IFile[] res = null;
                     if (l.Path.Last() == "A")
                     {
-                        res = new ISourceFile[]
+                        res = new IFile[]
                         {
-                            new TextSourceFile(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2"),
-                            new TextSourceFile(Location.FromPath("dir\\file3.txt"), $"{l.Path.Last()}_theme_f3"),
-                            new TextSourceFile(Location.FromPath("file4.txt"), $"{l.Path.Last()}_theme_f4"),
-                            new TextSourceFile(Location.FromPath("dir\\file4.txt"), $"{l.Path.Last()}_theme_dir-f4")
+                            new SourceFile(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2"),
+                            new SourceFile(Location.FromPath("dir\\file3.txt"), $"{l.Path.Last()}_theme_f3"),
+                            new SourceFile(Location.FromPath("file4.txt"), $"{l.Path.Last()}_theme_f4"),
+                            new SourceFile(Location.FromPath("dir\\file4.txt"), $"{l.Path.Last()}_theme_dir-f4")
                         };
                     }
                     else if (l.Path.Last() == "B")
                     {
-                        res = new ISourceFile[]
+                        res = new IFile[]
                         {
-                            new TextSourceFile(Location.FromPath("file1.txt"), $"{l.Path.Last()}_theme_f1"),
-                            new TextSourceFile(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2"),
-                            new TextSourceFile(Location.FromPath("dir\\file4.txt"), $"{l.Path.Last()}_theme_f4")
+                            new SourceFile(Location.FromPath("file1.txt"), $"{l.Path.Last()}_theme_f1"),
+                            new SourceFile(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2"),
+                            new SourceFile(Location.FromPath("dir\\file4.txt"), $"{l.Path.Last()}_theme_f4")
                         };
                     }
 
-                    return Task.FromResult<IEnumerable<ISourceFile>>(res);
+                    return Task.FromResult<IEnumerable<IFile>>(res);
                 });
 
             var conf = new Configuration()
@@ -132,11 +133,11 @@ namespace Core.Tests
 
             var frgLoader = new LocalFileSystemComponentsLoader(loaderMock.Object, conf);
 
-            var res = await frgLoader.Load(new ISourceFile[]
+            var res = await frgLoader.Load(new IFile[]
             {
-                new TextSourceFile(Location.FromPath("dir\\file2.txt"), "f2"),
-                new TextSourceFile(Location.FromPath("dir\\file3.txt"), "f3"),
-                new TextSourceFile(Location.FromPath("file5.txt"), "f5")
+                new SourceFile(Location.FromPath("dir\\file2.txt"), "f2"),
+                new SourceFile(Location.FromPath("dir\\file3.txt"), "f3"),
+                new SourceFile(Location.FromPath("file5.txt"), "f5")
             });
 
             Assert.AreEqual(6, res.Count());
@@ -147,12 +148,12 @@ namespace Core.Tests
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file5.txt"));
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file4.txt"));
 
-            Assert.AreEqual("B_theme_f1", (res.First(f => f.Location.ToId() == "file1.txt") as TextSourceFile).Content);
-            Assert.AreEqual("f2", (res.First(f => f.Location.ToId() == "dir::file2.txt") as TextSourceFile).Content);
-            Assert.AreEqual("f3", (res.First(f => f.Location.ToId() == "dir::file3.txt") as TextSourceFile).Content);
-            Assert.AreEqual("A_theme_f4", (res.First(f => f.Location.ToId() == "file4.txt") as TextSourceFile).Content);
-            Assert.AreEqual("f5", (res.First(f => f.Location.ToId() == "file5.txt") as TextSourceFile).Content);
-            Assert.AreEqual("A_theme_dir-f4", (res.First(f => f.Location.ToId() == "dir::file4.txt") as TextSourceFile).Content);
+            Assert.AreEqual("B_theme_f1", res.First(f => f.Location.ToId() == "file1.txt").AsTextContent());
+            Assert.AreEqual("f2", res.First(f => f.Location.ToId() == "dir::file2.txt").AsTextContent());
+            Assert.AreEqual("f3", res.First(f => f.Location.ToId() == "dir::file3.txt").AsTextContent());
+            Assert.AreEqual("A_theme_f4", res.First(f => f.Location.ToId() == "file4.txt").AsTextContent());
+            Assert.AreEqual("f5", res.First(f => f.Location.ToId() == "file5.txt").AsTextContent());
+            Assert.AreEqual("A_theme_dir-f4", res.First(f => f.Location.ToId() == "dir::file4.txt").AsTextContent());
         }
 
         [Test]
@@ -164,9 +165,9 @@ namespace Core.Tests
                 ComponentsFolder = Location.FromPath("C:\\components")
             });
 
-            Assert.ThrowsAsync<DuplicateComponentSourceFileException>(() => compLoader.Load(new ISourceFile[]
+            Assert.ThrowsAsync<DuplicateComponentSourceFileException>(() => compLoader.Load(new IFile[]
             {
-                new TextSourceFile(Location.FromPath("dir\\file2.txt"), "")
+                new SourceFile(Location.FromPath("dir\\file2.txt"), "")
             }));
         }
     }

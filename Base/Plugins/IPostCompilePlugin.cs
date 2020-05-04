@@ -13,6 +13,6 @@ namespace Xarial.Docify.Base.Plugins
 {
     public interface IPostCompilePlugin : IPlugin
     {
-        void PostCompile(Site site);
+        void PostCompile(ISite site);
     }
 }

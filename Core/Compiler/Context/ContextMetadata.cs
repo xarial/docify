@@ -10,16 +10,17 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Context;
 
 namespace Xarial.Docify.Core.Compiler.Context
 {
-    public class ContextMetadata : ReadOnlyDictionary<string, dynamic>
+    public class ContextMetadata : ReadOnlyDictionary<string, object>, IContextMetadata
     {
-        internal ContextMetadata(Metadata data) : base(data) 
+        internal ContextMetadata(IMetadata data) : base(data)
         {
         }
 
-        public ContextMetadata(IDictionary<string, dynamic> data) : base(data)
+        public ContextMetadata(IDictionary<string, object> data) : base(data)
         {
         }
 
@@ -47,26 +48,7 @@ namespace Xarial.Docify.Core.Compiler.Context
 
         public bool TryGet<T>(string prpName, out T val) 
         {
-            dynamic dynVal;
-
-            if (this.TryGetValue(prpName, out dynVal))
-            {
-                if (dynVal is T)
-                {
-                    val = (T)dynVal;
-                }
-                else
-                {
-                    val = Convert.ChangeType(dynVal, typeof(T));
-                }
-
-                return true;
-            }
-            else
-            {
-                val = default(T);
-                return false;
-            }
+            return MetadataExtension.TryGetParameter<T>(this, prpName, out val);
         }
     }
 }

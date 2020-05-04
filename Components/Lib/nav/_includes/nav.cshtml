@@ -1,5 +1,4 @@
 ﻿---
-title_attribute: caption
 home_menu: true
 menu:
 root_page:
@@ -8,9 +7,9 @@ root_page:
 @using System
 @using System.Linq
 @using System.Collections.Generic
-@using Xarial.Docify.Core.Compiler.Context
 @using Xarial.Docify.Lib.Tools
-@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@using Xarial.Docify.Base.Context
+@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
 @{
     const string MENU_OPT = "menu";
     const string HOME_MENU_OPT = "home_menu";
@@ -35,7 +34,7 @@ root_page:
         {
             var active = string.Equals(menuPage.Url, Model.Page?.Url, StringComparison.CurrentCultureIgnoreCase) ? " active" : "";
             html.AppendLine($"<li class=\"menu-item{active}\">");
-            html.AppendLine($"<a href=\"{menuPage.Url}\">{PageHelper.GetTitle(menuPage, Model.Data)}</a>");
+            html.AppendLine($"<a href=\"{menuPage.Url}\">{PageHelper.GetCaption(menuPage, Model.Data)}</a>");
 
             if (menuPage.SubPages.Any())
             {

@@ -5,9 +5,8 @@ id:
 @using System
 @using System.Linq
 @using System.Collections.Generic
-@using Xarial.Docify.Core.Compiler.Context
 @using Xarial.Docify.Lib.Tools
-@inherits TemplatePage<Xarial.Docify.Core.Compiler.Context.IncludeContextModel>
+@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
 @{
     var id = Model.Data.Get<string>("id");
 }

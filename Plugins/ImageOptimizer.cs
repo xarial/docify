@@ -14,11 +14,11 @@ using nQuant;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
-using Xarial.Docify.Base.Content;
 using Svg;
 using System.Drawing.Imaging;
 using System.Collections;
 using System.Collections.Generic;
+using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Lib.Plugins
 {
@@ -47,7 +47,7 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("image-optimizer")]
-    public class ImageOptimizer : IPreCompilePlugin, IPrePublishBinaryAssetPlugin, IPlugin<ImageOptimizerSettings>
+    public class ImageOptimizer : IPreCompilePlugin, IPrePublishFilePlugin, IPlugin<ImageOptimizerSettings>
     {
         private const string IMAGE_TAG_NAME = "image";
         private const string REPLACE_IMAGE_TAG_NAME = "image-png";
@@ -56,7 +56,7 @@ namespace Xarial.Docify.Lib.Plugins
 
         public ImageOptimizerSettings Settings { get; set; }
 
-        public void PreCompile(Site site)
+        public void PreCompile(ISite site)
         {
             foreach (var page in site.GetAllPages()) 
             {
@@ -94,9 +94,9 @@ namespace Xarial.Docify.Lib.Plugins
                             }
 
                             page.Data.Add(REPLACE_IMAGE_TAG_NAME, imgName);
-                            var imgPngAsset = new BinaryAsset(pngBuffer, new Location(imgName, page.Location.Path.ToArray()));
+                            var imgPngAsset = new PluginReplacedFile(pngBuffer, new Location(imgName, page.Location.Path.ToArray()));
                             page.Assets.Add(imgPngAsset);
-                            site.Assets.Add(imgPngAsset);
+                            site.MainPage.Assets.Add(imgPngAsset);
                         }
                     }
                 }
@@ -108,7 +108,7 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        private void GenerateFavIcon(Site site) 
+        private void GenerateFavIcon(ISite site) 
         {
             //TODO: implement
             throw new NotImplementedException();
@@ -120,23 +120,23 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        private BinaryAsset TryFindImageAsset(Site site, Page page, string path)
+        private IFile TryFindImageAsset(ISite site, IPage page, string path)
         {
             if (!path.StartsWith('/')) 
             {
                 path = page.Location.ToUrl().TrimEnd('/') + "/" + path;
             }
 
-            return site.Assets.FirstOrDefault(
+            return site.MainPage.Assets.FirstOrDefault(
                     p => string.Equals(p.Location.ToUrl(), path)
-                    || string.Equals(p.Location.ToUrl(site.BaseUrl), path)) as BinaryAsset;
+                    || string.Equals(p.Location.ToUrl(site.BaseUrl), path));
         }
-
-        public void PrePublishBinaryAsset(ref Location loc, ref byte[] content, out bool cancel)
+        
+        public void PrePublishFile(ref IFile file, out bool skip)
         {
-            cancel = false;
+            skip = false;
 
-            var path = loc.ToPath();
+            var path = file.Location.ToPath();
 
             var opts = Settings.IgnoreMatchCase ? RegexOptions.IgnoreCase : RegexOptions.None;
 
@@ -144,7 +144,7 @@ namespace Xarial.Docify.Lib.Plugins
             {
                 var quantizer = new WuQuantizer();
 
-                using (var inStr = new MemoryStream(content))
+                using (var inStr = new MemoryStream(file.Content))
                 {
                     inStr.Seek(0, SeekOrigin.Begin);
 
@@ -158,7 +158,7 @@ namespace Xarial.Docify.Lib.Plugins
                                 {
                                     quantized.Save(outStr, img.RawFormat);
                                     outStr.Seek(0, SeekOrigin.Begin);
-                                    content = outStr.GetBuffer();
+                                    file = new PluginReplacedFile(outStr.GetBuffer(), file.Location);
                                 }
                             }
                         }

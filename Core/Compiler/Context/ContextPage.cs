@@ -10,41 +10,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Xarial.Docify.Base;
-using Xarial.Docify.Base.Content;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Context;
 using Xarial.Docify.Core.Data;
 
 namespace Xarial.Docify.Core.Compiler.Context
 {
-    public interface IContextPage
-    {
-        string Url { get; }
-        string FullUrl { get; }
-        string Name { get; }
-        string RawContent { get; }
-        ContextMetadata Data { get; }
-        IReadOnlyList<IContextPage> SubPages { get; }
-        IReadOnlyList<IContextAsset> Assets { get; }
-    }
-
     public class ContextPage : IContextPage
     {
-        private readonly Site m_Site;
+        private readonly ISite m_Site;
 
-        internal Page BasePage { get; }
+        internal IPage BasePage { get; }
 
         public string Url => BasePage.Location.ToUrl();
         public string FullUrl => BasePage.Location.ToUrl(m_Site.BaseUrl);
         public string Name => BasePage.Location.FileName;
         public string RawContent => BasePage.RawContent;
 
-        public ContextMetadata Data 
+        public IContextMetadata Data 
         {
             get
             {
                 var thisParam = new Metadata();
 
-                Frame frame = BasePage;
+                IFrame frame = BasePage;
 
                 while (frame != null) 
                 {
@@ -58,22 +47,10 @@ namespace Xarial.Docify.Core.Compiler.Context
 
         public IReadOnlyList<IContextPage> SubPages => BasePage.SubPages.ConvertAll(p => new ContextPage(m_Site, p));
 
-        public IReadOnlyList<IContextAsset> Assets => BasePage.Assets.ConvertAll<IContextAsset>(a => 
-        {
-            switch (a) 
-            {
-                case TextAsset text:
-                    return new ContextTextAsset(text.Location.FileName, text.RawContent);
+        public IReadOnlyList<IContextAsset> Assets => BasePage.Assets
+            .ConvertAll<IContextAsset>(a => new ContextAsset(a.Location.FileName, a.Content));
 
-                case BinaryAsset bin:
-                    return new ContextBinaryAsset(bin.Location.FileName, bin.Content);
-
-                default:
-                    throw new NotSupportedException();
-            }
-        });
-
-        public ContextPage(Site site, Page page) 
+        public ContextPage(ISite site, IPage page) 
         {
             m_Site = site;
             BasePage = page;

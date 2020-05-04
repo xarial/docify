@@ -6,10 +6,14 @@
 //*********************************************************************
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Xarial.Docify.Core.Compiler.Context;
+using Xarial.Docify.Base.Context;
+using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Lib.Tools
 {
@@ -22,7 +26,7 @@ namespace Xarial.Docify.Lib.Tools
             public string Url { get; set; } = "";
             public string FullUrl { get; set; }
             public string Name { get; }
-            public ContextMetadata Data { get; }
+            public IContextMetadata Data { get; }
             public IReadOnlyList<IContextPage> SubPages => SubPagesList;
             public List<MenuPage> SubPagesList { get; }
 
@@ -36,7 +40,7 @@ namespace Xarial.Docify.Lib.Tools
                 Url = page.Url;
             }
 
-            public MenuPage(string name, ContextMetadata data)
+            public MenuPage(string name, IContextMetadata data)
             {
                 Name = name;
                 SubPagesList = new List<MenuPage>();
@@ -44,11 +48,45 @@ namespace Xarial.Docify.Lib.Tools
             }
         }
 
-        public static IEnumerable<IContextPage> BuildPredefinedMenu(string menuOptName, ContextSite site, ContextMetadata data) 
+        public class MenuPageMetadata : ReadOnlyDictionary<string, object>, IContextMetadata
         {
-            var menu = data[menuOptName];
+            public MenuPageMetadata(IDictionary<string, object> data) : base(data)
+            {
+            }
 
-            if (menu != null)
+            public T Get<T>(string prpName)
+            {
+                T val;
+
+                if (TryGet<T>(prpName, out val))
+                {
+                    return val;
+                }
+                else
+                {
+                    throw new KeyNotFoundException($"{prpName} is not present in the metadata");
+                }
+            }
+
+            public T GetOrDefault<T>(string prpName)
+            {
+                T val;
+                TryGet<T>(prpName, out val);
+
+                return val;
+            }
+
+            public bool TryGet<T>(string prpName, out T val)
+            {
+                return MetadataExtension.TryGetParameter<T>(this, prpName, out val);
+            }
+        }
+
+        public static IEnumerable<IContextPage> BuildPredefinedMenu(string menuOptName, IContextSite site, IContextMetadata data) 
+        {
+            List<object> menu;
+            
+            if (data.TryGet(menuOptName, out menu) && menu != null)
             {
                 var allPages = PageHelper.GetAllPages(site.MainPage);
                 var menuPagesList = new List<MenuPage>();
@@ -61,7 +99,7 @@ namespace Xarial.Docify.Lib.Tools
             }
         }
 
-        public static MenuPage BuildPage(ContextPage srcPage, ContextMetadata data, string title) 
+        public static MenuPage BuildPage(IContextPage srcPage, IContextMetadata data, string title) 
         {
             var page = CreateMenuPage(null, data, title);
             page.Url = srcPage.Url;
@@ -69,7 +107,7 @@ namespace Xarial.Docify.Lib.Tools
             return page;
         }
 
-        public static IContextPage GetRootPage(IncludeContextModel model) 
+        public static IContextPage GetRootPage(IIncludeContextModel model) 
         {
             var rootPageUrl = model.Data.GetOrDefault<string>(ROOT_PAGE_ATT);
 
@@ -94,7 +132,7 @@ namespace Xarial.Docify.Lib.Tools
             }
         }
 
-        private static MenuPage CreateMenuPage(IEnumerable<IContextPage> allPages, ContextMetadata data, string url)
+        private static MenuPage CreateMenuPage(IEnumerable<IContextPage> allPages, IContextMetadata data, string url)
         {
             var page = allPages?.FirstOrDefault(p => string.Equals(p.Url,
                 url, StringComparison.CurrentCultureIgnoreCase));
@@ -105,13 +143,13 @@ namespace Xarial.Docify.Lib.Tools
             }
             else
             {
-                return new MenuPage(url, new ContextMetadata(
-                    new Dictionary<string, dynamic>()
-                    { { data[PageHelper.TITLE_ATT] , url } }));
+                return new MenuPage(url, new MenuPageMetadata(
+                    new Dictionary<string, object>()
+                    { { data.Get<string>(PageHelper.TITLE_ATT) , url } }));
             }
         }
 
-        private static void ParsePages(List<object> menuList, List<MenuPage> menuPagesList, IEnumerable<IContextPage> allPages, ContextMetadata data)
+        private static void ParsePages(List<object> menuList, List<MenuPage> menuPagesList, IEnumerable<IContextPage> allPages, IContextMetadata data)
         {
             foreach (var menuItem in menuList)
             {
@@ -119,9 +157,9 @@ namespace Xarial.Docify.Lib.Tools
                 {
                     menuPagesList.Add(CreateMenuPage(allPages, data, (string)menuItem));
                 }
-                else if (menuItem is Dictionary<object, object>)
+                else if (menuItem is Dictionary<string, object>)
                 {
-                    foreach (var parentMenuItem in menuItem as Dictionary<object, object>)
+                    foreach (var parentMenuItem in menuItem as Dictionary<string, object>)
                     {
                         var menuPage = CreateMenuPage(allPages, data, (string)parentMenuItem.Key);
                         menuPagesList.Add(menuPage);

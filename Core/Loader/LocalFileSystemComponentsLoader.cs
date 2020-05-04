@@ -24,7 +24,7 @@ namespace Xarial.Docify.Core.Loader
         private readonly ILoader m_Loader;
         private readonly IConfiguration m_Config;
 
-        public LocalFileSystemComponentsLoader(ILoader loader, Configuration conf)
+        public LocalFileSystemComponentsLoader(ILoader loader, IConfiguration conf)
         {
             m_Loader = loader;
             m_Config = conf;

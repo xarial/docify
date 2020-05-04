@@ -15,6 +15,6 @@ namespace Xarial.Docify.Base.Plugins
 {
     public interface IPrePublishFilePlugin : IPlugin
     {
-        void PrePublishFile(ref IFile file, out bool cancel);
+        void PrePublishFile(ref IFile file, out bool skip);
     }
 }

@@ -6,17 +6,17 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Lib.Plugins
 {
-    public class File : IFile
+    public class PluginReplacedFile : IFile
     {
         public byte[] Content { get; }
         public ILocation Location { get; }
 
-        public File(string content, ILocation loc) 
+        public PluginReplacedFile(string content, ILocation loc) 
             : this(FileExtension.ToByteArray(content), loc)
         {
         }
 
-        public File(byte[] content, ILocation loc)
+        public PluginReplacedFile(byte[] content, ILocation loc)
         {
             Content = content;
             Location = loc;

@@ -39,13 +39,13 @@ namespace Xarial.Docify.Lib.Plugins
             {
                 var css = (Formatter as HtmlClassFormatter).GetCSSString();
                 css = css.Substring("body{background-color:#FFFFFFFF;} ".Length);//temp solution - find a better way
-                site.MainPage.Assets.Add(new File(css, new Location(CSS_FILE_NAME, CSS_FILE_PATH)));
+                site.MainPage.Assets.Add(new PluginReplacedFile(css, new Location(CSS_FILE_NAME, CSS_FILE_PATH)));
             }
         }
 
-        public void PrePublishFile(ref IFile file, out bool cancel)
+        public void PrePublishFile(ref IFile file, out bool skip)
         {
-            cancel = false;
+            skip = false;
 
             if (!Settings.EmbedStyle)
             {
@@ -54,7 +54,7 @@ namespace Xarial.Docify.Lib.Plugins
                     var pageContent = file.AsTextContent();
                     Helper.InjectDataIntoHtmlHead(ref pageContent,
                         string.Format(Helper.CSS_LINK_TEMPLATE, string.Join('/', CSS_FILE_PATH) + "/" + CSS_FILE_NAME));
-                    file = new File(pageContent, file.Location);
+                    file = new PluginReplacedFile(pageContent, file.Location);
                 }
             }
         }

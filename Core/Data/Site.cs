@@ -18,7 +18,7 @@ namespace Xarial.Docify.Core.Data
         public List<ITemplate> Includes { get; }
         public IConfiguration Configuration { get; }
 
-        public Site(string baseUrl, Page mainPage, Configuration config)
+        public Site(string baseUrl, IPage mainPage, IConfiguration config)
         {
             BaseUrl = baseUrl;
             MainPage = mainPage;

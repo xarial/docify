@@ -66,12 +66,12 @@ namespace Xarial.Docify.Core.Publisher
                     }
                 }
 
-                bool cancel = false;
+                bool skip = false;
 
                 IFile outWritable = new Writable(writable.Content, outLoc);
 
-                m_PrePublishFilePlugins.InvokePluginsIfAny(p => p.PrePublishFile(ref outWritable, out cancel));
-                if (!cancel)
+                m_PrePublishFilePlugins.InvokePluginsIfAny(p => p.PrePublishFile(ref outWritable, out skip));
+                if (!skip)
                 {
                     outFilePath = outWritable.Location.ToPath();
                     CreateDirectoryIfNeeded();

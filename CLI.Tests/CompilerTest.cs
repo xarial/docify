@@ -5,8 +5,11 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using Autofac;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
@@ -25,7 +28,7 @@ namespace CLI.Tests
         [SetUp]
         public void Setup()
         {
-            m_Compiler = new DocifyEngine("", "", "", Environment_e.Test).Resove<ICompiler>();
+            m_Compiler = new DocifyEngineMock(@"D:\src", @"D:\out", "www.xarial.com", Environment_e.Test).Resove<ICompiler>();
         }
         
         [Test]

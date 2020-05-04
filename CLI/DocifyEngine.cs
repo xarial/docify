@@ -49,6 +49,41 @@ namespace Xarial.Docify.CLI
             m_SrcDir = srcDir;
             m_OutDir = outDir;
 
+            RegisterDependencies(builder, env);
+
+            m_Container = builder.Build();
+
+            LoadPlugins();
+
+            MarkdownHelper.MarkdownTransformer = m_Container.Resolve<MarkdigMarkdownContentTransformer>();
+        }
+
+        public async Task Build()
+        {
+            var loader = Resove<ILoader>();
+            var composer = Resove<IComposer>();
+            var compiler = Resove<ICompiler>();
+            var publisher = Resove<IPublisher>();
+
+            var srcFiles = await loader.Load(Location.FromPath(m_SrcDir));
+
+            var compsLoader = Resove<IComponentsLoader>();
+            srcFiles = await compsLoader.Load(srcFiles);
+
+            var site = composer.ComposeSite(srcFiles, m_SiteUrl);
+
+            var writables = await compiler.Compile(site);
+            
+            await publisher.Write(Location.FromPath(m_OutDir), writables);
+        }
+
+        public T Resove<T>() 
+        {
+            return m_Container.Resolve<T>();
+        }
+
+        protected virtual void RegisterDependencies(ContainerBuilder builder, Environment_e env) 
+        {
             builder.RegisterType<LocalFileSystemLoaderConfig>()
                 .UsingConstructor(typeof(IConfiguration));
 
@@ -92,36 +127,6 @@ namespace Xarial.Docify.CLI
             builder.Register(c => c.Resolve<IConfigurationLoader>().Load(Location.FromPath(m_SrcDir)).Result);
 
             builder.RegisterType<LocalFileSystemPluginsManager>().As<IPluginsManager>();
-
-            m_Container = builder.Build();
-
-            LoadPlugins();
-
-            MarkdownHelper.MarkdownTransformer = m_Container.Resolve<MarkdigMarkdownContentTransformer>();
-        }
-
-        public async Task Build()
-        {
-            var loader = Resove<ILoader>();
-            var composer = Resove<IComposer>();
-            var compiler = Resove<ICompiler>();
-            var publisher = Resove<IPublisher>();
-
-            var srcFiles = await loader.Load(Location.FromPath(m_SrcDir));
-
-            var compsLoader = Resove<IComponentsLoader>();
-            srcFiles = await compsLoader.Load(srcFiles);
-
-            var site = composer.ComposeSite(srcFiles, m_SiteUrl);
-
-            var writables = await compiler.Compile(site);
-            
-            await publisher.Write(Location.FromPath(m_OutDir), writables);
-        }
-
-        public T Resove<T>() 
-        {
-            return m_Container.Resolve<T>();
         }
 
         private void LoadPlugins()

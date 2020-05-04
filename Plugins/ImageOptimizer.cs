@@ -47,7 +47,7 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("image-optimizer")]
-    public class ImageOptimizer : IPreCompilePlugin, IPlugin<ImageOptimizerSettings>
+    public class ImageOptimizer : IPreCompilePlugin, IPrePublishFilePlugin, IPlugin<ImageOptimizerSettings>
     {
         private const string IMAGE_TAG_NAME = "image";
         private const string REPLACE_IMAGE_TAG_NAME = "image-png";
@@ -94,7 +94,7 @@ namespace Xarial.Docify.Lib.Plugins
                             }
 
                             page.Data.Add(REPLACE_IMAGE_TAG_NAME, imgName);
-                            var imgPngAsset = new File(pngBuffer, new Location(imgName, page.Location.Path.ToArray()));
+                            var imgPngAsset = new PluginReplacedFile(pngBuffer, new Location(imgName, page.Location.Path.ToArray()));
                             page.Assets.Add(imgPngAsset);
                             site.MainPage.Assets.Add(imgPngAsset);
                         }
@@ -131,12 +131,12 @@ namespace Xarial.Docify.Lib.Plugins
                     p => string.Equals(p.Location.ToUrl(), path)
                     || string.Equals(p.Location.ToUrl(site.BaseUrl), path));
         }
-
-        public void PrePublishAsset(ref ILocation loc, ref byte[] content, out bool cancel)
+        
+        public void PrePublishFile(ref IFile file, out bool skip)
         {
-            cancel = false;
+            skip = false;
 
-            var path = loc.ToPath();
+            var path = file.Location.ToPath();
 
             var opts = Settings.IgnoreMatchCase ? RegexOptions.IgnoreCase : RegexOptions.None;
 
@@ -144,7 +144,7 @@ namespace Xarial.Docify.Lib.Plugins
             {
                 var quantizer = new WuQuantizer();
 
-                using (var inStr = new MemoryStream(content))
+                using (var inStr = new MemoryStream(file.Content))
                 {
                     inStr.Seek(0, SeekOrigin.Begin);
 
@@ -158,7 +158,7 @@ namespace Xarial.Docify.Lib.Plugins
                                 {
                                     quantized.Save(outStr, img.RawFormat);
                                     outStr.Seek(0, SeekOrigin.Begin);
-                                    content = outStr.GetBuffer();
+                                    file = new PluginReplacedFile(outStr.GetBuffer(), file.Location);
                                 }
                             }
                         }

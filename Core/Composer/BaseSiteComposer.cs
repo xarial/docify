@@ -25,9 +25,9 @@ namespace Xarial.Docify.Core.Composer
         private const string LAYOUT_VAR_NAME = "layout";
 
         private readonly ILayoutParser m_LayoutParser;
-        private readonly Configuration m_Config;
+        private readonly IConfiguration m_Config;
         
-        public BaseSiteComposer(ILayoutParser parser, Configuration config) 
+        public BaseSiteComposer(ILayoutParser parser, IConfiguration config) 
         {
             m_LayoutParser = parser;
             m_Config = config;

@@ -29,7 +29,7 @@ namespace Components.Tests
         {
             var site = ComponentsTest.NewSite("<div>\r\n{% nav %}\r\n</div>", INCLUDE_PATH,
                 ComponentsTest.GetData<Metadata>("title: p1"),
-                ComponentsTest.GetData<Configuration>("nav:\r\n  menu:\r\n    - Page1:\r\n      - /p2.html\r\n      - SubPage2\r\n    - Page2"));
+                ComponentsTest.GetData<Configuration>("$nav:\r\n  menu:\r\n    - Page1:\r\n      - /p2.html\r\n      - SubPage2\r\n    - Page2"));
 
             site.MainPage.SubPages.Add(new Page(new Location("p2.html"), "", ComponentsTest.GetData<Metadata>("title: p2")));
 
@@ -69,7 +69,7 @@ namespace Components.Tests
         public async Task CustomTitleTest()
         {
             var site = ComponentsTest.NewSite("<div>\r\n{% nav %}\r\n</div>", INCLUDE_PATH, null,
-                ComponentsTest.GetData<Configuration>("nav:\r\n  home_menu: false\r\n  title_attribute: abc"));
+                ComponentsTest.GetData<Configuration>("$nav:\r\n  home_menu: false\r\n  title_attribute: abc"));
             var p1 = new Page(Location.FromPath("Page1.html"), "", ComponentsTest.GetData<Metadata>("title: p1\r\nabc: x1"));
             site.MainPage.SubPages.Add(p1);
             

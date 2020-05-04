@@ -12,9 +12,14 @@ title_attribute: title
 @{
     var img = Model.Site.MainPage.Data.GetOrDefault<string>("image-png");
 
-    if (string.IsNullOrEmpty(img)) 
-    { 
+    if (string.IsNullOrEmpty(img))
+    {
         img = Model.Site.MainPage.Data.GetOrDefault<string>("image");
+    }
+
+    if (string.IsNullOrEmpty(img)) 
+    {
+        img = Model.Data.Get<string>("image");
     }
 
     if (!string.IsNullOrEmpty(img))

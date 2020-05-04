@@ -13,19 +13,19 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Data
 {
-    public class SourceFile : IFile
+    public class File : IFile
     {
         public byte[] Content { get; }
 
         public ILocation Location { get; }
 
-        public SourceFile(ILocation path, byte[] content)
+        public File(ILocation path, byte[] content)
         {
             Location = path;
             Content = content;
         }
 
-        public SourceFile(ILocation path, string content)
+        public File(ILocation path, string content)
             : this(path, FileExtension.ToByteArray(content))
         {
         }

@@ -193,9 +193,9 @@ namespace Xarial.Docify.Core.Composer
             }).ToList();
         }
 
-        private List<Asset> ParseAssets(IEnumerable<IFile> assets) 
+        private List<Data.File> ParseAssets(IEnumerable<IFile> assets) 
         {
-            return assets.Select(a => new Asset(a.Location, a.Content)).ToList();
+            return assets.Select(a => new Data.File(a.Location, a.Content)).ToList();
         }
 
         private string GetTemplateName(ILocation loc) 
@@ -256,9 +256,9 @@ namespace Xarial.Docify.Core.Composer
 
         private Page ParsePages(IEnumerable<IFile> srcPages,
             IReadOnlyDictionary<string, Template> layouts,
-            IReadOnlyList<Asset> assets)
+            IReadOnlyList<Data.File> assets)
         {
-            var refAssets = new List<Asset>(assets);
+            var refAssets = new List<Data.File>(assets);
 
             //TODO: identify if any layouts are not in use
 
@@ -322,7 +322,7 @@ namespace Xarial.Docify.Core.Composer
                             new Location(isPage ? srcPage.Location.FileName : "",
                             pagePath.ToArray()), layouts);
 
-                        Asset[] pageAssets;
+                        Data.File[] pageAssets;
                         if (assetsMap.TryGetValue(page.Location.Path, out pageAssets))
                         {
                             assetsMap.Remove(page.Location.Path);

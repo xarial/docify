@@ -33,11 +33,11 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_SinglePageAsset()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"), ""),
-                new SourceFile(Location.FromPath(@"page1\index.md"), ""),
-                new SourceFile(Location.FromPath(@"page1\asset.txt"), "a1"),
+                new File(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"page1\index.md"), ""),
+                new File(Location.FromPath(@"page1\asset.txt"), "a1"),
             };
 
             var site = m_Composer.ComposeSite(src, "");
@@ -50,10 +50,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_MainPageAsset()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"), ""),
-                new SourceFile(Location.FromPath(@"asset.txt"), "a1"),
+                new File(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"asset.txt"), "a1"),
             };
             
             var site = m_Composer.ComposeSite(src, "");
@@ -66,12 +66,12 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_TextAndBinaryAsset()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"), ""),
-                new SourceFile(Location.FromPath(@"page1\index.md"), ""),
-                new SourceFile(Location.FromPath(@"page1\asset.txt"), "a1"),
-                new SourceFile(Location.FromPath(@"page1\asset1.bin"), new byte[] { 1,2,3 })
+                new File(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"page1\index.md"), ""),
+                new File(Location.FromPath(@"page1\asset.txt"), "a1"),
+                new File(Location.FromPath(@"page1\asset1.bin"), new byte[] { 1,2,3 })
             };
             
             var site = m_Composer.ComposeSite(src, "");
@@ -85,16 +85,16 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_MultiLevelAsset()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"), ""),
-                new SourceFile(Location.FromPath(@"asset.txt"), "a1"),
-                new SourceFile(Location.FromPath(@"page1\index.md"), ""),
-                new SourceFile(Location.FromPath(@"page1\asset1.txt"), "a2"),
-                new SourceFile(Location.FromPath(@"page2\index.md"), ""),
-                new SourceFile(Location.FromPath(@"page2\asset.txt"), "a3"),
-                new SourceFile(Location.FromPath(@"page2\page3\index.md"), ""),
-                new SourceFile(Location.FromPath(@"page2\page3\asset2.txt"), "a4")
+                new File(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"asset.txt"), "a1"),
+                new File(Location.FromPath(@"page1\index.md"), ""),
+                new File(Location.FromPath(@"page1\asset1.txt"), "a2"),
+                new File(Location.FromPath(@"page2\index.md"), ""),
+                new File(Location.FromPath(@"page2\asset.txt"), "a3"),
+                new File(Location.FromPath(@"page2\page3\index.md"), ""),
+                new File(Location.FromPath(@"page2\page3\asset2.txt"), "a4")
             };
 
             var site = m_Composer.ComposeSite(src, "");

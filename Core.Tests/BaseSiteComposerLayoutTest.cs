@@ -37,10 +37,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_LayoutSimple() 
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"_layouts\\l1.md"), "Layout _C_"),
-                new SourceFile(Location.FromPath(@"index.md"),
+                new File(Location.FromPath(@"_layouts\\l1.md"), "Layout _C_"),
+                new File(Location.FromPath(@"index.md"),
                     "---\r\nprp1: A\r\nlayout: l1\r\n---\r\nText Line1\r\nText Line2"),
             };
 
@@ -57,16 +57,16 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_LayoutNested()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"_layouts\\l1.md"), "L1 _C_"),
-                new SourceFile(Location.FromPath(@"_layouts\\l2.md"), "---\r\nlayout: l1\r\n---\r\nL2 _C_"),
-                new SourceFile(Location.FromPath(@"_layouts\\l4.md"), "---\r\nlayout: l3\r\n---\r\nL4 _C_"),
-                new SourceFile(Location.FromPath(@"_layouts\\l3.md"), "L3 _C_"),
-                new SourceFile(Location.FromPath(@"index.md"),
+                new File(Location.FromPath(@"_layouts\\l1.md"), "L1 _C_"),
+                new File(Location.FromPath(@"_layouts\\l2.md"), "---\r\nlayout: l1\r\n---\r\nL2 _C_"),
+                new File(Location.FromPath(@"_layouts\\l4.md"), "---\r\nlayout: l3\r\n---\r\nL4 _C_"),
+                new File(Location.FromPath(@"_layouts\\l3.md"), "L3 _C_"),
+                new File(Location.FromPath(@"index.md"),
                     "---\r\nprp1: A\r\n---\r\nText Line1\r\nText Line2"),
-                new SourceFile(Location.FromPath(@"p2.md"), "---\r\nlayout: l2\r\n---\r\nP1"),
-                new SourceFile(Location.FromPath(@"p4.md"), "---\r\nlayout: l4\r\n---\r\nP4")
+                new File(Location.FromPath(@"p2.md"), "---\r\nlayout: l2\r\n---\r\nP1"),
+                new File(Location.FromPath(@"p4.md"), "---\r\nlayout: l4\r\n---\r\nP4")
             };
 
             var site = m_Composer.ComposeSite(src, "");
@@ -85,10 +85,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_LayoutMissing()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"_layouts\\l1.md"), "Layout _C_"),
-                new SourceFile(Location.FromPath(@"index.md"),
+                new File(Location.FromPath(@"_layouts\\l1.md"), "Layout _C_"),
+                new File(Location.FromPath(@"index.md"),
                     "---\r\nprp1: A\r\nlayout: l2\r\n---\r\nText Line1\r\nText Line2"),
             };
 
@@ -98,11 +98,11 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_DuplicateLayout()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"_layouts\\l1.md"), "_C_"),
-                new SourceFile(Location.FromPath(@"_layouts\\l1.txt"), "_C_"),
-                new SourceFile(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"_layouts\\l1.md"), "_C_"),
+                new File(Location.FromPath(@"_layouts\\l1.txt"), "_C_"),
+                new File(Location.FromPath(@"index.md"), ""),
             };
 
             Assert.Throws<DuplicateTemplateException>(() => m_Composer.ComposeSite(src, ""));
@@ -111,10 +111,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_MissingContentPLaceholderLayout()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"_layouts\\l1.md"), "abc"),
-                new SourceFile(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"_layouts\\l1.md"), "abc"),
+                new File(Location.FromPath(@"index.md"), ""),
             };
 
             Assert.Throws<LayoutMissingContentPlaceholderException>(() => m_Composer.ComposeSite(src, ""));
@@ -123,10 +123,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_SubFolderLayout()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"_layouts\\dir1\\l1.md"), "_C_"),
-                new SourceFile(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"_layouts\\dir1\\l1.md"), "_C_"),
+                new File(Location.FromPath(@"index.md"), ""),
             };
 
             var site = m_Composer.ComposeSite(src, "");

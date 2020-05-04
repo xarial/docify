@@ -29,11 +29,11 @@ namespace Core.Tests
             var fs = new MockFileSystem();
             var publisher = new LocalFileSystemPublisher(new LocalFileSystemPublisherConfig(), fs);
 
-            var pages = new Writable[]
+            var pages = new File[]
             {
-                new Writable("abc", Location.FromPath("page1.html")),
-                new Writable("def", Location.FromPath("dir1\\page2.html")),
-                new Writable("xyz", Location.FromPath("C:\\external\\page3.html")),
+                new File(Location.FromPath("page1.html"), "abc"),
+                new File(Location.FromPath("dir1\\page2.html"), "def"),
+                new File(Location.FromPath("C:\\external\\page3.html"), "xyz"),
             };
 
             await publisher.Write(Location.FromPath("C:\\site"), pages);
@@ -55,7 +55,7 @@ namespace Core.Tests
 
             var assets = new IFile[]
             {
-                new Writable(new byte[] { 1,2,3 }, Location.FromPath("file.bin"))
+                new File(Location.FromPath("file.bin"), new byte[] { 1,2,3 })
             };
 
             await publisher.Write(Location.FromPath("C:\\site"), assets);
@@ -76,7 +76,7 @@ namespace Core.Tests
 
             var pages = new IFile[]
             {
-                new Writable("abc", Location.FromPath("page1.html"))
+                new File(Location.FromPath("page1.html"), "abc")
             };
 
             await publisher.Write(Location.FromPath("C:\\site"), pages);

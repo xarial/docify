@@ -34,10 +34,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_IndexPageTest() 
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"), "i"),
-                new SourceFile(Location.FromPath(@"page1\index.md"), "p1")
+                new File(Location.FromPath(@"index.md"), "i"),
+                new File(Location.FromPath(@"page1\index.md"), "p1")
             };
 
             var site = m_Composer.ComposeSite(src, "");
@@ -53,10 +53,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_NamedPageTest()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"), "i"),
-                new SourceFile(Location.FromPath(@"page1.md"), "p1")
+                new File(Location.FromPath(@"index.md"), "i"),
+                new File(Location.FromPath(@"page1.md"), "p1")
             };
             
             var site = m_Composer.ComposeSite(src, "");
@@ -70,10 +70,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_NestedIndexPageUndefinedTest()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"), "i"),
-                new SourceFile(Location.FromPath(@"page1\page2\index.md"), "p2")
+                new File(Location.FromPath(@"index.md"), "i"),
+                new File(Location.FromPath(@"page1\page2\index.md"), "p2")
             };
 
             var site = m_Composer.ComposeSite(src, "");
@@ -90,11 +90,11 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_NestedIndexPageTest()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"), "i"),
-                new SourceFile(Location.FromPath(@"page1\page2\index.md"), "p2"),
-                new SourceFile(Location.FromPath(@"page1\index.md"), "p1")
+                new File(Location.FromPath(@"index.md"), "i"),
+                new File(Location.FromPath(@"page1\page2\index.md"), "p2"),
+                new File(Location.FromPath(@"page1\index.md"), "p1")
             };
 
             var site = m_Composer.ComposeSite(src, "");
@@ -111,10 +111,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_NestedNamedPageUndefinedTest()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"), "i"),
-                new SourceFile(Location.FromPath(@"page1\page2.md"), "p2")
+                new File(Location.FromPath(@"index.md"), "i"),
+                new File(Location.FromPath(@"page1\page2.md"), "p2")
             };
 
             var site = m_Composer.ComposeSite(src, "");
@@ -131,11 +131,11 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_NestedNamedPageTest()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"), "i"),
-                new SourceFile(Location.FromPath(@"page1\index.md"), "p1"),
-                new SourceFile(Location.FromPath(@"page1\page2.md"), "p2")
+                new File(Location.FromPath(@"index.md"), "i"),
+                new File(Location.FromPath(@"page1\index.md"), "p1"),
+                new File(Location.FromPath(@"page1\page2.md"), "p2")
             };
 
             var site = m_Composer.ComposeSite(src, "");
@@ -152,11 +152,11 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_DuplicateTest()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"), ""),
-                new SourceFile(Location.FromPath(@"page1\index.md"), ""),
-                new SourceFile(Location.FromPath(@"page1.md"), "")
+                new File(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"page1\index.md"), ""),
+                new File(Location.FromPath(@"page1.md"), "")
             };
 
             Assert.Throws<DuplicatePageException>(() => m_Composer.ComposeSite(src, ""));
@@ -165,12 +165,12 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_CaseInsensitiveTest()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"), "i"),
-                new SourceFile(Location.FromPath(@"PAGE1\Page2\index.md"), "p2"),
-                new SourceFile(Location.FromPath(@"page1\index.md"), "p1"),
-                new SourceFile(Location.FromPath(@"page1\Page3\INDEX.md"), "p3"),
+                new File(Location.FromPath(@"index.md"), "i"),
+                new File(Location.FromPath(@"PAGE1\Page2\index.md"), "p2"),
+                new File(Location.FromPath(@"page1\index.md"), "p1"),
+                new File(Location.FromPath(@"page1\Page3\INDEX.md"), "p3"),
             };
 
             var site = m_Composer.ComposeSite(src, "");
@@ -189,9 +189,9 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_EmptySiteTest()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"page1\index.txt"), ""),
+                new File(Location.FromPath(@"page1\index.txt"), ""),
             };
 
             Assert.Throws<EmptySiteException>(() => m_Composer.ComposeSite(src, ""));
@@ -200,10 +200,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_NoMainPageTest()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"page1\index.md"), ""),
-                new SourceFile(Location.FromPath(@"page1.md"), "")
+                new File(Location.FromPath(@"page1\index.md"), ""),
+                new File(Location.FromPath(@"page1.md"), "")
             };
 
             Assert.Throws<SiteMainPageMissingException>(() => m_Composer.ComposeSite(src, ""));
@@ -212,12 +212,12 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_DifferentPageTypesTest()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.html"), "i"),
-                new SourceFile(Location.FromPath(@"page1\page2\index.cshtml"), "p2"),
-                new SourceFile(Location.FromPath(@"page1\index.md"), "p1"),
-                new SourceFile(Location.FromPath(@"page1\page3\index.html"), "p3"),
+                new File(Location.FromPath(@"index.html"), "i"),
+                new File(Location.FromPath(@"page1\page2\index.cshtml"), "p2"),
+                new File(Location.FromPath(@"page1\index.md"), "p1"),
+                new File(Location.FromPath(@"page1\page3\index.html"), "p3"),
             };
 
             var site = m_Composer.ComposeSite(src, "");
@@ -238,10 +238,10 @@ namespace Core.Tests
         {
             var src = new IFile[]
             {
-                new SourceFile(Location.FromPath(@"index.md"), "i"),
-                new SourceFile(Location.FromPath(@"page1\index.md"), "p1"),
-                new SourceFile(Location.FromPath(@"page1\asset1.txt"), "p1"),
-                new SourceFile(Location.FromPath(@"asset2.ini"), "p1")
+                new File(Location.FromPath(@"index.md"), "i"),
+                new File(Location.FromPath(@"page1\index.md"), "p1"),
+                new File(Location.FromPath(@"page1\asset1.txt"), "p1"),
+                new File(Location.FromPath(@"asset2.ini"), "p1")
             };
 
             var site = m_Composer.ComposeSite(src, "");

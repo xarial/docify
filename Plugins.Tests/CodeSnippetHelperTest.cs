@@ -154,8 +154,8 @@ namespace Plugins.Tests
             var res1 = CodeSnippetHelper.Select("line1\r\nline2", "cs", new CodeSelectorOptions());
             var res2 = CodeSnippetHelper.Select("//---reg1\r\nline1\r\nline2\r\n//---", "cs", new CodeSelectorOptions());
 
-            Assert.AreEqual(SnippetInfo_e.Full, res1[0].Info);
-            Assert.AreEqual(SnippetInfo_e.Full, res2[0].Info);
+            Assert.AreEqual(SnippetLocation_e.Full, res1[0].Location);
+            Assert.AreEqual(SnippetLocation_e.Full, res2[0].Location);
         }
 
         [Test]
@@ -173,8 +173,8 @@ namespace Plugins.Tests
                     Regions = new string[] { "reg1" }
                 });
 
-            Assert.AreEqual(SnippetInfo_e.BottomBoundary, res1[0].Info);
-            Assert.AreEqual(SnippetInfo_e.BottomBoundary, res2[0].Info);
+            Assert.AreEqual(SnippetLocation_e.End, res1[0].Location);
+            Assert.AreEqual(SnippetLocation_e.End, res2[0].Location);
         }
 
         [Test]
@@ -192,8 +192,8 @@ namespace Plugins.Tests
                     ExcludeRegions = new string[] { "reg1" }
                 });
 
-            Assert.AreEqual(SnippetInfo_e.TopBoundary, res1[0].Info);
-            Assert.AreEqual(SnippetInfo_e.TopBoundary, res2[0].Info);
+            Assert.AreEqual(SnippetLocation_e.Start, res1[0].Location);
+            Assert.AreEqual(SnippetLocation_e.Start, res2[0].Location);
         }
 
         [Test]
@@ -211,8 +211,8 @@ namespace Plugins.Tests
                     ExcludeRegions = new string[] { "reg1", "reg2" }
                 });
 
-            Assert.AreEqual(SnippetInfo_e.Jagged, res1[0].Info);
-            Assert.AreEqual(SnippetInfo_e.Jagged, res2[0].Info);
+            Assert.AreEqual(SnippetLocation_e.Middle, res1[0].Location);
+            Assert.AreEqual(SnippetLocation_e.Middle, res2[0].Location);
         }
 
         [Test]
@@ -230,10 +230,10 @@ namespace Plugins.Tests
                     ExcludeRegions = new string[] { "reg2" }
                 });
 
-            Assert.AreEqual(SnippetInfo_e.Jagged, res1[0].Info);
-            Assert.AreEqual(SnippetInfo_e.BottomBoundary, res1[1].Info);
-            Assert.AreEqual(SnippetInfo_e.TopBoundary, res2[0].Info);
-            Assert.AreEqual(SnippetInfo_e.BottomBoundary, res2[1].Info);
+            Assert.AreEqual(SnippetLocation_e.Middle, res1[0].Location);
+            Assert.AreEqual(SnippetLocation_e.End, res1[1].Location);
+            Assert.AreEqual(SnippetLocation_e.Start, res2[0].Location);
+            Assert.AreEqual(SnippetLocation_e.End, res2[1].Location);
         }
 
         [Test]
@@ -245,7 +245,7 @@ namespace Plugins.Tests
                     Regions = new string[] { "reg1" }
                 });
 
-            Assert.AreEqual(SnippetInfo_e.Full, res1[0].Info);
+            Assert.AreEqual(SnippetLocation_e.Full, res1[0].Location);
         }
 
         [Test]
@@ -257,7 +257,7 @@ namespace Plugins.Tests
                     Regions = new string[] { "reg2" }
                 });
 
-            Assert.AreEqual(SnippetInfo_e.BottomBoundary, res1[0].Info);
+            Assert.AreEqual(SnippetLocation_e.End, res1[0].Location);
         }
 
         [Test]
@@ -269,7 +269,7 @@ namespace Plugins.Tests
                     Regions = new string[] { "reg2" }
                 });
 
-            Assert.AreEqual(SnippetInfo_e.TopBoundary, res1[0].Info);
+            Assert.AreEqual(SnippetLocation_e.Start, res1[0].Location);
         }
 
         [Test]
@@ -282,7 +282,7 @@ namespace Plugins.Tests
                     ExcludeRegions = new string[] { "reg2" }
                 });
 
-            Assert.AreEqual(SnippetInfo_e.Jagged, res1[0].Info);
+            Assert.AreEqual(SnippetLocation_e.Middle, res1[0].Location);
         }
     }
 }

@@ -8,6 +8,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -63,6 +64,12 @@ namespace Core.Tests
         {
         }
 
+        public class Plugin4 : IPlugin
+        {
+            [Import]
+            private IServiceMock2 Service { get; set; }
+        }
+
         public class ServiceMock1 
         {
             [ImportPlugins]
@@ -70,6 +77,14 @@ namespace Core.Tests
 
             [ImportPlugins]
             protected IEnumerable<IPlugin2> m_Plugins2;
+        }
+
+        public interface IServiceMock2
+        {
+        }
+
+        public class ServiceMock2 : IServiceMock2
+        {
         }
 
         [Test]
@@ -212,7 +227,17 @@ namespace Core.Tests
         [Test]
         public void LoadPluginImportsTest()
         {
-            throw new NotImplementedException();
+            var mgr = new LocalFileSystemPluginsManager(new Configuration());
+            var field = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic);
+            var p1 = new Plugin4();
+            field.SetValue(mgr, new IPlugin[] { p1 });
+
+            var svcMock = new ServiceMock2();
+            mgr.LoadPlugins(svcMock, true);
+
+            var res1 = p1.GetType().GetProperty("Service", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(p1) as ServiceMock2;
+
+            Assert.AreEqual(svcMock, res1);
         }
     }
 }

@@ -10,11 +10,13 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler;
@@ -29,15 +31,9 @@ namespace Core.Tests
         private IncludesHandler m_Handler;
 
         [SetUp]
-        public void Setup() 
+        public void Setup()
         {
-            var mock = new Mock<IContentTransformer>();
-            mock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ContextModel>()))
-                .Returns(new Func<string, string, IContextModel, Task<string>>(
-                    (c, k, m) => Task.FromResult(
-                        $"{c}_{(m as ContextModel).Page.Name}_{string.Join(",", (m as IncludeContextModel).Data.OrderBy(p => p.Key).Select(p => $"{p.Key}={p.Value}").ToArray())}")));
-
-            m_Handler = new IncludesHandler(mock.Object);
+            m_Handler = CreateNewIncludesHandler();
         }
 
         [Test]
@@ -198,9 +194,24 @@ namespace Core.Tests
         }
 
         [Test]
-        public void Render_PluginIncludes()
+        public async Task Render_PluginIncludes()
         {
-            throw new NotImplementedException();
+            var includesHandler = CreateNewIncludesHandler();
+
+            var includePluginMock = new Mock<IRenderIncludePlugin>();
+            includePluginMock.SetupGet(x => x.IncludeName).Returns("plugin-include");
+            includePluginMock.Setup(x => x.GetContent(It.IsAny<IMetadata>(), It.IsAny<IPage>()))
+                .Returns(new Func<IMetadata, IPage, Task<string>>((m, p) => Task.FromResult("render-result")));
+
+            includesHandler.GetType().GetField("m_RenderIncludePlugins", BindingFlags.NonPublic | BindingFlags.Instance)
+                .SetValue(includesHandler, new IRenderIncludePlugin[] { includePluginMock.Object });
+
+            var p1 = new Page(Location.FromPath("page1.html"), "{% plugin-include { param1: x, param2: b} %}");
+            var s = new Site("", p1, null);
+
+            var res = await includesHandler.Render("plugin-include", new Metadata(), s, p1);
+
+            Assert.AreEqual("render-result", res);
         }
 
         [Test]
@@ -291,6 +302,17 @@ namespace Core.Tests
             var res1 = await m_Handler.ReplaceAll("{% i3 %}__{% i1 %}", s, p1);
 
             Assert.AreEqual("abcxyzabc_page1.html_a1=z_page1.html__page1.html___abc_page1.html_", res1);
+        }
+
+        private IncludesHandler CreateNewIncludesHandler()
+        {
+            var mock = new Mock<IContentTransformer>();
+            mock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ContextModel>()))
+                .Returns(new Func<string, string, IContextModel, Task<string>>(
+                    (c, k, m) => Task.FromResult(
+                        $"{c}_{(m as ContextModel).Page.Name}_{string.Join(",", (m as IncludeContextModel).Data.OrderBy(p => p.Key).Select(p => $"{p.Key}={p.Value}").ToArray())}")));
+
+            return new IncludesHandler(mock.Object);
         }
     }
 }

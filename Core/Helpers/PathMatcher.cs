@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Xarial.Docify.Core.Helpers
 {
-    internal static class PathMatcher
+    public static class PathMatcher
     {
         public static bool Matches(IEnumerable<string> filters, string path) 
         {

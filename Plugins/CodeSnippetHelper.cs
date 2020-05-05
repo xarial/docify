@@ -21,22 +21,22 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Flags]
-    public enum SnippetInfo_e 
+    public enum SnippetLocation_e 
     {
-        Jagged = 0,
-        TopBoundary = 1,
-        BottomBoundary = 2,
-        Full = TopBoundary | BottomBoundary
+        Middle = 0,
+        Start = 1,
+        End = 2,
+        Full = Start | End
     }
 
     public class Snippet 
     {
-        public SnippetInfo_e Info { get; }
+        public SnippetLocation_e Location { get; }
         public string Code { get; }
 
-        public Snippet(string code, SnippetInfo_e info) 
+        public Snippet(string code, SnippetLocation_e location) 
         {
-            Info = info;
+            Location = location;
             Code = code;
         }
     }
@@ -46,7 +46,7 @@ namespace Xarial.Docify.Lib.Plugins
         private class ProcessingSnippet
         {
             public string[] Lines { get; set; }
-            public SnippetInfo_e Info { get; set; }
+            public SnippetLocation_e Info { get; set; }
         }
 
         private const string REGION_BLOCK = "---";
@@ -82,7 +82,7 @@ namespace Xarial.Docify.Lib.Plugins
             result.Add(new ProcessingSnippet()
             {
                 Lines = srcLines,
-                Info = SnippetInfo_e.Full
+                Info = SnippetLocation_e.Full
             });
 
             var commentSymbol = GetCommentLineSymbol(codeLang);
@@ -155,7 +155,7 @@ namespace Xarial.Docify.Lib.Plugins
         {
             var result = new List<ProcessingSnippet>();
 
-            var curGroupType = SnippetInfo_e.Jagged;
+            var curGroupType = SnippetLocation_e.Middle;
             var curGroup = new List<string>();
             
             var foundRegions = new List<string>();
@@ -174,10 +174,10 @@ namespace Xarial.Docify.Lib.Plugins
                     result.Add(new ProcessingSnippet()
                     {
                         Lines = curGroup.ToArray(),
-                        Info = snippet.Info == SnippetInfo_e.Full ? curGroupType : snippet.Info
+                        Info = snippet.Info == SnippetLocation_e.Full ? curGroupType : snippet.Info
                     });
                     curGroup.Clear();
-                    curGroupType = SnippetInfo_e.Jagged;
+                    curGroupType = SnippetLocation_e.Middle;
                     hasLinesAfterLastGroup = false;
                 }
             }
@@ -188,7 +188,7 @@ namespace Xarial.Docify.Lib.Plugins
                 {
                     if (isFirstCodeLine.Value)
                     {
-                        curGroupType |= SnippetInfo_e.TopBoundary;
+                        curGroupType |= SnippetLocation_e.Start;
                     }
                 }
 
@@ -283,11 +283,11 @@ namespace Xarial.Docify.Lib.Plugins
                 throw new Exception($"Missing regions: {string.Join(',', missingRegs)}");
             }
 
-            if (snippet.Info == SnippetInfo_e.Full)
+            if (snippet.Info == SnippetLocation_e.Full)
             {
                 if (!hasLinesAfterLastGroup)
                 {
-                    result.Last().Info |= SnippetInfo_e.BottomBoundary;
+                    result.Last().Info |= SnippetLocation_e.End;
                 }
             }
 

@@ -91,16 +91,20 @@ namespace Xarial.Docify.Lib.Plugins
 
                     switch (snip.Info) 
                     {
+                        case SnippetInfo_e.Full:
+                            snipClass = "";
+                            break;
+
+                        case SnippetInfo_e.TopBoundary:
+                            snipClass = "jagged-bottom";
+                            break;
+
+                        case SnippetInfo_e.BottomBoundary:
+                            snipClass = "jagged-top";
+                            break;
+
                         case SnippetInfo_e.Jagged:
                             snipClass = "jagged";
-                            break;
-
-                        case SnippetInfo_e.BottomJagged:
-                            snipClass = "bottom-jagged";
-                            break;
-
-                        case SnippetInfo_e.TopJagged:
-                            snipClass = "top-jagged";
                             break;
                     }
 

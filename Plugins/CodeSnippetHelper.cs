@@ -18,11 +18,37 @@ namespace Xarial.Docify.Lib.Plugins
         public bool LeftAlign { get; set; }
         public string[] Regions { get; set; }
         public string[] ExcludeRegions { get; set; }
-        public bool HideRegions { get; set; }
+    }
+
+    [Flags]
+    public enum SnippetInfo_e 
+    {
+        Full = 0,
+        TopJagged = 1,
+        BottomJagged = 2,
+        Jagged = TopJagged | BottomJagged
+    }
+
+    public class Snippet 
+    {
+        public SnippetInfo_e Info { get; }
+        public string Code { get; }
+
+        public Snippet(string code, SnippetInfo_e info) 
+        {
+            Info = info;
+            Code = code;
+        }
     }
 
     public static class CodeSnippetHelper
     {
+        private class ProcessingSnippet
+        {
+            public string[] Lines { get; set; }
+            public SnippetInfo_e Info { get; set; }
+        }
+
         private const string REGION_BLOCK = "---";
         
         private static string GetCommentLineSymbol(string codeLang) 
@@ -48,74 +74,86 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
         
-        public static string[] Select(string rawCode, string codeLang, CodeSelectorOptions opts)
+        public static Snippet[] Select(string rawCode, string codeLang, CodeSelectorOptions opts)
         {
             var srcLines = Regex.Split(rawCode, "\r\n|\r|\n");
 
-            var result = new List<string[]>();
-            result.Add(srcLines);
+            var result = new List<ProcessingSnippet>();
+            result.Add(new ProcessingSnippet()
+            {
+                Lines = srcLines,
+                Info = SnippetInfo_e.Full
+            });
 
             var commentSymbol = GetCommentLineSymbol(codeLang);
 
-            void ProcessRegions(string[] regs, bool inner) 
-            {
-                if (regs?.Any() == true)
-                {
-                    var newResult = new List<string[]>();
-
-                    for (int i = 0; i < result.Count; i++)
-                    {
-                        var lineGroups = SelectRegionLines(result[i], commentSymbol, regs, inner);
-                        newResult.AddRange(lineGroups);
-                    }
-
-                    result = newResult;
-                }
-            }
-
-            ProcessRegions(opts.Regions, true);
-            ProcessRegions(opts.ExcludeRegions, false);
-            
-            if (opts.HideRegions)
-            {
-                for (int i = 0; i < result.Count; i++)
-                {
-                    var lines = result[i];
-                    lines = result[i].Where(l =>
-                    {
-                        string regName;
-                        return !(IsRegionEnd(l, commentSymbol) || IsRegionStart(l, commentSymbol, out regName));
-                     }).ToArray();
-
-                    if (result[i].Length != lines.Length)
-                    {
-                        result[i] = lines;
-                    }
-                }
-            }
+            ProcessRegions(ref result, opts.Regions, true, commentSymbol);
+            ProcessRegions(ref result, opts.ExcludeRegions, false, commentSymbol);
+            HideRegions(result, commentSymbol);
 
             if (opts.LeftAlign)
             {
-                for (int i = 0; i < result.Count; i++)
-                {
-                    var lines = result[i];
-                    var indent = lines.Min(l => string.IsNullOrEmpty(l) ? int.MaxValue : l.TakeWhile(Char.IsWhiteSpace).Count());
-
-                    if (indent > 0)
-                    {
-                        lines = lines.Select(l => string.IsNullOrEmpty(l) ? l : l.Substring(indent)).ToArray();
-                        result[i] = lines;
-                    }
-                }
+                AlignLeft(result);
             }
 
-            return result.Select(lines => string.Join(Environment.NewLine, lines)).ToArray();
+            return result.Select(snip => new Snippet(string.Join(Environment.NewLine, snip.Lines), snip.Info)).ToArray();
         }
 
-        private static IEnumerable<string[]> SelectRegionLines(string[] lines, string commentSymbol, 
+        private static void AlignLeft(List<ProcessingSnippet> result)
+        {
+            for (int i = 0; i < result.Count; i++)
+            {
+                var lines = result[i].Lines;
+                var indent = lines.Min(l => string.IsNullOrEmpty(l) ? int.MaxValue : l.TakeWhile(Char.IsWhiteSpace).Count());
+
+                if (indent > 0)
+                {
+                    lines = lines.Select(l => string.IsNullOrEmpty(l) ? l : l.Substring(indent)).ToArray();
+                    result[i].Lines = lines;
+                }
+            }
+        }
+
+        private static void ProcessRegions(ref List<ProcessingSnippet> result, string[] regs, 
+            bool inner, string commentSymbol)
+        {
+            if (regs?.Any() == true)
+            {
+                var newResult = new List<ProcessingSnippet>();
+
+                for (int i = 0; i < result.Count; i++)
+                {
+                    var lineGroups = SelectRegionLines(result[i], commentSymbol, regs, inner);
+                    newResult.AddRange(lineGroups);
+                }
+
+                result = newResult;
+            }
+        }
+
+        private static void HideRegions(List<ProcessingSnippet> result, string commentSymbol)
+        {
+            for (int i = 0; i < result.Count; i++)
+            {
+                var lines = result[i].Lines;
+                lines = lines.Where(l =>
+                {
+                    string regName;
+                    return !(IsRegionEnd(l, commentSymbol) || IsRegionStart(l, commentSymbol, out regName));
+                }).ToArray();
+
+                if (result[i].Lines.Length != lines.Length)
+                {
+                    result[i].Lines = lines;
+                }
+            }
+        }
+
+        private static IEnumerable<ProcessingSnippet> SelectRegionLines(
+            ProcessingSnippet snippet, string commentSymbol, 
             string[] regions, bool inner)
         {
-            var result = new List<string[]>();
+            var result = new List<ProcessingSnippet>();
             
             var curGroup = new List<string>();
 
@@ -128,16 +166,20 @@ namespace Xarial.Docify.Lib.Plugins
             {
                 if (curGroup.Any())
                 {
-                    result.Add(curGroup.ToArray());
+                    result.Add(new ProcessingSnippet() 
+                    {
+                        Lines = curGroup.ToArray(),
+                        Info = SnippetInfo_e.Full
+                    });
                     curGroup.Clear();
                 }
             }
 
-            for (int i = 0; i < lines.Length; i++)
+            for (int i = 0; i < snippet.Lines.Length; i++)
             {
                 string regName = "";
-                var isRegStart = IsRegionStart(lines[i], commentSymbol, out regName);
-                var isRegEnd = IsRegionEnd(lines[i], commentSymbol);
+                var isRegStart = IsRegionStart(snippet.Lines[i], commentSymbol, out regName);
+                var isRegEnd = IsRegionEnd(snippet.Lines[i], commentSymbol);
 
                 var isStart = isRegStart
                     && regions.Contains(regName, StringComparer.CurrentCultureIgnoreCase)
@@ -166,7 +208,7 @@ namespace Xarial.Docify.Lib.Plugins
                     {   
                         if (inner)
                         {
-                            curGroup.Add(lines[i]);
+                            curGroup.Add(snippet.Lines[i]);
                         }
                     }
 
@@ -188,7 +230,7 @@ namespace Xarial.Docify.Lib.Plugins
                 }
                 else if(!inner)
                 {
-                    curGroup.Add(lines[i]);
+                    curGroup.Add(snippet.Lines[i]);
                 }
             }
 

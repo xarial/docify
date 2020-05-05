@@ -21,7 +21,7 @@ namespace Plugins.Tests
             });
 
             Assert.AreEqual(1, res.Length);
-            Assert.AreEqual("line3\r\nline4", res[0]);
+            Assert.AreEqual("line3\r\nline4", res[0].Code);
         }
 
         [Test]
@@ -33,8 +33,8 @@ namespace Plugins.Tests
             });
 
             Assert.AreEqual(2, res.Length);
-            Assert.AreEqual("line3\r\nline4", res[0]);
-            Assert.AreEqual("line6\r\nline7", res[1]);
+            Assert.AreEqual("line3\r\nline4", res[0].Code);
+            Assert.AreEqual("line6\r\nline7", res[1].Code);
         }
 
         [Test]
@@ -46,8 +46,8 @@ namespace Plugins.Tests
             });
 
             Assert.AreEqual(2, res.Length);
-            Assert.AreEqual("line1\r\nline2", res[0]);
-            Assert.AreEqual("line5\r\n    //--- Reg2\r\nline6\r\nline7\r\n    //---\r\nline8", res[1]);
+            Assert.AreEqual("line1\r\nline2", res[0].Code);
+            Assert.AreEqual("line5\r\nline6\r\nline7\r\nline8", res[1].Code);
         }
 
         [Test]
@@ -59,21 +59,19 @@ namespace Plugins.Tests
             });
 
             Assert.AreEqual(3, res.Length);
-            Assert.AreEqual("line1\r\nline2", res[0]);
-            Assert.AreEqual("line5", res[1]);
-            Assert.AreEqual("line8", res[2]);
+            Assert.AreEqual("line1\r\nline2", res[0].Code);
+            Assert.AreEqual("line5", res[1].Code);
+            Assert.AreEqual("line8", res[2].Code);
         }
 
         [Test]
         public void HideRegions() 
         {
-            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    //--- Reg1\r\nline3\r\nline4\r\n    //---\r\nline5", "cs", new CodeSelectorOptions()
-            {
-                HideRegions = true
-            });
+            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    //--- Reg1\r\nline3\r\nline4\r\n    //---\r\nline5", "cs",
+                new CodeSelectorOptions());
 
             Assert.AreEqual(1, res.Length);
-            Assert.AreEqual("line1\r\nline2\r\nline3\r\nline4\r\nline5", res[0]);
+            Assert.AreEqual("line1\r\nline2\r\nline3\r\nline4\r\nline5", res[0].Code);
         }
 
         [Test]
@@ -86,7 +84,7 @@ namespace Plugins.Tests
             });
 
             Assert.AreEqual(1, res.Length);
-            Assert.AreEqual("line3\r\nline4", res[0]);
+            Assert.AreEqual("line3\r\nline4", res[0].Code);
         }
 
         [Test]
@@ -98,7 +96,7 @@ namespace Plugins.Tests
             });
 
             Assert.AreEqual(1, res.Length);
-            Assert.AreEqual("    line3\r\n    line4", res[0]);
+            Assert.AreEqual("    line3\r\n    line4", res[0].Code);
         }
 
         [Test]
@@ -110,8 +108,8 @@ namespace Plugins.Tests
             });
 
             Assert.AreEqual(2, res.Length);
-            Assert.AreEqual("line3\r\nline4", res[0]);
-            Assert.AreEqual("line6\r\nline7", res[1]);
+            Assert.AreEqual("line3\r\nline4", res[0].Code);
+            Assert.AreEqual("line6\r\nline7", res[1].Code);
         }
 
         [Test]
@@ -124,7 +122,7 @@ namespace Plugins.Tests
             });
 
             Assert.AreEqual(1, res.Length);
-            Assert.AreEqual("l1", res[0]);
+            Assert.AreEqual("l1", res[0].Code);
         }
 
         [Test]
@@ -136,7 +134,7 @@ namespace Plugins.Tests
             });
 
             Assert.AreEqual(1, res.Length);
-            Assert.AreEqual("line3\r\nline4", res[0]);
+            Assert.AreEqual("line3\r\nline4", res[0].Code);
         }
 
         [Test]
@@ -148,6 +146,94 @@ namespace Plugins.Tests
             });
 
             Assert.AreEqual(0, res.Length);
+        }
+
+        [Test]
+        public void FullSnippetInfoTest() 
+        {
+            var res1 = CodeSnippetHelper.Select("line1\r\nline2", "cs", new CodeSelectorOptions());
+            var res2 = CodeSnippetHelper.Select("//---reg1\r\nline1\r\nline2\r\n//---", "cs", new CodeSelectorOptions());
+
+            Assert.AreEqual(SnippetInfo_e.Full, res1[0].Info);
+            Assert.AreEqual(SnippetInfo_e.Full, res2[0].Info);
+        }
+
+        [Test]
+        public void TopJaggedSnippetInfoTest() 
+        {
+            var res1 = CodeSnippetHelper.Select("//---reg1\r\nline1\r\nline2\r\n//---\r\nline3", "cs",
+                new CodeSelectorOptions()
+                {
+                    ExcludeRegions = new string[] { "reg1" }
+                });
+
+            var res2 = CodeSnippetHelper.Select("line1\r\n//---reg1\r\nline2\r\nline3\r\n//---", "cs", 
+                new CodeSelectorOptions()
+                {
+                    Regions = new string[] { "reg1" }
+                });
+
+            Assert.AreEqual(SnippetInfo_e.TopJagged, res1[0].Info);
+            Assert.AreEqual(SnippetInfo_e.TopJagged, res2[0].Info);
+        }
+
+        [Test]
+        public void BottomJaggedSnippetInfoTest()
+        {
+            var res1 = CodeSnippetHelper.Select("//---reg1\r\nline1\r\nline2\r\n//---\r\nline3", "cs",
+                new CodeSelectorOptions()
+                {
+                    Regions = new string[] { "reg1" }
+                });
+
+            var res2 = CodeSnippetHelper.Select("line1\r\n//---reg1\r\nline2\r\nline3\r\n//---", "cs",
+                new CodeSelectorOptions()
+                {
+                    ExcludeRegions = new string[] { "reg1" }
+                });
+
+            Assert.AreEqual(SnippetInfo_e.BottomJagged, res1[0].Info);
+            Assert.AreEqual(SnippetInfo_e.BottomJagged, res2[0].Info);
+        }
+
+        [Test]
+        public void JaggedSnippetInfoTest()
+        {
+            var res1 = CodeSnippetHelper.Select("line1\r\n//---reg1\r\nline2\r\nline3\r\n//---\r\nline4", "cs",
+                new CodeSelectorOptions()
+                {
+                    Regions = new string[] { "reg1" }
+                });
+
+            var res2 = CodeSnippetHelper.Select("//---reg1\r\nline1\r\nline2\r\n//---\r\nline3\r\n//---reg2\r\nline4\r\nline5\r\n//---", "cs",
+                new CodeSelectorOptions()
+                {
+                    ExcludeRegions = new string[] { "reg1", "reg2" }
+                });
+
+            Assert.AreEqual(SnippetInfo_e.Jagged, res1[0].Info);
+            Assert.AreEqual(SnippetInfo_e.Jagged, res2[0].Info);
+        }
+
+        [Test]
+        public void MultipleJaggedSnippetInfoTest()
+        {
+            var res1 = CodeSnippetHelper.Select("line1\r\n//---reg1\r\nline1\r\nline2\r\n//---\r\nline3\r\n//---reg2\r\nline4\r\nline5\r\n//---", "cs",
+                new CodeSelectorOptions()
+                {
+                    Regions = new string[] { "reg1", "reg2"}
+                });
+
+            var res2 = CodeSnippetHelper.Select("line1//---reg1\r\nline1\r\nline2\r\n//---\r\nline3\r\n//---reg2\r\nline4\r\nline5\r\n//---\r\nline6", "cs",
+                new CodeSelectorOptions()
+                {
+                    ExcludeRegions = new string[] { "reg2" }
+                });
+
+            Assert.AreEqual(SnippetInfo_e.Jagged, res1[0].Info);
+            Assert.AreEqual(SnippetInfo_e.TopJagged, res1[2].Info);
+            Assert.AreEqual(SnippetInfo_e.BottomJagged, res2[0].Info);
+            Assert.AreEqual(SnippetInfo_e.TopJagged, res2[2].Info);
         }
     }
 }

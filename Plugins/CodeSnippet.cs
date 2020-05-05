@@ -24,8 +24,7 @@ namespace Xarial.Docify.Lib.Plugins
         public Dictionary<string, string> Tabs { get; set; }
         public string[] Regions { get; set; }
         public string[] ExclRegions { get; set; }
-        public bool HideRegions { get; set; }
-        public bool LeftAlign { get; set; }
+        public bool LeftAlign { get; set; } = true;
         public string Lang { get; set; }
     }
 
@@ -80,7 +79,6 @@ namespace Xarial.Docify.Lib.Plugins
                 var snips = CodeSnippetHelper.Select(rawCode, lang, new CodeSelectorOptions()
                 {
                     ExcludeRegions = snipData.ExclRegions,
-                    HideRegions = snipData.HideRegions,
                     LeftAlign = snipData.LeftAlign,
                     Regions = snipData.Regions
                 });
@@ -89,7 +87,24 @@ namespace Xarial.Docify.Lib.Plugins
 
                 foreach (var snip in snips)
                 {
-                    var code = $"~~~{lang}\r\n{snip}\r\n~~~";
+                    var snipClass = "";
+
+                    switch (snip.Info) 
+                    {
+                        case SnippetInfo_e.Jagged:
+                            snipClass = "jagged";
+                            break;
+
+                        case SnippetInfo_e.BottomJagged:
+                            snipClass = "bottom-jagged";
+                            break;
+
+                        case SnippetInfo_e.TopJagged:
+                            snipClass = "top-jagged";
+                            break;
+                    }
+
+                    var code = $"~~~{lang} {snipClass}\r\n{snip.Code}\r\n~~~";
                     res.AppendLine(await m_ContentTransformer.Transform(code, Guid.NewGuid().ToString(), null));
                 }
 

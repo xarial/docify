@@ -15,7 +15,7 @@ namespace Plugins.Tests
         [Test]
         public void SelectSingleRegion()
         {
-            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    #region Reg1\r\nline3\r\nline4\r\n    #endregion\r\nline5", "cs", new CodeSelectorOptions() 
+            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    //--- Reg1\r\nline3\r\nline4\r\n    //---\r\nline5", "cs", new CodeSelectorOptions() 
             {
                 Regions = new string[] { "Reg1" }
             });
@@ -27,7 +27,7 @@ namespace Plugins.Tests
         [Test]
         public void SelectMultiRegions()
         {
-            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    #region Reg1\r\nline3\r\nline4\r\n    #endregion\r\nline5\r\n    #region Reg2\r\nline6\r\nline7\r\n    #endregion\r\nline8", "cs", new CodeSelectorOptions()
+            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    //--- Reg1\r\nline3\r\nline4\r\n    //---\r\nline5\r\n    //--- Reg2\r\nline6\r\nline7\r\n    //---\r\nline8", "cs", new CodeSelectorOptions()
             {
                 Regions = new string[] { "Reg1", "Reg2" }
             });
@@ -40,20 +40,20 @@ namespace Plugins.Tests
         [Test]
         public void ExcludeSingleRegions()
         {
-            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    #region Reg1\r\nline3\r\nline4\r\n    #endregion\r\nline5\r\n    #region Reg2\r\nline6\r\nline7\r\n    #endregion\r\nline8", "cs", new CodeSelectorOptions()
+            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    //--- Reg1\r\nline3\r\nline4\r\n    //---\r\nline5\r\n    //--- Reg2\r\nline6\r\nline7\r\n    //---\r\nline8", "cs", new CodeSelectorOptions()
             {
                 ExcludeRegions = new string[] { "Reg1" }
             });
 
             Assert.AreEqual(2, res.Length);
             Assert.AreEqual("line1\r\nline2", res[0]);
-            Assert.AreEqual("line5\r\n    #region Reg2\r\nline6\r\nline7\r\n    #endregion\r\nline8", res[1]);
+            Assert.AreEqual("line5\r\n    //--- Reg2\r\nline6\r\nline7\r\n    //---\r\nline8", res[1]);
         }
 
         [Test]
         public void ExcludeMultiRegions()
         {
-            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    #region Reg1\r\nline3\r\nline4\r\n    #endregion\r\nline5\r\n    #region Reg2\r\nline6\r\nline7\r\n    #endregion\r\nline8", "cs", new CodeSelectorOptions()
+            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    //--- Reg1\r\nline3\r\nline4\r\n    //---\r\nline5\r\n    //--- Reg2\r\nline6\r\nline7\r\n    //---\r\nline8", "cs", new CodeSelectorOptions()
             {
                 ExcludeRegions = new string[] { "Reg1", "Reg2" }
             });
@@ -67,7 +67,7 @@ namespace Plugins.Tests
         [Test]
         public void HideRegions() 
         {
-            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    #region Reg1\r\nline3\r\nline4\r\n    #endregion\r\nline5", "cs", new CodeSelectorOptions()
+            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    //--- Reg1\r\nline3\r\nline4\r\n    //---\r\nline5", "cs", new CodeSelectorOptions()
             {
                 HideRegions = true
             });
@@ -79,7 +79,7 @@ namespace Plugins.Tests
         [Test]
         public void LeftAlignCode()
         {
-            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    #region Reg1\r\n    line3\r\n    line4\r\n    #endregion\r\nline5", "cs", new CodeSelectorOptions()
+            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    //--- Reg1\r\n    line3\r\n    line4\r\n    //---\r\nline5", "cs", new CodeSelectorOptions()
             {
                 LeftAlign = true,
                 Regions = new string[] { "Reg1" }
@@ -92,7 +92,7 @@ namespace Plugins.Tests
         [Test]
         public void SelectSingleRegionVB()
         {
-            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    #Region \"Reg1\"\r\n    line3\r\n    line4\r\n    #End Region\r\nline5", "vb", new CodeSelectorOptions()
+            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    '--- Reg1\r\n    line3\r\n    line4\r\n    '---\r\nline5", "vb", new CodeSelectorOptions()
             {
                 Regions = new string[] { "Reg1" }
             });
@@ -104,7 +104,7 @@ namespace Plugins.Tests
         [Test]
         public void SelectMultiRegionsNested()
         {
-            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    #region Reg1\r\nline3\r\nline4\r\n    #endregion\r\nline5\r\n#region Reg2\r\nl1\r\n    #region Reg3\r\nline6\r\nline7\r\n    #endregion\r\n#endregion\r\nline8", "cs", new CodeSelectorOptions()
+            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    //--- Reg1\r\nline3\r\nline4\r\n    //---\r\nline5\r\n//--- Reg2\r\nl1\r\n    //--- Reg3\r\nline6\r\nline7\r\n    //---\r\n//---\r\nline8", "cs", new CodeSelectorOptions()
             {
                 Regions = new string[] { "Reg1", "Reg3" }
             });
@@ -117,7 +117,7 @@ namespace Plugins.Tests
         [Test]
         public void SelectMultiRegionsAndExclude()
         {
-            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    #region Reg1\r\nline3\r\nline4\r\n    #endregion\r\nline5\r\n#region Reg2\r\nl1\r\n    #region Reg3\r\nline6\r\nline7\r\n    #endregion\r\n#endregion\r\nline8", "cs", new CodeSelectorOptions()
+            var res = CodeSnippetHelper.Select("line1\r\nline2\r\n    //--- Reg1\r\nline3\r\nline4\r\n    //---\r\nline5\r\n//--- Reg2\r\nl1\r\n    //--- Reg3\r\nline6\r\nline7\r\n    //---\r\n//---\r\nline8", "cs", new CodeSelectorOptions()
             {
                 Regions = new string[] { "Reg2" },
                 ExcludeRegions = new string[] { "Reg3" }
@@ -130,7 +130,7 @@ namespace Plugins.Tests
         [Test]
         public void SelectSingleOnlyRegion()
         {
-            var res = CodeSnippetHelper.Select("#region Reg1\r\nline3\r\nline4\r\n    #endregion", "cs", new CodeSelectorOptions()
+            var res = CodeSnippetHelper.Select("//--- Reg1\r\nline3\r\nline4\r\n    //---", "cs", new CodeSelectorOptions()
             {
                 Regions = new string[] { "Reg1" }
             });
@@ -142,7 +142,7 @@ namespace Plugins.Tests
         [Test]
         public void ExcludeSingleOnlyRegion()
         {
-            var res = CodeSnippetHelper.Select("#region Reg1\r\nline3\r\nline4\r\n    #endregion", "cs", new CodeSelectorOptions()
+            var res = CodeSnippetHelper.Select("//--- Reg1\r\nline3\r\nline4\r\n    //---", "cs", new CodeSelectorOptions()
             {
                 ExcludeRegions = new string[] { "Reg1" }
             });

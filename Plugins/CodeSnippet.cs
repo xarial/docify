@@ -70,7 +70,14 @@ namespace Xarial.Docify.Lib.Plugins
 
                 var rawCode = snipAsset.AsTextContent();
 
-                var snips = CodeSnippetHelper.Select(rawCode, snipData.Lang, new CodeSelectorOptions()
+                var lang = snipData.Lang;
+
+                if (string.IsNullOrEmpty(lang)) 
+                {
+                    lang = Path.GetExtension(snipAsset.Location.FileName).TrimStart('.').ToLower();
+                }
+
+                var snips = CodeSnippetHelper.Select(rawCode, lang, new CodeSelectorOptions()
                 {
                     ExcludeRegions = snipData.ExclRegions,
                     HideRegions = snipData.HideRegions,
@@ -82,7 +89,7 @@ namespace Xarial.Docify.Lib.Plugins
 
                 foreach (var snip in snips)
                 {
-                    var code = $"~~~{snipData.Lang}\r\n{snip}\r\n~~~";
+                    var code = $"~~~{lang}\r\n{snip}\r\n~~~";
                     res.AppendLine(await m_ContentTransformer.Transform(code, Guid.NewGuid().ToString(), null));
                 }
 

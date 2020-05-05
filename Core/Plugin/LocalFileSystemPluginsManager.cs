@@ -140,9 +140,6 @@ namespace Xarial.Docify.Core.Plugin
 
                     if (IsAssignableToGenericType(pluginSpecType, typeof(IPlugin<>), out pluginDeclrType))
                     {
-                        //var prp = pluginSpecType.GetProperty(nameof(IPlugin<object>.Settings));
-                        //var settsType = prp.PropertyType;
-
                         var settsType = pluginDeclrType.GetGenericArguments().First();
 
                         var pluginId = GetPluginId(pluginSpecType);
@@ -162,9 +159,6 @@ namespace Xarial.Docify.Core.Plugin
                         
                         var initMethod = pluginSpecType.GetMethod(nameof(IPlugin<object>.Init));
                         initMethod.Invoke(plugin, new object[] { setts });
-
-                        //TODO: imvoke Init method instead of assigning the property value
-                        //prp.SetValue(plugin, setts);
                     }
                 }
             }

@@ -64,9 +64,29 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        public void RenderCodeBlock(string rawCode, string lang, string args, StringBuilder html)
+        private ILanguage FileLanguageCodeById(string lang) 
         {
             var codeLang = Languages.FindById(lang);
+
+            if (codeLang == null) 
+            {
+                switch (lang.ToLower()) 
+                {
+                    case "vba":
+                        codeLang = Languages.VbDotNet;
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Language '{lang}' is not supported");
+                }
+            }
+
+            return codeLang;
+        }
+
+        public void RenderCodeBlock(string rawCode, string lang, string args, StringBuilder html)
+        {
+            var codeLang = FileLanguageCodeById(lang);
 
             string formattedCode;
             if (Formatter is HtmlFormatter)

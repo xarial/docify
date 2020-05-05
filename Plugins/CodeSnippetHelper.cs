@@ -23,40 +23,30 @@ namespace Xarial.Docify.Lib.Plugins
 
     public static class CodeSnippetHelper
     {
-        private interface IRegionParser
+        private const string REGION_BLOCK = "---";
+        
+        private static string GetCommentLineSymbol(string codeLang) 
         {
-            string[] CodeTokens { get; }
-            string StartRegEx { get; }
-            string EndRegEx { get; }
-        }
+            switch (codeLang.ToLower()) 
+            {
+                case "cs":
+                case "csharp":
+                case "c#":
+                case "js":
+                case "javascript":
+                case "java":
+                    return "//";
 
-        private class CSharpRegionParser : IRegionParser
-        {
-            public string[] CodeTokens => new string[] { "cs", "csharp", "c#" };
-            public string StartRegEx => "\\#region (.*)";
-            public string EndRegEx => "\\#endregion";
+                case "vb":
+                case "vbnet":
+                case "vb.net":
+                case "vba":
+                    return "'";
+                    
+                default:
+                    return "";
+            }
         }
-
-        private class VisualBasicRegionParser : IRegionParser
-        {
-            public string[] CodeTokens => new string[] { "vb", "vbnet", "vb.net", "vba" };
-            public string StartRegEx => "\\#Region \"(.*)\"";
-            public string EndRegEx => "\\#End Region";
-        }
-
-        private class DefaultRegionParser : IRegionParser
-        {
-            public string[] CodeTokens => null;
-            public string StartRegEx => "\\---\"(.*)\"---";
-            public string EndRegEx => "\\---";
-        }
-
-        private static readonly IRegionParser[] m_Parsers = new IRegionParser[]
-        {
-            new CSharpRegionParser(),
-            new VisualBasicRegionParser(),
-            new DefaultRegionParser()
-        };
         
         public static string[] Select(string rawCode, string codeLang, CodeSelectorOptions opts)
         {
@@ -65,7 +55,7 @@ namespace Xarial.Docify.Lib.Plugins
             var result = new List<string[]>();
             result.Add(srcLines);
 
-            var parser = SelectParser(codeLang);
+            var commentSymbol = GetCommentLineSymbol(codeLang);
 
             void ProcessRegions(string[] regs, bool inner) 
             {
@@ -75,7 +65,7 @@ namespace Xarial.Docify.Lib.Plugins
 
                     for (int i = 0; i < result.Count; i++)
                     {
-                        var lineGroups = SelectRegionLines(result[i], parser, regs, inner);
+                        var lineGroups = SelectRegionLines(result[i], commentSymbol, regs, inner);
                         newResult.AddRange(lineGroups);
                     }
 
@@ -94,7 +84,7 @@ namespace Xarial.Docify.Lib.Plugins
                     lines = result[i].Where(l =>
                     {
                         string regName;
-                        return !(IsRegionEnd(l, parser) || IsRegionStart(l, parser, out regName));
+                        return !(IsRegionEnd(l, commentSymbol) || IsRegionStart(l, commentSymbol, out regName));
                      }).ToArray();
 
                     if (result[i].Length != lines.Length)
@@ -122,12 +112,8 @@ namespace Xarial.Docify.Lib.Plugins
             return result.Select(lines => string.Join(Environment.NewLine, lines)).ToArray();
         }
 
-        private static IRegionParser SelectParser(string codeLang) 
-        {
-            return m_Parsers.First(p => p.CodeTokens == null || p.CodeTokens.Contains(codeLang, StringComparer.CurrentCultureIgnoreCase));
-        }
-
-        private static IEnumerable<string[]> SelectRegionLines(string[] lines, IRegionParser parser, string[] regions, bool inner)
+        private static IEnumerable<string[]> SelectRegionLines(string[] lines, string commentSymbol, 
+            string[] regions, bool inner)
         {
             var result = new List<string[]>();
             
@@ -150,8 +136,8 @@ namespace Xarial.Docify.Lib.Plugins
             for (int i = 0; i < lines.Length; i++)
             {
                 string regName = "";
-                var isRegStart = IsRegionStart(lines[i], parser, out regName);
-                var isRegEnd = IsRegionEnd(lines[i], parser);
+                var isRegStart = IsRegionStart(lines[i], commentSymbol, out regName);
+                var isRegEnd = IsRegionEnd(lines[i], commentSymbol);
 
                 var isStart = isRegStart
                     && regions.Contains(regName, StringComparer.CurrentCultureIgnoreCase)
@@ -221,15 +207,15 @@ namespace Xarial.Docify.Lib.Plugins
             return result;
         }
 
-        private static bool IsRegionStart(string line, IRegionParser parser, out string name)
+        private static bool IsRegionStart(string line, string commentSymbol, out string name)
         {
-            var regEx = parser.StartRegEx;
-            
-            if (Regex.IsMatch(line, regEx))
+            line = line.Trim();
+            var regBlock = commentSymbol + REGION_BLOCK;
+
+            if (line.StartsWith(regBlock)) 
             {
-                //TODO: replace with non-capturing groups
-                name = Regex.Match(line, regEx).Groups[1].Value;
-                return true;
+                name = line.Substring(regBlock.Length).Trim();
+                return !string.IsNullOrEmpty(name);
             }
             else
             {
@@ -238,9 +224,11 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        private static bool IsRegionEnd(string line, IRegionParser parser)
+        private static bool IsRegionEnd(string line, string commentSymbol)
         {
-            return Regex.IsMatch(line, parser.EndRegEx);
+            line = line.Trim();
+            var regBlock = commentSymbol + REGION_BLOCK;
+            return line == regBlock;
         }
     }
 }

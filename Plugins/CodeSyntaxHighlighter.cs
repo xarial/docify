@@ -54,13 +54,8 @@ namespace Xarial.Docify.Lib.Plugins
 
             if (!m_Settings.EmbedStyle)
             {
-                if (string.Equals(Path.GetExtension(file.Location.FileName), ".html", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    var pageContent = file.AsTextContent();
-                    Helper.InjectDataIntoHtmlHead(ref pageContent,
-                        string.Format(Helper.CSS_LINK_TEMPLATE, string.Join('/', CSS_FILE_PATH) + "/" + CSS_FILE_NAME));
-                    file = new PluginDataFile(pageContent, file.Location);
-                }
+                this.WriteToPageHead(ref file,
+                    w => w.AddStyleSheet(string.Join('/', CSS_FILE_PATH) + "/" + CSS_FILE_NAME));
             }
         }
 
@@ -68,7 +63,7 @@ namespace Xarial.Docify.Lib.Plugins
         {
             var codeLang = Languages.FindById(lang);
 
-            if (codeLang == null) 
+            if (codeLang == null)
             {
                 switch (lang.ToLower()) 
                 {

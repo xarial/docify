@@ -114,5 +114,26 @@ namespace Core.Tests
             Assert.AreEqual("a4", site.MainPage.SubPages.Find(p => p.Location.ToId() == "page2::index.html").SubPages[0].Assets[0].AsTextContent());
             Assert.AreEqual("asset2.txt", site.MainPage.SubPages.Find(p => p.Location.ToId() == "page2::index.html").SubPages[0].Assets[0].Location.FileName);
         }
+
+        [Test]
+        public void ComposeSite_SubFolderAsset()
+        {
+            var src = new File[]
+            {
+                new File(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"page1\index.md"), ""),
+                new File(Location.FromPath(@"page1\sub-folder\asset1.txt"), "a1"),
+            };
+
+            var site = m_Composer.ComposeSite(src, "");
+
+            var p1 = site.MainPage.SubPages.First(p => p.Location.ToId() == "page1::index.html");
+
+            var a1 = p1.Assets.FirstOrDefault(a => a.Location.ToId() == "page1::sub-folder::asset1.txt");
+
+            Assert.AreEqual(1, p1.Assets.Count);
+            Assert.IsNotNull(a1);
+            Assert.AreEqual("a1", a1.AsTextContent());
+        }
     }
 }

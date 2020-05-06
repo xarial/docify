@@ -63,6 +63,8 @@ namespace Xarial.Docify.Core.Composer
             IMetadata pageData = null;
             Template layout = null;
 
+            var pageLoc = loc.ConvertToPageLocation();
+
             if (src != null)
             {
                 string layoutName;
@@ -75,16 +77,14 @@ namespace Xarial.Docify.Core.Composer
                         throw new MissingLayoutException(layoutName);
                     }
                 }
+                
+                return new Page(pageLoc,
+                    rawContent, pageData, layout);
             }
             else
             {
-                //TODO: assign default attributes and content if available
+                return new PlaceholderPage(pageLoc);
             }
-            
-            var page = new Page(loc.ConvertToPageLocation(),
-                rawContent, pageData, layout);
-
-            return page;
         }
 
         public ISite ComposeSite(IEnumerable<IFile> files, string baseUrl)

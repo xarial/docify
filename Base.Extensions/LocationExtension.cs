@@ -55,15 +55,20 @@ namespace Xarial.Docify.Base
         }
 
         public static bool IsEmpty(this ILocation loc) => !loc.Path.Any() && string.IsNullOrEmpty(loc.FileName);
+        
         public static int GetTotalLevel(this ILocation loc) => loc.Path.Count;
-        public static bool IsRoot(this ILocation loc)=> !loc.Path.Any();
-        public static string GetRoot(this ILocation loc)=> loc.Path.FirstOrDefault();
+        
+        public static bool IsRoot(this ILocation loc) => !loc.Path.Any();
 
-        public static bool IsIndexPage(this ILocation loc)
+        public static string GetRoot(this ILocation loc) => loc.Path.FirstOrDefault();
+
+        public static bool IsDefaultPage(this ILocation loc)
         {
             return Path.GetFileNameWithoutExtension(loc.FileName)
                     .Equals("index", StringComparison.CurrentCultureIgnoreCase);
         }
+
+        public static bool IsFile(this ILocation loc) => !string.IsNullOrEmpty(loc.FileName);
 
         public static ILocation ConvertToPageLocation(this ILocation location)
         {
@@ -84,6 +89,53 @@ namespace Xarial.Docify.Base
         public static ILocation Combine(this ILocation loc, params string[] blocks)
         {
             return loc.Copy("", loc.Path.Union(blocks));
+        }
+
+        public static ILocation GetParent(this ILocation loc) 
+        {
+            if (loc.IsFile())
+            {
+                return loc.Copy("", loc.Path);
+            }
+            else 
+            {
+                return loc.Copy("", loc.Path.Take(loc.Path.Count - 1));
+            }
+        }
+
+        public static bool IsInLocation(this ILocation loc, ILocation parent) 
+        {
+            if (parent.IsFile()) 
+            {
+                throw new Exception("Parent must not be a file");
+            }
+
+            if (loc.Path.Count >= parent.Path.Count) 
+            {
+                for (int i = 0; i < parent.Path.Count; i++) 
+                {
+                    if (!string.Equals(loc.Path[i], parent.Path[i]))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public static ILocation GetRelative(this ILocation loc, ILocation relativeTo) 
+        {
+            if (loc.IsInLocation(relativeTo))
+            {
+                return loc.Copy(loc.FileName, loc.Path.Skip(relativeTo.Path.Count));
+            }
+            else 
+            {
+                throw new Exception($"'{loc.ToId()}' location is not within the '{relativeTo.ToId()}'");
+            }
         }
 
         private static string FormFullLocation(ILocation loc, string basePart, string sep)

@@ -269,7 +269,7 @@ namespace Xarial.Docify.Core.Composer
                 .GroupBy(a => a.Location.Path, new LocationDictionaryComparer())
                 .ToDictionary(g => g.Key, g => g.ToArray(), new LocationDictionaryComparer());
 
-            var mainSrcPage = srcPages.FirstOrDefault(p => p.Location.IsRoot() && p.Location.IsIndexPage());
+            var mainSrcPage = srcPages.FirstOrDefault(p => p.Location.IsRoot() && p.Location.IsDefaultPage());
 
             if (mainSrcPage == null)
             {
@@ -286,8 +286,8 @@ namespace Xarial.Docify.Core.Composer
             {
                 var pageLocParts = new List<string>();
                 pageLocParts.AddRange(srcPage.Location.Path);
-                var isIndexPage = srcPage.Location.IsIndexPage();
-                if (!isIndexPage)
+                var isDefaultPage = srcPage.Location.IsDefaultPage();
+                if (!isDefaultPage)
                 {
                     pageLocParts.Add(Path.GetFileNameWithoutExtension(srcPage.Location.FileName));
                 }
@@ -309,7 +309,7 @@ namespace Xarial.Docify.Core.Composer
                     {
                         List<string> pagePath = null;
 
-                        if (isPage && !isIndexPage)
+                        if (isPage && !isDefaultPage)
                         {
                             pagePath = new List<string>(thisLoc.SkipLast(1));
                         }

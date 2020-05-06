@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Components.Tests.Properties;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,22 +9,45 @@ namespace Components.Tests
 {
     public class DisqusTest
     {
+        private const string INCLUDE_PATH = @"disqus\_includes\disqus.cshtml";
+
         [Test]
         public async Task BasicTest()
         {
-            throw new NotImplementedException();
+            var site = ComponentsTest.NewSite("<div>\r\n{% disqus short-name: test %}\r\n</div>", INCLUDE_PATH);
+            
+            var res = await ComponentsTest.CompileMainPageNormalize(site);
+
+            Assert.AreEqual(Resources.disqus1, res);
         }
 
         [Test]
         public async Task NoCommentsTest()
         {
-            throw new NotImplementedException();
+            var site1 = ComponentsTest.NewSite("<div>\r\n{% disqus { short-name: test } %}\r\n</div>", INCLUDE_PATH,
+                new Xarial.Docify.Core.Data.Metadata() { { "comments", false } });
+            var res1 = await ComponentsTest.CompileMainPageNormalize(site1);
+
+            var site2 = ComponentsTest.NewSite("<div>\r\n{% disqus short-name: test %}\r\n</div>", INCLUDE_PATH,
+                new Xarial.Docify.Core.Data.Metadata() { { "sitemap", false } });
+            var res2 = await ComponentsTest.CompileMainPageNormalize(site2);
+
+            var site3 = ComponentsTest.NewSite("<div>\r\n{% disqus %}\r\n</div>", INCLUDE_PATH);
+            var res3 = await ComponentsTest.CompileMainPageNormalize(site2);
+
+            Assert.AreEqual("<div>\r\n</div>", res1);
+            Assert.AreEqual("<div>\r\n</div>", res2);
+            Assert.AreEqual("<div>\r\n</div>", res3);
         }
 
         [Test]
-        public async Task NoSitemapTest()
+        public async Task NotCountTest() 
         {
-            throw new NotImplementedException();
+            var site = ComponentsTest.NewSite("<div>\r\n{% disqus { short-name: test, count: false } %}\r\n</div>", INCLUDE_PATH);
+
+            var res = await ComponentsTest.CompileMainPageNormalize(site);
+
+            Assert.AreEqual(Resources.disqus2, res);
         }
     }
 }

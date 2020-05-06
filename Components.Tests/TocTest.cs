@@ -102,22 +102,37 @@ namespace Components.Tests
         }
 
         [Test]
-        public void OrderPagesTest() 
+        public async Task CustomHomeMenuTitleTest()
         {
-            throw new NotImplementedException();
+            var site = ComponentsTest.NewSite("<div>\r\n{% toc home_menu_title: custom-title %}\r\n</div>", INCLUDE_PATH);
+            
+            var res = await ComponentsTest.CompileMainPageNormalize(site);
+
+            Assert.AreEqual(Resources.toc6, res);
         }
 
         [Test]
-        public void ExcludePageTest() 
+        public async Task OrderPagesTest()
         {
-            throw new NotImplementedException();
+            var site = ComponentsTest.NewSite("<div>\r\n{% toc %}\r\n</div>", INCLUDE_PATH);
+            site.MainPage.SubPages.Add(new Page(Location.FromPath("SubPage1.html"), "", ComponentsTest.GetData<Metadata>("title: sp1\r\norder: 2")));
+            site.MainPage.SubPages.Add(new Page(Location.FromPath("SubPage2.html"), "", ComponentsTest.GetData<Metadata>("title: sp2\r\norder: 1")));
+
+            var res = await ComponentsTest.CompileMainPageNormalize(site);
+
+            Assert.AreEqual(Resources.toc7, res);
         }
 
         [Test]
-        public void CustomHomeMenuTitleTest()
+        public async Task ExcludePageTest()
         {
-            //home_menu_title: custom
-            throw new NotImplementedException();
+            var site = ComponentsTest.NewSite("<div>\r\n{% toc %}\r\n</div>", INCLUDE_PATH);
+            site.MainPage.SubPages.Add(new Page(Location.FromPath("SubPage1.html"), "", ComponentsTest.GetData<Metadata>("title: sp1\r\ntoc: false")));
+            site.MainPage.SubPages.Add(new Page(Location.FromPath("SubPage2.html"), "", ComponentsTest.GetData<Metadata>("title: sp2")));
+
+            var res = await ComponentsTest.CompileMainPageNormalize(site);
+
+            Assert.AreEqual(Resources.toc8, res);
         }
     }
 }

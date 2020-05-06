@@ -10,10 +10,14 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Services;
+using Xarial.Docify.CLI;
+using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Data;
 
@@ -74,7 +78,18 @@ namespace Components.Tests
         [Test]
         public async Task ImageAndImagePngTest()
         {
-            throw new NotImplementedException();
+            var site = ComponentsTest.NewSite("{% seo %}", INCLUDE_PATH,
+                ComponentsTest.GetData<Metadata>("title: p1\r\ndescription: d1\r\nimage: img1.svg\r\nimage-png: img1.png"));
+            site.MainPage.SubPages.Add(new Page(Location.FromPath("Page1.html"), "{% seo %}", ComponentsTest.GetData<Metadata>("title: p1\r\nimage: img2.png")));
+
+            var compiler = new DocifyEngine("", "", "", Environment_e.Test).Resove<ICompiler>();
+            var files = await compiler.Compile(site);
+
+            var r1 = files.First(f => f.Location.FileName == "index.html");
+            var r2 = files.First(f => f.Location.FileName == "Page1.html");
+            
+            Assert.AreEqual(Resources.seo5, r1.AsTextContent());
+            Assert.AreEqual(Resources.seo6, r2.AsTextContent());
         }
     }
 }

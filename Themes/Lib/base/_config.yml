@@ -2,12 +2,9 @@
   - seo
   - sitemap
   - google-analytics
-  - page-lang
   - feed
   - social-share
   - youtube
-  - date
-  - legal
   - cookie-consent
   - tipue-search
 plugins:

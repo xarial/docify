@@ -61,6 +61,52 @@ namespace Components.Tests.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div id=&quot;disqus_thread&quot;&gt;&lt;/div&gt;
+        ///&lt;script&gt;
+        ///var disqus_config = function () {
+        ///this.page.url = &apos;www.example.com&apos;;
+        ///this.page.identifier = &apos;www.example.com&apos;;
+        ///};
+        ///(function() {
+        ///var d = document, s = d.createElement(&apos;script&apos;);
+        ///s.src = &apos;https://test.disqus.com/embed.js&apos;;
+        ///s.setAttribute(&apos;data-timestamp&apos;, +new Date());
+        ///(d.head || d.body).appendChild(s);
+        ///})();
+        ///&lt;/script&gt;
+        ///&lt;noscript&gt;Please enable JavaScript to view the &lt;a href=&quot;https://disqus.com/?ref_noscript&quot;&gt;comments powered by Disqus.&lt;/a&gt;&lt;/noscript&gt;        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string disqus1 {
+            get {
+                return ResourceManager.GetString("disqus1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div id=&quot;disqus_thread&quot;&gt;&lt;/div&gt;
+        ///&lt;script&gt;
+        ///var disqus_config = function () {
+        ///this.page.url = &apos;www.example.com&apos;;
+        ///this.page.identifier = &apos;www.example.com&apos;;
+        ///};
+        ///(function() {
+        ///var d = document, s = d.createElement(&apos;script&apos;);
+        ///s.src = &apos;https://test.disqus.com/embed.js&apos;;
+        ///s.setAttribute(&apos;data-timestamp&apos;, +new Date());
+        ///(d.head || d.body).appendChild(s);
+        ///})();
+        ///&lt;/script&gt;
+        ///&lt;noscript&gt;Please enable JavaScript to view the &lt;a href=&quot;https://disqus.com/?ref_noscript&quot;&gt;comments powered by Disqus.&lt;/a&gt;&lt;/noscript&gt;        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string disqus2 {
+            get {
+                return ResourceManager.GetString("disqus2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;channel&gt;
         ///&lt;title&gt;index.html&lt;/title&gt;
         ///&lt;description&gt;&lt;/description&gt;
@@ -91,7 +137,7 @@ namespace Components.Tests.Properties {
         ///&lt;description&gt;&lt;/description&gt;
         ///&lt;link&gt;www.example.com&lt;/link&gt;
         ///&lt;image&gt;
-        ///&lt;url&gt;www.example.com/img1.png &lt;/url&gt;
+        ///&lt;url&gt;www.example.com/img1.png&lt;/url&gt;
         ///&lt;title&gt;index.html&lt;/title&gt;
         ///&lt;link&gt;www.example.com&lt;/link&gt;
         ///&lt;/image&gt;
@@ -129,12 +175,27 @@ namespace Components.Tests.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;channel&gt;
+        ///&lt;title&gt;index.html&lt;/title&gt;
+        ///&lt;description&gt;&lt;/description&gt;
+        ///&lt;link&gt;www.example.com&lt;/link&gt;
+        ///&lt;lastBuildDate&gt;-&lt;/lastBuildDate&gt;
+        ///&lt;atom:link href=&quot;www.example.com/feed.xml&quot; rel=&quot;self&quot; type=&quot;application/rss+xml&quot; /&gt;
+        ///&lt;/channel&gt;.
+        /// </summary>
+        internal static string feed4 {
+            get {
+                return ResourceManager.GetString("feed4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;script async src=&quot;https://www.googletagmanager.com/gtag/js?id=ABC&quot;&gt;&lt;/script&gt;
         ///&lt;script&gt;
         ///window.dataLayer = window.dataLayer || [];
         ///function gtag() { dataLayer.push(arguments); }
         ///gtag(&apos;js&apos;, new Date());
-        ///gtag(&apos;config&apos;, ABC);
+        ///gtag(&apos;config&apos;, &apos;ABC&apos;);
         ///&lt;/script&gt;.
         /// </summary>
         internal static string google_analytics1 {
@@ -272,7 +333,8 @@ namespace Components.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
+        ///   Looks up a localized string similar to &lt;title&gt;p1&lt;/title&gt;
+        ///&lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
         ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
         ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com&quot; /&gt;
         ///&lt;meta property=&quot;og:title&quot; content=&quot;p1&quot; /&gt;
@@ -283,7 +345,7 @@ namespace Components.Tests.Properties {
         ///&lt;meta property=&quot;og:image&quot; /&gt;
         ///&lt;meta name=&quot;twitter:card&quot; content=&quot;d1&quot; /&gt;
         ///&lt;meta name=&quot;twitter:site&quot; content=&quot;www.example.com&quot; /&gt;
-        ///&lt;meta name=&quot;twitter:titl [rest of string was truncated]&quot;;.
+        ///&lt;meta [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string seo1 {
             get {
@@ -292,7 +354,8 @@ namespace Components.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
+        ///   Looks up a localized string similar to &lt;title&gt;p1&lt;/title&gt;
+        ///&lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
         ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
         ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com&quot; /&gt;
         ///&lt;meta property=&quot;og:title&quot; content=&quot;p1&quot; /&gt;
@@ -309,7 +372,8 @@ namespace Components.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
+        ///   Looks up a localized string similar to &lt;title&gt;p1&lt;/title&gt;
+        ///&lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
         ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
         ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com&quot; /&gt;
         ///&lt;meta name=&quot;twitter:card&quot; content=&quot;d1&quot; /&gt;
@@ -325,7 +389,8 @@ namespace Components.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
+        ///   Looks up a localized string similar to &lt;title&gt;p1&lt;/title&gt;
+        ///&lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
         ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
         ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com&quot; /&gt;
         ///&lt;script type=&quot;application/ld+json&quot;&gt;
@@ -335,6 +400,66 @@ namespace Components.Tests.Properties {
         internal static string seo4 {
             get {
                 return ResourceManager.GetString("seo4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;p&gt;&lt;title&gt;p1&lt;/title&gt;
+        ///&lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
+        ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
+        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com&quot; /&gt;
+        ///    &lt;meta property=&quot;og:title&quot; content=&quot;p1&quot; /&gt;
+        ///    &lt;meta property=&quot;og:locale&quot; /&gt;
+        ///    &lt;meta property=&quot;og:description&quot; content=&quot;d1&quot; /&gt;
+        ///    &lt;meta property=&quot;og:url&quot; content=&quot;www.example.com&quot; /&gt;
+        ///    &lt;meta property=&quot;og:site_name&quot; /&gt;
+        ///    &lt;meta property=&quot;og:image&quot; content=&quot;www.example.com/img1.png&quot; /&gt;
+        ///    &lt;meta name=&quot;twitter:card&quot; content=&quot;d1&quot; /&gt;
+        ///    &lt;met [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string seo5 {
+            get {
+                return ResourceManager.GetString("seo5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;p&gt;&lt;title&gt;p1&lt;/title&gt;
+        ///&lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
+        ///&lt;meta name=&quot;description&quot; /&gt;
+        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com/Page1.html&quot; /&gt;
+        ///    &lt;meta property=&quot;og:title&quot; content=&quot;p1&quot; /&gt;
+        ///    &lt;meta property=&quot;og:locale&quot; /&gt;
+        ///    &lt;meta property=&quot;og:description&quot; /&gt;
+        ///    &lt;meta property=&quot;og:url&quot; content=&quot;www.example.com/Page1.html&quot; /&gt;
+        ///    &lt;meta property=&quot;og:site_name&quot; /&gt;
+        ///    &lt;meta property=&quot;og:image&quot; content=&quot;www.example.com/Page1.html/img2.png&quot; /&gt;
+        ///    &lt;meta name=&quot;twitter:card&quot; /&gt;
+        ///    &lt;meta name [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string seo6 {
+            get {
+                return ResourceManager.GetString("seo6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        ///&lt;urlset xmlns=&quot;http://www.sitemaps.org/schemas/sitemap/0.9&quot;&gt;
+        ///&lt;url&gt;
+        ///&lt;loc&gt;www.example.com&lt;/loc&gt;
+        ///&lt;/url&gt;
+        ///&lt;url&gt;
+        ///&lt;loc&gt;www.example.com/Page1.html&lt;/loc&gt;
+        ///&lt;/url&gt;
+        ///&lt;url&gt;
+        ///&lt;loc&gt;www.example.com/Page2.html&lt;/loc&gt;
+        ///&lt;/url&gt;
+        ///&lt;/urlset&gt;.
+        /// </summary>
+        internal static string sitemap1 {
+            get {
+                return ResourceManager.GetString("sitemap1", resourceCulture);
             }
         }
         
@@ -447,6 +572,7 @@ namespace Components.Tests.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;div&gt;
         ///&lt;div id=&quot;toc&quot;&gt;
+        ///&lt;a href=&quot;/&quot; class=&quot;toc-entry  active&quot;&gt;Welcome&lt;/a&gt;
         ///&lt;ul style=&quot;margin: 0px&quot; class=&quot;toc-container collapse in&quot;&gt;
         ///&lt;li&gt;
         ///&lt;div class=&quot;tree-toc-node pointer&quot; onclick=&quot;javascript:toggle(n1Span, n1);&quot;&gt;
@@ -458,10 +584,7 @@ namespace Components.Tests.Properties {
         ///&lt;li&gt;
         ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
         ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
-        ///&lt;a href=&quot;/p2.html&quot; class=&quot;toc-entry&quot;&gt;p2&lt;/a&gt;
-        ///&lt;/li&gt;
-        ///&lt;li&gt;
-        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt; [rest of string was truncated]&quot;;.
+        ///&lt;a href=&quot;/p2.html&quot; class=&quot;toc-entry&quot;&gt;p2&lt;/a&gt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string toc1 {
             get {
@@ -554,6 +677,66 @@ namespace Components.Tests.Properties {
         internal static string toc5 {
             get {
                 return ResourceManager.GetString("toc5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div id=&quot;toc&quot;&gt;
+        ///&lt;a href=&quot;/&quot; class=&quot;toc-entry  active&quot;&gt;custom-title&lt;/a&gt;
+        ///&lt;ul style=&quot;margin: 0px&quot; class=&quot;toc-container collapse in&quot;&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/div&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string toc6 {
+            get {
+                return ResourceManager.GetString("toc6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div id=&quot;toc&quot;&gt;
+        ///&lt;a href=&quot;/&quot; class=&quot;toc-entry  active&quot;&gt;Welcome&lt;/a&gt;
+        ///&lt;ul style=&quot;margin: 0px&quot; class=&quot;toc-container collapse in&quot;&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/SubPage2.html&quot; class=&quot;toc-entry&quot;&gt;sp2&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/SubPage1.html&quot; class=&quot;toc-entry&quot;&gt;sp1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/div&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string toc7 {
+            get {
+                return ResourceManager.GetString("toc7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div id=&quot;toc&quot;&gt;
+        ///&lt;a href=&quot;/&quot; class=&quot;toc-entry  active&quot;&gt;Welcome&lt;/a&gt;
+        ///&lt;ul style=&quot;margin: 0px&quot; class=&quot;toc-container collapse in&quot;&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/SubPage2.html&quot; class=&quot;toc-entry&quot;&gt;sp2&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/div&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string toc8 {
+            get {
+                return ResourceManager.GetString("toc8", resourceCulture);
             }
         }
     }

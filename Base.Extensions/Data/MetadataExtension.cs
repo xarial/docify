@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Xarial.Docify.Base.Data
@@ -134,11 +135,21 @@ namespace Xarial.Docify.Base.Data
                 {
                     val = (T)dynVal;
                 }
+                else if (dynVal is IEnumerable
+                    && IsAssignableToGenericType(typeof(T), typeof(IEnumerable<>), out Type enumerType))
+                {
+                    var itemType = enumerType.GetGenericArguments().First();
+                    
+                    var castMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.Cast),
+                        BindingFlags.Static | BindingFlags.Public).MakeGenericMethod(new Type[] { itemType });
+                    
+                    val = (T)castMethod.Invoke(null, new object[] { dynVal });
+                }
                 else if (dynVal is IConvertible)
                 {
                     val = (T)Convert.ChangeType(dynVal, typeof(T));
                 }
-                else 
+                else
                 {
                     throw new InvalidCastException("Failed to convert parameter");
                 }
@@ -150,6 +161,37 @@ namespace Xarial.Docify.Base.Data
                 val = default(T);
                 return false;
             }
+        }
+        
+        //duplicates the function in Core, might need to put this in xToolkit and use from there
+        private static bool IsAssignableToGenericType(Type givenType, Type genericType, out Type specGenericType)
+        {
+            var interfaceTypes = givenType.GetInterfaces();
+
+            foreach (var it in interfaceTypes)
+            {
+                if (it.IsGenericType && it.GetGenericTypeDefinition() == genericType)
+                {
+                    specGenericType = it;
+                    return true;
+                }
+            }
+
+            if (givenType.IsGenericType && givenType.GetGenericTypeDefinition() == genericType)
+            {
+                specGenericType = givenType;
+                return true;
+            }
+
+            var baseType = givenType.BaseType;
+
+            if (baseType == null)
+            {
+                specGenericType = null;
+                return false;
+            }
+
+            return IsAssignableToGenericType(baseType, genericType, out specGenericType);
         }
     }
 }

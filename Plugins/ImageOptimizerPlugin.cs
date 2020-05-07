@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Lib.Plugins.Data;
+using Xarial.Docify.Lib.Plugins.Helpers;
 
 namespace Xarial.Docify.Lib.Plugins
 {
@@ -75,13 +76,17 @@ namespace Xarial.Docify.Lib.Plugins
                         if (string.Equals(Path.GetExtension(image), 
                             SVG_EXT, StringComparison.CurrentCultureIgnoreCase)) 
                         {
-                            var imgAsset = TryFindImageAsset(site, page, image);
+                            IFile imgAsset;
 
-                            if (imgAsset == null)
+                            try
                             {
-                                throw new NullReferenceException($"Failed to find image asset: {image}");
+                                imgAsset = AssetsFinder.FindAsset(site, page, image);
                             }
-
+                            catch (Exception ex)
+                            {
+                                throw new NullReferenceException($"Failed to find image asset: '{image}'", ex);
+                            }
+                            
                             var imgName = Path.GetFileNameWithoutExtension(image) + PNG_EXT;
 
                             byte[] pngBuffer = null;
@@ -124,36 +129,6 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        private IFile TryFindImageAsset(ISite site, IPage page, string path)
-        {
-            try
-            {
-                var isRel = !path.StartsWith('/');
-
-                if (!isRel)
-                {
-                    path = path.Trim('/');
-                }
-
-                var parts = path.Split('\\', '/');
-
-                var loc = new PluginDataFileLocation(parts.Last(), parts.Take(parts.Length - 1));
-
-                if (isRel)
-                {
-                    return page.FindAsset(loc);
-                }
-                else 
-                {
-                    return site.MainPage.FindAsset(loc);
-                }
-            }
-            catch
-            {
-                return null;
-            }
-        }
-        
         public void PrePublishFile(ILocation outLoc, ref IFile file, out bool skip)
         {
             skip = false;

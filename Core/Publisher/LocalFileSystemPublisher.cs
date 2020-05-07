@@ -70,7 +70,17 @@ namespace Xarial.Docify.Core.Publisher
 
                 IFile outFile = new Data.File(outLoc, writable.Content);
                 
-                m_PrePublishFilePlugins.InvokePluginsIfAny(p => p.PrePublishFile(outLoc, ref outFile, out skip));
+                m_PrePublishFilePlugins.InvokePluginsIfAny(p =>
+                {
+                    bool skipThis = false;
+                    
+                    p.PrePublishFile(loc, ref outFile, out skipThis);
+                    
+                    if (skipThis) 
+                    {
+                        skip = true;
+                    }
+                });
 
                 if (!skip)
                 {

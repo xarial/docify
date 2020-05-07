@@ -46,6 +46,8 @@ namespace Xarial.Docify.Lib.Plugins
         [ImportService]
         private IContentTransformer m_ContentTransformer;
 
+        private ISite m_Site;
+
         public void Init(CodeSnippetSettings setts)
         {
             m_Settings = setts;
@@ -53,6 +55,8 @@ namespace Xarial.Docify.Lib.Plugins
 
         public void PreCompile(ISite site)
         {
+            m_Site = site;
+
             site.MainPage.Assets.Add(new PluginDataFile(Resources.code_snippet,
                 new PluginDataFileLocation(CSS_FILE_NAME, CSS_FILE_PATH)));
 
@@ -63,12 +67,23 @@ namespace Xarial.Docify.Lib.Plugins
         {
             var snipData = data.ToObject<CodeSnippetData>();
 
-            var snipAsset = page.Assets.FirstOrDefault(a => string.Equals(
-                a.Location.FileName, snipData.FileName, StringComparison.CurrentCultureIgnoreCase));
+            IFile snipAsset;
 
+            try
+            {
+                snipAsset = AssetsFinder.FindAsset(m_Site, page, snipData.FileName);
+            }
+            catch (Exception ex)
+            {
+                throw new NullReferenceException($"Failed to find code snippet: '{snipData.FileName}'", ex);
+            }
+            
             if (snipAsset != null)
             {
-                m_SnippetFiles.Add(snipAsset.Location);
+                if (!m_SnippetFiles.Contains(snipAsset.Location))
+                {
+                    m_SnippetFiles.Add(snipAsset.Location);
+                }
 
                 var rawCode = snipAsset.AsTextContent();
 
@@ -134,7 +149,9 @@ namespace Xarial.Docify.Lib.Plugins
             }
             else 
             {
-                skip = m_Settings.ExcludeSnippets && m_SnippetFiles.Contains(file.Location);
+                var relLoc = file.Location.GetRelative(outLoc);
+                skip = m_Settings.ExcludeSnippets
+                    && m_SnippetFiles.Contains(relLoc, new LocationEqualityComparer());
             }
         }
     }

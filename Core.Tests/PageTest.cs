@@ -81,5 +81,21 @@ namespace Core.Tests
 
             Assert.Throws<Exception>(() => p2.FindAsset(Location.FromPath(@"page3\page5\page6\a2.txt"), false));
         }
+
+        [Test]
+        public void FindAssetPhantomPage() 
+        {
+            var p1 = new Page(Location.FromPath("index.html"), "");
+            var p2 = new Page(Location.FromPath(@"page2\index.html"), "");
+
+            p1.Assets.Add(new File(Location.FromPath(@"assets\a1.txt"), "a1"));
+            p2.Assets.Add(new File(Location.FromPath(@"page2\assets\a2.txt"), "a2"));
+
+            var r1 = p1.FindAsset(Location.FromPath(@"assets\a1.txt"));
+            var r2 = p2.FindAsset(Location.FromPath(@"assets\a2.txt"));
+
+            Assert.AreEqual("a1", r1.AsTextContent());
+            Assert.AreEqual("a2", r2.AsTextContent());
+        }
     }
 }

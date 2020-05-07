@@ -7,6 +7,7 @@
 
 using NUnit.Framework;
 using Xarial.Docify.Lib.Plugins;
+using Xarial.Docify.Lib.Plugins.Helpers;
 
 namespace Plugins.Tests
 {

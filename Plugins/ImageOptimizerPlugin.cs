@@ -19,6 +19,7 @@ using System.Drawing.Imaging;
 using System.Collections;
 using System.Collections.Generic;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Lib.Plugins.Data;
 
 namespace Xarial.Docify.Lib.Plugins
 {
@@ -47,7 +48,7 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("image-optimizer")]
-    public class ImageOptimizer : IPreCompilePlugin, IPrePublishFilePlugin, IPlugin<ImageOptimizerSettings>
+    public class ImageOptimizerPlugin : IPreCompilePlugin, IPrePublishFilePlugin, IPlugin<ImageOptimizerSettings>
     {
         private const string IMAGE_TAG_NAME = "image";
         private const string REPLACE_IMAGE_TAG_NAME = "image-png";
@@ -63,8 +64,6 @@ namespace Xarial.Docify.Lib.Plugins
 
         public void PreCompile(ISite site)
         {
-            System.Diagnostics.Debugger.Launch();
-
             foreach (var page in site.GetAllPages()) 
             {
                 string image;
@@ -127,14 +126,32 @@ namespace Xarial.Docify.Lib.Plugins
 
         private IFile TryFindImageAsset(ISite site, IPage page, string path)
         {
-            if (!path.StartsWith('/')) 
+            try
             {
-                path = page.Location.ToUrl().TrimEnd('/') + "/" + path;
-            }
+                var isRel = !path.StartsWith('/');
 
-            return site.MainPage.Assets.FirstOrDefault(
-                    p => string.Equals(p.Location.ToUrl(), path)
-                    || string.Equals(p.Location.ToUrl(site.BaseUrl), path));
+                if (!isRel)
+                {
+                    path = path.Trim('/');
+                }
+
+                var parts = path.Split('\\', '/');
+
+                var loc = new PluginDataFileLocation(parts.Last(), parts.Take(parts.Length - 1));
+
+                if (isRel)
+                {
+                    return page.FindAsset(loc);
+                }
+                else 
+                {
+                    return site.MainPage.FindAsset(loc);
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
         
         public void PrePublishFile(ILocation outLoc, ref IFile file, out bool skip)

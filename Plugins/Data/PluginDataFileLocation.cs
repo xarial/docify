@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Base;
 
-namespace Xarial.Docify.Lib.Plugins
+namespace Xarial.Docify.Lib.Plugins.Data
 {
     public class PluginDataFileLocation : ILocation
     {

@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Xarial.Docify.Lib.Plugins
+namespace Xarial.Docify.Lib.Plugins.Helpers
 {
     public class CodeSelectorOptions
     {

@@ -9,6 +9,9 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Lib.Plugins.Attributes;
+using Xarial.Docify.Lib.Plugins.Data;
+using Xarial.Docify.Lib.Plugins.Helpers;
 using Xarial.Docify.Lib.Plugins.Properties;
 
 namespace Xarial.Docify.Lib.Plugins
@@ -29,7 +32,7 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("code-snippet")]
-    public class CodeSnippet : IPreCompilePlugin, IRenderIncludePlugin, IPrePublishFilePlugin, IPlugin<CodeSnippetSettings>
+    public class CodeSnippetPlugin : IPreCompilePlugin, IRenderIncludePlugin, IPrePublishFilePlugin, IPlugin<CodeSnippetSettings>
     {
         public string IncludeName => "code-snippet";
 

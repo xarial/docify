@@ -4,7 +4,7 @@ using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Lib.Plugins
+namespace Xarial.Docify.Lib.Plugins.Data
 {
     public class PluginDataFile : IFile
     {

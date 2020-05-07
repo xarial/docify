@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
+using Xarial.Docify.Lib.Plugins.Data;
 using Xarial.Docify.Lib.Plugins.Properties;
 
 namespace Xarial.Docify.Lib.Plugins

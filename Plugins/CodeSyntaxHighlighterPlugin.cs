@@ -15,6 +15,7 @@ using System.Xml.Linq;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
+using Xarial.Docify.Lib.Plugins.Data;
 
 namespace Xarial.Docify.Lib.Plugins
 {
@@ -24,7 +25,7 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("code-syntax-highlighter")]
-    public class CodeSyntaxHighlighter : IRenderCodeBlockPlugin, IPreCompilePlugin, IPrePublishFilePlugin, IPlugin<CodeSyntaxHighlighterSettings>
+    public class CodeSyntaxHighlighterPlugin : IRenderCodeBlockPlugin, IPreCompilePlugin, IPrePublishFilePlugin, IPlugin<CodeSyntaxHighlighterSettings>
     {
         private CodeSyntaxHighlighterSettings m_Settings;
 

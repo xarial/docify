@@ -62,12 +62,6 @@ namespace Xarial.Docify.Base
 
         public static string GetRoot(this ILocation loc) => loc.Path.FirstOrDefault();
 
-        public static bool IsDefaultPage(this ILocation loc)
-        {
-            return Path.GetFileNameWithoutExtension(loc.FileName)
-                    .Equals("index", StringComparison.CurrentCultureIgnoreCase);
-        }
-
         public static bool IsFile(this ILocation loc) => !string.IsNullOrEmpty(loc.FileName);
 
         public static ILocation ConvertToPageLocation(this ILocation location)
@@ -91,19 +85,20 @@ namespace Xarial.Docify.Base
             return loc.Copy("", loc.Path.Union(blocks));
         }
 
-        public static ILocation GetParent(this ILocation loc) 
+        public static ILocation GetParent(this ILocation loc, int level = 1) 
         {
             if (loc.IsFile())
             {
-                return loc.Copy("", loc.Path);
+                return loc.Copy("", loc.Path.Take(loc.Path.Count - (level - 1)));
             }
             else 
             {
-                return loc.Copy("", loc.Path.Take(loc.Path.Count - 1));
+                return loc.Copy("", loc.Path.Take(loc.Path.Count - level));
             }
         }
 
-        public static bool IsInLocation(this ILocation loc, ILocation parent) 
+        public static bool IsInLocation(this ILocation loc, ILocation parent, 
+            StringComparison compType = StringComparison.CurrentCultureIgnoreCase) 
         {
             if (parent.IsFile()) 
             {
@@ -114,7 +109,7 @@ namespace Xarial.Docify.Base
             {
                 for (int i = 0; i < parent.Path.Count; i++) 
                 {
-                    if (!string.Equals(loc.Path[i], parent.Path[i]))
+                    if (!string.Equals(loc.Path[i], parent.Path[i], compType))
                     {
                         return false;
                     }
@@ -126,9 +121,10 @@ namespace Xarial.Docify.Base
             return false;
         }
 
-        public static ILocation GetRelative(this ILocation loc, ILocation relativeTo) 
+        public static ILocation GetRelative(this ILocation loc, 
+            ILocation relativeTo, StringComparison compType = StringComparison.CurrentCultureIgnoreCase) 
         {
-            if (loc.IsInLocation(relativeTo))
+            if (loc.IsInLocation(relativeTo, compType))
             {
                 return loc.Copy(loc.FileName, loc.Path.Skip(relativeTo.Path.Count));
             }
@@ -136,6 +132,42 @@ namespace Xarial.Docify.Base
             {
                 throw new Exception($"'{loc.ToId()}' location is not within the '{relativeTo.ToId()}'");
             }
+        }
+
+        public static bool IsSame(this ILocation loc, ILocation other, 
+            StringComparison compType = StringComparison.CurrentCultureIgnoreCase)
+        {
+            if (ReferenceEquals(loc, other))
+            {
+                return true;
+            }
+
+            if (loc is null || other is null)
+            {
+                return false;
+            }
+
+            if (!string.Equals(loc.FileName, other.FileName, compType)) 
+            {
+                return false;
+            }
+
+            if (loc.Path.Count == other.Path.Count)
+            {
+                for (int i = 0; i < loc.Path.Count; i++)
+                {
+                    if (!string.Equals(loc.Path[i], other.Path[i], compType))
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private static string FormFullLocation(ILocation loc, string basePart, string sep)

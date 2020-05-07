@@ -5,9 +5,9 @@ using Xarial.Docify.Base;
 
 namespace Xarial.Docify.Core.Data
 {
-    public class PlaceholderPage : Page
+    public class PhantomPage : Page
     {
-        public PlaceholderPage(ILocation url) : base(url, null)
+        public PhantomPage(ILocation url) : base(url, null)
         {
         }
     }

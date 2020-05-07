@@ -26,11 +26,16 @@ namespace Xarial.Docify.Core.Composer
 
         private readonly ILayoutParser m_LayoutParser;
         private readonly IConfiguration m_Config;
-        
+
+        private readonly StringComparer m_Comparer;
+        private readonly StringComparison m_Comparison;
+
         public BaseSiteComposer(ILayoutParser parser, IConfiguration config) 
         {
             m_LayoutParser = parser;
             m_Config = config;
+            m_Comparer = StringComparer.CurrentCultureIgnoreCase;
+            m_Comparison = StringComparison.CurrentCultureIgnoreCase;
         }
 
         private bool IsPage(IFile srcFile) 
@@ -44,7 +49,13 @@ namespace Xarial.Docify.Core.Composer
                 ".cshtml"
             };
 
-            return htmlExts.Contains(ext, StringComparer.CurrentCultureIgnoreCase);
+            return htmlExts.Contains(ext, m_Comparer);
+        }
+
+        private bool IsDefaultPage(IFile pageFile)
+        {
+            return Path.GetFileNameWithoutExtension(pageFile.Location.FileName)
+                    .Equals("index", StringComparison.CurrentCultureIgnoreCase);
         }
 
         private void ParseTextFile(IFile src, out string rawContent,
@@ -55,36 +66,30 @@ namespace Xarial.Docify.Core.Composer
             layoutName = data.GetRemoveParameterOrDefault<string>(LAYOUT_VAR_NAME);
         }
 
-        private Page CreatePageFromSourceOrDefault(IFile src,
-            ILocation loc, 
+        private Page CreatePage(IFile src, 
             IReadOnlyDictionary<string, Template> layoutsMap)
         {
             string rawContent = null;
             IMetadata pageData = null;
             Template layout = null;
 
-            var pageLoc = loc.ConvertToPageLocation();
+            var pageLoc = new Location(
+                Path.GetFileNameWithoutExtension(src.Location.FileName) + ".html", 
+                src.Location.Path.ToArray());
 
-            if (src != null)
+            string layoutName;
+            ParseTextFile(src, out rawContent, out pageData, out layoutName);
+
+            if (!string.IsNullOrEmpty(layoutName))
             {
-                string layoutName;
-                ParseTextFile(src, out rawContent, out pageData, out layoutName);
-
-                if (!string.IsNullOrEmpty(layoutName))
+                if (!layoutsMap.TryGetValue(layoutName, out layout))
                 {
-                    if (!layoutsMap.TryGetValue(layoutName, out layout))
-                    {
-                        throw new MissingLayoutException(layoutName);
-                    }
+                    throw new MissingLayoutException(layoutName);
                 }
-                
-                return new Page(pageLoc,
-                    rawContent, pageData, layout);
             }
-            else
-            {
-                return new PlaceholderPage(pageLoc);
-            }
+
+            return new Page(pageLoc,
+                rawContent, pageData, layout);
         }
 
         public ISite ComposeSite(IEnumerable<IFile> files, string baseUrl)
@@ -134,13 +139,13 @@ namespace Xarial.Docify.Core.Composer
 
             layouts = procFiles
                 .Where(f => string.Equals(f.Location.GetRoot(), LAYOUTS_FOLDER,
-                StringComparison.CurrentCultureIgnoreCase));
+                m_Comparison));
 
             procFiles = procFiles.Except(layouts);
 
             includes = procFiles
                 .Where(f => string.Equals(f.Location.GetRoot(), INCLUDES_FOLDER,
-                StringComparison.CurrentCultureIgnoreCase));
+                m_Comparison));
 
             procFiles = procFiles.Except(includes);
 
@@ -153,7 +158,7 @@ namespace Xarial.Docify.Core.Composer
         
         private Dictionary<string, Template> ParseLayouts(IEnumerable<IFile> layoutFiles) 
         {
-            var layouts = new Dictionary<string, Template>(StringComparer.CurrentCultureIgnoreCase);
+            var layouts = new Dictionary<string, Template>(m_Comparer);
 
             var layoutSrcList = layoutFiles.ToList();
 
@@ -182,7 +187,7 @@ namespace Xarial.Docify.Core.Composer
 
                 var name = GetTemplateName(s.Location);
 
-                if (usedIncludes.Contains(name, StringComparer.CurrentCultureIgnoreCase)) 
+                if (usedIncludes.Contains(name, m_Comparer)) 
                 {
                     throw new DuplicateTemplateException(name);
                 }
@@ -203,7 +208,7 @@ namespace Xarial.Docify.Core.Composer
             var path = loc.Path.Skip(1).ToList();
             path.Add(Path.GetFileNameWithoutExtension(loc.FileName));
             
-            return string.Join(Base.LocationExtension.ID_SEP, path.ToArray());
+            return string.Join(LocationExtension.ID_SEP, path.ToArray());
         }
 
         private Template CreateLayout(Dictionary<string, Template> layouts, 
@@ -214,7 +219,7 @@ namespace Xarial.Docify.Core.Composer
             var layoutFile = layoutsSrcList.Find(
                 l => string.Equals(GetTemplateName(l.Location), 
                 layoutName, 
-                StringComparison.CurrentCultureIgnoreCase));
+                m_Comparison));
 
             if (layoutFile == null) 
             {
@@ -256,20 +261,9 @@ namespace Xarial.Docify.Core.Composer
 
         private Page ParsePages(IEnumerable<IFile> srcPages,
             IReadOnlyDictionary<string, Template> layouts,
-            IReadOnlyList<Data.File> assets)
+            IReadOnlyList<IFile> assets)
         {
-            var refAssets = new List<Data.File>(assets);
-
-            //TODO: identify if any layouts are not in use
-
-            var pageMap = new Dictionary<IReadOnlyList<string>, Page>(
-                new LocationDictionaryComparer());
-            
-            var assetsMap = refAssets
-                .GroupBy(a => a.Location.Path, new LocationDictionaryComparer())
-                .ToDictionary(g => g.Key, g => g.ToArray(), new LocationDictionaryComparer());
-
-            var mainSrcPage = srcPages.FirstOrDefault(p => p.Location.IsRoot() && p.Location.IsDefaultPage());
+            var mainSrcPage = srcPages.FirstOrDefault(p => p.Location.IsRoot() && IsDefaultPage(p));
 
             if (mainSrcPage == null)
             {
@@ -278,81 +272,91 @@ namespace Xarial.Docify.Core.Composer
 
             srcPages = srcPages.Except(new IFile[] { mainSrcPage });
 
-            var mainPage = CreatePageFromSourceOrDefault(mainSrcPage, new Location(""), layouts);
+            var mainPage = CreatePage(mainSrcPage, layouts);
 
-            pageMap.Add(new List<string>(), mainPage);
+            var refAssets = new List<IFile>(assets);
 
-            foreach (var srcPage in srcPages.OrderBy(p => p.Location.GetTotalLevel()))
+            ProcessChildren(mainPage, srcPages, refAssets, layouts);
+
+            System.Diagnostics.Debug.Assert(!refAssets.Any(), "Invalid algorithm, assets are not distributed across resolurces");
+            
+            return mainPage;
+        }
+
+        private void ProcessChildren(IPage parent, 
+            IEnumerable<IFile> pages, List<IFile> assets,
+            IReadOnlyDictionary<string, Template> layouts) 
+        {
+            var curLoc = parent.Location.GetParent();
+
+            var children = pages.Where(p =>
             {
-                var pageLocParts = new List<string>();
-                pageLocParts.AddRange(srcPage.Location.Path);
-                var isDefaultPage = srcPage.Location.IsDefaultPage();
-                if (!isDefaultPage)
+                var parentOffset = 1;
+                if (IsDefaultPage(p)) 
                 {
-                    pageLocParts.Add(Path.GetFileNameWithoutExtension(srcPage.Location.FileName));
+                    parentOffset = 2;
                 }
 
-                var parentLoc = new List<string>();
+                return p.Location.GetParent(parentOffset).IsSame(curLoc, m_Comparison);
+            });
 
-                for (int i = 0; i < pageLocParts.Count; i++)
-                {
-                    var pathPart = pageLocParts[i];
+            void ProcessChildPage(IPage page) 
+            {
+                parent.SubPages.Add(page);
+                var subPages = pages.Where(p => p.Location.IsInLocation(page.Location.GetParent(), m_Comparison));
 
-                    var thisLoc = new List<string>(parentLoc);
-                    thisLoc.Add(pathPart);
-
-                    var isPage = (i == pageLocParts.Count - 1);
-
-                    Page page = null;
-
-                    if (!pageMap.TryGetValue(thisLoc, out page))
-                    {
-                        List<string> pagePath = null;
-
-                        if (isPage && !isDefaultPage)
-                        {
-                            pagePath = new List<string>(thisLoc.SkipLast(1));
-                        }
-                        else
-                        {
-                            pagePath = new List<string>(thisLoc);
-                        }
-
-                        page = CreatePageFromSourceOrDefault(isPage ? srcPage : null,
-                            new Location(isPage ? srcPage.Location.FileName : "",
-                            pagePath.ToArray()), layouts);
-
-                        Data.File[] pageAssets;
-                        if (assetsMap.TryGetValue(page.Location.Path, out pageAssets))
-                        {
-                            assetsMap.Remove(page.Location.Path);
-                            page.Assets.AddRange(pageAssets);
-
-                            foreach (var pageAsset in pageAssets)
-                            {
-                                refAssets.Remove(pageAsset);
-                            }
-                        }
-
-                        pageMap.Add(thisLoc, page);
-
-                        pageMap[parentLoc].SubPages.Add(page);
-                    }
-                    else
-                    {
-                        if (isPage)
-                        {
-                            throw new DuplicatePageException(srcPage.Location);
-                        }
-                    }
-
-                    parentLoc = thisLoc;
-                }
+                ProcessChildren(page, subPages, assets, layouts);
             }
 
-            mainPage.Assets.AddRange(assets);
+            if (!children.Any() && pages.Any())
+            {
+                foreach (var phantomGroup in pages
+                    .Select(p => p.Location.GetRelative(curLoc).GetRoot()) 
+                    .Distinct(m_Comparer))
+                {
+                    var phantomPagePath = curLoc.Path.Union(new string[] { phantomGroup }).ToArray();
 
-            return mainPage;
+                    var phantomPage = new PhantomPage(
+                        new Location("index.html", phantomPagePath));
+
+                    ProcessChildPage(phantomPage);
+                }
+            }
+            else
+            {
+                var usedNames = new List<string>();
+
+                foreach (var child in children) 
+                {
+                    var pageName = IsDefaultPage(child) ?
+                        child.Location.Path.LastOrDefault()
+                        : Path.GetFileNameWithoutExtension(child.Location.FileName);
+
+                    if (usedNames.Contains(pageName,
+                        m_Comparer))
+                    {
+                        throw new DuplicatePageException(child.Location);
+                    }
+                    
+                    usedNames.Add(pageName);
+
+                    var page = CreatePage(child, layouts);
+
+                    if (IsDefaultPage(child))
+                    {
+                        pages = pages.Except(new IFile[] { child });
+                        ProcessChildPage(page);
+                    }
+                    else 
+                    {
+                        parent.SubPages.Add(page);
+                    }
+                }
+
+                var pageAssets = assets.Where(a => a.Location.IsInLocation(curLoc, m_Comparison)).ToList();
+                pageAssets.ForEach(a => assets.Remove(a));
+                parent.Assets.AddRange(pageAssets);
+            }
         }
     }
 }

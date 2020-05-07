@@ -95,9 +95,13 @@ namespace Core.Tests
 
             var r1 = l1.GetParent();
             var r2 = l2.GetParent();
+            var r3 = l1.GetParent(2);
+            var r4 = l2.GetParent(2);
 
             Assert.AreEqual("dir1::dir2", r1.ToId());
             Assert.AreEqual("dir1", r2.ToId());
+            Assert.AreEqual("dir1", r3.ToId());
+            Assert.AreEqual("", r4.ToId());
         }
 
         [Test]
@@ -136,6 +140,25 @@ namespace Core.Tests
             Assert.AreEqual("dir3::dir4", r2.ToId());
             Assert.Throws<Exception>(() => l1.GetRelative(l3));
             Assert.Throws<Exception>(() => l3.GetRelative(l4));
+        }
+
+        [Test]
+        public void IsSameTest() 
+        {
+            var l1 = new Location("page.html", "dir1", "dir2");
+            var l2 = new Location("page.html", "Dir1", "Dir2");
+            var l3 = new Location("", "Dir1", "Dir2");
+            var l4 = new Location("", "dir1", "dir2");
+
+            var r1 = l1.IsSame(l2);
+            var r2 = l1.IsSame(l2, StringComparison.CurrentCulture);
+            var r3 = l3.IsSame(l2);
+            var r4 = l3.IsSame(l4);
+
+            Assert.IsTrue(r1);
+            Assert.IsFalse(r2);
+            Assert.IsFalse(r3);
+            Assert.IsTrue(r4);
         }
     }
 }

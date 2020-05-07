@@ -33,10 +33,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_SingleInclude() 
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"_includes\\i1.md"), "Include"),
-                new SourceFile(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"_includes\\i1.md"), "Include"),
+                new File(Location.FromPath(@"index.md"), ""),
             };
 
             var site = m_Composer.ComposeSite(src, "");
@@ -50,12 +50,12 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_MultipleInclude()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"_includes\\i1.md"), "i1content"),
-                new SourceFile(Location.FromPath(@"_includes\\i2.txt"), "i2content"),
-                new SourceFile(Location.FromPath(@"_includes\\i3.ini"), "i3content"),
-                new SourceFile(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"_includes\\i1.md"), "i1content"),
+                new File(Location.FromPath(@"_includes\\i2.txt"), "i2content"),
+                new File(Location.FromPath(@"_includes\\i3.ini"), "i3content"),
+                new File(Location.FromPath(@"index.md"), ""),
             };
 
             var site = m_Composer.ComposeSite(src, "");
@@ -70,10 +70,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_IncludeMetadata()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"_includes\\i1.md"), "---\r\nprp1: A\r\nprp2: B\r\n---\r\ni1content"),
-                new SourceFile(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"_includes\\i1.md"), "---\r\nprp1: A\r\nprp2: B\r\n---\r\ni1content"),
+                new File(Location.FromPath(@"index.md"), ""),
             };
 
             var site = m_Composer.ComposeSite(src, "");
@@ -88,11 +88,11 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_DuplicateIncludes()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"_includes\\i1.md"), ""),
-                new SourceFile(Location.FromPath(@"_includes\\i1.txt"), ""),
-                new SourceFile(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"_includes\\i1.md"), ""),
+                new File(Location.FromPath(@"_includes\\i1.txt"), ""),
+                new File(Location.FromPath(@"index.md"), ""),
             };
 
             Assert.Throws<DuplicateTemplateException>(() => m_Composer.ComposeSite(src, ""));
@@ -101,10 +101,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_SubFolderInclude()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"_includes\\dir1\\i1.md"), "Include"),
-                new SourceFile(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"_includes\\dir1\\i1.md"), "Include"),
+                new File(Location.FromPath(@"index.md"), ""),
             };
 
             var site = m_Composer.ComposeSite(src, "");

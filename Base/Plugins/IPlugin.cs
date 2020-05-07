@@ -18,6 +18,6 @@ namespace Xarial.Docify.Base.Plugins
     public interface IPlugin<TSettings> : IPlugin 
         where TSettings : new()
     {
-        TSettings Settings { get; set; }
+        void Init(TSettings setts);
     }
 }

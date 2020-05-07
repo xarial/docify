@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Data
 {
+    [DebuggerDisplay("{" + nameof(Key) + "}")]
     public abstract class Frame : IFrame
     {
         public string RawContent { get; }

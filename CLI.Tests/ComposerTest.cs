@@ -27,7 +27,7 @@ namespace CLI.Tests
         {
             var files = new IFile[]
             {
-                new SourceFile(Location.FromPath("index.html"), "test")
+                new File(Location.FromPath("index.html"), "test")
             };
 
             var site = m_Composer.ComposeSite(files, "");

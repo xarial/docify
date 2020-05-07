@@ -7,7 +7,6 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Data
 {
-    [DebuggerDisplay("{" + nameof(Location) + "}")]
     public class Page : Frame, IPage
     {
         public List<IPage> SubPages { get; }

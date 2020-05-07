@@ -33,9 +33,9 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_ContentMetadataSimpleProperties()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"),
+                new File(Location.FromPath(@"index.md"),
                 "---\r\nprp1: A\r\nprp2: B\r\n---\r\nText Line1\r\nText Line2"),
             };
 
@@ -50,9 +50,9 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_ContentMetadataNestedProperties()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"),
+                new File(Location.FromPath(@"index.md"),
                 "---\r\nprp1: A\r\nprp2:\r\n  prp3: B\r\n---\r\nText Line1\r\nText Line2"),
             };
 
@@ -68,9 +68,9 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_ContentMetadataArray()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"),
+                new File(Location.FromPath(@"index.md"),
                 "---\r\nprp1: A\r\nprp2:\r\n  - B\r\n  - C\r\n---\r\nText Line1\r\nText Line2"),
             };
 
@@ -87,9 +87,9 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_ContentNoFrontMatter()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"),
+                new File(Location.FromPath(@"index.md"),
                 "Text Line1\r\nText Line2"),
             };
 
@@ -102,9 +102,9 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_NotClosedFrontMatter()
         {
-            var src = new SourceFile[]
+            var src = new File[]
             {
-                new SourceFile(Location.FromPath(@"index.md"),
+                new File(Location.FromPath(@"index.md"),
                 "---\r\nText Line1\r\nText Line2"),
             };
 

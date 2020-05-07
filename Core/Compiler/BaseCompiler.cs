@@ -33,10 +33,10 @@ namespace Xarial.Docify.Core.Compiler
         private readonly ILayoutParser m_LayoutParser;
         private readonly IIncludesHandler m_IncludesHandler;
 
-        [ImportPlugin]
+        [ImportPlugins]
         private IEnumerable<IPreCompilePlugin> m_PreCompilePlugins = null;
 
-        [ImportPlugin]
+        [ImportPlugins]
         private IEnumerable<IPostCompilePlugin> m_PostCompilePlugins = null;
         
         public BaseCompiler(BaseCompilerConfig config,
@@ -55,13 +55,13 @@ namespace Xarial.Docify.Core.Compiler
         {
             m_PreCompilePlugins.InvokePluginsIfAny(p => p.PreCompile(site));
 
-            var writables = new List<IFile>();
+            var outFiles = new List<IFile>();
 
             var allPages = site.GetAllPages();
 
             foreach (var page in allPages)
             {
-                writables.Add(await CompilePage(page, site));
+                outFiles.Add(await CompilePage(page, site));
 
                 foreach (var asset in page.Assets)
                 {
@@ -69,19 +69,18 @@ namespace Xarial.Docify.Core.Compiler
 
                     if (PathMatcher.Matches(m_Config.CompilableAssetsFilter, id))
                     {
-                        writables.Add(await CompileAsset(asset, site));
+                        outFiles.Add(await CompileAsset(asset, site));
                     }
                     else 
                     {
-                        //TODO: change this
-                        writables.Add(new Writable(asset.Content, asset.Location));
+                        outFiles.Add(new File(asset.Location, asset.Content));
                     }
                 }
             }
 
             m_PostCompilePlugins.InvokePluginsIfAny(p => p.PostCompile(site));
 
-            return writables.ToArray();
+            return outFiles.ToArray();
         }
         
         private async Task<IFile> CompilePage(IPage page, ISite site)
@@ -99,7 +98,7 @@ namespace Xarial.Docify.Core.Compiler
 
             content = await m_IncludesHandler.ReplaceAll(content, site, page);
 
-            return new Writable(content, page.Location);
+            return new File(page.Location, content);
         }
 
         private async Task<IFile> CompileAsset(IFile asset, ISite site)
@@ -107,7 +106,7 @@ namespace Xarial.Docify.Core.Compiler
             var rawContent = asset.AsTextContent();
             var content = await m_IncludesHandler.ReplaceAll(rawContent, site, null);
 
-            return new Writable(content, asset.Location);
+            return new File(asset.Location, content);
         }
     }
 }

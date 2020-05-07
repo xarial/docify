@@ -22,7 +22,7 @@ namespace Xarial.Docify.Core.Publisher
         private readonly LocalFileSystemPublisherConfig m_Config;
         private readonly System.IO.Abstractions.IFileSystem m_FileSystem;
 
-        [ImportPlugin]
+        [ImportPlugins]
         private IEnumerable<IPrePublishFilePlugin> m_PrePublishFilePlugins = null;
         
         public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config) 
@@ -36,7 +36,7 @@ namespace Xarial.Docify.Core.Publisher
             m_FileSystem = fileSystem;
         }
 
-        public async Task Write(ILocation loc, IEnumerable<IFile> writables)
+        public async Task Write(ILocation loc, IEnumerable<IFile> files)
         {
             var outDir = loc.ToPath();
 
@@ -45,7 +45,7 @@ namespace Xarial.Docify.Core.Publisher
                 m_FileSystem.Directory.Delete(outDir, true);
             }
 
-            foreach (var writable in writables)
+            foreach (var writable in files)
             {
                 var outFilePath = writable.Location.ToPath();
 
@@ -68,14 +68,25 @@ namespace Xarial.Docify.Core.Publisher
 
                 bool skip = false;
 
-                IFile outWritable = new Writable(writable.Content, outLoc);
+                IFile outFile = new Data.File(outLoc, writable.Content);
+                
+                m_PrePublishFilePlugins.InvokePluginsIfAny(p =>
+                {
+                    bool skipThis = false;
+                    
+                    p.PrePublishFile(loc, ref outFile, out skipThis);
+                    
+                    if (skipThis) 
+                    {
+                        skip = true;
+                    }
+                });
 
-                m_PrePublishFilePlugins.InvokePluginsIfAny(p => p.PrePublishFile(ref outWritable, out skip));
                 if (!skip)
                 {
-                    outFilePath = outWritable.Location.ToPath();
+                    outFilePath = outFile.Location.ToPath();
                     CreateDirectoryIfNeeded();
-                    await m_FileSystem.File.WriteAllBytesAsync(outFilePath, outWritable.Content);
+                    await m_FileSystem.File.WriteAllBytesAsync(outFilePath, outFile.Content);
                 }
             }
         }

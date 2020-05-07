@@ -8,6 +8,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -23,6 +24,17 @@ using YamlDotNet.Serialization;
 
 namespace Core.Tests
 {
+    public class PluginMock<TSetts> : IPlugin<TSetts>
+        where TSetts : new()
+    {
+        public TSetts Settings { get; private set; }
+
+        public void Init(TSetts setts)
+        {
+            Settings = setts;
+        }
+    }
+
     public class MockSettings1
     {
         public string Prp1 { get; set; } = "A";
@@ -52,48 +64,34 @@ namespace Core.Tests
         {
         }
 
+        public class Plugin4 : IPlugin
+        {
+            [Import]
+            private IServiceMock2 Service { get; set; }
+        }
+
         public class ServiceMock1 
         {
-#pragma warning disable CS0169 // Add readonly modifier
+            [ImportPlugins]
             private IEnumerable<IPlugin1> m_Plugins1;
-#pragma warning restore CS0169 // Add readonly modifier
+
+            [ImportPlugins]
             protected IEnumerable<IPlugin2> m_Plugins2;
         }
 
-        private void AddSettingsProperty(TypeBuilder typeBuilder)
+        public interface IServiceMock2
         {
-            var fieldSetts = typeBuilder.DefineField("m_Settings", typeof(MockSettings1), FieldAttributes.Private);
+        }
 
-            var prpSetts = typeBuilder.DefineProperty("Settings", PropertyAttributes.HasDefault, typeof(MockSettings1), null);
-
-            var getSetAttr = MethodAttributes.Public | MethodAttributes.Final | MethodAttributes.Virtual;
-
-            var prpSettsGetAccessor = typeBuilder.DefineMethod("get_Settings", getSetAttr, typeof(MockSettings1), Type.EmptyTypes);
-
-            var settsGetIL = prpSettsGetAccessor.GetILGenerator();
-
-            settsGetIL.Emit(OpCodes.Ldarg_0);
-            settsGetIL.Emit(OpCodes.Ldfld, fieldSetts);
-            settsGetIL.Emit(OpCodes.Ret);
-
-            var prpSettsSetAccessor = typeBuilder.DefineMethod("set_Settings", getSetAttr, null, new Type[] { typeof(MockSettings1) });
-
-            var settsSetIL = prpSettsSetAccessor.GetILGenerator();
-
-            settsSetIL.Emit(OpCodes.Ldarg_0);
-            settsSetIL.Emit(OpCodes.Ldarg_1);
-            settsSetIL.Emit(OpCodes.Stfld, fieldSetts);
-            settsSetIL.Emit(OpCodes.Ret);
-
-            prpSetts.SetGetMethod(prpSettsGetAccessor);
-            prpSetts.SetSetMethod(prpSettsSetAccessor);
+        public class ServiceMock2 : IServiceMock2
+        {
         }
 
         [Test]
         public void InitTest() 
         {
-            var assmBuilder = System.Reflection.Emit.AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()), 
-                System.Reflection.Emit.AssemblyBuilderAccess.RunAndCollect);
+            var assmBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()), 
+                AssemblyBuilderAccess.RunAndCollect);
             var moduleBuilder = assmBuilder.DefineDynamicModule(Guid.NewGuid().ToString());
             
             var typeBuilder1 = moduleBuilder.DefineType("Plugin1", TypeAttributes.Public);
@@ -134,8 +132,9 @@ namespace Core.Tests
 
             var typeBuilder = moduleBuilder.DefineType("Plugin1", TypeAttributes.Public);
 
+            //need this line to properly load Base.dll
             typeBuilder.AddInterfaceImplementation(typeof(IPlugin<MockSettings1>));
-            AddSettingsProperty(typeBuilder);
+            typeBuilder.SetParent(typeof(PluginMock<MockSettings1>));
 
             typeBuilder.CreateType();
 
@@ -153,7 +152,7 @@ namespace Core.Tests
             var mgr = new LocalFileSystemPluginsManager(conf, fs);
 
             var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPlugin>;
-            var plg = res.OfType<IPlugin<MockSettings1>>().FirstOrDefault();
+            var plg = res.OfType<PluginMock<MockSettings1>>().FirstOrDefault();
 
             Assert.IsNotNull(plg);
             Assert.IsNotNull(plg.Settings);
@@ -161,7 +160,7 @@ namespace Core.Tests
             Assert.AreEqual(0, plg.Settings.PropTwo);
             Assert.IsNull(plg.Settings.Prp3);
         }
-
+        
         [Test]
         public void LoadSettingsTest()
         {
@@ -174,9 +173,8 @@ namespace Core.Tests
             typeBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(PluginAttribute).GetConstructor(
                 new Type[] { typeof(string) }), new object[] { "plg1" }));
 
-            typeBuilder.AddInterfaceImplementation(typeof(IPlugin<MockSettings1>));
-            AddSettingsProperty(typeBuilder);
-
+            typeBuilder.SetParent(typeof(PluginMock<MockSettings1>));
+            
             typeBuilder.CreateType();
 
             var assm = moduleBuilder.Assembly;
@@ -186,14 +184,14 @@ namespace Core.Tests
             var fs = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
             fs.AddFile("D:\\Plugins\\mockplugins.dll", new System.IO.Abstractions.TestingHelpers.MockFileData(assmBuffer));
 
-            var conf = new MetadataSerializer().Deserialize<Configuration>("plg1:\r\n  prop-two: 0.1\r\n  prp3:\r\n    - A\r\n    - B");
+            var conf = new MetadataSerializer().Deserialize<Configuration>("~plg1:\r\n  prop-two: 0.1\r\n  prp3:\r\n    - A\r\n    - B");
             conf.PluginsFolder = Location.FromPath("D:\\Plugins");
             conf.Plugins = new List<string>(new string[] { "plg1" });
 
             var mgr = new LocalFileSystemPluginsManager(conf, fs);
 
             var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPlugin>;
-            var plg = res.OfType<IPlugin<MockSettings1>>().FirstOrDefault();
+            var plg = res.OfType<PluginMock<MockSettings1>>().FirstOrDefault();
 
             Assert.IsNotNull(plg);
             Assert.IsNotNull(plg.Settings);
@@ -213,7 +211,7 @@ namespace Core.Tests
             field.SetValue(mgr, new IPlugin[] { p1, p2, p3 });
             
             var svcMock = new ServiceMock1();
-            mgr.LoadPlugins(svcMock);
+            mgr.LoadPlugins(svcMock, false);
 
             var res1 = svcMock.GetType().GetField("m_Plugins1", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(svcMock) as IEnumerable<IPlugin1>;
             var res2 = svcMock.GetType().GetField("m_Plugins2", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(svcMock) as IEnumerable<IPlugin2>;
@@ -224,6 +222,22 @@ namespace Core.Tests
             Assert.That(res1.Contains(p3));
             Assert.That(res2.Contains(p2));
             Assert.That(res2.Contains(p3));
+        }
+
+        [Test]
+        public void LoadPluginImportsTest()
+        {
+            var mgr = new LocalFileSystemPluginsManager(new Configuration());
+            var field = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic);
+            var p1 = new Plugin4();
+            field.SetValue(mgr, new IPlugin[] { p1 });
+
+            var svcMock = new ServiceMock2();
+            mgr.LoadPlugins(svcMock, true);
+
+            var res1 = p1.GetType().GetProperty("Service", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(p1) as ServiceMock2;
+
+            Assert.AreEqual(svcMock, res1);
         }
     }
 }

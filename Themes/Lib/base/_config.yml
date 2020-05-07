@@ -2,15 +2,14 @@
   - seo
   - sitemap
   - google-analytics
-  - page-lang
   - feed
   - social-share
   - youtube
-  - date
-  - legal
   - cookie-consent
   - tipue-search
 plugins:
   - image-optimizer
   - responsive-image
 title_attribute: caption
+ignore:
+  - _config.yml

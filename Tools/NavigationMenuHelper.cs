@@ -145,7 +145,7 @@ namespace Xarial.Docify.Lib.Tools
             {
                 return new MenuPage(url, new MenuPageMetadata(
                     new Dictionary<string, object>()
-                    { { data.Get<string>(PageHelper.TITLE_ATT) , url } }));
+                    { { "caption" , url } }));
             }
         }
 

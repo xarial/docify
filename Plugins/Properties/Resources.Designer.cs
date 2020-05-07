@@ -61,6 +61,25 @@ namespace Xarial.Docify.Lib.Plugins.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to pre.code-snippet {
+        ///    border: none;
+        ///    overflow: auto;
+        ///    background: #eff0f1;
+        ///}
+        ///
+        ///pre.jagged-top {
+        ///    background-color: #eff0f1;
+        ///    background-image: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(-135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(to top, #eff0f1 0%, #eff0f1 100%);
+        ///    background-position: top center;
+        ///    back [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string code_snippet {
+            get {
+                return ResourceManager.GetString("code_snippet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;figure&gt;
         ///   &lt;a href=&quot;{1}&quot; imageanchor=&quot;1&quot;&gt;
         ///   {0}

@@ -145,7 +145,7 @@ namespace CLI.Tests
         public async Task BinaryAssetTest()
         {
             var site = new Site("", new Page(new Location("page1.html"), ""), null);
-            var asset = new Asset(Location.FromPath("file.bin"), new byte[] { 1, 2, 3 });
+            var asset = new File(Location.FromPath("file.bin"), new byte[] { 1, 2, 3 });
             site.MainPage.Assets.Add(asset);
 
             var files = await m_Compiler.Compile(site);
@@ -157,7 +157,7 @@ namespace CLI.Tests
         public async Task TextAssetTest()
         {
             var site = new Site("", new Page(new Location("page1.html"), ""), null);
-            var asset = new Asset(Location.FromPath("file.txt"), "test");
+            var asset = new File(Location.FromPath("file.txt"), "test");
             site.MainPage.Assets.Add(asset);
 
             var files = await m_Compiler.Compile(site);

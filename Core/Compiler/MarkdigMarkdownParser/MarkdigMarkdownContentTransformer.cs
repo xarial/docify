@@ -24,13 +24,13 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
     {
         private MarkdownPipeline m_MarkdownEngine;
         
-        [ImportPlugin]
+        [ImportPlugins]
         private IEnumerable<IRenderUrlPlugin> m_RenderUrlPlugins = null;
 
-        [ImportPlugin]
+        [ImportPlugins]
         private IEnumerable<IRenderImagePlugin> m_RenderImagePlugins = null;
 
-        [ImportPlugin]
+        [ImportPlugins]
         private IEnumerable<IRenderCodeBlockPlugin> m_RenderCodeBlockPlugins = null;
 
         private MarkdownPipeline MarkdownEngine

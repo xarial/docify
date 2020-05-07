@@ -32,7 +32,7 @@ namespace Components.Tests
 
             var solDir = Path.GetDirectoryName(typeof(ComponentsTest).Assembly.Location);
 
-            while (!File.Exists(Path.Combine(solDir, SOLUTION_FILE_NAME)))
+            while (!System.IO.File.Exists(Path.Combine(solDir, SOLUTION_FILE_NAME)))
             {
                 solDir = Path.GetDirectoryName(solDir);
             }
@@ -86,7 +86,7 @@ namespace Components.Tests
             string rawContent;
             var path = GetPath(includeRelPath);
 
-            FrontMatterParser.Parse(File.ReadAllText(path), out rawContent, out data);
+            FrontMatterParser.Parse(System.IO.File.ReadAllText(path), out rawContent, out data);
 
             var name = Path.GetFileNameWithoutExtension(path);
 

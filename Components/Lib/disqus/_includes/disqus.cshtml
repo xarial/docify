@@ -14,8 +14,8 @@ count: true
 }
 @if (enable)
 {
-<div id="disqus_thread"></div>
-<script>
+    <div id="disqus_thread"></div>
+    <script>
 var disqus_config = function () {
 this.page.url = '@Model.Page.FullUrl';
 this.page.identifier = '@Model.Page.FullUrl';
@@ -27,10 +27,10 @@ s.src = '@src';
 s.setAttribute('data-timestamp', +new Date());
 (d.head || d.body).appendChild(s);
 })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-@if (Model.Data.Get<bool>("count"))
-{
-<script id="dsq-count-scr" src="@countSrc" async></script>
-}
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    @if (Model.Data.Get<bool>("count"))
+    {
+        <script id="dsq-count-scr" src="@countSrc" async></script>
+    }
 }

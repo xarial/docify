@@ -54,7 +54,12 @@ namespace Xarial.Docify.Lib.Tools
 
             if (data != null)
             {
-                caption = page.Data.GetOrDefault<string>(data.Get<string>(TITLE_ATT));
+                string titleAtt;
+
+                if (data.TryGet(TITLE_ATT, out titleAtt) && !string.IsNullOrEmpty(titleAtt))
+                {
+                    caption = page.Data.GetOrDefault<string>(titleAtt);
+                }
             }
 
             if (string.IsNullOrEmpty(caption))

@@ -31,6 +31,8 @@ namespace Xarial.Docify.Core.Plugin
 {
     public class LocalFileSystemPluginsManager : IPluginsManager
     {
+        private const string PLUGIN_SETTINGS_TOKEN = "~";
+
         private readonly IFileSystem m_FileSystem;
 
         private readonly IEnumerable<IPlugin> m_Plugins;
@@ -77,6 +79,55 @@ namespace Xarial.Docify.Core.Plugin
             }
         }
 
+        public void LoadPlugins<T>(T service, bool importService)
+        {
+            if (m_Plugins != null)
+            {
+                ImportPluginsToService(service);
+
+                if (importService)
+                {
+                    ImportServiceToPlugins(service);
+                }
+            }
+        }
+
+        private void ImportPluginsToService<T>(T service)
+        {
+            foreach (var importMember in GetImportMembers<ImportManyAttribute>(service.GetType())
+                                .Where(m => typeof(IEnumerable<IPlugin>).IsAssignableFrom(GetMemberType(m))))
+            {
+                var importPlugins = m_Plugins.Where(p => GetMemberType(importMember)
+                    .IsAssignableFrom(typeof(IEnumerable<>).MakeGenericType(p.GetType())));
+
+                if (importPlugins.Any())
+                {
+                    var pluginType = GetMemberType(importMember).GetGenericArguments().First();
+                    var pluginsListType = typeof(List<>).MakeGenericType(pluginType);
+                    var pluginsList = Activator.CreateInstance(pluginsListType) as IList;
+
+                    foreach (var importPlugin in importPlugins)
+                    {
+                        pluginsList.Add(importPlugin);
+                    }
+
+                    SetMemberValue(importMember, service, pluginsList);
+                }
+            }
+        }
+
+        private void ImportServiceToPlugins<T>(T service) 
+        {
+            foreach (var plugin in m_Plugins)
+            {
+                foreach (var importMember in GetImportMembers<ImportAttribute>(plugin.GetType())
+                    .Where(m => GetMemberType(m).IsAssignableFrom(service.GetType())))
+                {
+                    SetMemberValue(importMember, plugin, service);
+                }
+            }
+        }
+
         private void LoadPluginSettings(IConfiguration conf)
         {
             if (m_Plugins != null)
@@ -85,10 +136,11 @@ namespace Xarial.Docify.Core.Plugin
                 {
                     var pluginSpecType = plugin.GetType();
 
-                    if (IsAssignableToGenericType(pluginSpecType, typeof(IPlugin<>)))
+                    Type pluginDeclrType;
+
+                    if (IsAssignableToGenericType(pluginSpecType, typeof(IPlugin<>), out pluginDeclrType))
                     {
-                        var prp = pluginSpecType.GetProperty(nameof(IPlugin<object>.Settings));
-                        var settsType = prp.PropertyType;
+                        var settsType = pluginDeclrType.GetGenericArguments().First();
 
                         var pluginId = GetPluginId(pluginSpecType);
 
@@ -96,7 +148,7 @@ namespace Xarial.Docify.Core.Plugin
 
                         object setts = null;
 
-                        if (MetadataExtension.TryGetParameter(conf, pluginId, out settsData))
+                        if (MetadataExtension.TryGetParameter(conf, PLUGIN_SETTINGS_TOKEN + pluginId, out settsData))
                         {
                             setts = MetadataExtension.ToObject(settsData, settsType);
                         }
@@ -104,36 +156,61 @@ namespace Xarial.Docify.Core.Plugin
                         {
                             setts = Activator.CreateInstance(settsType);
                         }
-
-                        prp.SetValue(plugin, setts);
+                        
+                        var initMethod = pluginSpecType.GetMethod(nameof(IPlugin<object>.Init));
+                        initMethod.Invoke(plugin, new object[] { setts });
                     }
                 }
             }
         }
 
-        public void LoadPlugins<T>(T service)
+        private IEnumerable<MemberInfo> GetImportMembers<TAtt>(Type type)
+            where TAtt : Attribute
         {
-            if (m_Plugins != null)
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
+            var fields = type.GetFields(flags) ?? new FieldInfo[0];
+            var props = type.GetProperties(flags) ?? new PropertyInfo[0];
+
+            var members = fields.Cast<MemberInfo>()
+                .Union(props.Cast<MemberInfo>())
+                .Where(m => Attribute.IsDefined(m, typeof(TAtt)));
+
+            foreach (var importField in members)
             {
-                foreach (var importField in service.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                    .Where(f => typeof(IEnumerable<IPlugin>).IsAssignableFrom(f.FieldType)))
-                {
-                    var importPlugins = m_Plugins.Where(p => importField.FieldType.IsAssignableFrom(typeof(IEnumerable<>).MakeGenericType(p.GetType())));
+                yield return importField;
+            }
+        }
 
-                    if (importPlugins.Any())
-                    {
-                        var pluginType = importField.FieldType.GetGenericArguments().First();
-                        var pluginsListType = typeof(List<>).MakeGenericType(pluginType);
-                        var pluginsList = Activator.CreateInstance(pluginsListType) as IList;
+        private Type GetMemberType(MemberInfo mi)
+        {
+            switch (mi)
+            {
+                case FieldInfo fi:
+                    return fi.FieldType;
 
-                        foreach (var importPlugin in importPlugins) 
-                        {
-                            pluginsList.Add(importPlugin);
-                        }
+                case PropertyInfo pi:
+                    return pi.PropertyType;
 
-                        importField.SetValue(service, pluginsList);
-                    }
-                }
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        private void SetMemberValue(MemberInfo mi, object obj, object val) 
+        {
+            switch (mi)
+            {
+                case FieldInfo fi:
+                    fi.SetValue(obj, val);
+                    break;
+
+                case PropertyInfo pi:
+                    pi.SetValue(obj, val);
+                    break;
+
+                default:
+                    throw new NotSupportedException();
             }
         }
 
@@ -149,7 +226,7 @@ namespace Xarial.Docify.Core.Plugin
             return id;
         }
 
-        private bool IsAssignableToGenericType(Type givenType, Type genericType)
+        private bool IsAssignableToGenericType(Type givenType, Type genericType, out Type specGenericType)
         {
             var interfaceTypes = givenType.GetInterfaces();
 
@@ -157,12 +234,14 @@ namespace Xarial.Docify.Core.Plugin
             {
                 if (it.IsGenericType && it.GetGenericTypeDefinition() == genericType)
                 {
+                    specGenericType = it;
                     return true;
                 }
             }
 
             if (givenType.IsGenericType && givenType.GetGenericTypeDefinition() == genericType)
             {
+                specGenericType = givenType;
                 return true;
             }
 
@@ -170,10 +249,11 @@ namespace Xarial.Docify.Core.Plugin
 
             if (baseType == null)
             {
+                specGenericType = null;
                 return false; 
             }
 
-            return IsAssignableToGenericType(baseType, genericType);
+            return IsAssignableToGenericType(baseType, genericType, out specGenericType);
         }
     }
 }

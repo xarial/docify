@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
+using Xarial.Docify.Lib.Plugins.Data;
 using Xarial.Docify.Lib.Plugins.Properties;
 
 namespace Xarial.Docify.Lib.Plugins
@@ -19,18 +20,13 @@ namespace Xarial.Docify.Lib.Plugins
 
         public void PreCompile(ISite site)
         {
-            site.MainPage.Assets.Add(new PluginReplacedFile(Resources.responsive_image, new Location(CSS_FILE_NAME, CSS_FILE_PATH)));
+            site.MainPage.Assets.Add(new PluginDataFile(Resources.responsive_image, new PluginDataFileLocation(CSS_FILE_NAME, CSS_FILE_PATH)));
         }
 
-        public void PrePublishFile(ref IFile writable, out bool skip)
+        public void PrePublishFile(ILocation outLoc, ref IFile file, out bool skip)
         {
-            if (string.Equals(Path.GetExtension(writable.Location.FileName), ".html", StringComparison.InvariantCultureIgnoreCase))
-            {
-                var pageContent = writable.AsTextContent();
-                Helper.InjectDataIntoHtmlHead(ref pageContent,
-                    string.Format(Helper.CSS_LINK_TEMPLATE, string.Join('/', CSS_FILE_PATH) + "/" + CSS_FILE_NAME));
-                writable = new PluginReplacedFile(pageContent, writable.Location);
-            }
+            this.WriteToPageHead(ref file, 
+                w => w.AddStyleSheet(string.Join('/', CSS_FILE_PATH) + "/" + CSS_FILE_NAME));
 
             skip = false;
         }

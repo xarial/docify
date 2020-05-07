@@ -20,17 +20,4 @@ namespace Xarial.Docify.Base
         List<ITemplate> Includes { get; }
         IConfiguration Configuration { get; }
     }
-
-    public static class SiteExtension 
-    {
-        public static IEnumerable<IPage> GetAllPages(this ISite site) 
-        {
-            yield return site.MainPage;
-
-            foreach (var childPage in site.MainPage.GetAllSubPages()) 
-            {
-                yield return childPage;
-            }
-        }
-    }
 }

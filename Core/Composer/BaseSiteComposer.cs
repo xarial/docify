@@ -52,12 +52,6 @@ namespace Xarial.Docify.Core.Composer
             return htmlExts.Contains(ext, m_Comparer);
         }
 
-        private bool IsDefaultPage(IFile pageFile)
-        {
-            return Path.GetFileNameWithoutExtension(pageFile.Location.FileName)
-                    .Equals("index", StringComparison.CurrentCultureIgnoreCase);
-        }
-
         private void ParseTextFile(IFile src, out string rawContent,
             out IMetadata data, out string layoutName) 
         {
@@ -263,7 +257,8 @@ namespace Xarial.Docify.Core.Composer
             IReadOnlyDictionary<string, Template> layouts,
             IReadOnlyList<IFile> assets)
         {
-            var mainSrcPage = srcPages.FirstOrDefault(p => p.Location.IsRoot() && IsDefaultPage(p));
+            var mainSrcPage = srcPages.FirstOrDefault(
+                p => p.Location.IsRoot() && PageExtension.IsDefaultPageLocation(p.Location));
 
             if (mainSrcPage == null)
             {
@@ -275,24 +270,34 @@ namespace Xarial.Docify.Core.Composer
             var mainPage = CreatePage(mainSrcPage, layouts);
 
             var refAssets = new List<IFile>(assets);
+            var refPages = new List<IFile>(srcPages);
 
-            ProcessChildren(mainPage, srcPages, refAssets, layouts);
+            ProcessChildren(mainPage, refPages, refAssets, layouts);
 
-            System.Diagnostics.Debug.Assert(!refAssets.Any(), "Invalid algorithm, assets are not distributed across resolurces");
+            var unprocessed = refPages.Union(refAssets);
+
+            if (unprocessed.Any()) 
+            {
+                //this should never happen, but keeping this as an exception in case algorithm is incorrect
+                throw new SiteParsingException(unprocessed.ToArray());
+            }
             
             return mainPage;
         }
 
         private void ProcessChildren(IPage parent, 
-            IEnumerable<IFile> pages, List<IFile> assets,
+            List<IFile> pages, List<IFile> assets,
             IReadOnlyDictionary<string, Template> layouts) 
         {
             var curLoc = parent.Location.GetParent();
 
-            var children = pages.Where(p =>
+            var subPages = pages.Where(p => p.Location.IsInLocation(curLoc, m_Comparison))
+                .ToArray();
+
+            var children = subPages.Where(p =>
             {
                 var parentOffset = 1;
-                if (IsDefaultPage(p)) 
+                if (PageExtension.IsDefaultPageLocation(p.Location)) 
                 {
                     parentOffset = 2;
                 }
@@ -300,17 +305,21 @@ namespace Xarial.Docify.Core.Composer
                 return p.Location.GetParent(parentOffset).IsSame(curLoc, m_Comparison);
             });
 
+            foreach (var child in children) 
+            {
+                pages.Remove(child);
+            }
+
             void ProcessChildPage(IPage page) 
             {
                 parent.SubPages.Add(page);
-                var subPages = pages.Where(p => p.Location.IsInLocation(page.Location.GetParent(), m_Comparison));
 
-                ProcessChildren(page, subPages, assets, layouts);
+                ProcessChildren(page, pages, assets, layouts);
             }
 
-            if (!children.Any() && pages.Any())
+            if (!children.Any() && subPages.Any())
             {
-                foreach (var phantomGroup in pages
+                foreach (var phantomGroup in subPages
                     .Select(p => p.Location.GetRelative(curLoc).GetRoot()) 
                     .Distinct(m_Comparer))
                 {
@@ -328,7 +337,7 @@ namespace Xarial.Docify.Core.Composer
 
                 foreach (var child in children) 
                 {
-                    var pageName = IsDefaultPage(child) ?
+                    var pageName = PageExtension.IsDefaultPageLocation(child.Location) ?
                         child.Location.Path.LastOrDefault()
                         : Path.GetFileNameWithoutExtension(child.Location.FileName);
 
@@ -342,9 +351,8 @@ namespace Xarial.Docify.Core.Composer
 
                     var page = CreatePage(child, layouts);
 
-                    if (IsDefaultPage(child))
+                    if (PageExtension.IsDefaultPageLocation(child.Location))
                     {
-                        pages = pages.Except(new IFile[] { child });
                         ProcessChildPage(page);
                     }
                     else 
@@ -352,7 +360,10 @@ namespace Xarial.Docify.Core.Composer
                         parent.SubPages.Add(page);
                     }
                 }
+            }
 
+            if (!(parent is PhantomPage))
+            {
                 var pageAssets = assets.Where(a => a.Location.IsInLocation(curLoc, m_Comparison)).ToList();
                 pageAssets.ForEach(a => assets.Remove(a));
                 parent.Assets.AddRange(pageAssets);

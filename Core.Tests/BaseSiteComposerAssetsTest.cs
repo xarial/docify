@@ -121,6 +121,7 @@ namespace Core.Tests
                 new File(Location.FromPath(@"index.md"), ""),
                 new File(Location.FromPath(@"page1\index.md"), ""),
                 new File(Location.FromPath(@"page1\sub-folder\asset1.txt"), "a1"),
+                new File(Location.FromPath(@"page1\sub-folder\sub-folder2\asset2.txt"), "a2")
             };
 
             var site = m_Composer.ComposeSite(src, "");
@@ -128,10 +129,43 @@ namespace Core.Tests
             var p1 = site.MainPage.SubPages.First(p => p.Location.ToId() == "page1::index.html");
 
             var a1 = p1.Assets.FirstOrDefault(a => a.Location.ToId() == "page1::sub-folder::asset1.txt");
+            var a2 = p1.Assets.FirstOrDefault(a => a.Location.ToId() == "page1::sub-folder::sub-folder2::asset2.txt");
+
+            Assert.AreEqual(2, p1.Assets.Count);
+            Assert.IsNotNull(a1);
+            Assert.IsNotNull(a2);
+            Assert.AreEqual("a1", a1.AsTextContent());
+            Assert.AreEqual("a2", a2.AsTextContent());
+        }
+
+        [Test]
+        public void ComposeSite_PhantomPageAsset()
+        {
+            var src = new File[]
+            {
+                new File(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"page1\index.md"), ""),
+                new File(Location.FromPath(@"page1\page2\asset1.txt"), "a1"),
+                new File(Location.FromPath(@"page1\page2\Page3\asset2.txt"), "a2"),
+                new File(Location.FromPath(@"page1\page2\Page3\index.md"), ""),
+            };
+
+            var site = m_Composer.ComposeSite(src, "");
+
+            var p1 = site.MainPage.SubPages.First(p => p.Location.ToId() == "page1::index.html");
+            var p2 = p1.SubPages.First(p => p.Location.ToId() == "page1::page2::index.html");
+            var p3 = p2.SubPages.First(p => p.Location.ToId() == "page1::page2::Page3::index.html");
+
+            var a1 = p1.Assets.FirstOrDefault(a => a.Location.ToId() == "page1::page2::asset1.txt");
+            var a2 = p3.Assets.FirstOrDefault(a => a.Location.ToId() == "page1::page2::Page3::asset2.txt");
 
             Assert.AreEqual(1, p1.Assets.Count);
+            Assert.AreEqual(0, p2.Assets.Count);
+            Assert.AreEqual(1, p3.Assets.Count);
             Assert.IsNotNull(a1);
+            Assert.IsNotNull(a2);
             Assert.AreEqual("a1", a1.AsTextContent());
+            Assert.AreEqual("a2", a2.AsTextContent());
         }
     }
 }

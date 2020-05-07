@@ -9,11 +9,10 @@ namespace Xarial.Docify.Base
     public static class LocationExtension
     {
         public const string PATH_SEP = "\\";
-
-        private const string INDEX_PAGE_NAME = "index.html";
-
         private const string URL_SEP = "/";
         public const string ID_SEP = "::";
+
+        private const string INDEX_PAGE_NAME = "index.html";
 
         public static string ToPath(this ILocation loc, string root = "")
         {
@@ -55,34 +54,21 @@ namespace Xarial.Docify.Base
         }
 
         public static bool IsEmpty(this ILocation loc) => !loc.Path.Any() && string.IsNullOrEmpty(loc.FileName);
-        
-        public static int GetTotalLevel(this ILocation loc) => loc.Path.Count;
-        
+                
         public static bool IsRoot(this ILocation loc) => !loc.Path.Any();
 
         public static string GetRoot(this ILocation loc) => loc.Path.FirstOrDefault();
 
         public static bool IsFile(this ILocation loc) => !string.IsNullOrEmpty(loc.FileName);
-
-        public static ILocation ConvertToPageLocation(this ILocation location)
-        {
-            var fileName = location.FileName;
-
-            if (string.IsNullOrEmpty(fileName))
-            {
-                fileName = INDEX_PAGE_NAME;
-            }
-            else
-            {
-                fileName = Path.GetFileNameWithoutExtension(fileName) + ".html";
-            }
-
-            return location.Copy(fileName, location.Path.ToArray());
-        }
-
+        
         public static ILocation Combine(this ILocation loc, params string[] blocks)
         {
             return loc.Copy("", loc.Path.Union(blocks));
+        }
+
+        public static ILocation Combine(this ILocation loc, ILocation other)
+        {
+            return loc.Copy(other.FileName, loc.Path.Union(other.Path));
         }
 
         public static ILocation GetParent(this ILocation loc, int level = 1) 

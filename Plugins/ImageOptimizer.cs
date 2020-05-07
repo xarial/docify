@@ -63,13 +63,14 @@ namespace Xarial.Docify.Lib.Plugins
 
         public void PreCompile(ISite site)
         {
+            System.Diagnostics.Debugger.Launch();
+
             foreach (var page in site.GetAllPages()) 
             {
-                dynamic imageVal;
-                if (page.Data.TryGetValue(IMAGE_TAG_NAME, out imageVal)) 
-                {
-                    var image = imageVal as string;
+                string image;
 
+                if (MetadataExtension.TryGetParameter<string>(page.Data, IMAGE_TAG_NAME, out image))
+                {
                     if (!string.IsNullOrEmpty(image))
                     {
                         if (string.Equals(Path.GetExtension(image), 
@@ -101,7 +102,6 @@ namespace Xarial.Docify.Lib.Plugins
                             page.Data.Add(REPLACE_IMAGE_TAG_NAME, imgName);
                             var imgPngAsset = new PluginDataFile(pngBuffer, new PluginDataFileLocation(imgName, page.Location.Path.ToArray()));
                             page.Assets.Add(imgPngAsset);
-                            site.MainPage.Assets.Add(imgPngAsset);
                         }
                     }
                 }

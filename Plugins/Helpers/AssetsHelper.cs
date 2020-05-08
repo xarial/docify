@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using Xarial.Docify.Base;
@@ -63,28 +65,54 @@ namespace Xarial.Docify.Lib.Plugins.Helpers
             return asset;
         }
 
-        public static void AddAsset(string content, IPage page, string path) 
+        public static void AddTextAsset(string content, IPage page, string path)
+            => AddAsset(ContentExtension.ToByteArray(content), page, path);
+
+        public static void AddAsset(byte[] content, IPage page, string path)
         {
             var parts = path.Split(m_Separators, StringSplitOptions.RemoveEmptyEntries);
 
             IAssetsFolder curFolder = page;
 
-            for (int i = 0; i < parts.Length - 1; i++) 
+            for (int i = 0; i < parts.Length - 1; i++)
             {
                 var name = parts[i];
 
                 var nextFolder = curFolder.Folders.FirstOrDefault(
                     f => string.Equals(f.Name, name, StringComparison.CurrentCultureIgnoreCase));
 
-                if (nextFolder == null) 
+                if (nextFolder == null)
                 {
                     nextFolder = new PluginAssetsFolder(name);
+                    curFolder.Folders.Add(nextFolder);
                 }
 
                 curFolder = nextFolder;
             }
 
             curFolder.Assets.Add(new PluginAsset(content, parts.Last()));
+        }
+
+        public static void AddAssetFromZip(byte[] zipBuffer, IPage page) 
+        {
+            using (var zipStream = new MemoryStream(zipBuffer)) 
+            {
+                using (var archive = new ZipArchive(zipStream)) 
+                {
+                    foreach (var entry in archive.Entries) 
+                    {
+                        if (entry.Length > 0)
+                        {
+                            using (var entryStream = entry.Open())
+                            {
+                                var entryBuffer = new byte[entry.Length];
+                                entryStream.Read(entryBuffer, 0, entryBuffer.Length);
+                                AddAsset(entryBuffer, page, entry.FullName);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public static IEnumerable<IPage> GetAllPages(IPage page) 

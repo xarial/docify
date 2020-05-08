@@ -56,7 +56,7 @@ namespace Xarial.Docify.Lib.Plugins
         {
             m_Site = site;
 
-            AssetsHelper.AddAsset(Resources.code_snippet, site.MainPage, CSS_FILE_PATH);
+            AssetsHelper.AddTextAsset(Resources.code_snippet, site.MainPage, CSS_FILE_PATH);
 
             m_SnippetFiles = new List<ILocation>();
         }

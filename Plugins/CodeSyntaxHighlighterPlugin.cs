@@ -45,7 +45,7 @@ namespace Xarial.Docify.Lib.Plugins
             {
                 var css = (Formatter as HtmlClassFormatter).GetCSSString();
                 css = css.Substring("body{background-color:#FFFFFFFF;} ".Length);//temp solution - find a better way
-                AssetsHelper.AddAsset(css, site.MainPage, CSS_FILE_PATH);
+                AssetsHelper.AddTextAsset(css, site.MainPage, CSS_FILE_PATH);
             }
         }
 

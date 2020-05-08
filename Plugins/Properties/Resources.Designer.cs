@@ -112,5 +112,15 @@ namespace Xarial.Docify.Lib.Plugins.Properties {
                 return ResourceManager.GetString("responsive_image", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] tipue_search {
+            get {
+                object obj = ResourceManager.GetObject("tipue_search", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

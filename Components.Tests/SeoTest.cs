@@ -80,13 +80,13 @@ namespace Components.Tests
         {
             var site = ComponentsTest.NewSite("{% seo %}", INCLUDE_PATH,
                 ComponentsTest.GetData<Metadata>("title: p1\r\ndescription: d1\r\nimage: img1.svg\r\nimage-png: img1.png"));
-            site.MainPage.SubPages.Add(new Page(Location.FromPath("Page1.html"), "{% seo %}", ComponentsTest.GetData<Metadata>("title: p1\r\nimage: img2.png")));
+            site.MainPage.SubPages.Add(new Page("Page1", "{% seo %}", ComponentsTest.GetData<Metadata>("title: p1\r\nimage: img2.png")));
 
             var compiler = new DocifyEngine("", "", "", Environment_e.Test).Resove<ICompiler>();
-            var files = await compiler.Compile(site);
+            var files = await compiler.Compile(site).ToListAsync();
 
-            var r1 = files.First(f => f.Location.FileName == "index.html");
-            var r2 = files.First(f => f.Location.FileName == "Page1.html");
+            var r1 = files.First(f => f.Location.ToId() == "index.html");
+            var r2 = files.First(f => f.Location.ToId() == "Page1::index.html");
             
             Assert.AreEqual(Resources.seo5, r1.AsTextContent());
             Assert.AreEqual(Resources.seo6, r2.AsTextContent());

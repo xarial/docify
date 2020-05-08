@@ -7,12 +7,12 @@ namespace Xarial.Docify.Core.Data
 {
     public class Asset : IAsset
     {
-        public string Name { get; }
+        public string FileName { get; }
         public byte[] Content { get; }
 
-        public Asset(string name, byte[] content) 
+        public Asset(string fileName, byte[] content) 
         {
-            Name = name;
+            FileName = fileName;
             Content = content;
         }
     }

@@ -78,8 +78,8 @@ namespace Core.Tests
 
             Assert.AreEqual(0, site.MainPage.Assets.Count);
             Assert.AreEqual(2, site.MainPage.SubPages[0].Assets.Count);
-            Assert.AreEqual("a1", site.MainPage.SubPages[0].Assets.Find(a => a.Name == "asset.txt").AsTextContent());
-            Assert.IsTrue(new byte[] { 1, 2, 3 }.SequenceEqual(site.MainPage.SubPages[0].Assets.Find(a => a.Name == "asset1.bin").Content));
+            Assert.AreEqual("a1", site.MainPage.SubPages[0].Assets.Find(a => a.FileName == "asset.txt").AsTextContent());
+            Assert.IsTrue(new byte[] { 1, 2, 3 }.SequenceEqual(site.MainPage.SubPages[0].Assets.Find(a => a.FileName == "asset1.bin").Content));
         }
 
         [Test]
@@ -101,16 +101,16 @@ namespace Core.Tests
 
             Assert.AreEqual(1, site.MainPage.Assets.Count);
             Assert.AreEqual("a1", site.MainPage.Assets[0].AsTextContent());
-            Assert.AreEqual("asset.txt", site.MainPage.Assets[0].Name);
+            Assert.AreEqual("asset.txt", site.MainPage.Assets[0].FileName);
             Assert.AreEqual(1, site.MainPage.SubPages.Find(p => p.Name == "page1").Assets.Count);
             Assert.AreEqual("a2", site.MainPage.SubPages.Find(p => p.Name == "page1").Assets[0].AsTextContent());
-            Assert.AreEqual("asset1.txt", site.MainPage.SubPages.Find(p => p.Name == "page1").Assets[0].Name);
+            Assert.AreEqual("asset1.txt", site.MainPage.SubPages.Find(p => p.Name == "page1").Assets[0].FileName);
             Assert.AreEqual(1, site.MainPage.SubPages.Find(p => p.Name == "page2").Assets.Count);
             Assert.AreEqual("a3", site.MainPage.SubPages.Find(p => p.Name == "page2").Assets[0].AsTextContent());
-            Assert.AreEqual("asset.txt", site.MainPage.SubPages.Find(p => p.Name == "page2").Assets[0].Name);
+            Assert.AreEqual("asset.txt", site.MainPage.SubPages.Find(p => p.Name == "page2").Assets[0].FileName);
             Assert.AreEqual(1, site.MainPage.SubPages.Find(p => p.Name == "page2").SubPages[0].Assets.Count);
             Assert.AreEqual("a4", site.MainPage.SubPages.Find(p => p.Name == "page2").SubPages[0].Assets[0].AsTextContent());
-            Assert.AreEqual("asset2.txt", site.MainPage.SubPages.Find(p => p.Name == "page2").SubPages[0].Assets[0].Name);
+            Assert.AreEqual("asset2.txt", site.MainPage.SubPages.Find(p => p.Name == "page2").SubPages[0].Assets[0].FileName);
         }
 
         [Test]
@@ -132,9 +132,9 @@ namespace Core.Tests
             var f1 = p1.Folders.First(f => f.Name == "sub-folder");
             var f2 = f1.Folders.First(f => f.Name == "sub-folder2");
 
-            var a1 = f1.Assets.FirstOrDefault(a => a.Name == "asset1.txt");
-            var a2 = f2.Assets.FirstOrDefault(a => a.Name == "asset2.txt");
-            var a3 = p1.Assets.FirstOrDefault(a => a.Name == "asset3.txt");
+            var a1 = f1.Assets.FirstOrDefault(a => a.FileName == "asset1.txt");
+            var a2 = f2.Assets.FirstOrDefault(a => a.FileName == "asset2.txt");
+            var a3 = p1.Assets.FirstOrDefault(a => a.FileName == "asset3.txt");
 
             Assert.AreEqual(1, p1.Assets.Count);
             Assert.AreEqual(1, f1.Assets.Count);
@@ -168,8 +168,8 @@ namespace Core.Tests
             var p2 = p1.SubPages.First(p => p.Name == "page2");
             var p3 = p2.SubPages.First(p => p.Name == "Page3");
 
-            var a1 = p1.Folders.FirstOrDefault(f => f.Name == "page2").Assets.FirstOrDefault(a => a.Name == "asset1.txt");
-            var a2 = p3.Assets.FirstOrDefault(a => a.Name == "asset2.txt");
+            var a1 = p1.Folders.FirstOrDefault(f => f.Name == "page2").Assets.FirstOrDefault(a => a.FileName == "asset1.txt");
+            var a2 = p3.Assets.FirstOrDefault(a => a.FileName == "asset2.txt");
 
             Assert.AreEqual(0, p1.Assets.Count);
             Assert.AreEqual(1, p1.Folders.Count);

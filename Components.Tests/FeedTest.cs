@@ -36,11 +36,11 @@ namespace Components.Tests
         public async Task DefaultTest()
         {
             var site = ComponentsTest.NewSite("<channel>\r\n{% feed %}\r\n</channel>", INCLUDE_PATH);
-            var p1 = new Page(Location.FromPath("Page1.html"), "", ComponentsTest.GetData<Metadata>("title: p1\r\ndescription: desc1"));
-            p1.SubPages.Add(new Page(Location.FromPath("SubPage1.html"), "", ComponentsTest.GetData<Metadata>("title: sp1")));
-            p1.SubPages.Add(new Page(Location.FromPath("SubPage2.html"), "", ComponentsTest.GetData<Metadata>("title: sp2")));
+            var p1 = new Page("Page1", "", ComponentsTest.GetData<Metadata>("title: p1\r\ndescription: desc1"));
+            p1.SubPages.Add(new Page("SubPage1", "", ComponentsTest.GetData<Metadata>("title: sp1")));
+            p1.SubPages.Add(new Page("SubPage2", "", ComponentsTest.GetData<Metadata>("title: sp2")));
             site.MainPage.SubPages.Add(p1);
-            site.MainPage.SubPages.Add(new Page(Location.FromPath("Page2.html"), "", ComponentsTest.GetData<Metadata>("title: p2")));
+            site.MainPage.SubPages.Add(new Page("Page2", "", ComponentsTest.GetData<Metadata>("title: p2")));
 
             var res = UpdateBuildDate(await ComponentsTest.CompileMainPageNormalize(site));
 
@@ -68,7 +68,7 @@ namespace Components.Tests
         public async Task CategoriesTest()
         {
             var site = ComponentsTest.NewSite("<channel>\r\n{% feed %}\r\n</channel>", INCLUDE_PATH);
-            var p1 = new Page(Location.FromPath("Page1.html"), "", ComponentsTest.GetData<Metadata>("title: p1\r\ncategories:\r\n  - cat1\r\n  - cat2"));
+            var p1 = new Page("Page1", "", ComponentsTest.GetData<Metadata>("title: p1\r\ncategories:\r\n  - cat1\r\n  - cat2"));
             site.MainPage.SubPages.Add(p1);
 
             var res = UpdateBuildDate(await ComponentsTest.CompileMainPageNormalize(site));
@@ -80,7 +80,7 @@ namespace Components.Tests
         public async Task IgnorePagesTest()
         {
             var site = ComponentsTest.NewSite("<channel>\r\n{% feed %}\r\n</channel>", INCLUDE_PATH);
-            var p1 = new Page(Location.FromPath("Page1.html"), "", ComponentsTest.GetData<Metadata>("title: p1\r\nsitemap: false"));
+            var p1 = new Page("Page1", "", ComponentsTest.GetData<Metadata>("title: p1\r\nsitemap: false"));
             site.MainPage.SubPages.Add(p1);
 
             var res = UpdateBuildDate(await ComponentsTest.CompileMainPageNormalize(site));
@@ -94,12 +94,12 @@ namespace Components.Tests
             var xmlFilePath = ComponentsTest.GetPath(@"feed\feed.xml");
 
             var site = ComponentsTest.NewSite("", INCLUDE_PATH);
-            var p1 = new Page(Location.FromPath("Page1.html"), "", ComponentsTest.GetData<Metadata>("title: p1\r\ndate: 2020-05-06"));
+            var p1 = new Page("Page1", "", ComponentsTest.GetData<Metadata>("title: p1\r\ndate: 2020-05-06"));
             site.MainPage.SubPages.Add(p1);
-            site.MainPage.Assets.Add(new File(Location.FromPath(xmlFilePath), System.IO.File.ReadAllBytes(xmlFilePath)));
+            site.MainPage.Assets.Add(new Asset("feed.xml", System.IO.File.ReadAllBytes(xmlFilePath)));
 
             var compiler = new DocifyEngine("", "", "", Environment_e.Test).Resove<ICompiler>();
-            var files = await compiler.Compile(site);
+            var files = await compiler.Compile(site).ToListAsync();
 
             var feed = files.First(f => f.Location.FileName == "feed.xml");
 
@@ -116,14 +116,14 @@ namespace Components.Tests
             var xmlFilePath = ComponentsTest.GetPath(@"feed\feed.xml");
 
             var site = ComponentsTest.NewSite("", INCLUDE_PATH);
-            var p1 = new Page(Location.FromPath("Page1.html"), "", ComponentsTest.GetData<Metadata>("title: p1\r\ndate: 2020-05-06"));
-            var p2 = new Page(Location.FromPath("Page2.html"), "", ComponentsTest.GetData<Metadata>("title: p2\r\ncategories:\r\n  - cat1\r\n  - cat2"));
+            var p1 = new Page("Page1", "", ComponentsTest.GetData<Metadata>("title: p1\r\ndate: 2020-05-06"));
+            var p2 = new Page("Page2", "", ComponentsTest.GetData<Metadata>("title: p2\r\ncategories:\r\n  - cat1\r\n  - cat2"));
             site.MainPage.SubPages.Add(p1);
             site.MainPage.SubPages.Add(p2);
-            site.MainPage.Assets.Add(new File(Location.FromPath(xmlFilePath), System.IO.File.ReadAllBytes(xmlFilePath)));
+            site.MainPage.Assets.Add(new Asset("feed.xml", System.IO.File.ReadAllBytes(xmlFilePath)));
 
             var compiler = new DocifyEngine("", "", "", Environment_e.Test).Resove<ICompiler>();
-            var files = await compiler.Compile(site);
+            var files = await compiler.Compile(site).ToListAsync();
 
             var feed = files.First(f => f.Location.FileName == "feed.xml");
 

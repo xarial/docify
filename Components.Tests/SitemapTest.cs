@@ -24,14 +24,14 @@ namespace Components.Tests
             var xmlFilePath = ComponentsTest.GetPath(@"sitemap\sitemap.xml");
 
             var site = ComponentsTest.NewSite("", INCLUDE_PATH);
-            var p1 = new Page(Location.FromPath("Page1.html"), "", ComponentsTest.GetData<Metadata>("title: p1"));
-            var p2 = new Page(Location.FromPath("Page2.html"), "", ComponentsTest.GetData<Metadata>("title: p2"));
+            var p1 = new Page("Page1", "", ComponentsTest.GetData<Metadata>("title: p1"));
+            var p2 = new Page("Page2", "", ComponentsTest.GetData<Metadata>("title: p2"));
             site.MainPage.SubPages.Add(p1);
             site.MainPage.SubPages.Add(p2);
-            site.MainPage.Assets.Add(new File(Location.FromPath(xmlFilePath), System.IO.File.ReadAllBytes(xmlFilePath)));
+            site.MainPage.Assets.Add(new Asset("sitemap.xml", System.IO.File.ReadAllBytes(xmlFilePath)));
 
             var compiler = new DocifyEngine("", "", "", Environment_e.Test).Resove<ICompiler>();
-            var files = await compiler.Compile(site);
+            var files = await compiler.Compile(site).ToListAsync();
 
             var sitemap = files.First(f => f.Location.FileName == "sitemap.xml");
 

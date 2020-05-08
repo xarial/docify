@@ -60,7 +60,7 @@ namespace Themes.Tests
 
         public static Site NewSite(string pageContent, string includePath, Metadata pageData = null, Configuration siteConfig = null)
         {
-            var page = new Page(Location.FromPath("index.html"), pageContent, pageData);
+            var page = new Page("", pageContent, pageData);
             var site = new Site("www.example.com", page, siteConfig);
 
             LoadInclude(includePath, site);
@@ -72,9 +72,9 @@ namespace Themes.Tests
         {
             var compiler = new DocifyEngine("", "", "", Environment_e.Test).Resove<ICompiler>();
 
-            var files = await compiler.Compile(site);
+            var files = await compiler.Compile(site).ToListAsync();
 
-            var res = files.First(f => f.Location == site.MainPage.Location).AsTextContent();
+            var res = files.First(f => f.Location.ToId() == "index.html").AsTextContent();
 
             res = Normalize(res);
 

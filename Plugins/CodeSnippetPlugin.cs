@@ -90,7 +90,7 @@ namespace Xarial.Docify.Lib.Plugins
 
                 if (string.IsNullOrEmpty(lang)) 
                 {
-                    lang = Path.GetExtension(snipAsset.Name).TrimStart('.').ToLower();
+                    lang = Path.GetExtension(snipAsset.FileName).TrimStart('.').ToLower();
                 }
 
                 var snips = CodeSnippetHelper.Select(rawCode, lang, new CodeSelectorOptions()

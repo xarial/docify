@@ -6,10 +6,10 @@
 <div class="bar3"></div>
 </a>
 <li class="menu-item">
-<a href="/SubPage1.html">sp1</a>
+<a href="/Page1/SubPage1/">sp1</a>
 </li>
 <li class="menu-item">
-<a href="/SubPage2.html">sp2</a>
+<a href="/Page1/SubPage2/">sp2</a>
 </li>
 </ul>
 </div>

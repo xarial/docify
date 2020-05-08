@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="System.ServiceModel.Syndication" Version="4.7.0" />
     <PackageReference Include="YamlDotNet" Version="8.0.0" />
+    <PackageReference Include="System.Linq.Async" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>

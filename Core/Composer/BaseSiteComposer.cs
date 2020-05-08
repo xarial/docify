@@ -273,8 +273,7 @@ namespace Xarial.Docify.Core.Composer
             var refAssets = new List<IFile>(assets);
             var refPages = new List<IFile>(srcPages);
 
-            ProcessChildren(mainPage, refPages, refAssets, layouts,
-                new Location(Enumerable.Empty<string>()));
+            ProcessChildren(mainPage, refPages, refAssets, layouts, Location.Empty);
 
             var unprocessed = refPages.Union(refAssets);
 

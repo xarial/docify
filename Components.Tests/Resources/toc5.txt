@@ -4,12 +4,12 @@
 <li>
 <div class="tree-toc-node pointer" >
 <span class="article"></span>
-<a href="/SubPage1.html" class="toc-entry">sp1</a>
+<a href="/Page1/SubPage1/" class="toc-entry">sp1</a>
 </li>
 <li>
 <div class="tree-toc-node pointer" >
 <span class="article"></span>
-<a href="/SubPage2.html" class="toc-entry">sp2</a>
+<a href="/Page1/SubPage2/" class="toc-entry">sp2</a>
 </li>
 </ul>
 </div>

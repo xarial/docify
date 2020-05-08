@@ -54,7 +54,7 @@ namespace Xarial.Docify.Core.Compiler
 
             var outFiles = new List<IFile>();
 
-            await foreach (var file in CompileAll(site.MainPage, site, null))
+            await foreach (var file in CompileAll(site.MainPage, site, Location.Empty))
             {
                 yield return file;
             }
@@ -88,7 +88,7 @@ namespace Xarial.Docify.Core.Compiler
 
             ILocation thisLoc = null;
 
-            if (baseLoc != null)
+            if (!baseLoc.IsEmpty())
             {
                 thisLoc = baseLoc.Combine(new Location(PAGE_FILE_NAME, page.Name));
             }
@@ -119,7 +119,7 @@ namespace Xarial.Docify.Core.Compiler
         {
             foreach (var asset in folder.Assets)
             {
-                var thisLoc = baseLoc.Combine(new Location(asset.Name));
+                var thisLoc = baseLoc.Combine(new Location(asset.FileName));
                 yield return await CompileAsset(asset, site, page, thisLoc);
             }
 

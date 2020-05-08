@@ -52,15 +52,22 @@ namespace Xarial.Docify.Core.Compiler.Context
                 .ConvertAll(p => new ContextPage(m_Site, p, GetChildPageUrl(p))));
 
         public IReadOnlyList<IContextAsset> Assets => BasePage.Assets
-            .ConvertAll<IContextAsset>(a => new ContextAsset(a.Name, a.Content));
+            .ConvertAll<IContextAsset>(a => new ContextAsset(a.FileName, a.Content));
 
         public ContextPage(ISite site, IPage page, string url)
         {
+            if (string.IsNullOrEmpty(url)) 
+            {
+                url = "/";
+            }
+
             m_Site = site;
             BasePage = page;
             Url = url;
-            
-            FullUrl = site.BaseUrl.TrimEnd('/') + "/" + Url.TrimStart('/');
+
+            var partUrl = Url.TrimStart('/');
+
+            FullUrl = site.BaseUrl + (string.IsNullOrEmpty(partUrl) ? "" : "/" + partUrl);
             //Name = page.Name;
             //RawContent = page.RawContent;
         }

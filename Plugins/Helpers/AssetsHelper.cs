@@ -53,7 +53,7 @@ namespace Xarial.Docify.Lib.Plugins.Helpers
                 curFolder = nextDir;
             }
 
-            var asset = curFolder.Assets.FirstOrDefault(a => string.Equals(a.Name, fileName));
+            var asset = curFolder.Assets.FirstOrDefault(a => string.Equals(a.FileName, fileName));
 
             if (asset == null) 
             {

@@ -32,7 +32,7 @@ namespace CLI.Tests
 
             var site = m_Composer.ComposeSite(files, "");
 
-            Assert.AreEqual(1, site.GetAllPages().Count());
+            Assert.AreEqual(0, site.MainPage.SubPages.Count);
             Assert.AreEqual("test", site.MainPage.RawContent);
         }
     }

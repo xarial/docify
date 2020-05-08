@@ -9,7 +9,7 @@ namespace Xarial.Docify.Lib.Plugins.Data
     public class PluginAsset : IAsset
     {
         public byte[] Content { get; }
-        public string Name { get; }
+        public string FileName { get; }
 
         public PluginAsset(string content, string name) 
             : this(ContentExtension.ToByteArray(content), name)
@@ -19,7 +19,7 @@ namespace Xarial.Docify.Lib.Plugins.Data
         public PluginAsset(byte[] content, string name)
         {
             Content = content;
-            Name = name;
+            FileName = name;
         }
     }
 }

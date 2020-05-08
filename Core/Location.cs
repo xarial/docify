@@ -8,6 +8,8 @@ namespace Xarial.Docify.Core
 {
     public class Location : ILocation
     {
+        public static Location Empty => new Location(Enumerable.Empty<string>());
+
         public static Location FromPath(string path, string relTo = "")
         {
             //TODO: check if path is valid

@@ -12,7 +12,7 @@
 <li>
 <div class="tree-toc-node pointer" >
 <span class="article"></span>
-<a href="/p2.html" class="toc-entry">p2</a>
+<a href="/p2/" class="toc-entry">p2</a>
 </li>
 <li>
 <div class="tree-toc-node pointer" >

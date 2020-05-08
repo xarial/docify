@@ -6,6 +6,6 @@ namespace Xarial.Docify.Base.Data
 {
     public interface IAsset : IContent
     {
-        string Name { get; }
+        string FileName { get; }
     }
 }

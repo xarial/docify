@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xarial.Docify.Base.Context;
 
@@ -39,7 +40,7 @@ namespace Xarial.Docify.Lib.Tools
 
             if (string.IsNullOrEmpty(title))
             {
-                title = page.Name;
+                title = page.Url.Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
             }
 
             return title;

@@ -9,10 +9,7 @@ namespace Xarial.Docify.Core.Data
     public class Site : ISite
     {
         public string BaseUrl { get; }
-
-        //TODO: this needs to be removed as it is currently duplicated by page assets
-        //public List<Asset> Assets { get; }
-
+        
         public IPage MainPage { get; }
         public List<ITemplate> Layouts { get; }
         public List<ITemplate> Includes { get; }

@@ -100,7 +100,7 @@ namespace Xarial.Docify.CLI
 
             var site = composer.ComposeSite(srcFiles, m_SiteUrl);
 
-            var writables = await compiler.Compile(site);
+            var writables = compiler.Compile(site);
             
             await publisher.Write(Location.FromPath(m_OutDir), writables);
         }

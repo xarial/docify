@@ -22,10 +22,10 @@ namespace Xarial.Docify.Core.Compiler.Context
 
         internal IPage BasePage { get; }
 
-        public string Url => BasePage.Location.ToUrl();
-        public string FullUrl => BasePage.Location.ToUrl(m_Site.BaseUrl);
-        public string Name => BasePage.Location.FileName;
-        public string RawContent => BasePage.RawContent;
+        public string Url { get; }
+        public string FullUrl { get; }
+        //public string Name { get; }
+        //public string RawContent { get; }
 
         public IContextMetadata Data 
         {
@@ -45,15 +45,26 @@ namespace Xarial.Docify.Core.Compiler.Context
             }
         }
 
-        public IReadOnlyList<IContextPage> SubPages => BasePage.SubPages.ConvertAll(p => new ContextPage(m_Site, p));
+        private IReadOnlyList<IContextPage> m_SubPages;
+
+        public IReadOnlyList<IContextPage> SubPages => m_SubPages
+            ?? (m_SubPages = BasePage.SubPages
+                .ConvertAll(p => new ContextPage(m_Site, p, GetChildPageUrl(p))));
 
         public IReadOnlyList<IContextAsset> Assets => BasePage.Assets
             .ConvertAll<IContextAsset>(a => new ContextAsset(a.Location.FileName, a.Content));
 
-        public ContextPage(ISite site, IPage page) 
+        public ContextPage(ISite site, IPage page, string url)
         {
             m_Site = site;
             BasePage = page;
+            Url = url;
+            
+            FullUrl = site.BaseUrl.TrimEnd('/') + "/" + Url.TrimStart('/');
+            //Name = page.Name;
+            //RawContent = page.RawContent;
         }
+
+        private string GetChildPageUrl(IPage page) => Url.TrimEnd('/') + "/" + page.Name + "/";
     }
 }

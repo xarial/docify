@@ -36,7 +36,7 @@ namespace Xarial.Docify.Core.Publisher
             m_FileSystem = fileSystem;
         }
 
-        public async Task Write(ILocation loc, IEnumerable<IFile> files)
+        public async Task Write(ILocation loc, IAsyncEnumerable<IFile> files)
         {
             var outDir = loc.ToPath();
 
@@ -45,7 +45,7 @@ namespace Xarial.Docify.Core.Publisher
                 m_FileSystem.Directory.Delete(outDir, true);
             }
 
-            foreach (var writable in files)
+            await foreach (var writable in files)
             {
                 var outFilePath = writable.Location.ToPath();
 

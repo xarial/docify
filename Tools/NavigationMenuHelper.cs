@@ -23,26 +23,26 @@ namespace Xarial.Docify.Lib.Tools
 
         public class MenuPage : IContextPage
         {
-            public string Url { get; set; } = "";
+            public string Url { get; set; }
             public string FullUrl { get; set; }
-            public string Name { get; }
+            //public string Name { get; }
             public IContextMetadata Data { get; }
             public IReadOnlyList<IContextPage> SubPages => SubPagesList;
             public List<MenuPage> SubPagesList { get; }
 
-            public string RawContent { get; }
+            //public string RawContent { get; }
 
             public IReadOnlyList<IContextAsset> Assets => throw new NotSupportedException();
 
-            public MenuPage(IContextPage page) : this(page.Name, page.Data)
+            public MenuPage(IContextPage page) : this(page.Data)
             {
                 FullUrl = page.FullUrl;
                 Url = page.Url;
             }
 
-            public MenuPage(string name, IContextMetadata data)
+            public MenuPage(IContextMetadata data)
             {
-                Name = name;
+                //Name = name;
                 SubPagesList = new List<MenuPage>();
                 Data = data;
             }
@@ -143,7 +143,7 @@ namespace Xarial.Docify.Lib.Tools
             }
             else
             {
-                return new MenuPage(url, new MenuPageMetadata(
+                return new MenuPage(new MenuPageMetadata(
                     new Dictionary<string, object>()
                     { { "caption" , url } }));
             }

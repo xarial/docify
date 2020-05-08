@@ -8,8 +8,8 @@ namespace Xarial.Docify.Base.Context
     {
         string Url { get; }
         string FullUrl { get; }
-        string Name { get; }
-        string RawContent { get; }
+        //string Name { get; }
+        //string RawContent { get; }
         IContextMetadata Data { get; }
         IReadOnlyList<IContextPage> SubPages { get; }
         IReadOnlyList<IContextAsset> Assets { get; }

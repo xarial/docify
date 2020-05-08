@@ -13,9 +13,8 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Data
 {
-    public interface IFile
+    public interface IFile : IContent
     {
-        byte[] Content { get; }
         ILocation Location { get; }
     }
 }

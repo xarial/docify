@@ -6,10 +6,10 @@ using Xarial.Docify.Base;
 
 namespace Xarial.Docify.Core.Data
 {
-    [DebuggerDisplay("~{" + nameof(Key) + "}")]
+    [DebuggerDisplay("~{" + nameof(Name) + "}")]
     public class PhantomPage : Page
     {
-        public PhantomPage(ILocation url) : base(url, null)
+        public PhantomPage(string name) : base("", name, null)
         {
         }
     }

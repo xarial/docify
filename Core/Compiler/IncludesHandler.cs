@@ -45,7 +45,7 @@ namespace Xarial.Docify.Core.Compiler
         }
         
         public async Task<string> Render(string name, IMetadata param, 
-            ISite site, IPage page)
+            ISite site, IPage page, string url)
         {
             var includePlugins = m_RenderIncludePlugins?.Where(p => string.Equals(p.IncludeName,
                 name, StringComparison.CurrentCultureIgnoreCase));
@@ -59,7 +59,7 @@ namespace Xarial.Docify.Core.Compiler
                 data = data.Merge(include.Data);
 
                 return await m_Transformer.Transform(include.RawContent, include.Key,
-                    new IncludeContextModel(site, page, data));
+                    new IncludeContextModel(site, page, data, url));
             }
             else 
             {
@@ -79,7 +79,7 @@ namespace Xarial.Docify.Core.Compiler
                     }
                     else
                     {
-                        //TODO: create specific extension
+                        //TODO: create specific exception
                         throw new Exception($"Too many plugins registered for the '{name}' include rendering");
                     }
                 }
@@ -139,15 +139,15 @@ namespace Xarial.Docify.Core.Compiler
             return Task.CompletedTask;
         }
 
-        public async Task<string> ReplaceAll(string rawContent, ISite site, IPage page)
+        public async Task<string> ReplaceAll(string rawContent, ISite site, IPage page, string url)
         {
             var replacement = await m_PlcParser.ReplaceAsync(rawContent, async (string includeRawContent) => 
             {
                 string name;
                 IMetadata data;
                 await ParseParameters(includeRawContent, out name, out data);
-                var replace = await Render(name, data, site, page);
-                return await ReplaceAll(replace, site, page);
+                var replace = await Render(name, data, site, page, url);
+                return await ReplaceAll(replace, site, page, url);
             });
 
             return replacement;

@@ -6,14 +6,14 @@ namespace Xarial.Docify.Base
 {
     public static class SiteExtension
     {
-        public static IEnumerable<IPage> GetAllPages(this ISite site)
-        {
-            yield return site.MainPage;
+        //public static IEnumerable<IPage> GetAllPages(this ISite site)
+        //{
+        //    yield return site.MainPage;
 
-            foreach (var childPage in site.MainPage.GetAllSubPages())
-            {
-                yield return childPage;
-            }
-        }
+        //    foreach (var childPage in site.MainPage.GetAllSubPages())
+        //    {
+        //        yield return childPage;
+        //    }
+        //}
     }
 }

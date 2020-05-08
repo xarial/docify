@@ -20,7 +20,7 @@ namespace Xarial.Docify.Base.Plugins
 
         internal HtmlFile(string content, ILocation loc)
         {
-            Content = FileExtension.ToByteArray(content);
+            Content = ContentExtension.ToByteArray(content);
             Location = loc;
         }
     }

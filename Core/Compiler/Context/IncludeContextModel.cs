@@ -18,8 +18,8 @@ namespace Xarial.Docify.Core.Compiler.Context
     {
         public IContextMetadata Data { get; }
 
-        internal IncludeContextModel(ISite site, IPage page, IMetadata data)
-            : base(site, page)
+        internal IncludeContextModel(ISite site, IPage page, IMetadata data, string url)
+            : base(site, page, url)
         {
             Data = new ContextMetadata(data);
         }

@@ -17,6 +17,5 @@ namespace Xarial.Docify.Base
     {
         List<IPage> SubPages { get; }
         List<IFile> Assets { get; }
-        ILocation Location { get; }
     }
 }

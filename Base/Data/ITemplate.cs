@@ -14,6 +14,5 @@ namespace Xarial.Docify.Base.Data
 {
     public interface ITemplate : IFrame
     {
-        string Name { get; }
     }
 }

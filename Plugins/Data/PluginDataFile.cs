@@ -12,7 +12,7 @@ namespace Xarial.Docify.Lib.Plugins.Data
         public ILocation Location { get; }
 
         public PluginDataFile(string content, ILocation loc) 
-            : this(FileExtension.ToByteArray(content), loc)
+            : this(ContentExtension.ToByteArray(content), loc)
         {
         }
 

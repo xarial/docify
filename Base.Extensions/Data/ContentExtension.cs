@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Xarial.Docify.Base.Data
 {
-    public static class FileExtension
+    public static class ContentExtension
     {
-        public static string AsTextContent(this IFile file)
+        public static string AsTextContent(this IContent file)
         {
             var buffer = file.Content;
 

@@ -1,18 +1,13 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Core;
-using Xarial.Docify.Core.Data;
-using Xarial.Docify.Base;
-using Xarial.Docify.Base.Data;
 
-namespace Core.Tests
+namespace Plugins.Tests
 {
     public class PageTest
     {
         [Test]
-        public void FindPageTest() 
+        public void FindPageTest()
         {
             var p1 = new Page(Location.FromPath("index.html"), "");
             var p2 = new Page(Location.FromPath(@"page2\index.html"), "");
@@ -44,7 +39,7 @@ namespace Core.Tests
         }
 
         [Test]
-        public void FindAssetTest() 
+        public void FindAssetTest()
         {
             var p1 = new Page(Location.FromPath("index.html"), "");
             var p2 = new Page(Location.FromPath(@"page2\index.html"), "");
@@ -83,7 +78,7 @@ namespace Core.Tests
         }
 
         [Test]
-        public void FindAssetPhantomPage() 
+        public void FindAssetPhantomPage()
         {
             var p1 = new Page(Location.FromPath("index.html"), "");
             var p2 = new Page(Location.FromPath(@"page2\index.html"), "");

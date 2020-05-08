@@ -60,6 +60,12 @@ namespace Xarial.Docify.Core.Composer
             layoutName = data.GetRemoveParameterOrDefault<string>(LAYOUT_VAR_NAME);
         }
 
+        private bool IsDefaultPageLocation(ILocation location)
+        {
+            return Path.GetFileNameWithoutExtension(location.FileName)
+                    .Equals("index", StringComparison.CurrentCultureIgnoreCase);
+        }
+
         private Page CreatePage(IFile src, 
             IReadOnlyDictionary<string, Template> layoutsMap, string name)
         {
@@ -78,8 +84,7 @@ namespace Xarial.Docify.Core.Composer
                 }
             }
 
-            return new Page(
-                rawContent, name, pageData, layout);
+            return new Page(name, rawContent, pageData, layout);
         }
 
         public ISite ComposeSite(IEnumerable<IFile> files, string baseUrl)
@@ -254,7 +259,7 @@ namespace Xarial.Docify.Core.Composer
             IReadOnlyList<IFile> assets)
         {
             var mainSrcPage = srcPages.FirstOrDefault(
-                p => p.Location.IsRoot() && PageExtension.IsDefaultPageLocation(p.Location));
+                p => p.Location.IsRoot() && IsDefaultPageLocation(p.Location));
 
             if (mainSrcPage == null)
             {
@@ -292,7 +297,7 @@ namespace Xarial.Docify.Core.Composer
             var children = subPages.Where(p =>
             {
                 var parentOffset = 1;
-                if (PageExtension.IsDefaultPageLocation(p.Location))
+                if (IsDefaultPageLocation(p.Location))
                 {
                     parentOffset = 2;
                 }
@@ -329,7 +334,7 @@ namespace Xarial.Docify.Core.Composer
 
                 foreach (var child in children)
                 {
-                    var pageName = PageExtension.IsDefaultPageLocation(child.Location) ?
+                    var pageName = IsDefaultPageLocation(child.Location) ?
                         child.Location.Path.LastOrDefault()
                         : Path.GetFileNameWithoutExtension(child.Location.FileName);
 
@@ -343,7 +348,7 @@ namespace Xarial.Docify.Core.Composer
 
                     var page = CreatePage(child, layouts, pageName);
 
-                    if (PageExtension.IsDefaultPageLocation(child.Location))
+                    if (IsDefaultPageLocation(child.Location))
                     {
                         ProcessChildPage(page);
                     }
@@ -376,6 +381,7 @@ namespace Xarial.Docify.Core.Composer
                     a => a.Location.GetRelative(curLoc).GetRoot()).Distinct(m_Comparer)) 
                 {
                     var subFolder = new AssetsFolder(subFolderName);
+                    folder.Folders.Add(subFolder);
                     LoadAssets(subFolder, assets, curLoc.Combine(new Location("", subFolderName)));
                 }
             }

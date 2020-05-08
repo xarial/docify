@@ -84,7 +84,18 @@ namespace Xarial.Docify.Core.Compiler
 
         private async IAsyncEnumerable<IFile> CompileAll(IPage page, ISite site, ILocation baseLoc) 
         {
-            var thisLoc = baseLoc.Combine(new Location("index.html", page.Name));
+            const string PAGE_FILE_NAME = "index.html";
+
+            ILocation thisLoc = null;
+
+            if (baseLoc != null)
+            {
+                thisLoc = baseLoc.Combine(new Location(PAGE_FILE_NAME, page.Name));
+            }
+            else 
+            {
+                thisLoc = new Location(PAGE_FILE_NAME);
+            }
 
             await foreach (var asset in CompileAssets(page, page, site, baseLoc))
             {

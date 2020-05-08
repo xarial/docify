@@ -74,12 +74,12 @@ namespace Core.Tests
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.IsNull(site.MainPage.Layout);
             Assert.IsNotNull(site.MainPage.SubPages[0].Layout);
-            Assert.AreEqual("l2", site.MainPage.SubPages.Find(p => p.Location.FileName == "p2.html").Layout.Name);
-            Assert.AreEqual("l4", site.MainPage.SubPages.Find(p => p.Location.FileName == "p4.html").Layout.Name);
-            Assert.IsNotNull(site.MainPage.SubPages.Find(p => p.Location.FileName == "p2.html").Layout.Layout);
-            Assert.AreEqual("l1", site.MainPage.SubPages.Find(p => p.Location.FileName == "p2.html").Layout.Layout.Name);
-            Assert.IsNotNull(site.MainPage.SubPages.Find(p => p.Location.FileName == "p4.html").Layout.Layout);
-            Assert.AreEqual("l3", site.MainPage.SubPages.Find(p => p.Location.FileName == "p4.html").Layout.Layout.Name);
+            Assert.AreEqual("l2", site.MainPage.SubPages.Find(p => p.Name == "p2").Layout.Name);
+            Assert.AreEqual("l4", site.MainPage.SubPages.Find(p => p.Name == "p4").Layout.Name);
+            Assert.IsNotNull(site.MainPage.SubPages.Find(p => p.Name == "p2").Layout.Layout);
+            Assert.AreEqual("l1", site.MainPage.SubPages.Find(p => p.Name == "p2").Layout.Layout.Name);
+            Assert.IsNotNull(site.MainPage.SubPages.Find(p => p.Name == "p4").Layout.Layout);
+            Assert.AreEqual("l3", site.MainPage.SubPages.Find(p => p.Name == "p4").Layout.Layout.Name);
         }
 
         [Test]

@@ -36,7 +36,7 @@ namespace Core.Tests
                 new File(Location.FromPath("C:\\external\\page3.html"), "xyz"),
             };
 
-            await publisher.Write(Location.FromPath("C:\\site"), pages);
+            await publisher.Write(Location.FromPath("C:\\site"), pages.ToAsyncEnumerable());
 
             Assert.AreEqual(2, fs.Directory.GetFiles("C:\\site", "*.*", System.IO.SearchOption.AllDirectories).Length);
             Assert.IsTrue(fs.File.Exists("C:\\site\\page1.html"));
@@ -58,7 +58,7 @@ namespace Core.Tests
                 new File(Location.FromPath("file.bin"), new byte[] { 1,2,3 })
             };
 
-            await publisher.Write(Location.FromPath("C:\\site"), assets);
+            await publisher.Write(Location.FromPath("C:\\site"), assets.ToAsyncEnumerable());
 
             Assert.AreEqual(1, fs.Directory.GetFiles("C:\\site", "*.*", System.IO.SearchOption.AllDirectories).Length);
             Assert.IsTrue(fs.File.Exists("C:\\site\\file.bin"));
@@ -79,7 +79,7 @@ namespace Core.Tests
                 new File(Location.FromPath("page1.html"), "abc")
             };
 
-            await publisher.Write(Location.FromPath("C:\\site"), pages);
+            await publisher.Write(Location.FromPath("C:\\site"), pages.ToAsyncEnumerable());
 
             Assert.AreEqual(1, fs.Directory.GetFiles("C:\\site", "*.*", System.IO.SearchOption.AllDirectories).Length);
             Assert.IsTrue(fs.File.Exists("C:\\site\\page1.html"));

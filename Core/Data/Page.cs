@@ -13,13 +13,13 @@ namespace Xarial.Docify.Core.Data
         public List<IAsset> Assets { get; }
         public List<IAssetsFolder> Folders { get; }
 
-        public Page(string rawContent, string name, Template layout = null)
-            : this(rawContent, "", new Metadata(), layout)
+        public Page(string name, string rawContent, Template layout = null)
+            : this(name, rawContent, new Metadata(), layout)
         {
 
         }
 
-        public Page(string rawContent, string name, IMetadata data, Template layout = null)
+        public Page(string name, string rawContent, IMetadata data, Template layout = null)
             : base(rawContent, name, data, layout)
         {
             SubPages = new List<IPage>();

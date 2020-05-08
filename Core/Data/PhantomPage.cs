@@ -9,7 +9,7 @@ namespace Xarial.Docify.Core.Data
     [DebuggerDisplay("~{" + nameof(Name) + "}")]
     public class PhantomPage : Page
     {
-        public PhantomPage(string name) : base("", name, null)
+        public PhantomPage(string name) : base(name, "", null)
         {
         }
     }

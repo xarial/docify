@@ -166,6 +166,23 @@ namespace CLI.Tests
         }
 
         [Test]
+        public async Task SubPageAssetTest()
+        {
+            var site = new Site("", new Page("", ""), null);
+            var asset = new Asset("file.txt", ContentExtension.ToByteArray("test"));
+            var p2 = new Page("p2", "");
+            site.MainPage.SubPages.Add(p2);
+            p2.Assets.Add(asset);
+
+            var files = await m_Compiler.Compile(site).ToListAsync();
+
+            var a = files.FirstOrDefault(f => f.Location.ToId() == "p2::file.txt");
+
+            Assert.IsNotNull(a);
+            Assert.AreEqual("test", a.AsTextContent());
+        }
+
+        [Test]
         public async Task OpenIncludeTest()
         {
             var site = new Site("", new Page("page1", "abc {% x *test*"), null);

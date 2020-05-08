@@ -58,35 +58,13 @@ namespace Xarial.Docify.Core.Compiler
             {
                 yield return file;
             }
-            //var allPages = site.GetAllPages();
-
-            //foreach (var page in allPages)
-            //{
-            //    outFiles.Add(await CompilePage(page, site));
-
-            //    foreach (var asset in page.Assets)
-            //    {
-            //        var id = asset.Location.ToId();
-
-            //        if (PathMatcher.Matches(m_Config.CompilableAssetsFilter, id))
-            //        {
-            //            outFiles.Add(await CompileAsset(asset, site));
-            //        }
-            //        else 
-            //        {
-            //            outFiles.Add(new File(asset.Location, asset.Content));
-            //        }
-            //    }
-            //}
-            
-            //return outFiles.ToArray();
         }
 
         private async IAsyncEnumerable<IFile> CompileAll(IPage page, ISite site, ILocation baseLoc) 
         {
             const string PAGE_FILE_NAME = "index.html";
 
-            ILocation thisLoc = null;
+            ILocation thisLoc;
 
             if (!baseLoc.IsEmpty())
             {
@@ -97,7 +75,7 @@ namespace Xarial.Docify.Core.Compiler
                 thisLoc = new Location(PAGE_FILE_NAME);
             }
 
-            await foreach (var asset in CompileAssets(page, page, site, baseLoc))
+            await foreach (var asset in CompileAssets(page, page, site, thisLoc))
             {
                 yield return asset;
             }
@@ -120,7 +98,16 @@ namespace Xarial.Docify.Core.Compiler
             foreach (var asset in folder.Assets)
             {
                 var thisLoc = baseLoc.Combine(new Location(asset.FileName));
-                yield return await CompileAsset(asset, site, page, thisLoc);
+
+                if (PathMatcher.Matches(m_Config.CompilableAssetsFilter, thisLoc.ToId()))
+                {
+                    yield return await CompileAsset(asset, site, page, thisLoc);
+                }
+                else
+                {
+                    yield return new File(thisLoc, asset.Content);
+                }
+                
             }
 
             foreach (var subFolder in folder.Folders) 

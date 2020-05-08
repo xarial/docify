@@ -31,7 +31,7 @@ namespace Xarial.Docify.Base.Data
 
         public static byte[] ToByteArray(string content)
         {
-            byte[] buffer = null;
+            byte[] buffer = new byte[0];
 
             if (!string.IsNullOrEmpty(content))
             {

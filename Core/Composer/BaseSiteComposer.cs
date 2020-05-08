@@ -370,7 +370,19 @@ namespace Xarial.Docify.Core.Composer
 
             var children = pageAssets.Where(p => p.Location.GetParent().IsSame(curLoc, m_Comparison)).ToList();
 
-            folder.Assets.AddRange(children.Select(a => new Asset(a.Location.FileName, a.Content)));
+            folder.Assets.AddRange(children.Select(a =>
+            {
+                var fileName = a.Location.FileName;
+                
+                if (string.IsNullOrEmpty(fileName)) 
+                {
+                    //file with no extension
+                    fileName = a.Location.GetRoot();
+                }
+
+                return new Asset(fileName, a.Content);
+            }));
+
             children.ForEach(a => assets.Remove(a));
             children.ForEach(a => pageAssets.Remove(a));
 

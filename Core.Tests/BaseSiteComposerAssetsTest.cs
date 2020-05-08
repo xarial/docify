@@ -114,6 +114,22 @@ namespace Core.Tests
         }
 
         [Test]
+        public void ComposeSite_NoExtensionAsset()
+        {
+            var src = new File[]
+            {
+                new File(Location.FromPath(@"index.md"), ""),
+                new File(Location.FromPath(@"asset"), "a1"),
+            };
+
+            var site = m_Composer.ComposeSite(src, "");
+
+            Assert.AreEqual(1, site.MainPage.Assets.Count);
+            Assert.AreEqual("asset", site.MainPage.Assets[0].FileName);
+            Assert.AreEqual("a1", site.MainPage.Assets[0].AsTextContent());
+        }
+
+        [Test]
         public void ComposeSite_SubFolderAsset()
         {
             var src = new File[]

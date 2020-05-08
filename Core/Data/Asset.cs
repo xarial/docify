@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Data
 {
+    [DebuggerDisplay("{" + nameof(FileName) + "}")]
     public class Asset : IAsset
     {
         public string FileName { get; }

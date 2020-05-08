@@ -14,7 +14,6 @@ namespace Xarial.Docify.Base.Data
 {
     public interface IFrame : ICompilable 
     {
-        string Name { get; }
         ITemplate Layout { get; }
         IMetadata Data { get; }
     }

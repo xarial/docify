@@ -52,7 +52,7 @@ namespace Xarial.Docify.Core.Compiler.Context
                 .ConvertAll(p => new ContextPage(m_Site, p, GetChildPageUrl(p))));
 
         public IReadOnlyList<IContextAsset> Assets => BasePage.Assets
-            .ConvertAll<IContextAsset>(a => new ContextAsset(a.Location.FileName, a.Content));
+            .ConvertAll<IContextAsset>(a => new ContextAsset(a.Name, a.Content));
 
         public ContextPage(ISite site, IPage page, string url)
         {

@@ -84,14 +84,14 @@ namespace Xarial.Docify.Core.Compiler
 
         private async IAsyncEnumerable<IFile> CompileAll(IPage page, ISite site, ILocation baseLoc) 
         {
-            var thisLoc = GetPageLocation(page, baseLoc);
+            var thisLoc = baseLoc.Combine(new Location("index.html", page.Name));
+
+            await foreach (var asset in CompileAssets(page, page, site, baseLoc))
+            {
+                yield return asset;
+            }
 
             var compiled = await CompilePage(page, site, thisLoc);
-            
-            foreach (var asset in page.Assets) 
-            {
-                yield return await CompileAsset(asset, site, page, thisLoc.ToUrl());
-            }
 
             yield return compiled;
 
@@ -100,6 +100,24 @@ namespace Xarial.Docify.Core.Compiler
                 await foreach (var subPage in CompileAll(child, site, thisLoc)) 
                 {
                     yield return subPage;
+                }
+            }
+        }
+
+        private async IAsyncEnumerable<IFile> CompileAssets(IAssetsFolder folder, IPage page, ISite site, ILocation baseLoc)
+        {
+            foreach (var asset in folder.Assets)
+            {
+                var thisLoc = baseLoc.Combine(new Location(asset.Name));
+                yield return await CompileAsset(asset, site, page, thisLoc);
+            }
+
+            foreach (var subFolder in folder.Folders) 
+            {
+                var folderLoc = baseLoc.Combine(new Location("", subFolder.Name));
+                await foreach (var subFolderAsset in CompileAssets(subFolder, page, site, folderLoc)) 
+                {
+                    yield return subFolderAsset;
                 }
             }
         }
@@ -123,20 +141,14 @@ namespace Xarial.Docify.Core.Compiler
             return new File(loc, content);
         }
 
-        private async Task<IFile> CompileAsset(IFile asset, ISite site, IPage page, string url)
+        private async Task<IFile> CompileAsset(IAsset asset, ISite site, IPage page, ILocation loc)
         {
+            var url = loc.ToUrl();
+
             var rawContent = asset.AsTextContent();
             var content = await m_IncludesHandler.ReplaceAll(rawContent, site, page, url);
 
-            return new File(asset.Location, content);
-        }
-
-        private ILocation GetPageLocation(IPage page, ILocation curLoc)
-        {
-            return new Location("index.html",
-                curLoc == null
-                ? new string[0]
-                : curLoc.Path.Union(new string[] { page.Name }).ToArray());
+            return new File(loc, ContentExtension.ToByteArray(content));
         }
     }
 }

@@ -356,9 +356,28 @@ namespace Xarial.Docify.Core.Composer
 
             if (!(parent is PhantomPage))
             {
-                var pageAssets = assets.Where(a => a.Location.IsInLocation(curLoc, m_Comparison)).ToList();
-                pageAssets.ForEach(a => assets.Remove(a));
-                parent.Assets.AddRange(pageAssets);
+                LoadAssets(parent, assets, curLoc);
+            }
+        }
+
+        private void LoadAssets(IAssetsFolder folder, List<IFile> assets, ILocation curLoc)
+        {
+            var pageAssets = assets.Where(a => a.Location.IsInLocation(curLoc, m_Comparison)).ToList();
+
+            var children = pageAssets.Where(p => p.Location.GetParent().IsSame(curLoc, m_Comparison)).ToList();
+
+            folder.Assets.AddRange(children.Select(a => new Asset(a.Location.FileName, a.Content)));
+            children.ForEach(a => assets.Remove(a));
+            children.ForEach(a => pageAssets.Remove(a));
+
+            if (pageAssets.Any()) 
+            {
+                foreach (var subFolderName in pageAssets.Select(
+                    a => a.Location.GetRelative(curLoc).GetRoot()).Distinct(m_Comparer)) 
+                {
+                    var subFolder = new AssetsFolder(subFolderName);
+                    LoadAssets(subFolder, assets, curLoc.Combine(new Location("", subFolderName)));
+                }
             }
         }
     }

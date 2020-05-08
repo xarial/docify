@@ -13,9 +13,8 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base
 {
-    public interface IPage : IFrame
+    public interface IPage : IFrame, IAssetsFolder
     {
         List<IPage> SubPages { get; }
-        List<IFile> Assets { get; }
     }
 }

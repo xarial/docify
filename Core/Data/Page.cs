@@ -10,8 +10,9 @@ namespace Xarial.Docify.Core.Data
     public class Page : Frame, IPage
     {
         public List<IPage> SubPages { get; }
-        public List<IFile> Assets { get; }
-        
+        public List<IAsset> Assets { get; }
+        public List<IAssetsFolder> Folders { get; }
+
         public Page(string rawContent, string name, Template layout = null)
             : this(rawContent, "", new Metadata(), layout)
         {
@@ -22,7 +23,8 @@ namespace Xarial.Docify.Core.Data
             : base(rawContent, name, data, layout)
         {
             SubPages = new List<IPage>();
-            Assets = new List<IFile>();
+            Assets = new List<IAsset>();
+            Folders = new List<IAssetsFolder>();
         }
     }
 }

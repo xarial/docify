@@ -16,6 +16,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Lib.Plugins.Data;
+using Xarial.Docify.Lib.Plugins.Helpers;
 
 namespace Xarial.Docify.Lib.Plugins
 {
@@ -31,8 +32,7 @@ namespace Xarial.Docify.Lib.Plugins
 
         private CodeColorizerBase m_Formatter;
 
-        private const string CSS_FILE_NAME = "syntax-highlight.css";
-        private readonly string[] CSS_FILE_PATH = new string[] { "assets", "styles" };
+        private readonly string CSS_FILE_PATH = "assets/styles/syntax-highlight.css";
 
         public void Init(CodeSyntaxHighlighterSettings setts)
         {
@@ -45,7 +45,7 @@ namespace Xarial.Docify.Lib.Plugins
             {
                 var css = (Formatter as HtmlClassFormatter).GetCSSString();
                 css = css.Substring("body{background-color:#FFFFFFFF;} ".Length);//temp solution - find a better way
-                site.MainPage.Assets.Add(new PluginDataFile(css, new PluginDataFileLocation(CSS_FILE_NAME, CSS_FILE_PATH)));
+                AssetsHelper.AddAsset(css, site.MainPage, CSS_FILE_PATH);
             }
         }
 
@@ -55,8 +55,7 @@ namespace Xarial.Docify.Lib.Plugins
 
             if (!m_Settings.EmbedStyle)
             {
-                this.WriteToPageHead(ref file,
-                    w => w.AddStyleSheet(string.Join('/', CSS_FILE_PATH) + "/" + CSS_FILE_NAME));
+                this.WriteToPageHead(ref file, w => w.AddStyleSheet(CSS_FILE_PATH));
             }
         }
 

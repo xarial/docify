@@ -7,6 +7,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Lib.Plugins.Data;
+using Xarial.Docify.Lib.Plugins.Helpers;
 using Xarial.Docify.Lib.Plugins.Properties;
 
 namespace Xarial.Docify.Lib.Plugins
@@ -14,19 +15,17 @@ namespace Xarial.Docify.Lib.Plugins
     [Plugin("responsive-image")]
     public class ResponsiveImagePlugin : IPreCompilePlugin, IPrePublishFilePlugin, IRenderImagePlugin
     {
-        private const string CSS_FILE_NAME = "responsive-image.css";
-        private readonly string[] CSS_FILE_PATH = new string[] { "assets", "styles" };
+        private readonly string CSS_FILE_PATH = "assets/styles/responsive-image.css";
         private const string CLASS_NAME = "responsive";
 
         public void PreCompile(ISite site)
         {
-            site.MainPage.Assets.Add(new PluginDataFile(Resources.responsive_image, new PluginDataFileLocation(CSS_FILE_NAME, CSS_FILE_PATH)));
+            AssetsHelper.AddAsset(Resources.responsive_image, site.MainPage, CSS_FILE_PATH);
         }
 
         public void PrePublishFile(ILocation outLoc, ref IFile file, out bool skip)
         {
-            this.WriteToPageHead(ref file, 
-                w => w.AddStyleSheet(string.Join('/', CSS_FILE_PATH) + "/" + CSS_FILE_NAME));
+            this.WriteToPageHead(ref file, w => w.AddStyleSheet(CSS_FILE_PATH));
 
             skip = false;
         }

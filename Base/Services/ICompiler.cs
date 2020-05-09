@@ -15,6 +15,6 @@ namespace Xarial.Docify.Base.Services
 {
     public interface ICompiler
     {
-        Task<IFile[]> Compile(ISite site);
+        IAsyncEnumerable<IFile> Compile(ISite site);
     }
 }

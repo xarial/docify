@@ -6,7 +6,7 @@
 <div class="bar3"></div>
 </a>
 <li class="menu-item">
-<a href="/Page1.html">x1</a>
+<a href="/Page1/">x1</a>
 </li>
 </ul>
 </div>

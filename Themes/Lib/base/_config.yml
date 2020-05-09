@@ -6,10 +6,10 @@
   - social-share
   - youtube
   - cookie-consent
-  - tipue-search
 plugins:
   - image-optimizer
   - responsive-image
+  - tipue-search
 title_attribute: caption
 ignore:
   - _config.yml

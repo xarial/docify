@@ -26,7 +26,7 @@ namespace Xarial.Docify.Core.Data
         }
 
         public File(ILocation path, string content)
-            : this(path, FileExtension.ToByteArray(content))
+            : this(path, ContentExtension.ToByteArray(content))
         {
         }
 

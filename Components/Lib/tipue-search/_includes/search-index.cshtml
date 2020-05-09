@@ -28,7 +28,7 @@ count: true
         var pageSearchData = pages.Select(p => new PageSearchData()
         {
             title = Xarial.Docify.Lib.Tools.PageHelper.GetTitle(p, null),
-            text = NormalizeText(p.RawContent),
+            text = NormalizeText("p.RawContent"),
             url = p.FullUrl
         });
 

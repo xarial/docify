@@ -1,5 +1,5 @@
 <channel>
-<title>index.html</title>
+<title></title>
 <description></description>
 <link>www.example.com</link>
 <lastBuildDate>-</lastBuildDate>
@@ -7,8 +7,8 @@
 <item>
 <title>p1</title>
 <description></description>
-<link>www.example.com/Page1.html</link>
-<guid isPermaLink="true">www.example.com/Page1.html</guid>
+<link>www.example.com/Page1/</link>
+<guid isPermaLink="true">www.example.com/Page1/</guid>
 <category>cat1</category>
 <category>cat2</category>
 </item>

@@ -6,20 +6,20 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Lib.Plugins.Data
 {
-    public class PluginDataFile : IFile
+    public class PluginAsset : IAsset
     {
         public byte[] Content { get; }
-        public ILocation Location { get; }
+        public string FileName { get; }
 
-        public PluginDataFile(string content, ILocation loc) 
-            : this(FileExtension.ToByteArray(content), loc)
+        public PluginAsset(string content, string name) 
+            : this(ContentExtension.ToByteArray(content), name)
         {
         }
 
-        public PluginDataFile(byte[] content, ILocation loc)
+        public PluginAsset(byte[] content, string name)
         {
             Content = content;
-            Location = loc;
+            FileName = name;
         }
     }
 }

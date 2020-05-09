@@ -9,7 +9,7 @@
 <a href="">Page1</a>
 <ul class="sub-menu-item-container">
 <li class="menu-item">
-<a href="/p2.html">p2</a>
+<a href="/p2/">p2</a>
 </li>
 <li class="menu-item">
 <a href="">SubPage2</a>

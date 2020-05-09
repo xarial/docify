@@ -1,10 +1,10 @@
 <channel>
-<title>index.html</title>
+<title></title>
 <description></description>
 <link>www.example.com</link>
 <image>
 <url>www.example.com/img1.png</url>
-<title>index.html</title>
+<title></title>
 <link>www.example.com</link>
 </image>
 <lastBuildDate>-</lastBuildDate>

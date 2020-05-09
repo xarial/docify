@@ -135,7 +135,10 @@ namespace Xarial.Docify.Base
 
             if (!string.Equals(loc.FileName, other.FileName, compType)) 
             {
-                return false;
+                if (!string.IsNullOrEmpty(loc.FileName) || !string.IsNullOrEmpty(other.FileName))
+                {
+                    return false;
+                }
             }
 
             if (loc.Path.Count == other.Path.Count)

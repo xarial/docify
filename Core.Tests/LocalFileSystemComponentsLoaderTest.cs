@@ -32,11 +32,11 @@ namespace Core.Tests
             var loaderMock = new Mock<ILoader>();
 
             loaderMock.Setup(m => m.Load(It.IsAny<Location>()))
-                .Returns<Location>(l => Task.FromResult<IEnumerable<IFile>>(new IFile[] 
+                .Returns<Location>(l => new IFile[] 
                 {
                     new File(Location.FromPath("file1.txt"), $"{l.Path.Last()}_theme_f1"),
                     new File(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2")
-                }));
+                }.ToAsyncEnumerable());
 
             m_Loader = loaderMock.Object;
         }
@@ -54,7 +54,7 @@ namespace Core.Tests
             {
                 new File(Location.FromPath("file2.txt"), ""),
                 new File(Location.FromPath("dir\\file3.txt"), "")
-            });
+            }.ToAsyncEnumerable()).ToListAsync();
 
             Assert.AreEqual(4, res.Count());
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file1.txt"));
@@ -80,7 +80,7 @@ namespace Core.Tests
                 new File(Location.FromPath("file1.txt"), "f1"),
                 new File(Location.FromPath("file2.txt"), ""),
                 new File(Location.FromPath("dir\\file3.txt"), "")
-            });
+            }.ToAsyncEnumerable()).ToListAsync();
 
             Assert.AreEqual(4, res.Count());
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file1.txt"));
@@ -120,7 +120,7 @@ namespace Core.Tests
                         };
                     }
 
-                    return Task.FromResult<IEnumerable<IFile>>(res);
+                    return res.ToAsyncEnumerable();
                 });
 
             var conf = new Configuration()
@@ -138,7 +138,7 @@ namespace Core.Tests
                 new File(Location.FromPath("dir\\file2.txt"), "f2"),
                 new File(Location.FromPath("dir\\file3.txt"), "f3"),
                 new File(Location.FromPath("file5.txt"), "f5")
-            });
+            }.ToAsyncEnumerable()).ToListAsync();
 
             Assert.AreEqual(6, res.Count());
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file1.txt"));
@@ -157,7 +157,7 @@ namespace Core.Tests
         }
 
         [Test]
-        public void Load_Duplicate()
+        public async Task Load_Duplicate()
         {
             var compLoader = new LocalFileSystemComponentsLoader(m_Loader, new Configuration()
             {
@@ -165,10 +165,23 @@ namespace Core.Tests
                 ComponentsFolder = Location.FromPath("C:\\components")
             });
 
-            Assert.ThrowsAsync<DuplicateComponentSourceFileException>(() => compLoader.Load(new IFile[]
+
+            Exception err = null;
+            
+            //cannot test IAsyncEnumerable with Assert.Throws or Assert.ThrowsAsync
+            try
             {
-                new File(Location.FromPath("dir\\file2.txt"), "")
-            }));
+                await foreach (var x in compLoader.Load(new IFile[]
+                {
+                    new File(Location.FromPath("dir\\file2.txt"), "")
+                }.ToAsyncEnumerable())) ;
+            }
+            catch (DuplicateComponentSourceFileException ex)
+            {
+                err = ex;
+            }
+
+            Assert.IsNotNull(err);
         }
     }
 }

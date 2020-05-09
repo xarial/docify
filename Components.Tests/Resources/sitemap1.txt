@@ -4,9 +4,9 @@
 <loc>www.example.com</loc>
 </url>
 <url>
-<loc>www.example.com/Page1.html</loc>
+<loc>www.example.com/Page1/</loc>
 </url>
 <url>
-<loc>www.example.com/Page2.html</loc>
+<loc>www.example.com/Page2/</loc>
 </url>
 </urlset>

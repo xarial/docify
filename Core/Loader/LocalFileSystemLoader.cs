@@ -37,10 +37,8 @@ namespace Xarial.Docify.Core.Loader
             m_FileSystem = fileSystem;
         }
 
-        public async Task<IEnumerable<IFile>> Load(ILocation location)
-        {
-            var files = new List<IFile>();
-            
+        public async IAsyncEnumerable<IFile> Load(ILocation location)
+        {            
             var path = location.ToPath();
 
             if (!m_FileSystem.Directory.Exists(path)) 
@@ -58,11 +56,9 @@ namespace Xarial.Docify.Core.Loader
                     var loc = Location.FromPath(relPath);
 
                     var content = await m_FileSystem.File.ReadAllBytesAsync(filePath);
-                    files.Add(new Data.File(loc, content));
+                    yield return new Data.File(loc, content);
                 }
             }
-
-            return files;
         }
     }
 }

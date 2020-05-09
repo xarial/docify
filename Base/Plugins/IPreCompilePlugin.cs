@@ -8,11 +8,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Xarial.Docify.Base.Plugins
 {
     public interface IPreCompilePlugin : IPlugin
     {
-        void PreCompile(ISite site);
+        Task PreCompile(ISite site);
     }
 }

@@ -36,7 +36,7 @@ namespace Xarial.Docify.Core.Publisher
             m_FileSystem = fileSystem;
         }
 
-        public async Task Write(ILocation loc, IEnumerable<IFile> files)
+        public async Task Write(ILocation loc, IAsyncEnumerable<IFile> files)
         {
             var outDir = loc.ToPath();
 
@@ -45,7 +45,7 @@ namespace Xarial.Docify.Core.Publisher
                 m_FileSystem.Directory.Delete(outDir, true);
             }
 
-            foreach (var writable in files)
+            await foreach (var writable in files)
             {
                 var outFilePath = writable.Location.ToPath();
 
@@ -70,15 +70,17 @@ namespace Xarial.Docify.Core.Publisher
 
                 IFile outFile = new Data.File(outLoc, writable.Content);
                 
-                m_PrePublishFilePlugins.InvokePluginsIfAny(p =>
+                await m_PrePublishFilePlugins.InvokePluginsIfAnyAsync(async (p) =>
                 {
-                    bool skipThis = false;
-                    
-                    p.PrePublishFile(loc, ref outFile, out skipThis);
-                    
-                    if (skipThis) 
+                    var res = await p.PrePublishFile(loc, outFile);
+
+                    if (res.SkipFile)
                     {
                         skip = true;
+                    }
+                    else 
+                    {
+                        outFile = res.File;
                     }
                 });
 

@@ -20,7 +20,7 @@ namespace Xarial.Docify.Base.Plugins
 
         internal HtmlFile(string content, ILocation loc)
         {
-            Content = FileExtension.ToByteArray(content);
+            Content = ContentExtension.ToByteArray(content);
             Location = loc;
         }
     }
@@ -92,8 +92,8 @@ namespace Xarial.Docify.Base.Plugins
         private static bool IsHtmlPage(IFile file) => string.Equals(Path.GetExtension(file.Location.FileName), ".html",
                 StringComparison.InvariantCultureIgnoreCase);
 
-        public static void WriteToPageHead(this IPrePublishFilePlugin plugin, 
-            ref IFile file, Action<IHeadWriter> writer)
+        public static IFile WriteToPageHead(this IPrePublishFilePlugin plugin, 
+            IFile file, Action<IHeadWriter> writer)
         {
             if (IsHtmlPage(file)) 
             {
@@ -102,9 +102,11 @@ namespace Xarial.Docify.Base.Plugins
                 
                 if (htmlWriter.HasChanged) 
                 {
-                    file = new HtmlFile(htmlWriter.Content, file.Location);
+                    return new HtmlFile(htmlWriter.Content, file.Location);
                 }
             }
+
+            return file;
         }
     }
 }

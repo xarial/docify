@@ -30,51 +30,53 @@ namespace Xarial.Docify.Core.Loader
             m_Config = conf;
         }
 
-        public async Task<IEnumerable<IFile>> Load(IEnumerable<IFile> srcFiles)
+        public async IAsyncEnumerable<IFile> Load(IAsyncEnumerable<IFile> srcFiles)
         {
-            if (srcFiles == null)
+            var resFileIds = new List<string>();
+
+            await foreach (var srcFile in srcFiles) 
             {
-                srcFiles = Enumerable.Empty<IFile>();
+                resFileIds.Add(srcFile.Location.ToId());
+                yield return srcFile;
             }
-
-            var resFiles = srcFiles.ToDictionary(f => f.Location.ToId(), f => f, StringComparer.CurrentCultureIgnoreCase);
-
+            
             if (m_Config.Components?.Any() == true)
             {
                 foreach (var comp in m_Config.Components)
                 {
-                    await AddFiles(resFiles, m_Config.ComponentsFolder.Combine(comp), comp, false);
+                    await foreach (var file in LoadFiles(resFileIds, m_Config.ComponentsFolder.Combine(comp), comp, false)) 
+                    {
+                        yield return file;
+                    }
                 }
             }
 
             foreach (var theme in m_Config.ThemesHierarchy) 
             {
-                await AddFiles(resFiles, m_Config.ThemesFolder.Combine(theme), theme, true);
+                await foreach (var file in LoadFiles(resFileIds, m_Config.ThemesFolder.Combine(theme), theme, true)) 
+                {
+                    yield return file;
+                }
             }
-
-            return resFiles.Values;
         }
 
-        private async Task AddFiles(Dictionary<string, IFile> srcFiles, ILocation loc, string fragName, bool allowInherit) 
+        private async IAsyncEnumerable<IFile> LoadFiles(
+            List<string> resFileIds, ILocation loc, string fragName, bool allowInherit) 
         {
-            var newSrcFiles = await m_Loader.Load(loc);
-
-            if (newSrcFiles != null) 
+            await foreach (var newSrcFile in m_Loader.Load(loc))
             {
-                foreach (var newSrcFile in newSrcFiles) 
-                {
-                    var id = newSrcFile.Location.ToId();
+                var id = newSrcFile.Location.ToId();
 
-                    if (!srcFiles.ContainsKey(id))
+                if (!resFileIds.Contains(id))
+                {
+                    resFileIds.Add(id);
+                    yield return newSrcFile;
+                }
+                else
+                {
+                    if (!allowInherit)
                     {
-                        srcFiles.Add(id, newSrcFile);
-                    }
-                    else 
-                    {
-                        if (!allowInherit)
-                        {
-                            throw new DuplicateComponentSourceFileException(fragName, id);
-                        }
+                        throw new DuplicateComponentSourceFileException(fragName, id);
                     }
                 }
             }

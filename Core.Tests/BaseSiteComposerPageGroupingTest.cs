@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
@@ -32,123 +33,123 @@ namespace Core.Tests
         }
 
         [Test]
-        public void ComposeSite_IndexPageTest() 
+        public async Task ComposeSite_IndexPageTest() 
         {
             var src = new File[]
             {
                 new File(Location.FromPath(@"index.md"), "i"),
                 new File(Location.FromPath(@"page1\index.md"), "p1")
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
-            Assert.AreEqual("index.html", site.MainPage.Location.ToId());
+            Assert.AreEqual("", site.MainPage.Name);
             Assert.AreEqual("i", site.MainPage.RawContent);
             Assert.AreEqual(0, site.MainPage.SubPages[0].SubPages.Count);
-            Assert.AreEqual("page1::index.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.AreEqual("page1", site.MainPage.SubPages[0].Name);
             Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
         }
 
         [Test]
-        public void ComposeSite_NamedPageTest()
+        public async Task ComposeSite_NamedPageTest()
         {
             var src = new File[]
             {
                 new File(Location.FromPath(@"index.md"), "i"),
                 new File(Location.FromPath(@"page1.md"), "p1")
-            };
+            }.ToAsyncEnumerable();
             
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.AreEqual("page1.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.AreEqual("page1", site.MainPage.SubPages[0].Name);
             Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
         }
 
         [Test]
-        public void ComposeSite_NestedIndexPageUndefinedTest()
+        public async Task ComposeSite_NestedIndexPageUndefinedTest()
         {
             var src = new File[]
             {
                 new File(Location.FromPath(@"index.md"), "i"),
                 new File(Location.FromPath(@"page1\page2\index.md"), "p2")
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.AreEqual("page1::index.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.AreEqual("page1", site.MainPage.SubPages[0].Name);
             Assert.IsTrue(string.IsNullOrEmpty(site.MainPage.SubPages[0].RawContent));
             Assert.AreEqual(1, site.MainPage.SubPages[0].SubPages.Count);
-            Assert.AreEqual("page1::page2::index.html", site.MainPage.SubPages[0].SubPages[0].Location.ToId());
+            Assert.AreEqual("page2", site.MainPage.SubPages[0].SubPages[0].Name);
             Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
         }
 
         [Test]
-        public void ComposeSite_NestedIndexPageTest()
+        public async Task ComposeSite_NestedIndexPageTest()
         {
             var src = new File[]
             {
                 new File(Location.FromPath(@"index.md"), "i"),
                 new File(Location.FromPath(@"page1\page2\index.md"), "p2"),
                 new File(Location.FromPath(@"page1\index.md"), "p1")
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.AreEqual("page1::index.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.AreEqual("page1", site.MainPage.SubPages[0].Name);
             Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
             Assert.AreEqual(1, site.MainPage.SubPages[0].SubPages.Count);
-            Assert.AreEqual("page1::page2::index.html", site.MainPage.SubPages[0].SubPages[0].Location.ToId());
+            Assert.AreEqual("page2", site.MainPage.SubPages[0].SubPages[0].Name);
             Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
         }
 
         [Test]
-        public void ComposeSite_NestedNamedPageUndefinedTest()
+        public async Task ComposeSite_NestedNamedPageUndefinedTest()
         {
             var src = new File[]
             {
                 new File(Location.FromPath(@"index.md"), "i"),
                 new File(Location.FromPath(@"page1\page2.md"), "p2")
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
             Assert.IsNotInstanceOf<PhantomPage>(site.MainPage);
-            Assert.AreEqual("page1::index.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.AreEqual("page1", site.MainPage.SubPages[0].Name);
             Assert.IsInstanceOf<PhantomPage>(site.MainPage.SubPages[0]);
             Assert.IsTrue(string.IsNullOrEmpty(site.MainPage.SubPages[0].RawContent));
             Assert.AreEqual(1, site.MainPage.SubPages[0].SubPages.Count);
-            Assert.AreEqual("page1::page2.html", site.MainPage.SubPages[0].SubPages[0].Location.ToId());
+            Assert.AreEqual("page2", site.MainPage.SubPages[0].SubPages[0].Name);
             Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
             Assert.IsNotInstanceOf<PhantomPage>(site.MainPage.SubPages[0].SubPages[0]);
         }
 
         [Test]
-        public void ComposeSite_NestedNamedPageTest()
+        public async Task ComposeSite_NestedNamedPageTest()
         {
             var src = new File[]
             {
                 new File(Location.FromPath(@"index.md"), "i"),
                 new File(Location.FromPath(@"page1\index.md"), "p1"),
                 new File(Location.FromPath(@"page1\page2.md"), "p2")
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.AreEqual("page1::index.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.AreEqual("page1", site.MainPage.SubPages[0].Name);
             Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
             Assert.AreEqual(1, site.MainPage.SubPages[0].SubPages.Count);
-            Assert.AreEqual("page1::page2.html", site.MainPage.SubPages[0].SubPages[0].Location.ToId());
+            Assert.AreEqual("page2", site.MainPage.SubPages[0].SubPages[0].Name);
             Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
         }
 
@@ -160,13 +161,13 @@ namespace Core.Tests
                 new File(Location.FromPath(@"index.md"), ""),
                 new File(Location.FromPath(@"page1\index.md"), ""),
                 new File(Location.FromPath(@"page1.md"), "")
-            };
+            }.ToAsyncEnumerable();
 
-            Assert.Throws<DuplicatePageException>(() => m_Composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<DuplicatePageException>(() => m_Composer.ComposeSite(src, ""));
         }
 
         [Test]
-        public void ComposeSite_CaseInsensitiveTest()
+        public async Task ComposeSite_CaseInsensitiveTest()
         {
             var src = new File[]
             {
@@ -174,18 +175,18 @@ namespace Core.Tests
                 new File(Location.FromPath(@"PAGE1\Page2\index.md"), "p2"),
                 new File(Location.FromPath(@"page1\index.md"), "p1"),
                 new File(Location.FromPath(@"page1\Page3\INDEX.md"), "p3"),
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            StringAssert.AreEqualIgnoringCase("page1::index.html", site.MainPage.SubPages[0].Location.ToId());
+            StringAssert.AreEqualIgnoringCase("page1", site.MainPage.SubPages[0].Name);
             Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
             Assert.AreEqual(2, site.MainPage.SubPages[0].SubPages.Count);
-            StringAssert.AreEqualIgnoringCase("page1::page2::index.html", site.MainPage.SubPages[0].SubPages[0].Location.ToId());
+            StringAssert.AreEqualIgnoringCase("page2", site.MainPage.SubPages[0].SubPages[0].Name);
             Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
-            StringAssert.AreEqualIgnoringCase("page1::page3::index.html", site.MainPage.SubPages[0].SubPages[1].Location.ToId());
+            StringAssert.AreEqualIgnoringCase("page3", site.MainPage.SubPages[0].SubPages[1].Name);
             Assert.AreEqual("p3", site.MainPage.SubPages[0].SubPages[1].RawContent);
         }
 
@@ -195,9 +196,9 @@ namespace Core.Tests
             var src = new File[]
             {
                 new File(Location.FromPath(@"page1\index.txt"), ""),
-            };
+            }.ToAsyncEnumerable();
 
-            Assert.Throws<EmptySiteException>(() => m_Composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<EmptySiteException>(() => m_Composer.ComposeSite(src, ""));
         }
 
         [Test]
@@ -207,13 +208,13 @@ namespace Core.Tests
             {
                 new File(Location.FromPath(@"page1\index.md"), ""),
                 new File(Location.FromPath(@"page1.md"), "")
-            };
+            }.ToAsyncEnumerable();
 
-            Assert.Throws<SiteMainPageMissingException>(() => m_Composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<SiteMainPageMissingException>(() => m_Composer.ComposeSite(src, ""));
         }
 
         [Test]
-        public void ComposeSite_DifferentPageTypesTest()
+        public async Task ComposeSite_DifferentPageTypesTest()
         {
             var src = new File[]
             {
@@ -221,23 +222,23 @@ namespace Core.Tests
                 new File(Location.FromPath(@"page1\page2\index.cshtml"), "p2"),
                 new File(Location.FromPath(@"page1\index.md"), "p1"),
                 new File(Location.FromPath(@"page1\page3\index.html"), "p3"),
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.AreEqual("page1::index.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.AreEqual("page1", site.MainPage.SubPages[0].Name);
             Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
             Assert.AreEqual(2, site.MainPage.SubPages[0].SubPages.Count);
-            Assert.AreEqual("page1::page2::index.html", site.MainPage.SubPages[0].SubPages[0].Location.ToId());
+            Assert.AreEqual("page2", site.MainPage.SubPages[0].SubPages[0].Name);
             Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
-            Assert.AreEqual("page1::page3::index.html", site.MainPage.SubPages[0].SubPages[1].Location.ToId());
+            Assert.AreEqual("page3", site.MainPage.SubPages[0].SubPages[1].Name);
             Assert.AreEqual("p3", site.MainPage.SubPages[0].SubPages[1].RawContent);
         }
 
         [Test]
-        public void ComposeSite_SkippedNotPageTest()
+        public async Task ComposeSite_SkippedNotPageTest()
         {
             var src = new IFile[]
             {
@@ -245,15 +246,15 @@ namespace Core.Tests
                 new File(Location.FromPath(@"page1\index.md"), "p1"),
                 new File(Location.FromPath(@"page1\asset1.txt"), "p1"),
                 new File(Location.FromPath(@"asset2.ini"), "p1")
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
-            Assert.AreEqual("index.html", site.MainPage.Location.ToId());
+            Assert.AreEqual("", site.MainPage.Name);
             Assert.AreEqual("i", site.MainPage.RawContent);
             Assert.AreEqual(0, site.MainPage.SubPages[0].SubPages.Count);
-            Assert.AreEqual("page1::index.html", site.MainPage.SubPages[0].Location.ToId());
+            Assert.AreEqual("page1", site.MainPage.SubPages[0].Name);
             Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
         }
     }

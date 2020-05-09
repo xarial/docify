@@ -36,7 +36,7 @@ namespace Xarial.Docify.Core.Compiler
         private readonly PlaceholdersParser m_PlcParser;
 
         [ImportPlugins]
-        private IEnumerable<IRenderIncludePlugin> m_RenderIncludePlugins = null;
+        private IEnumerable<IIncludeResolverPlugin> m_IncludeResolverPlugins = null;
 
         public IncludesHandler(IContentTransformer transformer) 
         {
@@ -45,45 +45,50 @@ namespace Xarial.Docify.Core.Compiler
         }
         
         public async Task<string> Render(string name, IMetadata param, 
-            ISite site, IPage page)
+            ISite site, IPage page, string url)
         {
-            var includePlugins = m_RenderIncludePlugins?.Where(p => string.Equals(p.IncludeName,
+            var includePlugins = m_IncludeResolverPlugins?.Where(p => string.Equals(p.IncludeName,
                 name, StringComparison.CurrentCultureIgnoreCase));
 
             var include = site.Includes.FirstOrDefault(i => string.Equals(i.Name,
                 name, StringComparison.CurrentCultureIgnoreCase));
 
+            var pluginsCount = includePlugins?.Count();
+
             if (include != null)
             {
+                if (pluginsCount > 0) 
+                {
+                    //TODO: create specific extension
+                    throw new Exception($"Both plugin and include registered for '{name}'");
+                }
+
                 var data = ComposeDataParameters(name, param, site, page);
                 data = data.Merge(include.Data);
 
                 return await m_Transformer.Transform(include.RawContent, include.Key,
-                    new IncludeContextModel(site, page, data));
+                    new IncludeContextModel(site, page, data, url));
             }
             else 
             {
-                if (includePlugins != null)
+                if (pluginsCount == 1)
                 {
-                    if (includePlugins.Count() == 1)
-                    {
-                        var includePlugin = includePlugins.First();
+                    var includePlugin = includePlugins.First();
 
-                        if (param == null) 
-                        {
-                            param = new Metadata();
-                        }
-
-                        var data = ComposeDataParameters(name, param, site, page);
-                        return await includePlugin.GetContent(data, page);
-                    }
-                    else
+                    if (param == null)
                     {
-                        //TODO: create specific extension
-                        throw new Exception($"Too many plugins registered for the '{name}' include rendering");
+                        param = new Metadata();
                     }
+
+                    var data = ComposeDataParameters(name, param, site, page);
+                    return await includePlugin.ResolveInclude(data, page);
                 }
-                else 
+                else if (pluginsCount > 1)
+                {
+                    //TODO: create specific exception
+                    throw new Exception($"Too many plugins registered for the '{name}' include rendering");
+                }
+                else
                 {
                     throw new MissingIncludeException(name);
                 }
@@ -139,15 +144,15 @@ namespace Xarial.Docify.Core.Compiler
             return Task.CompletedTask;
         }
 
-        public async Task<string> ReplaceAll(string rawContent, ISite site, IPage page)
+        public async Task<string> ReplaceAll(string rawContent, ISite site, IPage page, string url)
         {
             var replacement = await m_PlcParser.ReplaceAsync(rawContent, async (string includeRawContent) => 
             {
                 string name;
                 IMetadata data;
                 await ParseParameters(includeRawContent, out name, out data);
-                var replace = await Render(name, data, site, page);
-                return await ReplaceAll(replace, site, page);
+                var replace = await Render(name, data, site, page, url);
+                return await ReplaceAll(replace, site, page, url);
             });
 
             return replacement;

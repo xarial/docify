@@ -93,14 +93,14 @@ namespace Xarial.Docify.CLI
             var compiler = Resove<ICompiler>();
             var publisher = Resove<IPublisher>();
 
-            var srcFiles = await loader.Load(Location.FromPath(m_SrcDir));
+            var srcFiles = loader.Load(Location.FromPath(m_SrcDir));
 
             var compsLoader = Resove<IComponentsLoader>();
-            srcFiles = await compsLoader.Load(srcFiles);
+            srcFiles = compsLoader.Load(srcFiles);
 
-            var site = composer.ComposeSite(srcFiles, m_SiteUrl);
+            var site = await composer.ComposeSite(srcFiles, m_SiteUrl);
 
-            var writables = await compiler.Compile(site);
+            var writables = compiler.Compile(site);
             
             await publisher.Write(Location.FromPath(m_OutDir), writables);
         }

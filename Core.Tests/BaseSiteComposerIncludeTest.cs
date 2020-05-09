@@ -17,6 +17,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Composer;
+using System.Threading.Tasks;
 
 namespace Core.Tests
 {
@@ -31,15 +32,15 @@ namespace Core.Tests
         }
 
         [Test]
-        public void ComposeSite_SingleInclude() 
+        public async Task ComposeSite_SingleInclude() 
         {
             var src = new File[]
             {
                 new File(Location.FromPath(@"_includes\\i1.md"), "Include"),
                 new File(Location.FromPath(@"index.md"), ""),
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.Includes.Count);
             Assert.AreEqual("i1", site.Includes[0].Name);
@@ -48,7 +49,7 @@ namespace Core.Tests
         }
 
         [Test]
-        public void ComposeSite_MultipleInclude()
+        public async Task ComposeSite_MultipleInclude()
         {
             var src = new File[]
             {
@@ -56,9 +57,9 @@ namespace Core.Tests
                 new File(Location.FromPath(@"_includes\\i2.txt"), "i2content"),
                 new File(Location.FromPath(@"_includes\\i3.ini"), "i3content"),
                 new File(Location.FromPath(@"index.md"), ""),
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(3, site.Includes.Count);
             Assert.AreEqual(0, site.Includes.Select(i => i.Name).Except(new string[] { "i1", "i2", "i3" }).Count());
@@ -68,15 +69,15 @@ namespace Core.Tests
         }
 
         [Test]
-        public void ComposeSite_IncludeMetadata()
+        public async Task ComposeSite_IncludeMetadata()
         {
             var src = new File[]
             {
                 new File(Location.FromPath(@"_includes\\i1.md"), "---\r\nprp1: A\r\nprp2: B\r\n---\r\ni1content"),
                 new File(Location.FromPath(@"index.md"), ""),
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.Includes.Count);
             Assert.AreEqual("i1", site.Includes[0].Name);
@@ -93,21 +94,21 @@ namespace Core.Tests
                 new File(Location.FromPath(@"_includes\\i1.md"), ""),
                 new File(Location.FromPath(@"_includes\\i1.txt"), ""),
                 new File(Location.FromPath(@"index.md"), ""),
-            };
+            }.ToAsyncEnumerable();
 
-            Assert.Throws<DuplicateTemplateException>(() => m_Composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<DuplicateTemplateException>(() => m_Composer.ComposeSite(src, ""));
         }
 
         [Test]
-        public void ComposeSite_SubFolderInclude()
+        public async Task ComposeSite_SubFolderInclude()
         {
             var src = new File[]
             {
                 new File(Location.FromPath(@"_includes\\dir1\\i1.md"), "Include"),
                 new File(Location.FromPath(@"index.md"), ""),
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.Includes.Count);
             Assert.AreEqual("dir1::i1", site.Includes[0].Name);

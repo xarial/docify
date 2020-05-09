@@ -9,7 +9,7 @@
 <a href="/">Home</a>
 </li>
 <li class="menu-item">
-<a href="/Page1.html">p1</a>
+<a href="/Page1/">p1</a>
 </li>
 </ul>
 </div>

@@ -32,14 +32,13 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("code-snippet")]
-    public class CodeSnippetPlugin : IPreCompilePlugin, IRenderIncludePlugin, IPrePublishFilePlugin, IPlugin<CodeSnippetSettings>
+    public class CodeSnippetPlugin : IPreCompilePlugin, IIncludeResolverPlugin, IPrePublishFilePlugin, IPlugin<CodeSnippetSettings>
     {
         public string IncludeName => "code-snippet";
 
         private CodeSnippetSettings m_Settings;
 
-        private const string CSS_FILE_NAME = "code-snippet.css";
-        private readonly string[] CSS_FILE_PATH = new string[] { "assets", "styles" };
+        private readonly string CSS_FILE_PATH = "assets/styles/code-snippet.css";
 
         private List<ILocation> m_SnippetFiles;
 
@@ -53,25 +52,26 @@ namespace Xarial.Docify.Lib.Plugins
             m_Settings = setts;
         }
 
-        public void PreCompile(ISite site)
+        public Task PreCompile(ISite site)
         {
             m_Site = site;
 
-            site.MainPage.Assets.Add(new PluginDataFile(Resources.code_snippet,
-                new PluginDataFileLocation(CSS_FILE_NAME, CSS_FILE_PATH)));
+            AssetsHelper.AddTextAsset(Resources.code_snippet, site.MainPage, CSS_FILE_PATH);
 
             m_SnippetFiles = new List<ILocation>();
+
+            return Task.CompletedTask;
         }
 
-        public async Task<string> GetContent(IMetadata data, IPage page)
+        public async Task<string> ResolveInclude(IMetadata data, IPage page)
         {
             var snipData = data.ToObject<CodeSnippetData>();
 
-            IFile snipAsset;
+            IAsset snipAsset;
 
             try
             {
-                snipAsset = AssetsFinder.FindAsset(m_Site, page, snipData.FileName);
+                snipAsset = AssetsHelper.FindAsset(m_Site, page, snipData.FileName);
             }
             catch (Exception ex)
             {
@@ -80,10 +80,11 @@ namespace Xarial.Docify.Lib.Plugins
             
             if (snipAsset != null)
             {
-                if (!m_SnippetFiles.Contains(snipAsset.Location))
-                {
-                    m_SnippetFiles.Add(snipAsset.Location);
-                }
+                //TODO: fix
+                //if (!m_SnippetFiles.Contains(snipAsset.Location))
+                //{
+                //    m_SnippetFiles.Add(snipAsset.Location);
+                //}
 
                 var rawCode = snipAsset.AsTextContent();
 
@@ -91,7 +92,7 @@ namespace Xarial.Docify.Lib.Plugins
 
                 if (string.IsNullOrEmpty(lang)) 
                 {
-                    lang = Path.GetExtension(snipAsset.Location.FileName).TrimStart('.').ToLower();
+                    lang = Path.GetExtension(snipAsset.FileName).TrimStart('.').ToLower();
                 }
 
                 var snips = CodeSnippetHelper.Select(rawCode, lang, new CodeSelectorOptions()
@@ -138,21 +139,26 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        public void PrePublishFile(ILocation outLoc, ref IFile file, out bool skip)
+        public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
         {
+            var res = new PrePublishResult()
+            {
+                File = file,
+                SkipFile = false
+            };
+
             if (string.Equals(Path.GetExtension(file.Location.FileName), ".html", StringComparison.InvariantCultureIgnoreCase))
             {
-                this.WriteToPageHead(ref file,
-                    w => w.AddStyleSheet(string.Join('/', CSS_FILE_PATH) + "/" + CSS_FILE_NAME));
-
-                skip = false;
+                res.File = this.WriteToPageHead(file, w => w.AddStyleSheet(CSS_FILE_PATH));
             }
-            else 
+            else
             {
                 var relLoc = file.Location.GetRelative(outLoc);
-                skip = m_Settings.ExcludeSnippets
+                res.SkipFile = m_Settings.ExcludeSnippets
                     && m_SnippetFiles.Contains(relLoc, new LocationEqualityComparer());
             }
+
+            return Task.FromResult(res);
         }
     }
 }

@@ -17,6 +17,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Composer;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Core.Tests
 {
@@ -31,15 +32,15 @@ namespace Core.Tests
         }
 
         [Test]
-        public void ComposeSite_ContentMetadataSimpleProperties()
+        public async Task ComposeSite_ContentMetadataSimpleProperties()
         {
             var src = new File[]
             {
                 new File(Location.FromPath(@"index.md"),
                 "---\r\nprp1: A\r\nprp2: B\r\n---\r\nText Line1\r\nText Line2"),
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(2, site.MainPage.Data.Count);
@@ -48,15 +49,15 @@ namespace Core.Tests
         }
 
         [Test]
-        public void ComposeSite_ContentMetadataNestedProperties()
+        public async Task ComposeSite_ContentMetadataNestedProperties()
         {
             var src = new File[]
             {
                 new File(Location.FromPath(@"index.md"),
                 "---\r\nprp1: A\r\nprp2:\r\n  prp3: B\r\n---\r\nText Line1\r\nText Line2"),
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(2, site.MainPage.Data.Count);
@@ -66,15 +67,15 @@ namespace Core.Tests
         }
 
         [Test]
-        public void ComposeSite_ContentMetadataArray()
+        public async Task ComposeSite_ContentMetadataArray()
         {
             var src = new File[]
             {
                 new File(Location.FromPath(@"index.md"),
                 "---\r\nprp1: A\r\nprp2:\r\n  - B\r\n  - C\r\n---\r\nText Line1\r\nText Line2"),
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(2, site.MainPage.Data.Count);
@@ -85,15 +86,15 @@ namespace Core.Tests
         }
 
         [Test]
-        public void ComposeSite_ContentNoFrontMatter()
+        public async Task ComposeSite_ContentNoFrontMatter()
         {
             var src = new File[]
             {
                 new File(Location.FromPath(@"index.md"),
                 "Text Line1\r\nText Line2"),
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(0, site.MainPage.Data.Count);
@@ -106,9 +107,9 @@ namespace Core.Tests
             {
                 new File(Location.FromPath(@"index.md"),
                 "---\r\nText Line1\r\nText Line2"),
-            };
+            }.ToAsyncEnumerable();
 
-            Assert.Throws<FrontMatterErrorException>(() => m_Composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<FrontMatterErrorException>(() => m_Composer.ComposeSite(src, ""));
         }
     }
 }

@@ -35,10 +35,7 @@ namespace Xarial.Docify.Core.Compiler
 
         [ImportPlugins]
         private IEnumerable<IPreCompilePlugin> m_PreCompilePlugins = null;
-
-        [ImportPlugins]
-        private IEnumerable<IPostCompilePlugin> m_PostCompilePlugins = null;
-        
+                
         public BaseCompiler(BaseCompilerConfig config,
             ILogger logger, ILayoutParser layoutParser,
             IIncludesHandler includesHandler,
@@ -51,41 +48,82 @@ namespace Xarial.Docify.Core.Compiler
             m_IncludesHandler = includesHandler;
         }
 
-        public async Task<IFile[]> Compile(ISite site)
+        public async IAsyncEnumerable<IFile> Compile(ISite site)
         {
-            m_PreCompilePlugins.InvokePluginsIfAny(p => p.PreCompile(site));
+            await m_PreCompilePlugins.InvokePluginsIfAnyAsync(async (p) => await p.PreCompile(site));
 
             var outFiles = new List<IFile>();
 
-            var allPages = site.GetAllPages();
-
-            foreach (var page in allPages)
+            await foreach (var file in CompileAll(site.MainPage, site, Location.Empty))
             {
-                outFiles.Add(await CompilePage(page, site));
+                yield return file;
+            }
+        }
 
-                foreach (var asset in page.Assets)
-                {
-                    var id = asset.Location.ToId();
+        private async IAsyncEnumerable<IFile> CompileAll(IPage page, ISite site, ILocation baseLoc) 
+        {
+            const string PAGE_FILE_NAME = "index.html";
 
-                    if (PathMatcher.Matches(m_Config.CompilableAssetsFilter, id))
-                    {
-                        outFiles.Add(await CompileAsset(asset, site));
-                    }
-                    else 
-                    {
-                        outFiles.Add(new File(asset.Location, asset.Content));
-                    }
-                }
+            ILocation thisLoc;
+
+            if (!baseLoc.IsEmpty())
+            {
+                thisLoc = baseLoc.Combine(new Location(PAGE_FILE_NAME, page.Name));
+            }
+            else 
+            {
+                thisLoc = new Location(PAGE_FILE_NAME);
             }
 
-            m_PostCompilePlugins.InvokePluginsIfAny(p => p.PostCompile(site));
+            await foreach (var asset in CompileAssets(page, page, site, thisLoc))
+            {
+                yield return asset;
+            }
 
-            return outFiles.ToArray();
+            var compiled = await CompilePage(page, site, thisLoc);
+
+            yield return compiled;
+
+            foreach (var child in page.SubPages) 
+            {
+                await foreach (var subPage in CompileAll(child, site, thisLoc)) 
+                {
+                    yield return subPage;
+                }
+            }
+        }
+
+        private async IAsyncEnumerable<IFile> CompileAssets(IAssetsFolder folder, IPage page, ISite site, ILocation baseLoc)
+        {
+            foreach (var asset in folder.Assets)
+            {
+                var thisLoc = baseLoc.Combine(new Location(asset.FileName));
+
+                if (PathMatcher.Matches(m_Config.CompilableAssetsFilter, thisLoc.ToId()))
+                {
+                    yield return await CompileAsset(asset, site, page, thisLoc);
+                }
+                else
+                {
+                    yield return new File(thisLoc, asset.Content);
+                }
+                
+            }
+
+            foreach (var subFolder in folder.Folders) 
+            {
+                var folderLoc = baseLoc.Combine(new Location("", subFolder.Name));
+                await foreach (var subFolderAsset in CompileAssets(subFolder, page, site, folderLoc)) 
+                {
+                    yield return subFolderAsset;
+                }
+            }
         }
         
-        private async Task<IFile> CompilePage(IPage page, ISite site)
+        private async Task<IFile> CompilePage(IPage page, ISite site, ILocation loc)
         {
-            var model = new ContextModel(site, page);
+            var url = loc.ToUrl();
+            var model = new ContextModel(site, page, url);
 
             var content = await m_ContentTransformer.Transform(page.RawContent, page.Key, model);
             
@@ -96,17 +134,19 @@ namespace Xarial.Docify.Core.Compiler
                 content = await m_LayoutParser.InsertContent(layout, content, model);
             }
 
-            content = await m_IncludesHandler.ReplaceAll(content, site, page);
+            content = await m_IncludesHandler.ReplaceAll(content, site, page, url);
 
-            return new File(page.Location, content);
+            return new File(loc, content);
         }
 
-        private async Task<IFile> CompileAsset(IFile asset, ISite site)
+        private async Task<IFile> CompileAsset(IAsset asset, ISite site, IPage page, ILocation loc)
         {
-            var rawContent = asset.AsTextContent();
-            var content = await m_IncludesHandler.ReplaceAll(rawContent, site, null);
+            var url = loc.ToUrl();
 
-            return new File(asset.Location, content);
+            var rawContent = asset.AsTextContent();
+            var content = await m_IncludesHandler.ReplaceAll(rawContent, site, page, url);
+
+            return new File(loc, ContentExtension.ToByteArray(content));
         }
     }
 }

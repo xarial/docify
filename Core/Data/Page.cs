@@ -10,23 +10,21 @@ namespace Xarial.Docify.Core.Data
     public class Page : Frame, IPage
     {
         public List<IPage> SubPages { get; }
-        public List<IFile> Assets { get; }
-        public ILocation Location { get; }
+        public List<IAsset> Assets { get; }
+        public List<IAssetsFolder> Folders { get; }
 
-        public override string Key => Location.ToId();
-
-        public Page(ILocation url, string rawContent, Template layout = null)
-            : this(url, rawContent, new Metadata(), layout)
+        public Page(string name, string rawContent, Template layout = null)
+            : this(name, rawContent, new Metadata(), layout)
         {
 
         }
 
-        public Page(ILocation url, string rawContent, IMetadata data, Template layout = null)
-            : base(rawContent, data, layout)
+        public Page(string name, string rawContent, IMetadata data, Template layout = null)
+            : base(rawContent, name, data, layout)
         {
-            Location = url;
             SubPages = new List<IPage>();
-            Assets = new List<IFile>();
+            Assets = new List<IAsset>();
+            Folders = new List<IAssetsFolder>();
         }
     }
 }

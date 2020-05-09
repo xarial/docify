@@ -19,10 +19,10 @@ namespace Xarial.Docify.Core.Compiler.Context
         public IContextSite Site { get; }
         public IContextPage Page { get; }
 
-        public ContextModel(ISite site, IPage page)
+        public ContextModel(ISite site, IPage page, string url)
         {
             Site = new ContextSite(site);
-            Page = new ContextPage(site, page);
+            Page = new ContextPage(site, page, url);
         }
     }
 }

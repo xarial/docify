@@ -5,7 +5,7 @@
 <li>
 <div class="tree-toc-node pointer" >
 <span class="article"></span>
-<a href="/Page1.html" class="toc-entry">p1</a>
+<a href="/Page1/" class="toc-entry">p1</a>
 </li>
 </ul>
 </div>

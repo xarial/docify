@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
@@ -39,7 +40,7 @@ namespace Xarial.Docify.Lib.Plugins
             m_Settings = setts;
         }
 
-        public void PreCompile(ISite site)
+        public Task PreCompile(ISite site)
         {
             if (!m_Settings.EmbedStyle)
             {
@@ -47,16 +48,24 @@ namespace Xarial.Docify.Lib.Plugins
                 css = css.Substring("body{background-color:#FFFFFFFF;} ".Length);//temp solution - find a better way
                 AssetsHelper.AddTextAsset(css, site.MainPage, CSS_FILE_PATH);
             }
-        }
 
-        public void PrePublishFile(ILocation outLoc, ref IFile file, out bool skip)
+            return Task.CompletedTask;
+        }
+        
+        public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
         {
-            skip = false;
+            var res = new PrePublishResult()
+            {
+                File = file,
+                SkipFile = false
+            };
 
             if (!m_Settings.EmbedStyle)
             {
-                this.WriteToPageHead(ref file, w => w.AddStyleSheet(CSS_FILE_PATH));
+                res.File = this.WriteToPageHead(file, w => w.AddStyleSheet(CSS_FILE_PATH));
             }
+
+            return Task.FromResult(res);
         }
 
         private ILanguage FileLanguageCodeById(string lang) 

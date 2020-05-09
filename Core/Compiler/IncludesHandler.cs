@@ -36,7 +36,7 @@ namespace Xarial.Docify.Core.Compiler
         private readonly PlaceholdersParser m_PlcParser;
 
         [ImportPlugins]
-        private IEnumerable<IRenderIncludePlugin> m_RenderIncludePlugins = null;
+        private IEnumerable<IIncludeResolverPlugin> m_IncludeResolverPlugins = null;
 
         public IncludesHandler(IContentTransformer transformer) 
         {
@@ -47,7 +47,7 @@ namespace Xarial.Docify.Core.Compiler
         public async Task<string> Render(string name, IMetadata param, 
             ISite site, IPage page, string url)
         {
-            var includePlugins = m_RenderIncludePlugins?.Where(p => string.Equals(p.IncludeName,
+            var includePlugins = m_IncludeResolverPlugins?.Where(p => string.Equals(p.IncludeName,
                 name, StringComparison.CurrentCultureIgnoreCase));
 
             var include = site.Includes.FirstOrDefault(i => string.Equals(i.Name,
@@ -81,7 +81,7 @@ namespace Xarial.Docify.Core.Compiler
                     }
 
                     var data = ComposeDataParameters(name, param, site, page);
-                    return await includePlugin.GetContent(data, page);
+                    return await includePlugin.ResolveInclude(data, page);
                 }
                 else if (pluginsCount > 1)
                 {

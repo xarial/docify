@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
@@ -18,16 +19,22 @@ namespace Xarial.Docify.Lib.Plugins
         private readonly string CSS_FILE_PATH = "assets/styles/responsive-image.css";
         private const string CLASS_NAME = "responsive";
 
-        public void PreCompile(ISite site)
+        public Task PreCompile(ISite site)
         {
             AssetsHelper.AddTextAsset(Resources.responsive_image, site.MainPage, CSS_FILE_PATH);
+
+            return Task.CompletedTask;
         }
 
-        public void PrePublishFile(ILocation outLoc, ref IFile file, out bool skip)
+        public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
         {
-            this.WriteToPageHead(ref file, w => w.AddStyleSheet(CSS_FILE_PATH));
+            var res = new PrePublishResult()
+            {
+                File = this.WriteToPageHead(file, w => w.AddStyleSheet(CSS_FILE_PATH)),
+                SkipFile = false
+            };
 
-            skip = false;
+            return Task.FromResult(res);
         }
 
         public void RenderImage(StringBuilder html)

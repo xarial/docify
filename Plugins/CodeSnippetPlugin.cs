@@ -32,7 +32,7 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("code-snippet")]
-    public class CodeSnippetPlugin : IPreCompilePlugin, IRenderIncludePlugin, IPrePublishFilePlugin, IPlugin<CodeSnippetSettings>
+    public class CodeSnippetPlugin : IPreCompilePlugin, IIncludeResolverPlugin, IPrePublishFilePlugin, IPlugin<CodeSnippetSettings>
     {
         public string IncludeName => "code-snippet";
 
@@ -52,16 +52,18 @@ namespace Xarial.Docify.Lib.Plugins
             m_Settings = setts;
         }
 
-        public void PreCompile(ISite site)
+        public Task PreCompile(ISite site)
         {
             m_Site = site;
 
             AssetsHelper.AddTextAsset(Resources.code_snippet, site.MainPage, CSS_FILE_PATH);
 
             m_SnippetFiles = new List<ILocation>();
+
+            return Task.CompletedTask;
         }
 
-        public async Task<string> GetContent(IMetadata data, IPage page)
+        public async Task<string> ResolveInclude(IMetadata data, IPage page)
         {
             var snipData = data.ToObject<CodeSnippetData>();
 
@@ -137,20 +139,26 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        public void PrePublishFile(ILocation outLoc, ref IFile file, out bool skip)
+        public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
         {
+            var res = new PrePublishResult()
+            {
+                File = file,
+                SkipFile = false
+            };
+
             if (string.Equals(Path.GetExtension(file.Location.FileName), ".html", StringComparison.InvariantCultureIgnoreCase))
             {
-                this.WriteToPageHead(ref file, w => w.AddStyleSheet(CSS_FILE_PATH));
-
-                skip = false;
+                res.File = this.WriteToPageHead(file, w => w.AddStyleSheet(CSS_FILE_PATH));
             }
-            else 
+            else
             {
                 var relLoc = file.Location.GetRelative(outLoc);
-                skip = m_Settings.ExcludeSnippets
+                res.SkipFile = m_Settings.ExcludeSnippets
                     && m_SnippetFiles.Contains(relLoc, new LocationEqualityComparer());
             }
+
+            return Task.FromResult(res);
         }
     }
 }

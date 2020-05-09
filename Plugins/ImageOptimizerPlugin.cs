@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Lib.Plugins.Data;
 using Xarial.Docify.Lib.Plugins.Helpers;
+using System.Threading.Tasks;
 
 namespace Xarial.Docify.Lib.Plugins
 {
@@ -63,7 +64,7 @@ namespace Xarial.Docify.Lib.Plugins
             m_Settings = setts;
         }
 
-        public void PreCompile(ISite site)
+        public Task PreCompile(ISite site)
         {
             foreach (var page in AssetsHelper.GetAllPages(site.MainPage)) 
             {
@@ -115,6 +116,8 @@ namespace Xarial.Docify.Lib.Plugins
             {
                 GenerateFavIcon(site);
             }
+
+            return Task.CompletedTask;
         }
 
         private void GenerateFavIcon(ISite site) 
@@ -129,9 +132,13 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        public void PrePublishFile(ILocation outLoc, ref IFile file, out bool skip)
+        public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
         {
-            skip = false;
+            var res = new PrePublishResult()
+            {
+                File = file,
+                SkipFile = false
+            };
 
             var path = file.Location.ToPath();
 
@@ -155,13 +162,15 @@ namespace Xarial.Docify.Lib.Plugins
                                 {
                                     quantized.Save(outStr, img.RawFormat);
                                     outStr.Seek(0, SeekOrigin.Begin);
-                                    file = new PluginFile(outStr.GetBuffer(), file.Location);
+                                    res.File = new PluginFile(outStr.GetBuffer(), file.Location);
                                 }
                             }
                         }
                     }
                 }
             }
+
+            return Task.FromResult(res);
         }
     }
 }

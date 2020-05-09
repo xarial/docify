@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Xarial.Docify.Base.Plugins;
 
 namespace Xarial.Docify.Core.Plugin
@@ -22,6 +23,18 @@ namespace Xarial.Docify.Core.Plugin
                 foreach (var plugin in plugins)
                 {
                     invoker.Invoke(plugin);
+                }
+            }
+        }
+
+        public static async Task InvokePluginsIfAnyAsync<T>(this IEnumerable<T> plugins, Func<T, Task> invoker)
+            where T : IPlugin
+        {
+            if (plugins != null)
+            {
+                foreach (var plugin in plugins)
+                {
+                    await invoker.Invoke(plugin);
                 }
             }
         }

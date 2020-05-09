@@ -50,7 +50,7 @@ namespace Xarial.Docify.Core.Compiler
 
         public async IAsyncEnumerable<IFile> Compile(ISite site)
         {
-            m_PreCompilePlugins.InvokePluginsIfAny(p => p.PreCompile(site));
+            await m_PreCompilePlugins.InvokePluginsIfAnyAsync(async (p) => await p.PreCompile(site));
 
             var outFiles = new List<IFile>();
 

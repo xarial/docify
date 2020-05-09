@@ -70,15 +70,17 @@ namespace Xarial.Docify.Core.Publisher
 
                 IFile outFile = new Data.File(outLoc, writable.Content);
                 
-                m_PrePublishFilePlugins.InvokePluginsIfAny(p =>
+                await m_PrePublishFilePlugins.InvokePluginsIfAnyAsync(async (p) =>
                 {
-                    bool skipThis = false;
-                    
-                    p.PrePublishFile(loc, ref outFile, out skipThis);
-                    
-                    if (skipThis) 
+                    var res = await p.PrePublishFile(loc, outFile);
+
+                    if (res.SkipFile)
                     {
                         skip = true;
+                    }
+                    else 
+                    {
+                        outFile = res.File;
                     }
                 });
 

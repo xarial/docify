@@ -6,9 +6,9 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Plugins
 {
-    public interface IRenderIncludePlugin : IPlugin
+    public interface IIncludeResolverPlugin : IPlugin
     {
         string IncludeName { get; }
-        Task<string> GetContent(IMetadata data, IPage page);
+        Task<string> ResolveInclude(IMetadata data, IPage page);
     }
 }

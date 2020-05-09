@@ -198,13 +198,13 @@ namespace Core.Tests
         {
             var includesHandler = CreateNewIncludesHandler();
 
-            var includePluginMock = new Mock<IRenderIncludePlugin>();
+            var includePluginMock = new Mock<IIncludeResolverPlugin>();
             includePluginMock.SetupGet(x => x.IncludeName).Returns("plugin-include");
-            includePluginMock.Setup(x => x.GetContent(It.IsAny<IMetadata>(), It.IsAny<IPage>()))
+            includePluginMock.Setup(x => x.ResolveInclude(It.IsAny<IMetadata>(), It.IsAny<IPage>()))
                 .Returns(new Func<IMetadata, IPage, Task<string>>((m, p) => Task.FromResult("render-result")));
 
-            includesHandler.GetType().GetField("m_RenderIncludePlugins", BindingFlags.NonPublic | BindingFlags.Instance)
-                .SetValue(includesHandler, new IRenderIncludePlugin[] { includePluginMock.Object });
+            includesHandler.GetType().GetField("m_IncludeResolverPlugins", BindingFlags.NonPublic | BindingFlags.Instance)
+                .SetValue(includesHandler, new IIncludeResolverPlugin[] { includePluginMock.Object });
 
             var p1 = new Page("", "{% plugin-include { param1: x, param2: b} %}");
             var s = new Site("", p1, null);

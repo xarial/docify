@@ -13,8 +13,14 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Plugins
 {
+    public struct PrePublishResult 
+    {
+        public IFile File { get; set; }
+        public bool SkipFile { get; set; }
+    }
+
     public interface IPrePublishFilePlugin : IPlugin
     {
-        void PrePublishFile(ILocation outLoc, ref IFile file, out bool skip);
+        Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file);
     }
 }

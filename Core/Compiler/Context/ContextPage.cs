@@ -33,7 +33,7 @@ namespace Xarial.Docify.Core.Compiler.Context
             {
                 var thisParam = new Metadata();
 
-                IFrame frame = BasePage;
+                ISheet frame = BasePage;
 
                 while (frame != null) 
                 {

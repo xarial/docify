@@ -19,13 +19,25 @@ namespace Xarial.Docify.Core.Data
 
         public ILocation Location { get; }
 
-        public File(ILocation path, byte[] content)
+        public string Id { get; }
+
+        public File(ILocation path, byte[] content) : this(path, content, Guid.NewGuid().ToString())
+        {
+        }
+
+        public File(ILocation path, byte[] content, string id)
         {
             Location = path;
             Content = content;
+            Id = id;
         }
 
-        public File(ILocation path, string content)
+        public File(ILocation path, string content) 
+            : this(path, content, Guid.NewGuid().ToString())
+        {
+        }
+
+        public File(ILocation path, string content, string id)
             : this(path, ContentExtension.ToByteArray(content))
         {
         }

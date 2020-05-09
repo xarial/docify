@@ -13,7 +13,7 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Data
 {
-    public interface IFile : IContent
+    public interface IFile : IContent, IResource
     {
         ILocation Location { get; }
     }

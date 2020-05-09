@@ -11,9 +11,8 @@ using System.Text;
 
 namespace Xarial.Docify.Base
 {
-    public interface ICompilable
+    public interface IResource
     {
-        string RawContent { get; }
-        string Key { get; }
+        string Id { get; }
     }
 }

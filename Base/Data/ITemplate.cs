@@ -12,7 +12,7 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Data
 {
-    public interface ITemplate : IFrame
+    public interface ITemplate : ISheet
     {
         string Name { get; }
     }

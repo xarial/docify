@@ -32,7 +32,8 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("code-snippet")]
-    public class CodeSnippetPlugin : IPreCompilePlugin, IIncludeResolverPlugin, IPrePublishFilePlugin, IPlugin<CodeSnippetSettings>
+    public class CodeSnippetPlugin : IPreCompilePlugin, IPageContentWriterPlugin, IIncludeResolverPlugin, 
+        IPrePublishFilePlugin, IPlugin<CodeSnippetSettings>
     {
         public string IncludeName => "code-snippet";
 
@@ -141,24 +142,21 @@ namespace Xarial.Docify.Lib.Plugins
 
         public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
         {
+            var relLoc = file.Location.GetRelative(outLoc);
+
             var res = new PrePublishResult()
             {
                 File = file,
-                SkipFile = false
+                SkipFile = m_Settings.ExcludeSnippets
+                    && m_SnippetFiles.Contains(relLoc, new LocationEqualityComparer())
             };
-
-            if (string.Equals(Path.GetExtension(file.Location.FileName), ".html", StringComparison.InvariantCultureIgnoreCase))
-            {
-                res.File = this.WriteToPageHead(file, w => w.AddStyleSheet(CSS_FILE_PATH));
-            }
-            else
-            {
-                var relLoc = file.Location.GetRelative(outLoc);
-                res.SkipFile = m_Settings.ExcludeSnippets
-                    && m_SnippetFiles.Contains(relLoc, new LocationEqualityComparer());
-            }
-
+            
             return Task.FromResult(res);
+        }
+
+        public Task<string> WritePageContent(string content, string url)
+        {
+            return Task.FromResult(this.WriteToPageHead(content, w => w.AddStyleSheets(CSS_FILE_PATH)));
         }
     }
 }

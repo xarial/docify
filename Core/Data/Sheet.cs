@@ -7,21 +7,21 @@ using Xarial.Docify.Base.Data;
 namespace Xarial.Docify.Core.Data
 {
     [DebuggerDisplay("{" + nameof(Name) + "}")]
-    public abstract class Frame : IFrame
+    public abstract class Sheet : ISheet
     {
         public string RawContent { get; }
         public ITemplate Layout { get; }
         public IMetadata Data { get; }
-        public string Key { get; }
+        public string Id { get; }
         public string Name { get; }
 
-        public Frame(string rawContent, string name, IMetadata data, Template layout)
+        protected Sheet(string rawContent, string name, IMetadata data, Template layout)
         {
             Name = name;
             RawContent = rawContent;
             Layout = layout;
             Data = data ?? new Metadata();
-            Key = Guid.NewGuid().ToString();
+            Id = Guid.NewGuid().ToString();
         }
     }
 }

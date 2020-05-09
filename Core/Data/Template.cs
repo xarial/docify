@@ -5,7 +5,7 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Data
 {
-    public class Template : Frame, ITemplate
+    public class Template : Sheet, ITemplate
     {
         public Template(string name, string rawContent,
             IMetadata data = null, Template baseTemplate = null)

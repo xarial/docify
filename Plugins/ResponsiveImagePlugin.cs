@@ -14,7 +14,7 @@ using Xarial.Docify.Lib.Plugins.Properties;
 namespace Xarial.Docify.Lib.Plugins
 {
     [Plugin("responsive-image")]
-    public class ResponsiveImagePlugin : IPreCompilePlugin, IPrePublishFilePlugin, IRenderImagePlugin
+    public class ResponsiveImagePlugin : IPreCompilePlugin, IPageContentWriterPlugin, IRenderImagePlugin
     {
         private readonly string CSS_FILE_PATH = "assets/styles/responsive-image.css";
         private const string CLASS_NAME = "responsive";
@@ -25,18 +25,7 @@ namespace Xarial.Docify.Lib.Plugins
 
             return Task.CompletedTask;
         }
-
-        public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
-        {
-            var res = new PrePublishResult()
-            {
-                File = this.WriteToPageHead(file, w => w.AddStyleSheet(CSS_FILE_PATH)),
-                SkipFile = false
-            };
-
-            return Task.FromResult(res);
-        }
-
+        
         public void RenderImage(StringBuilder html)
         {
             var img = html.ToString();
@@ -66,6 +55,12 @@ namespace Xarial.Docify.Lib.Plugins
 
             html.Clear();
             html.Append(string.Format(Resources.img_figure, img, imgSrc, imgAlt));
+        }
+
+        public Task<string> WritePageContent(string content, string url)
+        {
+            content = this.WriteToPageHead(content, w => w.AddStyleSheets(CSS_FILE_PATH));
+            return Task.FromResult(content);
         }
     }
 }

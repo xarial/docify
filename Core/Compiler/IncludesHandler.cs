@@ -66,7 +66,7 @@ namespace Xarial.Docify.Core.Compiler
                 var data = ComposeDataParameters(name, param, site, page);
                 data = data.Merge(include.Data);
 
-                return await m_Transformer.Transform(include.RawContent, include.Key,
+                return await m_Transformer.Transform(include.RawContent, include.Id,
                     new IncludeContextModel(site, page, data, url));
             }
             else 

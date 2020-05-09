@@ -41,7 +41,7 @@ namespace Xarial.Docify.Core.Compiler
 
             while (layout != null)
             {
-                var layoutContent = await m_Transformer.Transform(layout.RawContent, layout.Key, model);
+                var layoutContent = await m_Transformer.Transform(layout.RawContent, layout.Id, model);
 
                 content = ReplaceContent(layoutContent, content);
 

@@ -12,8 +12,9 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Data
 {
-    public interface IFrame : ICompilable 
+    public interface ISheet : IResource 
     {
+        string RawContent { get; }
         ITemplate Layout { get; }
         IMetadata Data { get; }
     }

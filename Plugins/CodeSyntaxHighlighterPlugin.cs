@@ -27,7 +27,8 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("code-syntax-highlighter")]
-    public class CodeSyntaxHighlighterPlugin : IRenderCodeBlockPlugin, IPreCompilePlugin, IPrePublishFilePlugin, IPlugin<CodeSyntaxHighlighterSettings>
+    public class CodeSyntaxHighlighterPlugin : IRenderCodeBlockPlugin, IPreCompilePlugin,
+        IPageContentWriterPlugin, IPlugin<CodeSyntaxHighlighterSettings>
     {
         private CodeSyntaxHighlighterSettings m_Settings;
 
@@ -52,22 +53,6 @@ namespace Xarial.Docify.Lib.Plugins
             return Task.CompletedTask;
         }
         
-        public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
-        {
-            var res = new PrePublishResult()
-            {
-                File = file,
-                SkipFile = false
-            };
-
-            if (!m_Settings.EmbedStyle)
-            {
-                res.File = this.WriteToPageHead(file, w => w.AddStyleSheet(CSS_FILE_PATH));
-            }
-
-            return Task.FromResult(res);
-        }
-
         private ILanguage FileLanguageCodeById(string lang) 
         {
             var codeLang = Languages.FindById(lang);
@@ -114,6 +99,16 @@ namespace Xarial.Docify.Lib.Plugins
 
             html.Clear();
             html.Append(pre);
+        }
+
+        public Task<string> WritePageContent(string content, string url)
+        {
+            if (!m_Settings.EmbedStyle)
+            {
+                content = this.WriteToPageHead(content, w => w.AddStyleSheets(CSS_FILE_PATH));
+            }
+
+            return Task.FromResult(content);
         }
 
         private CodeColorizerBase Formatter

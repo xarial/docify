@@ -35,7 +35,10 @@ namespace Xarial.Docify.Core.Compiler
 
         [ImportPlugins]
         private IEnumerable<IPreCompilePlugin> m_PreCompilePlugins = null;
-                
+
+        [ImportPlugins]
+        private IEnumerable<IPageContentWriterPlugin> m_PageContentWriterPlugins = null;
+
         public BaseCompiler(BaseCompilerConfig config,
             ILogger logger, ILayoutParser layoutParser,
             IIncludesHandler includesHandler,
@@ -125,7 +128,7 @@ namespace Xarial.Docify.Core.Compiler
             var url = loc.ToUrl();
             var model = new ContextModel(site, page, url);
 
-            var content = await m_ContentTransformer.Transform(page.RawContent, page.Key, model);
+            var content = await m_ContentTransformer.Transform(page.RawContent, page.Id, model);
             
             var layout = page.Layout;
 
@@ -135,6 +138,8 @@ namespace Xarial.Docify.Core.Compiler
             }
 
             content = await m_IncludesHandler.ReplaceAll(content, site, page, url);
+
+            await m_PageContentWriterPlugins.InvokePluginsIfAnyAsync(async (p) => content = await p.WritePageContent(content, url));
 
             return new File(loc, content);
         }

@@ -10,6 +10,7 @@ namespace Xarial.Docify.Lib.Plugins.Data
     {
         public byte[] Content { get; }
         public ILocation Location { get; }
+        public string Id { get; }
 
         public PluginFile(string content, ILocation loc) 
             : this(ContentExtension.ToByteArray(content), loc)
@@ -17,9 +18,15 @@ namespace Xarial.Docify.Lib.Plugins.Data
         }
 
         public PluginFile(byte[] content, ILocation loc)
+            : this(content, loc, Guid.NewGuid().ToString())
+        {
+        }
+
+        public PluginFile(byte[] content, ILocation loc, string id) 
         {
             Content = content;
             Location = loc;
+            Id = id;
         }
     }
 }

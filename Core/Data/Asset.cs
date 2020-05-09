@@ -12,10 +12,18 @@ namespace Xarial.Docify.Core.Data
         public string FileName { get; }
         public byte[] Content { get; }
 
+        public string Id { get; }
+
         public Asset(string fileName, byte[] content) 
+            : this(fileName, content, Guid.NewGuid().ToString())
+        { 
+        }
+
+        public Asset(string fileName, byte[] content, string id) 
         {
             FileName = fileName;
             Content = content;
+            Id = id;
         }
     }
 }

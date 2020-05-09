@@ -7,7 +7,7 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Data
 {
-    public class Page : Frame, IPage
+    public class Page : Sheet, IPage
     {
         public List<IPage> SubPages { get; }
         public List<IAsset> Assets { get; }

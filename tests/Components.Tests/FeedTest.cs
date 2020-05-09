@@ -36,14 +36,14 @@ namespace Components.Tests
         [Test]
         public async Task DefaultTest()
         {
-            var site = ComponentsTest.NewSite("<channel>\r\n{% feed %}\r\n</channel>", INCLUDE_PATH);
-            var p1 = new PageMock("Page1", "", ComponentsTest.GetData<Metadata>("title: p1\r\ndescription: desc1"));
-            p1.SubPages.Add(new PageMock("SubPage1", "", ComponentsTest.GetData<Metadata>("title: sp1")));
-            p1.SubPages.Add(new PageMock("SubPage2", "", ComponentsTest.GetData<Metadata>("title: sp2")));
+            var site = ComponentsTest.Instance.NewSite("<channel>\r\n{% feed %}\r\n</channel>", INCLUDE_PATH);
+            var p1 = new PageMock("Page1", "", ComponentsTest.Instance.GetData<Metadata>("title: p1\r\ndescription: desc1"));
+            p1.SubPages.Add(new PageMock("SubPage1", "", ComponentsTest.Instance.GetData<Metadata>("title: sp1")));
+            p1.SubPages.Add(new PageMock("SubPage2", "", ComponentsTest.Instance.GetData<Metadata>("title: sp2")));
             site.MainPage.SubPages.Add(p1);
-            site.MainPage.SubPages.Add(new PageMock("Page2", "", ComponentsTest.GetData<Metadata>("title: p2")));
+            site.MainPage.SubPages.Add(new PageMock("Page2", "", ComponentsTest.Instance.GetData<Metadata>("title: p2")));
 
-            var res = UpdateBuildDate(await ComponentsTest.CompileMainPageNormalize(site));
+            var res = UpdateBuildDate(await ComponentsTest.Instance.CompileMainPageNormalize(site));
 
             Assert.AreEqual(Resources.feed1, res);
         }
@@ -51,14 +51,14 @@ namespace Components.Tests
         [Test]
         public async Task ImageTest()
         {
-            var site1 = ComponentsTest.NewSite("<channel>\r\n{% feed image: /img1.png %}\r\n</channel>", INCLUDE_PATH);
-            var res1 = UpdateBuildDate(await ComponentsTest.CompileMainPageNormalize(site1));
+            var site1 = ComponentsTest.Instance.NewSite("<channel>\r\n{% feed image: /img1.png %}\r\n</channel>", INCLUDE_PATH);
+            var res1 = UpdateBuildDate(await ComponentsTest.Instance.CompileMainPageNormalize(site1));
 
-            var site2 = ComponentsTest.NewSite("---\r\nimage: /img1.svg\r\n\r\nimage-png: /img1.png\r\n---\r\n<channel>\r\n{% feed image: /img1.png %}\r\n</channel>", INCLUDE_PATH);
-            var res2 = UpdateBuildDate(await ComponentsTest.CompileMainPageNormalize(site1));
+            var site2 = ComponentsTest.Instance.NewSite("---\r\nimage: /img1.svg\r\n\r\nimage-png: /img1.png\r\n---\r\n<channel>\r\n{% feed image: /img1.png %}\r\n</channel>", INCLUDE_PATH);
+            var res2 = UpdateBuildDate(await ComponentsTest.Instance.CompileMainPageNormalize(site1));
 
-            var site3 = ComponentsTest.NewSite("---\r\nimage: /img1.png\r\n---\r\n<channel>\r\n{% feed %}\r\n</channel>", INCLUDE_PATH);
-            var res3 = UpdateBuildDate(await ComponentsTest.CompileMainPageNormalize(site1));
+            var site3 = ComponentsTest.Instance.NewSite("---\r\nimage: /img1.png\r\n---\r\n<channel>\r\n{% feed %}\r\n</channel>", INCLUDE_PATH);
+            var res3 = UpdateBuildDate(await ComponentsTest.Instance.CompileMainPageNormalize(site1));
 
             Assert.AreEqual(Resources.feed2, res1);
             Assert.AreEqual(Resources.feed2, res2);
@@ -68,11 +68,11 @@ namespace Components.Tests
         [Test]
         public async Task CategoriesTest()
         {
-            var site = ComponentsTest.NewSite("<channel>\r\n{% feed %}\r\n</channel>", INCLUDE_PATH);
-            var p1 = new PageMock("Page1", "", ComponentsTest.GetData<Metadata>("title: p1\r\ncategories:\r\n  - cat1\r\n  - cat2"));
+            var site = ComponentsTest.Instance.NewSite("<channel>\r\n{% feed %}\r\n</channel>", INCLUDE_PATH);
+            var p1 = new PageMock("Page1", "", ComponentsTest.Instance.GetData<Metadata>("title: p1\r\ncategories:\r\n  - cat1\r\n  - cat2"));
             site.MainPage.SubPages.Add(p1);
 
-            var res = UpdateBuildDate(await ComponentsTest.CompileMainPageNormalize(site));
+            var res = UpdateBuildDate(await ComponentsTest.Instance.CompileMainPageNormalize(site));
 
             Assert.AreEqual(Resources.feed3, res);
         }
@@ -80,11 +80,11 @@ namespace Components.Tests
         [Test]
         public async Task IgnorePagesTest()
         {
-            var site = ComponentsTest.NewSite("<channel>\r\n{% feed %}\r\n</channel>", INCLUDE_PATH);
-            var p1 = new PageMock("Page1", "", ComponentsTest.GetData<Metadata>("title: p1\r\nsitemap: false"));
+            var site = ComponentsTest.Instance.NewSite("<channel>\r\n{% feed %}\r\n</channel>", INCLUDE_PATH);
+            var p1 = new PageMock("Page1", "", ComponentsTest.Instance.GetData<Metadata>("title: p1\r\nsitemap: false"));
             site.MainPage.SubPages.Add(p1);
 
-            var res = UpdateBuildDate(await ComponentsTest.CompileMainPageNormalize(site));
+            var res = UpdateBuildDate(await ComponentsTest.Instance.CompileMainPageNormalize(site));
 
             Assert.AreEqual(Resources.feed4, res);
         }
@@ -92,10 +92,10 @@ namespace Components.Tests
         [Test]
         public async Task PubDateTest()
         {
-            var xmlFilePath = ComponentsTest.GetPath(@"feed\feed.xml");
+            var xmlFilePath = ComponentsTest.Instance.GetPath(@"feed\feed.xml");
 
-            var site = ComponentsTest.NewSite("", INCLUDE_PATH);
-            var p1 = new PageMock("Page1", "", ComponentsTest.GetData<Metadata>("title: p1\r\ndate: 2020-05-06"));
+            var site = ComponentsTest.Instance.NewSite("", INCLUDE_PATH);
+            var p1 = new PageMock("Page1", "", ComponentsTest.Instance.GetData<Metadata>("title: p1\r\ndate: 2020-05-06"));
             site.MainPage.SubPages.Add(p1);
             site.MainPage.Assets.Add(new AssetMock("feed.xml", System.IO.File.ReadAllBytes(xmlFilePath)));
 
@@ -114,11 +114,11 @@ namespace Components.Tests
         [Test]
         public async Task SchemaTest()
         {
-            var xmlFilePath = ComponentsTest.GetPath(@"feed\feed.xml");
+            var xmlFilePath = ComponentsTest.Instance.GetPath(@"feed\feed.xml");
 
-            var site = ComponentsTest.NewSite("", INCLUDE_PATH);
-            var p1 = new PageMock("Page1", "", ComponentsTest.GetData<Metadata>("title: p1\r\ndate: 2020-05-06"));
-            var p2 = new PageMock("Page2", "", ComponentsTest.GetData<Metadata>("title: p2\r\ncategories:\r\n  - cat1\r\n  - cat2"));
+            var site = ComponentsTest.Instance.NewSite("", INCLUDE_PATH);
+            var p1 = new PageMock("Page1", "", ComponentsTest.Instance.GetData<Metadata>("title: p1\r\ndate: 2020-05-06"));
+            var p2 = new PageMock("Page2", "", ComponentsTest.Instance.GetData<Metadata>("title: p2\r\ncategories:\r\n  - cat1\r\n  - cat2"));
             site.MainPage.SubPages.Add(p1);
             site.MainPage.SubPages.Add(p2);
             site.MainPage.Assets.Add(new AssetMock("feed.xml", System.IO.File.ReadAllBytes(xmlFilePath)));

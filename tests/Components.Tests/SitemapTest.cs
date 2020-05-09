@@ -22,11 +22,11 @@ namespace Components.Tests
         [Test]
         public async Task BasicTest()
         {
-            var xmlFilePath = ComponentsTest.GetPath(@"sitemap\sitemap.xml");
+            var xmlFilePath = ComponentsTest.Instance.GetPath(@"sitemap\sitemap.xml");
 
-            var site = ComponentsTest.NewSite("", INCLUDE_PATH);
-            var p1 = new PageMock("Page1", "", ComponentsTest.GetData<Metadata>("title: p1"));
-            var p2 = new PageMock("Page2", "", ComponentsTest.GetData<Metadata>("title: p2"));
+            var site = ComponentsTest.Instance.NewSite("", INCLUDE_PATH);
+            var p1 = new PageMock("Page1", "", ComponentsTest.Instance.GetData<Metadata>("title: p1"));
+            var p2 = new PageMock("Page2", "", ComponentsTest.Instance.GetData<Metadata>("title: p2"));
             site.MainPage.SubPages.Add(p1);
             site.MainPage.SubPages.Add(p2);
             site.MainPage.Assets.Add(new AssetMock("sitemap.xml", System.IO.File.ReadAllBytes(xmlFilePath)));
@@ -36,7 +36,7 @@ namespace Components.Tests
 
             var sitemap = files.First(f => f.Location.FileName == "sitemap.xml");
 
-            Assert.AreEqual(Resources.sitemap1, ComponentsTest.Normalize(sitemap.AsTextContent()));
+            Assert.AreEqual(Resources.sitemap1, ComponentsTest.Instance.Normalize(sitemap.AsTextContent()));
         }
     }
 }

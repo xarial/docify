@@ -24,10 +24,10 @@ using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Helpers;
 using YamlDotNet.Serialization;
 
-namespace Components.Tests
+namespace Themes.Tests
 {
-    public static class ComponentsTest
+    public static class ThemesTest
     {
-        public static LibTestsHelper Instance = new LibTestsHelper("Components");
+        public static LibTestsHelper Instance = new LibTestsHelper("Themes");
     }
 }

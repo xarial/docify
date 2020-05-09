@@ -21,9 +21,9 @@ namespace Components.Tests
         [Test]
         public async Task DefaultTest()
         {
-            var site = ComponentsTest.NewSite("<div>\r\n{% social-share %}\r\n</div>", INCLUDE_PATH);
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% social-share %}\r\n</div>", INCLUDE_PATH);
 
-            var res = await ComponentsTest.CompileMainPageNormalize(site);
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 
             Assert.AreEqual(Resources.social_share1, res);
         }
@@ -31,9 +31,9 @@ namespace Components.Tests
         [Test]
         public async Task LinkedInTest()
         {
-            var site = ComponentsTest.NewSite("<div>\r\n{% social-share { linkedin: true, facebook: false, pinterest: false, reddit: false } %}\r\n</div>", INCLUDE_PATH);
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% social-share { linkedin: true, facebook: false, pinterest: false, reddit: false } %}\r\n</div>", INCLUDE_PATH);
 
-            var res = await ComponentsTest.CompileMainPageNormalize(site);
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 
             Assert.AreEqual(Resources.social_share2, res);
         }
@@ -41,9 +41,9 @@ namespace Components.Tests
         [Test]
         public async Task FacebookTest()
         {
-            var site = ComponentsTest.NewSite("<div>\r\n{% social-share { linkedin: false, facebook: true, pinterest: false, reddit: false } %}\r\n</div>", INCLUDE_PATH);
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% social-share { linkedin: false, facebook: true, pinterest: false, reddit: false } %}\r\n</div>", INCLUDE_PATH);
 
-            var res = await ComponentsTest.CompileMainPageNormalize(site);
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 
             Assert.AreEqual(Resources.social_share3, res);
         }
@@ -51,9 +51,9 @@ namespace Components.Tests
         [Test]
         public async Task PinterestTest()
         {
-            var site = ComponentsTest.NewSite("<div>\r\n{% social-share { linkedin: false, facebook: false, pinterest: true, reddit: false } %}\r\n</div>", INCLUDE_PATH);
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% social-share { linkedin: false, facebook: false, pinterest: true, reddit: false } %}\r\n</div>", INCLUDE_PATH);
 
-            var res = await ComponentsTest.CompileMainPageNormalize(site);
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 
             Assert.AreEqual(Resources.social_share4, res);
         }
@@ -61,9 +61,9 @@ namespace Components.Tests
         [Test]
         public async Task RedditTest()
         {
-            var site = ComponentsTest.NewSite("<div>\r\n{% social-share { linkedin: false, facebook: false, pinterest: false, reddit: true } %}\r\n</div>", INCLUDE_PATH);
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% social-share { linkedin: false, facebook: false, pinterest: false, reddit: true } %}\r\n</div>", INCLUDE_PATH);
 
-            var res = await ComponentsTest.CompileMainPageNormalize(site);
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 
             Assert.AreEqual(Resources.social_share5, res);
         }
@@ -71,9 +71,9 @@ namespace Components.Tests
         [Test]
         public async Task ColorTest()
         {
-            var site = ComponentsTest.NewSite("<div>\r\n{% social-share { color: green } %}\r\n</div>", INCLUDE_PATH);
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% social-share { color: green } %}\r\n</div>", INCLUDE_PATH);
 
-            var res = await ComponentsTest.CompileMainPageNormalize(site);
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 
             Assert.AreEqual(Resources.social_share6, res);
         }

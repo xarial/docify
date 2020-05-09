@@ -27,11 +27,11 @@ namespace Components.Tests
         [Test]
         public async Task DefaultParamsTestEnvTest()
         {
-            var site = ComponentsTest.NewSite("<head>\r\n{% google-analytics { traking_code:  } %}\r\n</head>", INCLUDE_PATH,
+            var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics { traking_code:  } %}\r\n</head>", INCLUDE_PATH,
                 null,
                 new Configuration { Environment = Environment_e.Test });
 
-            var res = await ComponentsTest.CompileMainPageNormalize(site);
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 
             Assert.AreEqual("<head>\r\n</head>", res);
         }
@@ -39,11 +39,11 @@ namespace Components.Tests
         [Test]
         public async Task ProdEnvTest()
         {
-            var site = ComponentsTest.NewSite("<head>\r\n{% google-analytics { traking_code: ABC } %}\r\n</head>", INCLUDE_PATH,
+            var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics { traking_code: ABC } %}\r\n</head>", INCLUDE_PATH,
                 null,
                 new Configuration { Environment = Environment_e.Production });
 
-            var res = await ComponentsTest.CompileMainPageNormalize(site);
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 
             Assert.AreEqual($"<head>\r\n{Resources.google_analytics1}\r\n</head>", res);
         }
@@ -51,11 +51,11 @@ namespace Components.Tests
         [Test]
         public async Task TestEnvIgnoreEnvTest()
         {
-            var site = ComponentsTest.NewSite("<head>\r\n{% google-analytics { production_only: false, traking_code: ABC } %}\r\n</head>", INCLUDE_PATH,
+            var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics { production_only: false, traking_code: ABC } %}\r\n</head>", INCLUDE_PATH,
                 null,
                 new Configuration { Environment = Environment_e.Test });
 
-            var res = await ComponentsTest.CompileMainPageNormalize(site);
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 
             Assert.AreEqual($"<head>\r\n{Resources.google_analytics1}\r\n</head>", res);
         }
@@ -63,11 +63,11 @@ namespace Components.Tests
         [Test]
         public async Task NoAnalyticsIdTest()
         {
-            var site = ComponentsTest.NewSite("<head>\r\n{% google-analytics %}\r\n</head>", INCLUDE_PATH,
+            var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics %}\r\n</head>", INCLUDE_PATH,
                 null,
                 new Configuration { Environment = Environment_e.Production });
 
-            var res = await ComponentsTest.CompileMainPageNormalize(site);
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
             
             Assert.AreEqual("<head>\r\n</head>", res);
         }

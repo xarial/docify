@@ -20,9 +20,9 @@ namespace Themes.Tests
         [Test]
         public async Task Default_Lang()
         {
-            var site = ThemesTest.NewSite("<html lang=\"{% page-lang %}\"/>", INCLUDE_PATH);
+            var site = ThemesTest.Instance.NewSite("<html lang=\"{% page-lang %}\"/>", INCLUDE_PATH);
 
-            var res = await ThemesTest.CompileMainPageNormalize(site);
+            var res = await ThemesTest.Instance.CompileMainPageNormalize(site);
 
             Assert.AreEqual("<html lang=\"en\"/>", res);
         }
@@ -30,9 +30,9 @@ namespace Themes.Tests
         [Test]
         public async Task Page_Lang()
         {
-            var site = ThemesTest.NewSite("<html lang=\"{% page-lang %}\"/>", INCLUDE_PATH, ThemesTest.GetData<Metadata>("lang: ru"));
+            var site = ThemesTest.Instance.NewSite("<html lang=\"{% page-lang %}\"/>", INCLUDE_PATH, ThemesTest.Instance.GetData<Metadata>("lang: ru"));
 
-            var res = await ThemesTest.CompileMainPageNormalize(site);
+            var res = await ThemesTest.Instance.CompileMainPageNormalize(site);
 
             Assert.AreEqual("<html lang=\"ru\"/>", res);
         }
@@ -40,9 +40,9 @@ namespace Themes.Tests
         [Test]
         public async Task Page_SiteDefLang()
         {
-            var site = ThemesTest.NewSite("<html lang=\"{% page-lang %}\"/>", INCLUDE_PATH, null, ThemesTest.GetData<Configuration>("$page-lang:\r\n  default_lang: fr"));
+            var site = ThemesTest.Instance.NewSite("<html lang=\"{% page-lang %}\"/>", INCLUDE_PATH, null, ThemesTest.Instance.GetData<Configuration>("$page-lang:\r\n  default_lang: fr"));
 
-            var res = await ThemesTest.CompileMainPageNormalize(site);
+            var res = await ThemesTest.Instance.CompileMainPageNormalize(site);
 
             Assert.AreEqual("<html lang=\"fr\"/>", res);
         }

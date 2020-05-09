@@ -13,13 +13,14 @@ namespace Xarial.Docify.Lib.Plugins.Helpers
 {
     public static class AssetsHelper
     {
-        private static readonly string[] m_Separators = new string[] { "\\", "/", "::" };
+        private static readonly string[] m_PathSeparators = new string[] { "\\", "/", "::" };
+        internal static string[] PathSeparators => m_PathSeparators;
 
-        public static IAsset FindAsset(ISite site, IPage page, string path)
+        public static IAsset FindAsset(ISite site, IAssetsFolder page, string path)
         {
-            var isRel = !m_Separators.Any(s => path.StartsWith(s));
+            var isRel = !PathSeparators.Any(s => path.StartsWith(s));
             
-            var parts = path.Split(m_Separators, StringSplitOptions.RemoveEmptyEntries);
+            var parts = path.Split(PathSeparators, StringSplitOptions.RemoveEmptyEntries);
 
             var dir = parts.Take(parts.Length - 1);
             var fileName = parts.Last();
@@ -70,7 +71,7 @@ namespace Xarial.Docify.Lib.Plugins.Helpers
 
         public static void AddAsset(byte[] content, IPage page, string path)
         {
-            var parts = path.Split(m_Separators, StringSplitOptions.RemoveEmptyEntries);
+            var parts = path.Split(PathSeparators, StringSplitOptions.RemoveEmptyEntries);
 
             IAssetsFolder curFolder = page;
 
@@ -93,7 +94,7 @@ namespace Xarial.Docify.Lib.Plugins.Helpers
             curFolder.Assets.Add(new PluginAsset(content, parts.Last()));
         }
 
-        public static void AddAssetFromZip(byte[] zipBuffer, IPage page) 
+        public static void AddAssetsFromZip(byte[] zipBuffer, IPage page) 
         {
             using (var zipStream = new MemoryStream(zipBuffer)) 
             {
@@ -124,6 +125,33 @@ namespace Xarial.Docify.Lib.Plugins.Helpers
                 foreach (var subPage in GetAllPages(childPage)) 
                 {
                     yield return subPage;
+                }
+            }
+        }
+
+        public static IEnumerable<IAsset> GetAllAssets(IAssetsFolder folder)
+        {
+            foreach (var asset in folder.Assets) 
+            {
+                yield return asset;
+            }
+
+            foreach (var subFolder in folder.Folders) 
+            {
+                foreach (var subAsset in GetAllAssets(subFolder)) 
+                {
+                    yield return subAsset;
+                }
+            }
+
+            if (folder is IPage)
+            {
+                foreach (var subPage in (folder as IPage).SubPages) 
+                {
+                    foreach (var subPageAsset in GetAllAssets(subPage)) 
+                    {
+                        yield return subPageAsset;
+                    }
                 }
             }
         }

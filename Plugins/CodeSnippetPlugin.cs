@@ -18,6 +18,7 @@ namespace Xarial.Docify.Lib.Plugins
 {
     public class CodeSnippetSettings
     {
+        public string SnippetsFolder { get; set; } = "";
         public bool ExcludeSnippets { get; set; } = true;
     }
 
@@ -39,9 +40,12 @@ namespace Xarial.Docify.Lib.Plugins
 
         private CodeSnippetSettings m_Settings;
 
-        private readonly string CSS_FILE_PATH = "assets/styles/code-snippet.css";
+        private const string CSS_FILE_PATH = "assets/styles/code-snippet.css";
+        private const char SNIPPETS_FOLDER_PATH = '~';
 
-        private List<ILocation> m_SnippetFiles;
+
+        private IAssetsFolder m_SnippetsFolder;
+        private List<string> m_SnippetFileIds;
 
         [ImportService]
         private IContentTransformer m_ContentTransformer;
@@ -59,7 +63,42 @@ namespace Xarial.Docify.Lib.Plugins
 
             AssetsHelper.AddTextAsset(Resources.code_snippet, site.MainPage, CSS_FILE_PATH);
 
-            m_SnippetFiles = new List<ILocation>();
+            m_SnippetFileIds = new List<string>();
+
+            if (!string.IsNullOrEmpty(m_Settings.SnippetsFolder)) 
+            {
+                m_SnippetsFolder = site.MainPage;
+
+                var parts = m_Settings.SnippetsFolder.Split(AssetsHelper.PathSeparators, 
+                    StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var part in parts) 
+                {
+                    var nextFolder = m_SnippetsFolder.Folders
+                        .FirstOrDefault(f => string.Equals(f.Name, part, StringComparison.CurrentCultureIgnoreCase));
+
+                    if (nextFolder == null) 
+                    {
+                        if (m_SnippetsFolder is IPage)
+                        {
+                            nextFolder = (m_SnippetsFolder as IPage).SubPages
+                                .FirstOrDefault(p => string.Equals(p.Name, part, StringComparison.CurrentCultureIgnoreCase));
+                        }
+                    }
+
+                    if (nextFolder == null) 
+                    {
+                        throw new Exception($"Failed to find the folder for snippets: '{m_Settings.SnippetsFolder}'");
+                    }
+
+                    m_SnippetsFolder = nextFolder;
+                }
+
+                foreach (var snipAsset in AssetsHelper.GetAllAssets(m_SnippetsFolder)) 
+                {
+                    m_SnippetFileIds.Add(snipAsset.Id);
+                }
+            }
 
             return Task.CompletedTask;
         }
@@ -72,7 +111,26 @@ namespace Xarial.Docify.Lib.Plugins
 
             try
             {
-                snipAsset = AssetsHelper.FindAsset(m_Site, page, snipData.FileName);
+                var fileName = snipData.FileName;
+
+                IAssetsFolder searchFolder = null;
+
+                if (fileName.StartsWith(SNIPPETS_FOLDER_PATH))
+                {
+                    if (m_SnippetsFolder == null) 
+                    {
+                        throw new Exception("Snippets folder is not set");
+                    }
+
+                    fileName = fileName.TrimStart(SNIPPETS_FOLDER_PATH);
+                    searchFolder = m_SnippetsFolder;
+                }
+                else 
+                {
+                    searchFolder = page;
+                }
+
+                snipAsset = AssetsHelper.FindAsset(m_Site, searchFolder, fileName);
             }
             catch (Exception ex)
             {
@@ -81,11 +139,10 @@ namespace Xarial.Docify.Lib.Plugins
             
             if (snipAsset != null)
             {
-                //TODO: fix
-                //if (!m_SnippetFiles.Contains(snipAsset.Location))
-                //{
-                //    m_SnippetFiles.Add(snipAsset.Location);
-                //}
+                if (!m_SnippetFileIds.Contains(snipAsset.Id))
+                {
+                    m_SnippetFileIds.Add(snipAsset.Id);
+                }
 
                 var rawCode = snipAsset.AsTextContent();
 
@@ -142,13 +199,11 @@ namespace Xarial.Docify.Lib.Plugins
 
         public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
         {
-            var relLoc = file.Location.GetRelative(outLoc);
-
             var res = new PrePublishResult()
             {
                 File = file,
                 SkipFile = m_Settings.ExcludeSnippets
-                    && m_SnippetFiles.Contains(relLoc, new LocationEqualityComparer())
+                    && m_SnippetFileIds.Contains(file.Id)
             };
             
             return Task.FromResult(res);

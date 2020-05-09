@@ -37,7 +37,7 @@ namespace Xarial.Docify.Lib.Plugins
 
         public Task PreCompile(ISite site)
         {
-            AssetsHelper.AddAssetFromZip(Resources.tipue_search, site.MainPage);
+            AssetsHelper.AddAssetsFromZip(Resources.tipue_search, site.MainPage);
             return Task.CompletedTask;
         }
 

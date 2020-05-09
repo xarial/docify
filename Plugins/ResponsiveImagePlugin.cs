@@ -16,7 +16,7 @@ namespace Xarial.Docify.Lib.Plugins
     [Plugin("responsive-image")]
     public class ResponsiveImagePlugin : IPreCompilePlugin, IPageContentWriterPlugin, IRenderImagePlugin
     {
-        private readonly string CSS_FILE_PATH = "assets/styles/responsive-image.css";
+        private const string CSS_FILE_PATH = "assets/styles/responsive-image.css";
         private const string CLASS_NAME = "responsive";
 
         public Task PreCompile(ISite site)

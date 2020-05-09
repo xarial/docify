@@ -78,14 +78,12 @@ namespace Xarial.Docify.Core.Compiler
                 thisLoc = new Location(PAGE_FILE_NAME);
             }
 
+            yield return await CompilePage(page, site, thisLoc);
+
             await foreach (var asset in CompileAssets(page, page, site, thisLoc))
             {
                 yield return asset;
             }
-
-            var compiled = await CompilePage(page, site, thisLoc);
-
-            yield return compiled;
 
             foreach (var child in page.SubPages) 
             {

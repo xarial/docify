@@ -112,6 +112,23 @@ namespace Core.Tests
         }
 
         [Test]
+        public async Task ComposeSite_LayoutMetadata()
+        {
+            var src = new FileMock[]
+            {
+                new FileMock(Location.FromPath(@"_layouts\\l1.md"), "---\r\nprp1: B\r\nprp2: C\r\n---\r\nLayout _C_"),
+                new FileMock(Location.FromPath(@"index.md"),
+                    "---\r\nprp1: A\r\nlayout: l1\r\n---\r\nText Line1\r\nText Line2"),
+            }.ToAsyncEnumerable();
+
+            var site = await m_Composer.ComposeSite(src, "");
+
+            Assert.AreEqual(2, site.MainPage.Data.Count);
+            Assert.AreEqual("A", site.MainPage.Data["prp1"]);
+            Assert.AreEqual("C", site.MainPage.Data["prp2"]);
+        }
+
+        [Test]
         public void ComposeSite_MissingContentPLaceholderLayout()
         {
             var src = new FileMock[]

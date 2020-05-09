@@ -85,7 +85,7 @@ namespace Core.Tests
             Assert.AreEqual("B", (site.MainPage.Data["prp2"] as IEnumerable<object>).ElementAt(0));
             Assert.AreEqual("C", (site.MainPage.Data["prp2"] as IEnumerable<object>).ElementAt(1));
         }
-
+        
         [Test]
         public async Task ComposeSite_ContentNoFrontMatter()
         {

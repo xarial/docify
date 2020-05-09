@@ -39,6 +39,9 @@ namespace Xarial.Docify.Core.Compiler
         [ImportPlugins]
         private IEnumerable<IPageContentWriterPlugin> m_PageContentWriterPlugins = null;
 
+        [ImportPlugins]
+        private IEnumerable<IPostCompilePlugin> m_PostCompilePluginPlugins = null;
+        
         public BaseCompiler(BaseCompilerConfig config,
             ILogger logger, ILayoutParser layoutParser,
             IIncludesHandler includesHandler,
@@ -60,6 +63,11 @@ namespace Xarial.Docify.Core.Compiler
             await foreach (var file in CompileAll(site.MainPage, site, Location.Empty))
             {
                 yield return file;
+            }
+
+            await foreach (var addFile in m_PostCompilePluginPlugins.InvokePluginsIfAnyAsync((p) => p.AddFilesPostCompile()))
+            {
+                yield return addFile;
             }
         }
 
@@ -137,7 +145,8 @@ namespace Xarial.Docify.Core.Compiler
 
             content = await m_IncludesHandler.ReplaceAll(content, site, page, url);
 
-            await m_PageContentWriterPlugins.InvokePluginsIfAnyAsync(async (p) => content = await p.WritePageContent(content, url));
+            await m_PageContentWriterPlugins.InvokePluginsIfAnyAsync(async (p) 
+                => content = await p.WritePageContent(content, page.Data, url));
 
             return new File(loc, ContentExtension.ToByteArray(content), page.Id);
         }

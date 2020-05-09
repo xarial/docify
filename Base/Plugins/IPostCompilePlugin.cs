@@ -6,8 +6,8 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Plugins
 {
-    public interface IPageContentWriterPlugin : IPlugin
+    public interface IPostCompilePlugin : IPlugin
     {
-        Task<string> WritePageContent(string content, IMetadata data, string url);
+        IAsyncEnumerable<IFile> AddFilesPostCompile();
     }
 }

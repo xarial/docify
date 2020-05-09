@@ -101,7 +101,7 @@ namespace Xarial.Docify.Lib.Plugins
             html.Append(pre);
         }
 
-        public Task<string> WritePageContent(string content, string url)
+        public Task<string> WritePageContent(string content, IMetadata data, string url)
         {
             if (!m_Settings.EmbedStyle)
             {

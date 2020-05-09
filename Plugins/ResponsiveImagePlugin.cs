@@ -57,7 +57,7 @@ namespace Xarial.Docify.Lib.Plugins
             html.Append(string.Format(Resources.img_figure, img, imgSrc, imgAlt));
         }
 
-        public Task<string> WritePageContent(string content, string url)
+        public Task<string> WritePageContent(string content, IMetadata data, string url)
         {
             content = this.WriteToPageHead(content, w => w.AddStyleSheets(CSS_FILE_PATH));
             return Task.FromResult(content);

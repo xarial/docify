@@ -24,7 +24,10 @@ namespace Xarial.Docify.Core.Publisher
 
         [ImportPlugins]
         private IEnumerable<IPrePublishFilePlugin> m_PrePublishFilePlugins = null;
-        
+
+        [ImportPlugins]
+        private IEnumerable<IPostPublishPlugin> m_PostPublishPlugins = null;
+
         public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config) 
             : this(config, new System.IO.Abstractions.FileSystem())
         {
@@ -91,6 +94,8 @@ namespace Xarial.Docify.Core.Publisher
                     await m_FileSystem.File.WriteAllBytesAsync(outFilePath, outFile.Content);
                 }
             }
+
+            await m_PostPublishPlugins.InvokePluginsIfAnyAsync(async (p) => await p.PostPublish(loc));
         }
     }
 }

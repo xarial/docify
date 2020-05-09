@@ -32,7 +32,7 @@ namespace Xarial.Docify.Core.Plugin
 {
     public class LocalFileSystemPluginsManager : IPluginsManager
     {
-        private const string PLUGIN_SETTINGS_TOKEN = "~";
+        private const string PLUGIN_SETTINGS_TOKEN = "^";
 
         private readonly IFileSystem m_FileSystem;
 

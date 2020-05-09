@@ -209,7 +209,7 @@ namespace Xarial.Docify.Lib.Plugins
             return Task.FromResult(res);
         }
 
-        public Task<string> WritePageContent(string content, string url)
+        public Task<string> WritePageContent(string content, IMetadata data, string url)
         {
             return Task.FromResult(this.WriteToPageHead(content, w => w.AddStyleSheets(CSS_FILE_PATH)));
         }

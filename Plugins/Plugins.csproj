@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="ColorCode.Core" Version="2.0.6" />
     <PackageReference Include="ColorCode.HTML" Version="2.0.6" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.23" />
     <PackageReference Include="nQuant.Core.NETStandard" Version="1.0.0" />
     <PackageReference Include="Svg" Version="3.0.102" />
     <PackageReference Include="System.Composition" Version="1.4.0" />

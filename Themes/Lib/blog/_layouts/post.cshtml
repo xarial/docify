@@ -1,12 +1,13 @@
 ﻿---
 layout: default
+search: true
 ---
 @using RazorLight
 @using System
 @inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>
 @{
     var postDateStr = Model.Page.Data.GetOrDefault<string>("date");
-    var date = DateTime.ParseExact(postDateStr, "yyyy-MM-dd", null);    
+    var date = DateTime.ParseExact(postDateStr, "yyyy-MM-dd", null);
 }
 <article class="post">
     <header>

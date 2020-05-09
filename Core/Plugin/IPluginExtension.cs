@@ -15,8 +15,8 @@ namespace Xarial.Docify.Core.Plugin
 {
     public static class IPluginExtension
     {
-        public static void InvokePluginsIfAny<T>(this IEnumerable<T> plugins, Action<T> invoker)
-            where T : IPlugin
+        public static void InvokePluginsIfAny<TPlugin>(this IEnumerable<TPlugin> plugins, Action<TPlugin> invoker)
+            where TPlugin : IPlugin
         {
             if (plugins != null)
             {
@@ -27,14 +27,31 @@ namespace Xarial.Docify.Core.Plugin
             }
         }
 
-        public static async Task InvokePluginsIfAnyAsync<T>(this IEnumerable<T> plugins, Func<T, Task> invoker)
-            where T : IPlugin
+        public static async Task InvokePluginsIfAnyAsync<TPlugin>(this IEnumerable<TPlugin> plugins, Func<TPlugin, Task> invoker)
+            where TPlugin : IPlugin
         {
             if (plugins != null)
             {
                 foreach (var plugin in plugins)
                 {
                     await invoker.Invoke(plugin);
+                }
+            }
+        }
+
+        public static async IAsyncEnumerable<TResult> InvokePluginsIfAnyAsync<TPlugin, TResult>(
+            this IEnumerable<TPlugin> plugins,
+            Func<TPlugin, IAsyncEnumerable<TResult>> invoker)
+            where TPlugin : IPlugin
+        {
+            if (plugins != null)
+            {
+                foreach (var plugin in plugins)
+                {
+                    await foreach (var res in invoker.Invoke(plugin)) 
+                    {
+                        yield return res;
+                    }
                 }
             }
         }

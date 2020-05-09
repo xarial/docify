@@ -30,7 +30,7 @@ namespace CLI.Tests
                 new File(Location.FromPath("index.html"), "test")
             };
 
-            var site = m_Composer.ComposeSite(files, "");
+            var site = await m_Composer.ComposeSite(files.ToAsyncEnumerable(), "");
 
             Assert.AreEqual(0, site.MainPage.SubPages.Count);
             Assert.AreEqual("test", site.MainPage.RawContent);

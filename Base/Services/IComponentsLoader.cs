@@ -15,6 +15,6 @@ namespace Xarial.Docify.Base.Services
 {
     public interface IComponentsLoader
     {
-        Task<IEnumerable<IFile>> Load(IEnumerable<IFile> srcFiles);
+        IAsyncEnumerable<IFile> Load(IAsyncEnumerable<IFile> srcFiles);
     }
 }

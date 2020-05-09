@@ -26,6 +26,7 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using System.Text.RegularExpressions;
 using Xarial.Docify.Core.Data;
+using System.Threading.Tasks;
 
 namespace Xarial.Docify.Core.Plugin
 {
@@ -79,7 +80,7 @@ namespace Xarial.Docify.Core.Plugin
             }
         }
 
-        public void LoadPlugins<T>(T service, bool importService)
+        public Task LoadPlugins<T>(T service, bool importService)
         {
             if (m_Plugins != null)
             {
@@ -90,6 +91,8 @@ namespace Xarial.Docify.Core.Plugin
                     ImportServiceToPlugins(service);
                 }
             }
+
+            return Task.CompletedTask;
         }
 
         private void ImportPluginsToService<T>(T service)

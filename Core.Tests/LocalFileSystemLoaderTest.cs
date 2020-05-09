@@ -38,7 +38,7 @@ namespace Core.Tests
             }
             ));
 
-            var res = await loader.Load(Location.FromPath("C:\\site"));
+            var res = await loader.Load(Location.FromPath("C:\\site")).ToListAsync();
 
             Assert.AreEqual(5, res.Count());
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "page1.md"));
@@ -75,7 +75,7 @@ namespace Core.Tests
             }
             ));
 
-            var res = await loader.Load(Location.FromPath("C:\\site"));
+            var res = await loader.Load(Location.FromPath("C:\\site")).ToListAsync();
 
             Assert.AreEqual(2, res.Count());
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "page1.md"));
@@ -83,17 +83,28 @@ namespace Core.Tests
         }
 
         [Test]
-        public void Load_MissingLocation() 
+        public async Task Load_MissingLocation() 
         {
             var loader = new LocalFileSystemLoader(new LocalFileSystemLoaderConfig(Enumerable.Empty<string>()),
             new MockFileSystem(new Dictionary<string, MockFileData>()
             {
                 { @"C:\page2.md", null },
                 { @"C:\site\folder\page2.md", null }
-            }
-            ));
+            }));
 
-            Assert.ThrowsAsync<MissingLocationException>(() => loader.Load(Location.FromPath("C:\\site1")));
+            Exception err = null;
+
+            //cannot test IAsyncEnumerable with Assert.Throws or Assert.ThrowsAsync
+            try
+            {
+                await foreach (var x in loader.Load(Location.FromPath("C:\\site1"))) ;
+            }
+            catch (MissingLocationException ex)
+            {
+                err = ex;
+            }
+
+            Assert.IsNotNull(err);
         }
 
         [Test]

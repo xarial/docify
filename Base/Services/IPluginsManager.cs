@@ -8,11 +8,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Xarial.Docify.Base.Services
 {
     public interface IPluginsManager
     {
-        void LoadPlugins<T>(T service, bool importService);
+        Task LoadPlugins<T>(T service, bool importService);
     }
 }

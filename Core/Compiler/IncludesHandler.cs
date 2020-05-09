@@ -53,8 +53,16 @@ namespace Xarial.Docify.Core.Compiler
             var include = site.Includes.FirstOrDefault(i => string.Equals(i.Name,
                 name, StringComparison.CurrentCultureIgnoreCase));
 
+            var pluginsCount = includePlugins?.Count();
+
             if (include != null)
             {
+                if (pluginsCount > 0) 
+                {
+                    //TODO: create specific extension
+                    throw new Exception($"Both plugin and include registered for '{name}'");
+                }
+
                 var data = ComposeDataParameters(name, param, site, page);
                 data = data.Merge(include.Data);
 
@@ -63,27 +71,24 @@ namespace Xarial.Docify.Core.Compiler
             }
             else 
             {
-                if (includePlugins != null)
+                if (pluginsCount == 1)
                 {
-                    if (includePlugins.Count() == 1)
-                    {
-                        var includePlugin = includePlugins.First();
+                    var includePlugin = includePlugins.First();
 
-                        if (param == null) 
-                        {
-                            param = new Metadata();
-                        }
-
-                        var data = ComposeDataParameters(name, param, site, page);
-                        return await includePlugin.GetContent(data, page);
-                    }
-                    else
+                    if (param == null)
                     {
-                        //TODO: create specific exception
-                        throw new Exception($"Too many plugins registered for the '{name}' include rendering");
+                        param = new Metadata();
                     }
+
+                    var data = ComposeDataParameters(name, param, site, page);
+                    return await includePlugin.GetContent(data, page);
                 }
-                else 
+                else if (pluginsCount > 1)
+                {
+                    //TODO: create specific exception
+                    throw new Exception($"Too many plugins registered for the '{name}' include rendering");
+                }
+                else
                 {
                     throw new MissingIncludeException(name);
                 }

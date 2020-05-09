@@ -14,7 +14,7 @@ namespace Xarial.Docify.Core.Exceptions
     public class MissingIncludeException : Exception
     {
         public MissingIncludeException(string includeName)
-            : base($"Include cannot be found: {includeName}") 
+            : base($"Include '{includeName}' cannot be resolved") 
         {
         }
     }

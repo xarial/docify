@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
@@ -87,11 +88,18 @@ namespace Xarial.Docify.Core.Composer
             return new Page(name, rawContent, pageData, layout);
         }
 
-        public ISite ComposeSite(IEnumerable<IFile> files, string baseUrl)
+        public async Task<ISite> ComposeSite(IAsyncEnumerable<IFile> files, string baseUrl)
         {
-            if (files?.Any() == true)
+            var filesList = new List<IFile>();
+
+            await foreach(var file in files)
             {
-                GroupSourceFiles(files, 
+                filesList.Add(file);
+            }
+
+            if (filesList.Any())
+            {
+                GroupSourceFiles(filesList, 
                     out IEnumerable<IFile> srcPages, 
                     out IEnumerable<IFile> srcLayouts,
                     out IEnumerable<IFile> srcIncludes, 
@@ -119,7 +127,7 @@ namespace Xarial.Docify.Core.Composer
             }
         }
 
-        private void GroupSourceFiles(IEnumerable<IFile> files,
+        private void GroupSourceFiles(IReadOnlyList<IFile> files,
             out IEnumerable<IFile> pages, 
             out IEnumerable<IFile> layouts,
             out IEnumerable<IFile> includes,
@@ -130,7 +138,7 @@ namespace Xarial.Docify.Core.Composer
                 throw new NullReferenceException("Null reference source file is detected");
             }
 
-            var procFiles = files;
+            IEnumerable<IFile> procFiles = files;
 
             layouts = procFiles
                 .Where(f => string.Equals(f.Location.GetRoot(), LAYOUTS_FOLDER,

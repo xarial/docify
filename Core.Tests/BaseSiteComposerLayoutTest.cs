@@ -9,7 +9,9 @@ using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
@@ -35,16 +37,16 @@ namespace Core.Tests
         }
 
         [Test]
-        public void ComposeSite_LayoutSimple() 
+        public async Task ComposeSite_LayoutSimple() 
         {
             var src = new File[]
             {
                 new File(Location.FromPath(@"_layouts\\l1.md"), "Layout _C_"),
                 new File(Location.FromPath(@"index.md"),
                     "---\r\nprp1: A\r\nlayout: l1\r\n---\r\nText Line1\r\nText Line2"),
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(1, site.MainPage.Data.Count);
@@ -55,7 +57,7 @@ namespace Core.Tests
         }
 
         [Test]
-        public void ComposeSite_LayoutNested()
+        public async Task ComposeSite_LayoutNested()
         {
             var src = new File[]
             {
@@ -67,9 +69,9 @@ namespace Core.Tests
                     "---\r\nprp1: A\r\n---\r\nText Line1\r\nText Line2"),
                 new File(Location.FromPath(@"p2.md"), "---\r\nlayout: l2\r\n---\r\nP1"),
                 new File(Location.FromPath(@"p4.md"), "---\r\nlayout: l4\r\n---\r\nP4")
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.IsNull(site.MainPage.Layout);
@@ -90,9 +92,9 @@ namespace Core.Tests
                 new File(Location.FromPath(@"_layouts\\l1.md"), "Layout _C_"),
                 new File(Location.FromPath(@"index.md"),
                     "---\r\nprp1: A\r\nlayout: l2\r\n---\r\nText Line1\r\nText Line2"),
-            };
+            }.ToAsyncEnumerable();
 
-            Assert.Throws<MissingLayoutException>(() => m_Composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<MissingLayoutException>(() => m_Composer.ComposeSite(src, ""));
         }
 
         [Test]
@@ -103,9 +105,9 @@ namespace Core.Tests
                 new File(Location.FromPath(@"_layouts\\l1.md"), "_C_"),
                 new File(Location.FromPath(@"_layouts\\l1.txt"), "_C_"),
                 new File(Location.FromPath(@"index.md"), ""),
-            };
+            }.ToAsyncEnumerable();
 
-            Assert.Throws<DuplicateTemplateException>(() => m_Composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<DuplicateTemplateException>(() => m_Composer.ComposeSite(src, ""));
         }
 
         [Test]
@@ -115,21 +117,21 @@ namespace Core.Tests
             {
                 new File(Location.FromPath(@"_layouts\\l1.md"), "abc"),
                 new File(Location.FromPath(@"index.md"), ""),
-            };
+            }.ToAsyncEnumerable();
 
-            Assert.Throws<LayoutMissingContentPlaceholderException>(() => m_Composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<LayoutMissingContentPlaceholderException>(() => m_Composer.ComposeSite(src, ""));
         }
 
         [Test]
-        public void ComposeSite_SubFolderLayout()
+        public async Task ComposeSite_SubFolderLayout()
         {
             var src = new File[]
             {
                 new File(Location.FromPath(@"_layouts\\dir1\\l1.md"), "_C_"),
                 new File(Location.FromPath(@"index.md"), ""),
-            };
+            }.ToAsyncEnumerable();
 
-            var site = m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "");
 
             Assert.AreEqual(1, site.Layouts.Count);
             Assert.AreEqual("dir1::l1", site.Layouts[0].Name);

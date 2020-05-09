@@ -39,7 +39,7 @@ namespace Themes.Tests
                 solDir = Path.GetDirectoryName(solDir);
             }
 
-            var compDir = Path.Combine(solDir, "Themes\\Lib");
+            var compDir = Path.Combine(solDir, "lib\\Themes\\Lib");
 
             return Path.Combine(compDir, relPath);
         }

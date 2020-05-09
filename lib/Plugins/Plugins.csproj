@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Base.Extensions\Base.Extensions.csproj" />
-    <ProjectReference Include="..\Base\Base.csproj" />
+    <ProjectReference Include="..\..\src\Base.Extensions\Base.Extensions.csproj" />
+    <ProjectReference Include="..\..\src\Base\Base.csproj" />
   </ItemGroup>
 
   <ItemGroup>

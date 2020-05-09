@@ -18,14 +18,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Tools\Tools.csproj" />
+    <ProjectReference Include="..\..\lib\Tools\Tools.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-   <LibDir Include="$(SolutionDir)\Components\Lib\**\*" TargetPath="$(OutDir)\Components\%(RecursiveDir)%(Filename)%(Extension)" />
-	 <LibDir Include="$(SolutionDir)\Themes\Lib\**\*" TargetPath="$(OutDir)\Themes\%(RecursiveDir)%(Filename)%(Extension)" />
-   <LibDir Include="$(SolutionDir)\Plugins\$(OutDir)\**\*" TargetPath="$(OutDir)\Plugins\%(RecursiveDir)%(Filename)%(Extension)" />
+   <LibDir Include="$(SolutionDir)\lib\Components\Lib\**\*" TargetPath="$(OutDir)\Components\%(RecursiveDir)%(Filename)%(Extension)" />
+	 <LibDir Include="$(SolutionDir)\lib\Themes\Lib\**\*" TargetPath="$(OutDir)\Themes\%(RecursiveDir)%(Filename)%(Extension)" />
+   <LibDir Include="$(SolutionDir)\lib\Plugins\$(OutDir)\**\*" TargetPath="$(OutDir)\Plugins\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <Target Name="RemoveLib" BeforeTargets="CopyLib">
     <RemoveDir ContinueOnError="true" Directories="$(OutDir)\Components;$(OutDir)\Themes;$(OutDir)\Plugins" />

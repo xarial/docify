@@ -38,7 +38,7 @@ namespace Components.Tests
                 solDir = Path.GetDirectoryName(solDir);
             }
 
-            var compDir = Path.Combine(solDir, "Components\\Lib");
+            var compDir = Path.Combine(solDir, "lib\\Components\\Lib");
 
             return Path.Combine(compDir, relPath);
         }

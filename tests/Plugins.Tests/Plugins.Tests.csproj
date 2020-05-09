@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Base\Base.csproj" />
-    <ProjectReference Include="..\Plugins\Plugins.csproj" />
+    <ProjectReference Include="..\..\src\Base\Base.csproj" />
+    <ProjectReference Include="..\..\lib\Plugins\Plugins.csproj" />
   </ItemGroup>
 
 </Project>

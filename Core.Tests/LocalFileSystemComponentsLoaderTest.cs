@@ -5,6 +5,7 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using Tests.Common.Mocks;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -34,8 +35,8 @@ namespace Core.Tests
             loaderMock.Setup(m => m.Load(It.IsAny<Location>()))
                 .Returns<Location>(l => new IFile[] 
                 {
-                    new File(Location.FromPath("file1.txt"), $"{l.Path.Last()}_theme_f1"),
-                    new File(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2")
+                    new FileMock(Location.FromPath("file1.txt"), $"{l.Path.Last()}_theme_f1"),
+                    new FileMock(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2")
                 }.ToAsyncEnumerable());
 
             m_Loader = loaderMock.Object;
@@ -52,8 +53,8 @@ namespace Core.Tests
 
             var res = await frgLoader.Load(new IFile[] 
             {
-                new File(Location.FromPath("file2.txt"), ""),
-                new File(Location.FromPath("dir\\file3.txt"), "")
+                new FileMock(Location.FromPath("file2.txt"), ""),
+                new FileMock(Location.FromPath("dir\\file3.txt"), "")
             }.ToAsyncEnumerable()).ToListAsync();
 
             Assert.AreEqual(4, res.Count());
@@ -77,9 +78,9 @@ namespace Core.Tests
 
             var res = await frgLoader.Load(new IFile[]
             {
-                new File(Location.FromPath("file1.txt"), "f1"),
-                new File(Location.FromPath("file2.txt"), ""),
-                new File(Location.FromPath("dir\\file3.txt"), "")
+                new FileMock(Location.FromPath("file1.txt"), "f1"),
+                new FileMock(Location.FromPath("file2.txt"), ""),
+                new FileMock(Location.FromPath("dir\\file3.txt"), "")
             }.ToAsyncEnumerable()).ToListAsync();
 
             Assert.AreEqual(4, res.Count());
@@ -104,19 +105,19 @@ namespace Core.Tests
                     {
                         res = new IFile[]
                         {
-                            new File(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2"),
-                            new File(Location.FromPath("dir\\file3.txt"), $"{l.Path.Last()}_theme_f3"),
-                            new File(Location.FromPath("file4.txt"), $"{l.Path.Last()}_theme_f4"),
-                            new File(Location.FromPath("dir\\file4.txt"), $"{l.Path.Last()}_theme_dir-f4")
+                            new FileMock(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2"),
+                            new FileMock(Location.FromPath("dir\\file3.txt"), $"{l.Path.Last()}_theme_f3"),
+                            new FileMock(Location.FromPath("file4.txt"), $"{l.Path.Last()}_theme_f4"),
+                            new FileMock(Location.FromPath("dir\\file4.txt"), $"{l.Path.Last()}_theme_dir-f4")
                         };
                     }
                     else if (l.Path.Last() == "B")
                     {
                         res = new IFile[]
                         {
-                            new File(Location.FromPath("file1.txt"), $"{l.Path.Last()}_theme_f1"),
-                            new File(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2"),
-                            new File(Location.FromPath("dir\\file4.txt"), $"{l.Path.Last()}_theme_f4")
+                            new FileMock(Location.FromPath("file1.txt"), $"{l.Path.Last()}_theme_f1"),
+                            new FileMock(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2"),
+                            new FileMock(Location.FromPath("dir\\file4.txt"), $"{l.Path.Last()}_theme_f4")
                         };
                     }
 
@@ -135,9 +136,9 @@ namespace Core.Tests
 
             var res = await frgLoader.Load(new IFile[]
             {
-                new File(Location.FromPath("dir\\file2.txt"), "f2"),
-                new File(Location.FromPath("dir\\file3.txt"), "f3"),
-                new File(Location.FromPath("file5.txt"), "f5")
+                new FileMock(Location.FromPath("dir\\file2.txt"), "f2"),
+                new FileMock(Location.FromPath("dir\\file3.txt"), "f3"),
+                new FileMock(Location.FromPath("file5.txt"), "f5")
             }.ToAsyncEnumerable()).ToListAsync();
 
             Assert.AreEqual(6, res.Count());
@@ -173,7 +174,7 @@ namespace Core.Tests
             {
                 await foreach (var x in compLoader.Load(new IFile[]
                 {
-                    new File(Location.FromPath("dir\\file2.txt"), "")
+                    new FileMock(Location.FromPath("dir\\file2.txt"), "")
                 }.ToAsyncEnumerable())) ;
             }
             catch (DuplicateComponentSourceFileException ex)

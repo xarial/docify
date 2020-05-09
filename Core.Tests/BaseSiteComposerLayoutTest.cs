@@ -5,6 +5,7 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using Tests.Common.Mocks;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -39,10 +40,10 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_LayoutSimple() 
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"_layouts\\l1.md"), "Layout _C_"),
-                new File(Location.FromPath(@"index.md"),
+                new FileMock(Location.FromPath(@"_layouts\\l1.md"), "Layout _C_"),
+                new FileMock(Location.FromPath(@"index.md"),
                     "---\r\nprp1: A\r\nlayout: l1\r\n---\r\nText Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
@@ -59,16 +60,16 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_LayoutNested()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"_layouts\\l1.md"), "L1 _C_"),
-                new File(Location.FromPath(@"_layouts\\l2.md"), "---\r\nlayout: l1\r\n---\r\nL2 _C_"),
-                new File(Location.FromPath(@"_layouts\\l4.md"), "---\r\nlayout: l3\r\n---\r\nL4 _C_"),
-                new File(Location.FromPath(@"_layouts\\l3.md"), "L3 _C_"),
-                new File(Location.FromPath(@"index.md"),
+                new FileMock(Location.FromPath(@"_layouts\\l1.md"), "L1 _C_"),
+                new FileMock(Location.FromPath(@"_layouts\\l2.md"), "---\r\nlayout: l1\r\n---\r\nL2 _C_"),
+                new FileMock(Location.FromPath(@"_layouts\\l4.md"), "---\r\nlayout: l3\r\n---\r\nL4 _C_"),
+                new FileMock(Location.FromPath(@"_layouts\\l3.md"), "L3 _C_"),
+                new FileMock(Location.FromPath(@"index.md"),
                     "---\r\nprp1: A\r\n---\r\nText Line1\r\nText Line2"),
-                new File(Location.FromPath(@"p2.md"), "---\r\nlayout: l2\r\n---\r\nP1"),
-                new File(Location.FromPath(@"p4.md"), "---\r\nlayout: l4\r\n---\r\nP4")
+                new FileMock(Location.FromPath(@"p2.md"), "---\r\nlayout: l2\r\n---\r\nP1"),
+                new FileMock(Location.FromPath(@"p4.md"), "---\r\nlayout: l4\r\n---\r\nP4")
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");
@@ -87,10 +88,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_LayoutMissing()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"_layouts\\l1.md"), "Layout _C_"),
-                new File(Location.FromPath(@"index.md"),
+                new FileMock(Location.FromPath(@"_layouts\\l1.md"), "Layout _C_"),
+                new FileMock(Location.FromPath(@"index.md"),
                     "---\r\nprp1: A\r\nlayout: l2\r\n---\r\nText Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
@@ -100,11 +101,11 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_DuplicateLayout()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"_layouts\\l1.md"), "_C_"),
-                new File(Location.FromPath(@"_layouts\\l1.txt"), "_C_"),
-                new File(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"_layouts\\l1.md"), "_C_"),
+                new FileMock(Location.FromPath(@"_layouts\\l1.txt"), "_C_"),
+                new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
             Assert.ThrowsAsync<DuplicateTemplateException>(() => m_Composer.ComposeSite(src, ""));
@@ -113,10 +114,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_MissingContentPLaceholderLayout()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"_layouts\\l1.md"), "abc"),
-                new File(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"_layouts\\l1.md"), "abc"),
+                new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
             Assert.ThrowsAsync<LayoutMissingContentPlaceholderException>(() => m_Composer.ComposeSite(src, ""));
@@ -125,10 +126,10 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_SubFolderLayout()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"_layouts\\dir1\\l1.md"), "_C_"),
-                new File(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"_layouts\\dir1\\l1.md"), "_C_"),
+                new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");

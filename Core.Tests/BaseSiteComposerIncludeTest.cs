@@ -18,6 +18,7 @@ using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Composer;
 using System.Threading.Tasks;
+using Tests.Common.Mocks;
 
 namespace Core.Tests
 {
@@ -34,10 +35,10 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_SingleInclude() 
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"_includes\\i1.md"), "Include"),
-                new File(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"_includes\\i1.md"), "Include"),
+                new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");
@@ -51,12 +52,12 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_MultipleInclude()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"_includes\\i1.md"), "i1content"),
-                new File(Location.FromPath(@"_includes\\i2.txt"), "i2content"),
-                new File(Location.FromPath(@"_includes\\i3.ini"), "i3content"),
-                new File(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"_includes\\i1.md"), "i1content"),
+                new FileMock(Location.FromPath(@"_includes\\i2.txt"), "i2content"),
+                new FileMock(Location.FromPath(@"_includes\\i3.ini"), "i3content"),
+                new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");
@@ -71,10 +72,10 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_IncludeMetadata()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"_includes\\i1.md"), "---\r\nprp1: A\r\nprp2: B\r\n---\r\ni1content"),
-                new File(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"_includes\\i1.md"), "---\r\nprp1: A\r\nprp2: B\r\n---\r\ni1content"),
+                new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");
@@ -89,11 +90,11 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_DuplicateIncludes()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"_includes\\i1.md"), ""),
-                new File(Location.FromPath(@"_includes\\i1.txt"), ""),
-                new File(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"_includes\\i1.md"), ""),
+                new FileMock(Location.FromPath(@"_includes\\i1.txt"), ""),
+                new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
             Assert.ThrowsAsync<DuplicateTemplateException>(() => m_Composer.ComposeSite(src, ""));
@@ -102,10 +103,10 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_SubFolderInclude()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"_includes\\dir1\\i1.md"), "Include"),
-                new File(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"_includes\\dir1\\i1.md"), "Include"),
+                new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");

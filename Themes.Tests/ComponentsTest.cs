@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tests.Common.Mocks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
@@ -60,7 +61,7 @@ namespace Themes.Tests
 
         public static Site NewSite(string pageContent, string includePath, Metadata pageData = null, Configuration siteConfig = null)
         {
-            var page = new Page("", pageContent, pageData);
+            var page = new PageMock("", pageContent, pageData);
             var site = new Site("www.example.com", page, siteConfig);
 
             LoadInclude(includePath, site);
@@ -91,7 +92,7 @@ namespace Themes.Tests
 
             var name = Path.GetFileNameWithoutExtension(path);
 
-            site.Includes.Add(new Template(name, rawContent, data));
+            site.Includes.Add(new TemplateMock(name, rawContent, data));
         }
     }
 }

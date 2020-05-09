@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tests.Common.Mocks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
@@ -27,7 +28,7 @@ namespace CLI.Tests
         {
             var files = new IFile[]
             {
-                new File(Location.FromPath("index.html"), "test")
+                new FileMock(Location.FromPath("index.html"), "test")
             };
 
             var site = await m_Composer.ComposeSite(files.ToAsyncEnumerable(), "");

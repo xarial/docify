@@ -5,6 +5,7 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using Tests.Common.Mocks;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -35,10 +36,10 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_IndexPageTest() 
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"), "i"),
-                new File(Location.FromPath(@"page1\index.md"), "p1")
+                new FileMock(Location.FromPath(@"index.md"), "i"),
+                new FileMock(Location.FromPath(@"page1\index.md"), "p1")
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");
@@ -54,10 +55,10 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_NamedPageTest()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"), "i"),
-                new File(Location.FromPath(@"page1.md"), "p1")
+                new FileMock(Location.FromPath(@"index.md"), "i"),
+                new FileMock(Location.FromPath(@"page1.md"), "p1")
             }.ToAsyncEnumerable();
             
             var site = await m_Composer.ComposeSite(src, "");
@@ -71,10 +72,10 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_NestedIndexPageUndefinedTest()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"), "i"),
-                new File(Location.FromPath(@"page1\page2\index.md"), "p2")
+                new FileMock(Location.FromPath(@"index.md"), "i"),
+                new FileMock(Location.FromPath(@"page1\page2\index.md"), "p2")
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");
@@ -91,11 +92,11 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_NestedIndexPageTest()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"), "i"),
-                new File(Location.FromPath(@"page1\page2\index.md"), "p2"),
-                new File(Location.FromPath(@"page1\index.md"), "p1")
+                new FileMock(Location.FromPath(@"index.md"), "i"),
+                new FileMock(Location.FromPath(@"page1\page2\index.md"), "p2"),
+                new FileMock(Location.FromPath(@"page1\index.md"), "p1")
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");
@@ -112,10 +113,10 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_NestedNamedPageUndefinedTest()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"), "i"),
-                new File(Location.FromPath(@"page1\page2.md"), "p2")
+                new FileMock(Location.FromPath(@"index.md"), "i"),
+                new FileMock(Location.FromPath(@"page1\page2.md"), "p2")
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");
@@ -135,11 +136,11 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_NestedNamedPageTest()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"), "i"),
-                new File(Location.FromPath(@"page1\index.md"), "p1"),
-                new File(Location.FromPath(@"page1\page2.md"), "p2")
+                new FileMock(Location.FromPath(@"index.md"), "i"),
+                new FileMock(Location.FromPath(@"page1\index.md"), "p1"),
+                new FileMock(Location.FromPath(@"page1\page2.md"), "p2")
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");
@@ -156,11 +157,11 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_DuplicateTest()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"), ""),
-                new File(Location.FromPath(@"page1\index.md"), ""),
-                new File(Location.FromPath(@"page1.md"), "")
+                new FileMock(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\index.md"), ""),
+                new FileMock(Location.FromPath(@"page1.md"), "")
             }.ToAsyncEnumerable();
 
             Assert.ThrowsAsync<DuplicatePageException>(() => m_Composer.ComposeSite(src, ""));
@@ -169,12 +170,12 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_CaseInsensitiveTest()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"), "i"),
-                new File(Location.FromPath(@"PAGE1\Page2\index.md"), "p2"),
-                new File(Location.FromPath(@"page1\index.md"), "p1"),
-                new File(Location.FromPath(@"page1\Page3\INDEX.md"), "p3"),
+                new FileMock(Location.FromPath(@"index.md"), "i"),
+                new FileMock(Location.FromPath(@"PAGE1\Page2\index.md"), "p2"),
+                new FileMock(Location.FromPath(@"page1\index.md"), "p1"),
+                new FileMock(Location.FromPath(@"page1\Page3\INDEX.md"), "p3"),
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");
@@ -193,9 +194,9 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_EmptySiteTest()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"page1\index.txt"), ""),
+                new FileMock(Location.FromPath(@"page1\index.txt"), ""),
             }.ToAsyncEnumerable();
 
             Assert.ThrowsAsync<EmptySiteException>(() => m_Composer.ComposeSite(src, ""));
@@ -204,10 +205,10 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_NoMainPageTest()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"page1\index.md"), ""),
-                new File(Location.FromPath(@"page1.md"), "")
+                new FileMock(Location.FromPath(@"page1\index.md"), ""),
+                new FileMock(Location.FromPath(@"page1.md"), "")
             }.ToAsyncEnumerable();
 
             Assert.ThrowsAsync<SiteMainPageMissingException>(() => m_Composer.ComposeSite(src, ""));
@@ -216,12 +217,12 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_DifferentPageTypesTest()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.html"), "i"),
-                new File(Location.FromPath(@"page1\page2\index.cshtml"), "p2"),
-                new File(Location.FromPath(@"page1\index.md"), "p1"),
-                new File(Location.FromPath(@"page1\page3\index.html"), "p3"),
+                new FileMock(Location.FromPath(@"index.html"), "i"),
+                new FileMock(Location.FromPath(@"page1\page2\index.cshtml"), "p2"),
+                new FileMock(Location.FromPath(@"page1\index.md"), "p1"),
+                new FileMock(Location.FromPath(@"page1\page3\index.html"), "p3"),
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");
@@ -242,10 +243,10 @@ namespace Core.Tests
         {
             var src = new IFile[]
             {
-                new File(Location.FromPath(@"index.md"), "i"),
-                new File(Location.FromPath(@"page1\index.md"), "p1"),
-                new File(Location.FromPath(@"page1\asset1.txt"), "p1"),
-                new File(Location.FromPath(@"asset2.ini"), "p1")
+                new FileMock(Location.FromPath(@"index.md"), "i"),
+                new FileMock(Location.FromPath(@"page1\index.md"), "p1"),
+                new FileMock(Location.FromPath(@"page1\asset1.txt"), "p1"),
+                new FileMock(Location.FromPath(@"asset2.ini"), "p1")
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");

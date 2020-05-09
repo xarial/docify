@@ -85,7 +85,7 @@ namespace Xarial.Docify.Core.Composer
                 }
             }
 
-            return new Page(name, rawContent, pageData, layout);
+            return new Page(name, rawContent, pageData, src.Id, layout);
         }
 
         public async Task<ISite> ComposeSite(IAsyncEnumerable<IFile> files, string baseUrl)
@@ -197,13 +197,13 @@ namespace Xarial.Docify.Core.Composer
 
                 usedIncludes.Add(name);
 
-                return new Template(name, rawContent, data);
+                return new Template(name, rawContent, s.Id, data);
             }).ToList();
         }
 
         private List<Data.File> ParseAssets(IEnumerable<IFile> assets) 
         {
-            return assets.Select(a => new Data.File(a.Location, a.Content)).ToList();
+            return assets.Select(a => new Data.File(a.Location, a.Content, a.Id)).ToList();
         }
 
         private string GetTemplateName(ILocation loc) 
@@ -249,7 +249,7 @@ namespace Xarial.Docify.Core.Composer
                 }
             }
 
-            var layout = new Template(layoutName, rawContent, data, baseLayout);
+            var layout = new Template(layoutName, rawContent, layoutFile.Id, data, baseLayout);
 
             if (layouts.ContainsKey(layoutName)) 
             {
@@ -388,7 +388,7 @@ namespace Xarial.Docify.Core.Composer
                     fileName = a.Location.GetRoot();
                 }
 
-                return new Asset(fileName, a.Content);
+                return new Asset(fileName, a.Content, a.Id);
             }));
 
             children.ForEach(a => assets.Remove(a));

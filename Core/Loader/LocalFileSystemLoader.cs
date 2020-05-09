@@ -56,7 +56,7 @@ namespace Xarial.Docify.Core.Loader
                     var loc = Location.FromPath(relPath);
 
                     var content = await m_FileSystem.File.ReadAllBytesAsync(filePath);
-                    yield return new Data.File(loc, content);
+                    yield return new Data.File(loc, content, Guid.NewGuid().ToString());
                 }
             }
         }

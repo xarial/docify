@@ -16,14 +16,8 @@ namespace Xarial.Docify.Core.Data
     public class File : IFile
     {
         public byte[] Content { get; }
-
         public ILocation Location { get; }
-
         public string Id { get; }
-
-        public File(ILocation path, byte[] content) : this(path, content, Guid.NewGuid().ToString())
-        {
-        }
 
         public File(ILocation path, byte[] content, string id)
         {
@@ -31,17 +25,7 @@ namespace Xarial.Docify.Core.Data
             Content = content;
             Id = id;
         }
-
-        public File(ILocation path, string content) 
-            : this(path, content, Guid.NewGuid().ToString())
-        {
-        }
-
-        public File(ILocation path, string content, string id)
-            : this(path, ContentExtension.ToByteArray(content))
-        {
-        }
-
+        
         public override string ToString()
         {
             return Location.ToString();

@@ -39,7 +39,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Base.Extensions", "Base.Ext
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins.Tests", "Plugins.Tests\Plugins.Tests.csproj", "{4C5B93BE-4CD9-47AB-8F45-FDA3973B679C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Themes.Tests", "Themes.Tests\Themes.Tests.csproj", "{B3FC3FBD-3C19-42D4-B93E-CCEAEF6F4811}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Themes.Tests", "Themes.Tests\Themes.Tests.csproj", "{B3FC3FBD-3C19-42D4-B93E-CCEAEF6F4811}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Common", "Tests.Common\Tests.Common.csproj", "{E24618B1-3279-45FE-B04E-A8B7F21734F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +105,10 @@ Global
 		{B3FC3FBD-3C19-42D4-B93E-CCEAEF6F4811}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3FC3FBD-3C19-42D4-B93E-CCEAEF6F4811}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3FC3FBD-3C19-42D4-B93E-CCEAEF6F4811}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E24618B1-3279-45FE-B04E-A8B7F21734F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E24618B1-3279-45FE-B04E-A8B7F21734F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E24618B1-3279-45FE-B04E-A8B7F21734F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E24618B1-3279-45FE-B04E-A8B7F21734F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,6 +124,7 @@ Global
 		{BF95A996-98C7-4C4D-9011-B26BFFC01AAE} = {8FBE598C-2AA2-456A-ADDA-DFC71BECF0C8}
 		{4C5B93BE-4CD9-47AB-8F45-FDA3973B679C} = {8FBE598C-2AA2-456A-ADDA-DFC71BECF0C8}
 		{B3FC3FBD-3C19-42D4-B93E-CCEAEF6F4811} = {8FBE598C-2AA2-456A-ADDA-DFC71BECF0C8}
+		{E24618B1-3279-45FE-B04E-A8B7F21734F6} = {8FBE598C-2AA2-456A-ADDA-DFC71BECF0C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {680FB5AB-C7E7-4A10-9F1D-3B7D812E842C}

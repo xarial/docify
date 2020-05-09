@@ -18,6 +18,7 @@ using Xarial.Docify.Core.Publisher;
 using Xarial.Docify.Base;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core;
+using Tests.Common.Mocks;
 
 namespace Core.Tests
 {
@@ -29,11 +30,11 @@ namespace Core.Tests
             var fs = new MockFileSystem();
             var publisher = new LocalFileSystemPublisher(new LocalFileSystemPublisherConfig(), fs);
 
-            var pages = new File[]
+            var pages = new FileMock[]
             {
-                new File(Location.FromPath("page1.html"), "abc"),
-                new File(Location.FromPath("dir1\\page2.html"), "def"),
-                new File(Location.FromPath("C:\\external\\page3.html"), "xyz"),
+                new FileMock(Location.FromPath("page1.html"), "abc"),
+                new FileMock(Location.FromPath("dir1\\page2.html"), "def"),
+                new FileMock(Location.FromPath("C:\\external\\page3.html"), "xyz"),
             };
 
             await publisher.Write(Location.FromPath("C:\\site"), pages.ToAsyncEnumerable());
@@ -55,7 +56,7 @@ namespace Core.Tests
 
             var assets = new IFile[]
             {
-                new File(Location.FromPath("file.bin"), new byte[] { 1,2,3 })
+                new FileMock(Location.FromPath("file.bin"), new byte[] { 1,2,3 })
             };
 
             await publisher.Write(Location.FromPath("C:\\site"), assets.ToAsyncEnumerable());
@@ -76,7 +77,7 @@ namespace Core.Tests
 
             var pages = new IFile[]
             {
-                new File(Location.FromPath("page1.html"), "abc")
+                new FileMock(Location.FromPath("page1.html"), "abc")
             };
 
             await publisher.Write(Location.FromPath("C:\\site"), pages.ToAsyncEnumerable());

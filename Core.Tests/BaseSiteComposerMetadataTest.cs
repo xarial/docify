@@ -18,6 +18,7 @@ using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Composer;
 using System.Linq;
 using System.Threading.Tasks;
+using Tests.Common.Mocks;
 
 namespace Core.Tests
 {
@@ -34,9 +35,9 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_ContentMetadataSimpleProperties()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"),
+                new FileMock(Location.FromPath(@"index.md"),
                 "---\r\nprp1: A\r\nprp2: B\r\n---\r\nText Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
@@ -51,9 +52,9 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_ContentMetadataNestedProperties()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"),
+                new FileMock(Location.FromPath(@"index.md"),
                 "---\r\nprp1: A\r\nprp2:\r\n  prp3: B\r\n---\r\nText Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
@@ -69,9 +70,9 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_ContentMetadataArray()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"),
+                new FileMock(Location.FromPath(@"index.md"),
                 "---\r\nprp1: A\r\nprp2:\r\n  - B\r\n  - C\r\n---\r\nText Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
@@ -88,9 +89,9 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_ContentNoFrontMatter()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"),
+                new FileMock(Location.FromPath(@"index.md"),
                 "Text Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
@@ -103,9 +104,9 @@ namespace Core.Tests
         [Test]
         public void ComposeSite_NotClosedFrontMatter()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"),
+                new FileMock(Location.FromPath(@"index.md"),
                 "---\r\nText Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 

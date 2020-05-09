@@ -45,9 +45,9 @@ namespace Xarial.Docify.Core.Publisher
                 m_FileSystem.Directory.Delete(outDir, true);
             }
 
-            await foreach (var writable in files)
+            await foreach (var file in files)
             {
-                var outFilePath = writable.Location.ToPath();
+                var outFilePath = file.Location.ToPath();
 
                 if (!Path.IsPathRooted(outFilePath)) 
                 {
@@ -68,7 +68,7 @@ namespace Xarial.Docify.Core.Publisher
 
                 bool skip = false;
 
-                IFile outFile = new Data.File(outLoc, writable.Content);
+                IFile outFile = new Data.File(outLoc, file.Content, file.Id);
                 
                 await m_PrePublishFilePlugins.InvokePluginsIfAnyAsync(async (p) =>
                 {

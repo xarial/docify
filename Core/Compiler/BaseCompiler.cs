@@ -108,7 +108,7 @@ namespace Xarial.Docify.Core.Compiler
                 }
                 else
                 {
-                    yield return new File(thisLoc, asset.Content);
+                    yield return new File(thisLoc, asset.Content, asset.Id);
                 }
                 
             }
@@ -141,7 +141,7 @@ namespace Xarial.Docify.Core.Compiler
 
             await m_PageContentWriterPlugins.InvokePluginsIfAnyAsync(async (p) => content = await p.WritePageContent(content, url));
 
-            return new File(loc, content);
+            return new File(loc, ContentExtension.ToByteArray(content), page.Id);
         }
 
         private async Task<IFile> CompileAsset(IAsset asset, ISite site, IPage page, ILocation loc)
@@ -151,7 +151,7 @@ namespace Xarial.Docify.Core.Compiler
             var rawContent = asset.AsTextContent();
             var content = await m_IncludesHandler.ReplaceAll(rawContent, site, page, url);
 
-            return new File(loc, ContentExtension.ToByteArray(content));
+            return new File(loc, ContentExtension.ToByteArray(content), asset.Id);
         }
     }
 }

@@ -5,6 +5,7 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using Tests.Common.Mocks;
 using Core.Tests.Properties;
 using Moq;
 using NUnit.Framework;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Tests.Common.Mocks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Data;
@@ -87,7 +89,7 @@ namespace Core.Tests
         public async Task Compile_SinglePageTest()
         {
             var site = new Site("",
-                new Page("", "abc _CC_ _FN_ test"), null);
+                new PageMock("", "abc _CC_ _FN_ test"), null);
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
@@ -97,16 +99,16 @@ namespace Core.Tests
         [Test]
         public async Task Compile_MultipleNestedPagesTest()
         {
-            var p1 = new Page("", "P1");
+            var p1 = new PageMock("", "P1");
 
             var site = new Site("", p1, null);
 
-            var p2 = new Page("page2", "P2");
+            var p2 = new PageMock("page2", "P2");
             p1.SubPages.Add(p2);
-            p2.SubPages.Add(new Page("page3", "P3"));
-            var p4 = new Page("page4", "P4");
+            p2.SubPages.Add(new PageMock("page3", "P3"));
+            var p4 = new PageMock("page4", "P4");
             p2.SubPages.Add(p4);
-            p4.SubPages.Add(new Page("page5", "P5"));
+            p4.SubPages.Add(new PageMock("page5", "P5"));
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
@@ -121,8 +123,8 @@ namespace Core.Tests
         public async Task Compile_SimpleTemplatePageTest()
         {
             var site = new Site("",
-                new Page("", "My Page Content",
-                new Template("t1", "TemplateText1 _C_ TemplateText2")), null);
+                new PageMock("", "My Page Content",
+                new TemplateMock("t1", "TemplateText1 _C_ TemplateText2")), null);
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
@@ -133,10 +135,10 @@ namespace Core.Tests
         public async Task Compile_NestedSimpleTemplatePageTest()
         {
             var site = new Site("",
-                new Page("",
+                new PageMock("",
                 "My Page Content",
-                new Template("t1", "T1 _C_ T1", null,
-                new Template("t2", "T2 _C_ T2"))), null);
+                new TemplateMock("t1", "T1 _C_ T1", null,
+                new TemplateMock("t2", "T2 _C_ T2"))), null);
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
@@ -146,12 +148,12 @@ namespace Core.Tests
         [Test]
         public async Task Compile_NestedTemplateMultiPageTest()
         {
-            var t2 = new Template("t2", "T2 _FN_ _C_ T2");
-            var t1 = new Template("t1", "T1 _FN_ _C_ T1", null, t2);
+            var t2 = new TemplateMock("t2", "T2 _FN_ _C_ T2");
+            var t1 = new TemplateMock("t1", "T1 _FN_ _C_ T1", null, t2);
 
-            var p1 = new Page("page1", "Page1 _FN_", t1);
+            var p1 = new PageMock("page1", "Page1 _FN_", t1);
 
-            p1.SubPages.Add(new Page("page2", "Page2 _FN_", t1));
+            p1.SubPages.Add(new PageMock("page2", "Page2 _FN_", t1));
 
             var site = new Site("", p1, null);
 

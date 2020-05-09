@@ -18,6 +18,7 @@ using Xarial.Docify.Core.Data;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Core.Composer;
 using System.Threading.Tasks;
+using Tests.Common.Mocks;
 
 namespace Core.Tests
 {
@@ -34,11 +35,11 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_SinglePageAsset()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"), ""),
-                new File(Location.FromPath(@"page1\index.md"), ""),
-                new File(Location.FromPath(@"page1\asset.txt"), "a1"),
+                new FileMock(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\asset.txt"), "a1"),
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");
@@ -51,10 +52,10 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_MainPageAsset()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"), ""),
-                new File(Location.FromPath(@"asset.txt"), "a1"),
+                new FileMock(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"asset.txt"), "a1"),
             }.ToAsyncEnumerable();
             
             var site = await m_Composer.ComposeSite(src, "");
@@ -67,12 +68,12 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_TextAndBinaryAsset()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"), ""),
-                new File(Location.FromPath(@"page1\index.md"), ""),
-                new File(Location.FromPath(@"page1\asset.txt"), "a1"),
-                new File(Location.FromPath(@"page1\asset1.bin"), new byte[] { 1,2,3 })
+                new FileMock(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\asset.txt"), "a1"),
+                new FileMock(Location.FromPath(@"page1\asset1.bin"), new byte[] { 1,2,3 })
             }.ToAsyncEnumerable();
             
             var site = await m_Composer.ComposeSite(src, "");
@@ -86,16 +87,16 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_MultiLevelAsset()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"), ""),
-                new File(Location.FromPath(@"asset.txt"), "a1"),
-                new File(Location.FromPath(@"page1\index.md"), ""),
-                new File(Location.FromPath(@"page1\asset1.txt"), "a2"),
-                new File(Location.FromPath(@"page2\index.md"), ""),
-                new File(Location.FromPath(@"page2\asset.txt"), "a3"),
-                new File(Location.FromPath(@"page2\page3\index.md"), ""),
-                new File(Location.FromPath(@"page2\page3\asset2.txt"), "a4")
+                new FileMock(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"asset.txt"), "a1"),
+                new FileMock(Location.FromPath(@"page1\index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\asset1.txt"), "a2"),
+                new FileMock(Location.FromPath(@"page2\index.md"), ""),
+                new FileMock(Location.FromPath(@"page2\asset.txt"), "a3"),
+                new FileMock(Location.FromPath(@"page2\page3\index.md"), ""),
+                new FileMock(Location.FromPath(@"page2\page3\asset2.txt"), "a4")
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");
@@ -117,10 +118,10 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_NoExtensionAsset()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"), ""),
-                new File(Location.FromPath(@"asset"), "a1"),
+                new FileMock(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"asset"), "a1"),
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");
@@ -133,13 +134,13 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_SubFolderAsset()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"), ""),
-                new File(Location.FromPath(@"page1\index.md"), ""),
-                new File(Location.FromPath(@"page1\sub-folder\asset1.txt"), "a1"),
-                new File(Location.FromPath(@"page1\sub-folder\sub-folder2\asset2.txt"), "a2"),
-                new File(Location.FromPath(@"page1\asset3.txt"), "a3")
+                new FileMock(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\sub-folder\asset1.txt"), "a1"),
+                new FileMock(Location.FromPath(@"page1\sub-folder\sub-folder2\asset2.txt"), "a2"),
+                new FileMock(Location.FromPath(@"page1\asset3.txt"), "a3")
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");
@@ -170,13 +171,13 @@ namespace Core.Tests
         [Test]
         public async Task ComposeSite_PhantomPageAsset()
         {
-            var src = new File[]
+            var src = new FileMock[]
             {
-                new File(Location.FromPath(@"index.md"), ""),
-                new File(Location.FromPath(@"page1\index.md"), ""),
-                new File(Location.FromPath(@"page1\page2\asset1.txt"), "a1"),
-                new File(Location.FromPath(@"page1\page2\Page3\asset2.txt"), "a2"),
-                new File(Location.FromPath(@"page1\page2\Page3\index.md"), ""),
+                new FileMock(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\page2\asset1.txt"), "a1"),
+                new FileMock(Location.FromPath(@"page1\page2\Page3\asset2.txt"), "a2"),
+                new FileMock(Location.FromPath(@"page1\page2\Page3\index.md"), ""),
             }.ToAsyncEnumerable();
 
             var site = await m_Composer.ComposeSite(src, "");

@@ -20,6 +20,7 @@
     <ProjectReference Include="..\CLI\CLI.csproj" />
     <ProjectReference Include="..\Components\Components.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
     <ProjectReference Include="..\Tools\Tools.csproj" />
   </ItemGroup>
 

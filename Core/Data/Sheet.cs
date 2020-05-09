@@ -15,13 +15,13 @@ namespace Xarial.Docify.Core.Data
         public string Id { get; }
         public string Name { get; }
 
-        protected Sheet(string rawContent, string name, IMetadata data, Template layout)
+        protected Sheet(string rawContent, string name, IMetadata data, ITemplate layout, string id)
         {
             Name = name;
             RawContent = rawContent;
             Layout = layout;
             Data = data ?? new Metadata();
-            Id = Guid.NewGuid().ToString();
+            Id = id;
         }
     }
 }

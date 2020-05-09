@@ -12,6 +12,7 @@ using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using System.Threading.Tasks;
+using Tests.Common.Mocks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
@@ -34,10 +35,10 @@ namespace CLI.Tests
         [Test]
         public async Task NoTemplatePageTest()
         {
-            var p1 = new Page("page1",
+            var p1 = new PageMock("page1",
                 "<div>@Model.Site.MainPage.SubPages.Count <a href=\"@Model.Page.Url\">Test</a></div>");
                         
-            var p2 = new Page("page2",
+            var p2 = new PageMock("page2",
                 "<p>@Model.Site.MainPage.SubPages.Count</p>\n\n[page](@Model.Site.BaseUrl@Model.Page.Url)");
             
             p1.SubPages.Add(p2);
@@ -54,9 +55,9 @@ namespace CLI.Tests
         public async Task TemplatePageTest()
         {
             var site = new Site("",
-                new Page("page",
+                new PageMock("page",
                 "My Page Content",
-                new Template("t1", "TemplateText1{{ content }}TemplateText2")), null);
+                new TemplateMock("t1", "TemplateText1{{ content }}TemplateText2")), null);
             
             var files = await m_Compiler.Compile(site).ToListAsync();
 
@@ -66,15 +67,15 @@ namespace CLI.Tests
         [Test]
         public async Task NestedTemplatePageTest()
         {
-            var t2 = new Template("t2", "*T2* @Model.Page.Url {{ content }}_T2");
-            var t1 = new Template("t1", "*T1* @Model.Page.Url {{ content }}_T1", null, t2);
-            var t3 = new Template("t3", "T3{{ content }}T3");
-            var t4 = new Template("t4", "T4{{ content }}T4", null, t3);
+            var t2 = new TemplateMock("t2", "*T2* @Model.Page.Url {{ content }}_T2");
+            var t1 = new TemplateMock("t1", "*T1* @Model.Page.Url {{ content }}_T1", null, t2);
+            var t3 = new TemplateMock("t3", "T3{{ content }}T3");
+            var t4 = new TemplateMock("t4", "T4{{ content }}T4", null, t3);
 
-            var p1 = new Page("page1", " **Page1** @Model.Page.Url", t1);
-            var p2 = new Page("page2", " **Page2** @Model.Page.Url", t1);
-            var p3 = new Page("page3", "Page3", t4);
-            var p4 = new Page("page4", "Page4", t4);
+            var p1 = new PageMock("page1", " **Page1** @Model.Page.Url", t1);
+            var p2 = new PageMock("page2", " **Page2** @Model.Page.Url", t1);
+            var p3 = new PageMock("page3", "Page3", t4);
+            var p4 = new PageMock("page4", "Page4", t4);
 
             p1.SubPages.Add(p2);
             p1.SubPages.Add(p3);
@@ -93,17 +94,17 @@ namespace CLI.Tests
         [Test]
         public async Task IncludePageTest()
         {
-            var p1 = new Page("page1",
+            var p1 = new PageMock("page1",
                 "*@Model.Site.MainPage.SubPages.Count* {% i1 %}");
 
-            var p2 = new Page("page2",
+            var p2 = new PageMock("page2",
                 "@Model.Page.Url\r\n{% i1 p1: B %}\r\n{% i2 p2: X %}");
 
             p1.SubPages.Add(p2);
 
             var site = new Site("", p1, null);
-            site.Includes.Add(new Template("i1", "Some Value\r\n@Model.Data[\"p1\"]", new Metadata() { { "p1", "A" } }));
-            site.Includes.Add(new Template("i2", "**@Model.Page.Url**\r\n@Model.Data.Count", new Metadata() { { "p1", "A" }, { "p2", "X" } }));
+            site.Includes.Add(new TemplateMock("i1", "Some Value\r\n@Model.Data[\"p1\"]", new Metadata() { { "p1", "A" } }));
+            site.Includes.Add(new TemplateMock("i2", "**@Model.Page.Url**\r\n@Model.Data.Count", new Metadata() { { "p1", "A" }, { "p2", "X" } }));
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
@@ -114,11 +115,11 @@ namespace CLI.Tests
         [Test]
         public async Task IncludeMultilineTest()
         {
-            var p1 = new Page("page1",
+            var p1 = new PageMock("page1",
                 "abc {% i1 \r\n %}");
             
             var site = new Site("", p1, null);
-            site.Includes.Add(new Template("i1", "Some Value"));
+            site.Includes.Add(new TemplateMock("i1", "Some Value"));
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
@@ -128,13 +129,13 @@ namespace CLI.Tests
         [Test]
         public async Task IncludeLayoutTest()
         {
-            var l1 = new Template("l1", "abc {% i1 { p1: B } %} klm {{ content }} xyz");
+            var l1 = new TemplateMock("l1", "abc {% i1 { p1: B } %} klm {{ content }} xyz");
 
-            var p1 = new Page("page1",
+            var p1 = new PageMock("page1",
                 "p1 {% i1 %}", l1);
 
             var site = new Site("", p1, null);
-            site.Includes.Add(new Template("i1", "Some Value: @Model.Data[\"p1\"]", new Metadata() { { "p1", "A" } }));
+            site.Includes.Add(new TemplateMock("i1", "Some Value: @Model.Data[\"p1\"]", new Metadata() { { "p1", "A" } }));
             
             var files = await m_Compiler.Compile(site).ToListAsync();
 
@@ -144,8 +145,8 @@ namespace CLI.Tests
         [Test]
         public async Task BinaryAssetTest()
         {
-            var site = new Site("", new Page("page1", ""), null);
-            var asset = new Asset("file.bin", new byte[] { 1, 2, 3 });
+            var site = new Site("", new PageMock("page1", ""), null);
+            var asset = new AssetMock("file.bin", new byte[] { 1, 2, 3 });
             site.MainPage.Assets.Add(asset);
 
             var files = await m_Compiler.Compile(site).ToListAsync();
@@ -156,8 +157,8 @@ namespace CLI.Tests
         [Test]
         public async Task TextAssetTest()
         {
-            var site = new Site("", new Page("page1", ""), null);
-            var asset = new Asset("file.txt", ContentExtension.ToByteArray("test"));
+            var site = new Site("", new PageMock("page1", ""), null);
+            var asset = new AssetMock("file.txt", ContentExtension.ToByteArray("test"));
             site.MainPage.Assets.Add(asset);
 
             var files = await m_Compiler.Compile(site).ToListAsync();
@@ -168,9 +169,9 @@ namespace CLI.Tests
         [Test]
         public async Task SubPageAssetTest()
         {
-            var site = new Site("", new Page("", ""), null);
-            var asset = new Asset("file.txt", ContentExtension.ToByteArray("test"));
-            var p2 = new Page("p2", "");
+            var site = new Site("", new PageMock("", ""), null);
+            var asset = new AssetMock("file.txt", ContentExtension.ToByteArray("test"));
+            var p2 = new PageMock("p2", "");
             site.MainPage.SubPages.Add(p2);
             p2.Assets.Add(asset);
 
@@ -185,7 +186,7 @@ namespace CLI.Tests
         [Test]
         public async Task OpenIncludeTest()
         {
-            var site = new Site("", new Page("page1", "abc {% x *test*"), null);
+            var site = new Site("", new PageMock("page1", "abc {% x *test*"), null);
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 

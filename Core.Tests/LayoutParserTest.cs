@@ -5,6 +5,7 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using Tests.Common.Mocks;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -56,25 +57,25 @@ namespace Core.Tests
         [Test]
         public async Task InsertContent()
         {
-            Assert.AreEqual("Hello __replacement__", await m_Parser.InsertContent(new Template("", "Hello {{ content }}"), "__replacement__", null));
-            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new Template("", "{{ content }}"), "__replacement__", null));
-            Assert.AreEqual("__replacement__ AAA", await m_Parser.InsertContent(new Template("", "{{ content }} AAA"), "__replacement__", null));
-            Assert.AreEqual("ABC __replacement__ aaa", await m_Parser.InsertContent(new Template("", "ABC {{ content }} aaa"), "__replacement__", null));
-            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new Template("", "{{    content }}"), "__replacement__", null));
-            Assert.AreEqual("Hello __replacement__", await m_Parser.InsertContent(new Template("", "Hello {{ content }}"), "__replacement__", null));
-            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new Template("", "{{ content  }}"), "__replacement__", null));
-            Assert.AreEqual("__replacement__ AAA", await m_Parser.InsertContent(new Template("", "{{ content}} AAA"), "__replacement__", null));
-            Assert.AreEqual("ABC __replacement__ aaa", await m_Parser.InsertContent(new Template("", "ABC {{content}} aaa"), "__replacement__", null));
-            Assert.AreEqual("__replacement__ AAA\r\n__replacement__", await m_Parser.InsertContent(new Template("", "{{ content}} AAA\r\n{{ content }}"), "__replacement__", null));
-            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new Template("", "{{content }}"), "__replacement__", null));
-            Assert.AreEqual("{content} Some Text", await m_Parser.InsertContent(new Template("", "{content} Some Text"), "__replacement__", null));
+            Assert.AreEqual("Hello __replacement__", await m_Parser.InsertContent(new TemplateMock("", "Hello {{ content }}"), "__replacement__", null));
+            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new TemplateMock("", "{{ content }}"), "__replacement__", null));
+            Assert.AreEqual("__replacement__ AAA", await m_Parser.InsertContent(new TemplateMock("", "{{ content }} AAA"), "__replacement__", null));
+            Assert.AreEqual("ABC __replacement__ aaa", await m_Parser.InsertContent(new TemplateMock("", "ABC {{ content }} aaa"), "__replacement__", null));
+            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new TemplateMock("", "{{    content }}"), "__replacement__", null));
+            Assert.AreEqual("Hello __replacement__", await m_Parser.InsertContent(new TemplateMock("", "Hello {{ content }}"), "__replacement__", null));
+            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new TemplateMock("", "{{ content  }}"), "__replacement__", null));
+            Assert.AreEqual("__replacement__ AAA", await m_Parser.InsertContent(new TemplateMock("", "{{ content}} AAA"), "__replacement__", null));
+            Assert.AreEqual("ABC __replacement__ aaa", await m_Parser.InsertContent(new TemplateMock("", "ABC {{content}} aaa"), "__replacement__", null));
+            Assert.AreEqual("__replacement__ AAA\r\n__replacement__", await m_Parser.InsertContent(new TemplateMock("", "{{ content}} AAA\r\n{{ content }}"), "__replacement__", null));
+            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new TemplateMock("", "{{content }}"), "__replacement__", null));
+            Assert.AreEqual("{content} Some Text", await m_Parser.InsertContent(new TemplateMock("", "{content} Some Text"), "__replacement__", null));
         }
 
         [Test]
         public async Task InsertContentNested()
         {
-            var t1 = new Template("", "T1 {{ content }} T1");
-            var t2 = new Template("", "T2 {{ content }} T2", null, t1);
+            var t1 = new TemplateMock("", "T1 {{ content }} T1");
+            var t2 = new TemplateMock("", "T2 {{ content }} T2", null, t1);
 
             Assert.AreEqual("T1 T2 __replacement__ T2 T1", await m_Parser.InsertContent(t2, "__replacement__", null));
         }

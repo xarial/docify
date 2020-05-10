@@ -59,15 +59,15 @@ namespace Xarial.Docify.Lib.Plugins
 
         private ImageOptimizerSettings m_Settings;
 
-        private IDocifyApplication m_Engine;
+        private IDocifyApplication m_App;
 
-        public void Init(IDocifyApplication engine, ImageOptimizerSettings setts)
+        public void Init(IDocifyApplication app, ImageOptimizerSettings setts)
         {
-            m_Engine = engine;
+            m_App = app;
             m_Settings = setts;
 
-            m_Engine.Compiler.PreCompile += OnPreCompile;
-            m_Engine.Publisher.PrePublishFile += OnPrePublishFile;
+            m_App.Compiler.PreCompile += OnPreCompile;
+            m_App.Publisher.PrePublishFile += OnPrePublishFile;
         }
 
         private Task OnPreCompile(ISite site)

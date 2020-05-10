@@ -52,17 +52,17 @@ namespace Xarial.Docify.Lib.Plugins
 
         private ISite m_Site;
 
-        private IDocifyApplication m_Engine;
+        private IDocifyApplication m_App;
 
-        public void Init(IDocifyApplication engine, CodeSnippetSettings setts)
+        public void Init(IDocifyApplication app, CodeSnippetSettings setts)
         {
-            m_Engine = engine;
+            m_App = app;
             m_Settings = setts;
 
-            m_Engine.Compiler.PreCompile += OnPreCompile;
-            m_Engine.Includes.RegisterCustomIncludeHandler("code-snippet", InsertCodeSnippet);
-            m_Engine.Publisher.PrePublishFile += OnPrePublishFile;
-            m_Engine.Compiler.WritePageContent += OnWritePageContent;
+            m_App.Compiler.PreCompile += OnPreCompile;
+            m_App.Includes.RegisterCustomIncludeHandler("code-snippet", InsertCodeSnippet);
+            m_App.Publisher.PrePublishFile += OnPrePublishFile;
+            m_App.Compiler.WritePageContent += OnWritePageContent;
         }
 
         private Task OnPreCompile(ISite site)
@@ -194,7 +194,7 @@ namespace Xarial.Docify.Lib.Plugins
                     }
 
                     var code = $"~~~{lang} {snipClass}\r\n{snip.Code}\r\n~~~";
-                    res.AppendLine(await m_Engine.Compiler.ContentTransformer.Transform(code, Guid.NewGuid().ToString(), null));
+                    res.AppendLine(await m_App.Compiler.ContentTransformer.Transform(code, Guid.NewGuid().ToString(), null));
                 }
 
                 return res.ToString();

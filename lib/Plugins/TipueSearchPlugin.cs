@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
@@ -24,12 +25,12 @@ namespace Xarial.Docify.Lib.Plugins
 {
     public class PageSearchData
     {
-        public string title { get; set; }
-        public string text { get; set; }
-        public string url { get; set; }
-        public string tags { get; set; }
-        public string img { get; set; }
-        public string note { get; set; }
+        public string Title { get; set; }
+        public string Text { get; set; }
+        public string Url { get; set; }
+        public string Tags { get; set; }
+        public string Img { get; set; }
+        public string Note { get; set; }
     }
 
     public class TipueSearchPluginSettings
@@ -55,16 +56,16 @@ namespace Xarial.Docify.Lib.Plugins
 
         private TipueSearchPluginSettings m_Setts;
 
-        private IDocifyApplication m_Engine;
+        private IDocifyApplication m_App;
 
-        public void Init(IDocifyApplication engine, TipueSearchPluginSettings setts)
+        public void Init(IDocifyApplication app, TipueSearchPluginSettings setts)
         {
-            m_Engine = engine;
+            m_App = app;
             m_Setts = setts;
-            m_Engine.Includes.RegisterCustomIncludeHandler("tipue-search", InsertSearchBox);
-            m_Engine.Compiler.PreCompile += OnPreCompile;
-            m_Engine.Compiler.WritePageContent += OnWritePageContent;
-            m_Engine.Compiler.AddFilesPostCompile += OnAddFilesPostCompile;
+            m_App.Includes.RegisterCustomIncludeHandler("tipue-search", InsertSearchBox);
+            m_App.Compiler.PreCompile += OnPreCompile;
+            m_App.Compiler.WritePageContent += OnWritePageContent;
+            m_App.Compiler.AddFilesPostCompile += OnAddFilesPostCompile;
         }
         
         private Task<string> InsertSearchBox(IMetadata data, IPage page)
@@ -117,9 +118,9 @@ namespace Xarial.Docify.Lib.Plugins
 
                 m_SearchIndex.Add(new PageSearchData()
                 {
-                    title = title,
-                    text = NormalizeText(text),
-                    url = url
+                    Title = title,
+                    Text = NormalizeText(text),
+                    Url = url
                 });
             }
 
@@ -131,9 +132,10 @@ namespace Xarial.Docify.Lib.Plugins
             //to remove the warning
             await Task.CompletedTask;
 
-            var opts = new System.Text.Json.JsonSerializerOptions()
+            var opts = new JsonSerializerOptions()
             {
-                IgnoreNullValues = true
+                IgnoreNullValues = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
             var searchContent = System.Text.Json.JsonSerializer.Serialize(m_SearchIndex, opts).ToString();

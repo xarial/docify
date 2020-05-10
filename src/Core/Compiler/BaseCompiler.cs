@@ -62,9 +62,14 @@ namespace Xarial.Docify.Core.Compiler
                 yield return file;
             }
 
-            await foreach (var addFile in m_Ext.AddFilesPostCompile())
+            var additionalFiles = m_Ext.AddFilesPostCompile();
+
+            if (additionalFiles != null)
             {
-                yield return addFile;
+                await foreach (var addFile in additionalFiles)
+                {
+                    yield return addFile;
+                }
             }
         }
 

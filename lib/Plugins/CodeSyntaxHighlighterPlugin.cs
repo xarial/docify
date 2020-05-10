@@ -35,16 +35,16 @@ namespace Xarial.Docify.Lib.Plugins
 
         private const string CSS_FILE_PATH = "assets/styles/syntax-highlight.css";
 
-        private IDocifyApplication m_Engine;
+        private IDocifyApplication m_App;
 
-        public void Init(IDocifyApplication engine, CodeSyntaxHighlighterSettings setts)
+        public void Init(IDocifyApplication app, CodeSyntaxHighlighterSettings setts)
         {
-            m_Engine = engine;
+            m_App = app;
             m_Settings = setts;
 
-            m_Engine.Compiler.PreCompile += OnPreCompile;
-            m_Engine.Compiler.RenderCodeBlock += OnRenderCodeBlock;
-            m_Engine.Compiler.WritePageContent += OnWritePageContent;
+            m_App.Compiler.PreCompile += OnPreCompile;
+            m_App.Compiler.RenderCodeBlock += OnRenderCodeBlock;
+            m_App.Compiler.WritePageContent += OnWritePageContent;
         }
         
         private Task OnPreCompile(ISite site)

@@ -26,15 +26,15 @@ namespace Xarial.Docify.Lib.Plugins
         private const string CSS_FILE_PATH = "assets/styles/responsive-image.css";
         private const string CLASS_NAME = "responsive";
 
-        private IDocifyApplication m_Engine;
+        private IDocifyApplication m_App;
 
-        public void Init(IDocifyApplication engine)
+        public void Init(IDocifyApplication app)
         {
-            m_Engine = engine;
+            m_App = app;
 
-            m_Engine.Compiler.PreCompile += OnPreCompile;
-            m_Engine.Compiler.RenderImage += OnRenderImage;
-            m_Engine.Compiler.WritePageContent += OnWritePageContent;
+            m_App.Compiler.PreCompile += OnPreCompile;
+            m_App.Compiler.RenderImage += OnRenderImage;
+            m_App.Compiler.WritePageContent += OnWritePageContent;
         }
         
         private Task OnPreCompile(ISite site)

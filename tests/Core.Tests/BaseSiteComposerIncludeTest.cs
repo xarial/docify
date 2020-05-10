@@ -19,6 +19,7 @@ using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Composer;
 using System.Threading.Tasks;
 using Tests.Common.Mocks;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Core.Tests
 {
@@ -29,7 +30,7 @@ namespace Core.Tests
         [SetUp]
         public void Setup()
         {
-            m_Composer = new BaseSiteComposer(new Mock<ILayoutParser>().Object, null);
+            m_Composer = new BaseSiteComposer(new Mock<ILayoutParser>().Object, null, new Mock<IComposerExtension>().Object);
         }
 
         [Test]

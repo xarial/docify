@@ -7,16 +7,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Xarial.Docify.Base.Plugins
 {
-    public interface IPlugin
+    [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+    public interface IPluginBase
+    {
+    }
+
+    public interface IPlugin : IPluginBase
     {
         void Init(IEngine engine);
     }
     
-    public interface IPlugin<TSettings> : IPlugin 
+    public interface IPlugin<TSettings> : IPluginBase
         where TSettings : new()
     {
         void Init(IEngine engine, TSettings setts);

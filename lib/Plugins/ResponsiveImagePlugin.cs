@@ -21,11 +21,22 @@ using Xarial.Docify.Lib.Plugins.Properties;
 namespace Xarial.Docify.Lib.Plugins
 {
     [Plugin("responsive-image")]
-    public class ResponsiveImagePlugin : IPreCompilePlugin, IPageContentWriterPlugin, IRenderImagePlugin
+    public class ResponsiveImagePlugin : IPlugin
     {
         private const string CSS_FILE_PATH = "assets/styles/responsive-image.css";
         private const string CLASS_NAME = "responsive";
 
+        private IEngine m_Engine;
+
+        public void Init(IEngine engine)
+        {
+            m_Engine = engine;
+
+            m_Engine.Compiler.PreCompile += PreCompile;
+            m_Engine.Compiler.RenderImage += RenderImage;
+            m_Engine.Compiler.WritePageContent += WritePageContent;
+        }
+        
         public Task PreCompile(ISite site)
         {
             AssetsHelper.AddTextAsset(Resources.responsive_image, site.MainPage, CSS_FILE_PATH);
@@ -66,8 +77,10 @@ namespace Xarial.Docify.Lib.Plugins
 
         public Task<string> WritePageContent(string content, IMetadata data, string url)
         {
-            content = this.WriteToPageHead(content, w => w.AddStyleSheets(CSS_FILE_PATH));
-            return Task.FromResult(content);
+            var htmlWriter = new HtmlHeadWriter(content);
+            htmlWriter.AddStyleSheets(CSS_FILE_PATH);
+            
+            return Task.FromResult(htmlWriter.Content);
         }
     }
 }

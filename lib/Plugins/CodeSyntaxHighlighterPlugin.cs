@@ -27,8 +27,7 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("code-syntax-highlighter")]
-    public class CodeSyntaxHighlighterPlugin : IRenderCodeBlockPlugin, IPreCompilePlugin,
-        IPageContentWriterPlugin, IPlugin<CodeSyntaxHighlighterSettings>
+    public class CodeSyntaxHighlighterPlugin : IPlugin<CodeSyntaxHighlighterSettings>
     {
         private CodeSyntaxHighlighterSettings m_Settings;
 
@@ -36,11 +35,18 @@ namespace Xarial.Docify.Lib.Plugins
 
         private const string CSS_FILE_PATH = "assets/styles/syntax-highlight.css";
 
-        public void Init(CodeSyntaxHighlighterSettings setts)
-        {
-            m_Settings = setts;
-        }
+        private IEngine m_Engine;
 
+        public void Init(IEngine engine, CodeSyntaxHighlighterSettings setts)
+        {
+            m_Engine = engine;
+            m_Settings = setts;
+
+            m_Engine.Compiler.PreCompile += PreCompile;
+            m_Engine.Compiler.RenderCodeBlock += RenderCodeBlock;
+            m_Engine.Compiler.WritePageContent += WritePageContent;
+        }
+        
         public Task PreCompile(ISite site)
         {
             if (!m_Settings.EmbedStyle)
@@ -105,7 +111,9 @@ namespace Xarial.Docify.Lib.Plugins
         {
             if (!m_Settings.EmbedStyle)
             {
-                content = this.WriteToPageHead(content, w => w.AddStyleSheets(CSS_FILE_PATH));
+                var writer = new HtmlHeadWriter(content);
+                writer.AddStyleSheets(CSS_FILE_PATH);
+                content = writer.Content;
             }
 
             return Task.FromResult(content);

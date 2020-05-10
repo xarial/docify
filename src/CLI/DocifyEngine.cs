@@ -37,32 +37,32 @@ namespace Xarial.Docify.CLI
         Task Build();
     }
 
-    public static class AutoFacExtension
-    {
-        private const string IMPORT_SERVICE_TO_PLUGINS = "import_service_to_plugins";
+    //public static class AutoFacExtension
+    //{
+    //    private const string IMPORT_SERVICE_TO_PLUGINS = "import_service_to_plugins";
 
-        public static IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> ImportServiceToPlugins<TLimit, TActivatorData, TRegistrationStyle>(
-            this IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> regBuilder)
-        {
-            regBuilder.WithMetadata(IMPORT_SERVICE_TO_PLUGINS, true);
-            return regBuilder;
-        }
+    //    public static IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> ImportServiceToPlugins<TLimit, TActivatorData, TRegistrationStyle>(
+    //        this IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> regBuilder)
+    //    {
+    //        regBuilder.WithMetadata(IMPORT_SERVICE_TO_PLUGINS, true);
+    //        return regBuilder;
+    //    }
 
-        public static bool IsImportServiceToPlugins(this IComponentRegistration compReg) 
-        {
-            object importService;
+    //    public static bool IsImportServiceToPlugins(this IComponentRegistration compReg) 
+    //    {
+    //        object importService;
             
-            if (compReg.Metadata.TryGetValue(IMPORT_SERVICE_TO_PLUGINS, out importService)) 
-            {
-                if (importService is bool) 
-                {
-                    return (bool)importService;
-                }
-            }
+    //        if (compReg.Metadata.TryGetValue(IMPORT_SERVICE_TO_PLUGINS, out importService)) 
+    //        {
+    //            if (importService is bool) 
+    //            {
+    //                return (bool)importService;
+    //            }
+    //        }
 
-            return false;
-        }
-    }
+    //        return false;
+    //    }
+    //}
 
     public class DocifyEngine : IDocifyEngine
     {
@@ -123,25 +123,19 @@ namespace Xarial.Docify.CLI
             builder.RegisterType<LocalFileSystemPublisherConfig>();
 
             builder.RegisterType<LocalFileSystemPublisher>()
-                .As<IPublisher>()
-                .ImportServiceToPlugins();
+                .As<IPublisher>();
 
             builder.RegisterType<LocalFileSystemLoader>()
-                .As<ILoader>()
-                .ImportServiceToPlugins();
+                .As<ILoader>();
 
             builder.RegisterType<LayoutParser>()
-                .As<ILayoutParser>()
-                .ImportServiceToPlugins();
+                .As<ILayoutParser>();
 
-            builder.RegisterType<BaseSiteComposer>().As<IComposer>()
-                .ImportServiceToPlugins();
+            builder.RegisterType<BaseSiteComposer>().As<IComposer>();
 
-            builder.RegisterType<ConsoleLogger>().As<ILogger>()
-                .ImportServiceToPlugins();
+            builder.RegisterType<ConsoleLogger>().As<ILogger>();
 
-            builder.RegisterType<LocalFileSystemComponentsLoader>().As<IComponentsLoader>()
-                .ImportServiceToPlugins();
+            builder.RegisterType<LocalFileSystemComponentsLoader>().As<IComponentsLoader>();
 
             builder.RegisterType<RazorLightContentTransformer>();
 
@@ -151,19 +145,15 @@ namespace Xarial.Docify.CLI
                 new ResolvedParameter(
                     (pi, ctx) => pi.ParameterType == typeof(IContentTransformer),
                     (pi, ctx) => ctx.Resolve<RazorLightContentTransformer>()))
-                .SingleInstance()
-                .ImportServiceToPlugins();
+                .SingleInstance();
 
             builder.RegisterType<MarkdigRazorLightTransformer>().As<IContentTransformer>()
-                .SingleInstance()
-                .ImportServiceToPlugins();
+                .SingleInstance();
 
             builder.RegisterType<LocalFileSystemConfigurationLoader>().As<IConfigurationLoader>()
-                .WithParameter(new TypedParameter(typeof(Environment_e), env))
-                .ImportServiceToPlugins();
+                .WithParameter(new TypedParameter(typeof(Environment_e), env));
 
-            builder.RegisterType<BaseCompiler>().As<ICompiler>()
-                .ImportServiceToPlugins();
+            builder.RegisterType<BaseCompiler>().As<ICompiler>();
 
             builder.Register(c => c.Resolve<IConfigurationLoader>().Load(Location.FromPath(m_SrcDir)).Result);
 
@@ -208,6 +198,7 @@ namespace Xarial.Docify.CLI
         private void LoadPlugins()
         {
             var plugMgr = m_Container.Resolve<IPluginsManager>();
+            plugMgr.LoadPlugins();
 
             //foreach (var reg in m_Container.ComponentRegistry.Registrations)
             //{

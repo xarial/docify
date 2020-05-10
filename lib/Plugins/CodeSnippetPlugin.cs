@@ -40,28 +40,29 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("code-snippet")]
-    public class CodeSnippetPlugin : IPreCompilePlugin, IPageContentWriterPlugin, IIncludeResolverPlugin, 
-        IPrePublishFilePlugin, IPlugin<CodeSnippetSettings>
+    public class CodeSnippetPlugin : IPlugin<CodeSnippetSettings>
     {
-        public string IncludeName => "code-snippet";
-
         private CodeSnippetSettings m_Settings;
 
         private const string CSS_FILE_PATH = "assets/styles/code-snippet.css";
         private const char SNIPPETS_FOLDER_PATH = '~';
 
-
         private IAssetsFolder m_SnippetsFolder;
         private List<string> m_SnippetFileIds;
 
-        [ImportService]
-        private IContentTransformer m_ContentTransformer;
-
         private ISite m_Site;
 
-        public void Init(CodeSnippetSettings setts)
+        private IEngine m_Engine;
+
+        public void Init(IEngine engine, CodeSnippetSettings setts)
         {
+            m_Engine = engine;
             m_Settings = setts;
+
+            m_Engine.Compiler.PreCompile += PreCompile;
+            m_Engine.Includes.RegisterCustomIncludeHandler("code-snippet", ResolveInclude);
+            m_Engine.Publisher.PrePublishFile += PrePublishFile;
+            m_Engine.Compiler.WritePageContent += WritePageContent;
         }
 
         public Task PreCompile(ISite site)
@@ -193,7 +194,7 @@ namespace Xarial.Docify.Lib.Plugins
                     }
 
                     var code = $"~~~{lang} {snipClass}\r\n{snip.Code}\r\n~~~";
-                    res.AppendLine(await m_ContentTransformer.Transform(code, Guid.NewGuid().ToString(), null));
+                    res.AppendLine(await m_Engine.Compiler.ContentTransformer.Transform(code, Guid.NewGuid().ToString(), null));
                 }
 
                 return res.ToString();
@@ -218,7 +219,9 @@ namespace Xarial.Docify.Lib.Plugins
 
         public Task<string> WritePageContent(string content, IMetadata data, string url)
         {
-            return Task.FromResult(this.WriteToPageHead(content, w => w.AddStyleSheets(CSS_FILE_PATH)));
+            var writer = new HtmlHeadWriter(content);
+            writer.AddStyleSheets(CSS_FILE_PATH);
+            return Task.FromResult(writer.Content);
         }
     }
 }

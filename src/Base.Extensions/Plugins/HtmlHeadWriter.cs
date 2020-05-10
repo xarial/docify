@@ -20,16 +20,16 @@ namespace Xarial.Docify.Base.Plugins
         void AddLines(params string[] lines);
     }
 
-    internal class HtmlHeadWriter : IHeadWriter
+    public class HtmlHeadWriter : IHeadWriter
     {
         private const string CSS_LINK_TEMPLATE = "<link rel=\"stylesheet\" type=\"text/css\" href=\"/{0}\" />\r\n";
         private const string SCRIPT_LINK_TEMPLATE = "<script src=\"{0}\"></script>";
 
         //TODO: implement this via StringBuilder
 
-        internal string Content { get; private set; }
+        public string Content { get; private set; }
 
-        internal HtmlHeadWriter(string content)
+        public HtmlHeadWriter(string content)
         {
             Content = content;
         }
@@ -53,17 +53,5 @@ namespace Xarial.Docify.Base.Plugins
                 throw new Exception("Failed to find </head> tag in the html document");
             }
         }
-    }
-
-    public static class PageContentWriterPluginExtension
-    {
-        //TODO: fix
-        //public static string WriteToPageHead(this IPageContentWriterPlugin plugin, 
-        //    string content, Action<IHeadWriter> headWriter)
-        //{
-        //    var htmlWriter = new HtmlHeadWriter(content);
-        //    headWriter.Invoke(htmlWriter);
-        //    return htmlWriter.Content;
-        //}
     }
 }

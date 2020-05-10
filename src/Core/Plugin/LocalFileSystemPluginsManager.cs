@@ -38,12 +38,12 @@ namespace Xarial.Docify.Core.Plugin
 
         private readonly IEnumerable<IPlugin> m_Plugins;
 
-        public LocalFileSystemPluginsManager(IConfiguration conf)
-            : this(conf, new FileSystem())
+        public LocalFileSystemPluginsManager(IConfiguration conf, IEngine engine)
+            : this(conf, new FileSystem(), engine)
         {
         }
 
-        public LocalFileSystemPluginsManager(IConfiguration conf, IFileSystem fileSystem)
+        public LocalFileSystemPluginsManager(IConfiguration conf, IFileSystem fileSystem, IEngine engine)
         {
             m_FileSystem = fileSystem;
             

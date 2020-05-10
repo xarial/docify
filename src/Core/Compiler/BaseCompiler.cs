@@ -22,6 +22,7 @@ using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Core.Plugin;
 using Xarial.Docify.Core.Helpers;
 using Xarial.Docify.Core.Data;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -45,7 +46,7 @@ namespace Xarial.Docify.Core.Compiler
         public BaseCompiler(BaseCompilerConfig config,
             ILogger logger, ILayoutParser layoutParser,
             IIncludesHandler includesHandler,
-            IContentTransformer contentTransformer) 
+            IContentTransformer contentTransformer, ICompilerExtension ext) 
         {
             m_Config = config;
             m_Logger = logger;

@@ -20,6 +20,7 @@ using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Helpers;
 using Xarial.Docify.Core.Plugin;
+using Xarial.Docify.Core.Plugin.Extensions;
 using YamlDotNet.Serialization;
 
 namespace Xarial.Docify.Core.Compiler
@@ -38,7 +39,7 @@ namespace Xarial.Docify.Core.Compiler
         [ImportPlugins]
         private IEnumerable<IIncludeResolverPlugin> m_IncludeResolverPlugins = null;
 
-        public IncludesHandler(IContentTransformer transformer) 
+        public IncludesHandler(IContentTransformer transformer, IIncludesHandlerExtension ext) 
         {
             m_Transformer = transformer;
             m_PlcParser = new PlaceholdersParser(START_TAG, END_TAG);

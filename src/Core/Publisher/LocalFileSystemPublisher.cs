@@ -14,6 +14,7 @@ using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Plugin;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Publisher
 {
@@ -28,12 +29,14 @@ namespace Xarial.Docify.Core.Publisher
         [ImportPlugins]
         private IEnumerable<IPostPublishPlugin> m_PostPublishPlugins = null;
 
-        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config) 
-            : this(config, new System.IO.Abstractions.FileSystem())
+        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config,
+            IPublisherExtension ext) 
+            : this(config, new System.IO.Abstractions.FileSystem(), ext)
         {
         }
 
-        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config, System.IO.Abstractions.IFileSystem fileSystem)
+        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config, 
+            System.IO.Abstractions.IFileSystem fileSystem, IPublisherExtension ext)
         {
             m_Config = config;
             m_FileSystem = fileSystem;

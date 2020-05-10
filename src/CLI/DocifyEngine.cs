@@ -24,6 +24,7 @@ using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Loader;
 using Xarial.Docify.Core.Logger;
 using Xarial.Docify.Core.Plugin;
+using Xarial.Docify.Core.Plugin.Extensions;
 using Xarial.Docify.Core.Publisher;
 using Xarial.Docify.Lib.Tools;
 
@@ -166,24 +167,59 @@ namespace Xarial.Docify.CLI
             builder.Register(c => c.Resolve<IConfigurationLoader>().Load(Location.FromPath(m_SrcDir)).Result);
 
             builder.RegisterType<LocalFileSystemPluginsManager>().As<IPluginsManager>();
+
+            RegisterApiExtensions(builder);
+        }
+
+        protected virtual void RegisterApiExtensions(ContainerBuilder builder) 
+        {
+            builder.RegisterType<IncludesHandlerExtension>()
+                .SingleInstance()
+                .AsSelf()
+                .As<IIncludesHandlerExtension>();
+
+            builder.RegisterType<IncludesHandlerManager>().As<IIncludesHandlerManager>();
+
+            builder.RegisterType<CompilerExtension>()
+                .SingleInstance()
+                .AsSelf()
+                .As<ICompilerExtension>();
+
+            builder.RegisterType<CompilerManager>().As<ICompilerManager>();
+
+            builder.RegisterType<ComposerExtension>()
+                .SingleInstance()
+                .AsSelf()
+                .As<IComposerExtension>();
+
+            builder.RegisterType<ComposerManager>().As<IComposerManager>();
+
+            builder.RegisterType<PublisherExtension>()
+                .SingleInstance()
+                .AsSelf()
+                .As<IPublisherExtension>();
+
+            builder.RegisterType<PublisherManager>().As<IPublisherManager>();
+
+            builder.RegisterType<Engine>().As<IEngine>();
         }
 
         private void LoadPlugins()
         {
             var plugMgr = m_Container.Resolve<IPluginsManager>();
 
-            foreach (var reg in m_Container.ComponentRegistry.Registrations)
-            {
-                //TODO: activated is called on all resolves which makes duplicate calls for the same reference
-                reg.Activated += (o, eventArgs) =>
-                {
-                    if (plugMgr != null)
-                    {
-                        plugMgr.LoadPlugins(eventArgs.Instance,
-                            eventArgs.Component.IsImportServiceToPlugins());
-                    }
-                };
-            }
+            //foreach (var reg in m_Container.ComponentRegistry.Registrations)
+            //{
+            //    //TODO: activated is called on all resolves which makes duplicate calls for the same reference
+            //    reg.Activated += (o, eventArgs) =>
+            //    {
+            //        if (plugMgr != null)
+            //        {
+            //            plugMgr.LoadPlugins(eventArgs.Instance,
+            //                eventArgs.Component.IsImportServiceToPlugins());
+            //        }
+            //    };
+            //}
         }
     }
 }

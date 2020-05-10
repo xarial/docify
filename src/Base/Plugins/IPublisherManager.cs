@@ -10,17 +10,24 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Base.Plugins
 {
-    public struct PrePublishResult 
+    public struct PrePublishResult
     {
         public IFile File { get; set; }
         public bool SkipFile { get; set; }
     }
 
-    public interface IPrePublishFilePlugin : IPlugin
+    public delegate Task PostPublishDelegate(ILocation loc);
+    public delegate Task<PrePublishResult> PrePublishFileDelegate(ILocation outLoc, IFile file);
+
+    public interface IPublisherManager
     {
-        Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file);
+        event PostPublishDelegate PostPublish;
+        event PrePublishFileDelegate PrePublishFile;
+
+        IPublisher Instance { get; }
     }
 }

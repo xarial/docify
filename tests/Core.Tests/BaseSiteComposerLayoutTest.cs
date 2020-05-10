@@ -19,6 +19,7 @@ using Xarial.Docify.Core;
 using Xarial.Docify.Core.Composer;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Core.Tests
 {
@@ -34,7 +35,7 @@ namespace Core.Tests
             layoutMock.Setup(m => m.ContainsPlaceholder(It.IsAny<string>()))
                 .Returns<string>(c => c.Contains("_C_"));
 
-            m_Composer = new BaseSiteComposer(layoutMock.Object, null);
+            m_Composer = new BaseSiteComposer(layoutMock.Object, null, new Mock<IComposerExtension>().Object);
         }
 
         [Test]

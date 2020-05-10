@@ -11,16 +11,17 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Base.Plugins;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
     public class ObservableCodeBlockExtension : IMarkdownExtension
     {
-        private readonly IEnumerable<IRenderCodeBlockPlugin> m_Plugins;
+        private readonly ICompilerExtension m_Ext;
 
-        public ObservableCodeBlockExtension(IEnumerable<IRenderCodeBlockPlugin> plugins)
+        public ObservableCodeBlockExtension(ICompilerExtension ext)
         {
-            m_Plugins = plugins;
+            m_Ext = ext;
         }
 
         public void Setup(MarkdownPipelineBuilder pipeline)
@@ -34,7 +35,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
             if (htmlRenderer != null)
             {
                 htmlRenderer.ObjectRenderers.ReplaceOrAdd<Markdig.Renderers.Html.CodeBlockRenderer>(
-                    new ObservableCodeBlockRenderer(m_Plugins));
+                    new ObservableCodeBlockRenderer(m_Ext));
             }
             else 
             {

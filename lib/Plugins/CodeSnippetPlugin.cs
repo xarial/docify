@@ -40,31 +40,32 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("code-snippet")]
-    public class CodeSnippetPlugin : IPreCompilePlugin, IPageContentWriterPlugin, IIncludeResolverPlugin, 
-        IPrePublishFilePlugin, IPlugin<CodeSnippetSettings>
+    public class CodeSnippetPlugin : IPlugin<CodeSnippetSettings>
     {
-        public string IncludeName => "code-snippet";
-
         private CodeSnippetSettings m_Settings;
 
         private const string CSS_FILE_PATH = "assets/styles/code-snippet.css";
         private const char SNIPPETS_FOLDER_PATH = '~';
 
-
         private IAssetsFolder m_SnippetsFolder;
         private List<string> m_SnippetFileIds;
 
-        [ImportService]
-        private IContentTransformer m_ContentTransformer;
-
         private ISite m_Site;
 
-        public void Init(CodeSnippetSettings setts)
+        private IDocifyApplication m_App;
+
+        public void Init(IDocifyApplication app, CodeSnippetSettings setts)
         {
+            m_App = app;
             m_Settings = setts;
+
+            m_App.Compiler.PreCompile += OnPreCompile;
+            m_App.Includes.RegisterCustomIncludeHandler("code-snippet", InsertCodeSnippet);
+            m_App.Publisher.PrePublishFile += OnPrePublishFile;
+            m_App.Compiler.WritePageContent += OnWritePageContent;
         }
 
-        public Task PreCompile(ISite site)
+        private Task OnPreCompile(ISite site)
         {
             m_Site = site;
 
@@ -110,7 +111,7 @@ namespace Xarial.Docify.Lib.Plugins
             return Task.CompletedTask;
         }
 
-        public async Task<string> ResolveInclude(IMetadata data, IPage page)
+        private async Task<string> InsertCodeSnippet(IMetadata data, IPage page)
         {
             var snipData = data.ToObject<CodeSnippetData>();
 
@@ -193,7 +194,7 @@ namespace Xarial.Docify.Lib.Plugins
                     }
 
                     var code = $"~~~{lang} {snipClass}\r\n{snip.Code}\r\n~~~";
-                    res.AppendLine(await m_ContentTransformer.Transform(code, Guid.NewGuid().ToString(), null));
+                    res.AppendLine(await m_App.Compiler.ContentTransformer.Transform(code, Guid.NewGuid().ToString(), null));
                 }
 
                 return res.ToString();
@@ -204,7 +205,7 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
+        private Task<PrePublishResult> OnPrePublishFile(ILocation outLoc, IFile file)
         {
             var res = new PrePublishResult()
             {
@@ -216,9 +217,11 @@ namespace Xarial.Docify.Lib.Plugins
             return Task.FromResult(res);
         }
 
-        public Task<string> WritePageContent(string content, IMetadata data, string url)
+        private Task<string> OnWritePageContent(string content, IMetadata data, string url)
         {
-            return Task.FromResult(this.WriteToPageHead(content, w => w.AddStyleSheets(CSS_FILE_PATH)));
+            var writer = new HtmlHeadWriter(content);
+            writer.AddStyleSheets(CSS_FILE_PATH);
+            return Task.FromResult(writer.Content);
         }
     }
 }

@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler;
@@ -24,6 +25,7 @@ using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Loader;
 using Xarial.Docify.Core.Logger;
 using Xarial.Docify.Core.Plugin;
+using Xarial.Docify.Core.Plugin.Extensions;
 using Xarial.Docify.Core.Publisher;
 using Xarial.Docify.Lib.Tools;
 
@@ -34,34 +36,7 @@ namespace Xarial.Docify.CLI
         T Resove<T>();
         Task Build();
     }
-
-    public static class AutoFacExtension
-    {
-        private const string IMPORT_SERVICE_TO_PLUGINS = "import_service_to_plugins";
-
-        public static IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> ImportServiceToPlugins<TLimit, TActivatorData, TRegistrationStyle>(
-            this IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> regBuilder)
-        {
-            regBuilder.WithMetadata(IMPORT_SERVICE_TO_PLUGINS, true);
-            return regBuilder;
-        }
-
-        public static bool IsImportServiceToPlugins(this IComponentRegistration compReg) 
-        {
-            object importService;
-            
-            if (compReg.Metadata.TryGetValue(IMPORT_SERVICE_TO_PLUGINS, out importService)) 
-            {
-                if (importService is bool) 
-                {
-                    return (bool)importService;
-                }
-            }
-
-            return false;
-        }
-    }
-
+    
     public class DocifyEngine : IDocifyEngine
     {
         private readonly IContainer m_Container;
@@ -121,25 +96,19 @@ namespace Xarial.Docify.CLI
             builder.RegisterType<LocalFileSystemPublisherConfig>();
 
             builder.RegisterType<LocalFileSystemPublisher>()
-                .As<IPublisher>()
-                .ImportServiceToPlugins();
+                .As<IPublisher>();
 
             builder.RegisterType<LocalFileSystemLoader>()
-                .As<ILoader>()
-                .ImportServiceToPlugins();
+                .As<ILoader>();
 
             builder.RegisterType<LayoutParser>()
-                .As<ILayoutParser>()
-                .ImportServiceToPlugins();
+                .As<ILayoutParser>();
 
-            builder.RegisterType<BaseSiteComposer>().As<IComposer>()
-                .ImportServiceToPlugins();
+            builder.RegisterType<BaseSiteComposer>().As<IComposer>();
 
-            builder.RegisterType<ConsoleLogger>().As<ILogger>()
-                .ImportServiceToPlugins();
+            builder.RegisterType<ConsoleLogger>().As<ILogger>();
 
-            builder.RegisterType<LocalFileSystemComponentsLoader>().As<IComponentsLoader>()
-                .ImportServiceToPlugins();
+            builder.RegisterType<LocalFileSystemComponentsLoader>().As<IComponentsLoader>();
 
             builder.RegisterType<RazorLightContentTransformer>();
 
@@ -149,41 +118,60 @@ namespace Xarial.Docify.CLI
                 new ResolvedParameter(
                     (pi, ctx) => pi.ParameterType == typeof(IContentTransformer),
                     (pi, ctx) => ctx.Resolve<RazorLightContentTransformer>()))
-                .SingleInstance()
-                .ImportServiceToPlugins();
+                .SingleInstance();
 
             builder.RegisterType<MarkdigRazorLightTransformer>().As<IContentTransformer>()
-                .SingleInstance()
-                .ImportServiceToPlugins();
+                .SingleInstance();
 
             builder.RegisterType<LocalFileSystemConfigurationLoader>().As<IConfigurationLoader>()
-                .WithParameter(new TypedParameter(typeof(Environment_e), env))
-                .ImportServiceToPlugins();
+                .WithParameter(new TypedParameter(typeof(Environment_e), env));
 
-            builder.RegisterType<BaseCompiler>().As<ICompiler>()
-                .ImportServiceToPlugins();
+            builder.RegisterType<BaseCompiler>().As<ICompiler>();
 
             builder.Register(c => c.Resolve<IConfigurationLoader>().Load(Location.FromPath(m_SrcDir)).Result);
 
             builder.RegisterType<LocalFileSystemPluginsManager>().As<IPluginsManager>();
+
+            RegisterApiExtensions(builder);
+        }
+
+        protected virtual void RegisterApiExtensions(ContainerBuilder builder) 
+        {
+            builder.RegisterType<IncludesHandlerExtension>()
+                .SingleInstance()
+                .AsSelf()
+                .As<IIncludesHandlerExtension>();
+
+            builder.RegisterType<IncludesHandlerManager>().As<IIncludesHandlerManager>();
+
+            builder.RegisterType<CompilerExtension>()
+                .SingleInstance()
+                .AsSelf()
+                .As<ICompilerExtension>();
+
+            builder.RegisterType<CompilerManager>().As<ICompilerManager>();
+
+            builder.RegisterType<ComposerExtension>()
+                .SingleInstance()
+                .AsSelf()
+                .As<IComposerExtension>();
+
+            builder.RegisterType<ComposerManager>().As<IComposerManager>();
+
+            builder.RegisterType<PublisherExtension>()
+                .SingleInstance()
+                .AsSelf()
+                .As<IPublisherExtension>();
+
+            builder.RegisterType<PublisherManager>().As<IPublisherManager>();
+
+            builder.RegisterType<DocifyApplication>().As<IDocifyApplication>();
         }
 
         private void LoadPlugins()
         {
             var plugMgr = m_Container.Resolve<IPluginsManager>();
-
-            foreach (var reg in m_Container.ComponentRegistry.Registrations)
-            {
-                //TODO: activated is called on all resolves which makes duplicate calls for the same reference
-                reg.Activated += (o, eventArgs) =>
-                {
-                    if (plugMgr != null)
-                    {
-                        plugMgr.LoadPlugins(eventArgs.Instance,
-                            eventArgs.Component.IsImportServiceToPlugins());
-                    }
-                };
-            }
+            plugMgr.LoadPlugins();
         }
     }
 }

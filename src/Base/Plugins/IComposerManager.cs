@@ -5,15 +5,12 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Base.Plugins
 {
-    public interface IRenderUrlPlugin : IPlugin
+    public interface IComposerManager
     {
-        void RenderUrl(StringBuilder html);
+        IComposer Instance { get; }
     }
 }

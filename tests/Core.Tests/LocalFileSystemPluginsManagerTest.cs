@@ -5,6 +5,7 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
@@ -27,11 +29,23 @@ namespace Core.Tests
     public class PluginMock<TSetts> : IPlugin<TSetts>
         where TSetts : new()
     {
+        public IDocifyApplication App { get; private set; }
         public TSetts Settings { get; private set; }
 
-        public void Init(TSetts setts)
+        public void Init(IDocifyApplication app, TSetts setts)
         {
+            App = app;
             Settings = setts;
+        }
+    }
+
+    public class PluginMock3 : IPlugin
+    {
+        public IDocifyApplication App { get; private set; }
+
+        public void Init(IDocifyApplication app)
+        {
+            App = app;
         }
     }
 
@@ -41,54 +55,31 @@ namespace Core.Tests
         public double PropTwo { get; set; }
         public string[] Prp3 { get; set; }
     }
-    
-    public class LocalFileSystemPluginsManagerTest
+
+    public class PluginMock1 : IPlugin
     {
-        public interface IPlugin1 : IPlugin 
+        public IDocifyApplication App { get; private set; }
+
+        public void Init(IDocifyApplication app)
         {
+            App = app;
         }
+    }
 
-        public interface IPlugin2 : IPlugin
+    public class PluginMock2 : IPlugin
+    {
+        public IDocifyApplication App { get; private set; }
+
+        public void Init(IDocifyApplication app)
         {
+            App = app;
         }
+    }
 
-        public class Plugin1 : IPlugin1 
-        {
-        }
-
-        public class Plugin2 : IPlugin2
-        {
-        }
-
-        public class Plugin3 : IPlugin1, IPlugin2
-        {
-        }
-
-        public class Plugin4 : IPlugin
-        {
-            [Import]
-            private IServiceMock2 Service { get; set; }
-        }
-
-        public class ServiceMock1 
-        {
-            [ImportPlugins]
-            private IEnumerable<IPlugin1> m_Plugins1;
-
-            [ImportPlugins]
-            protected IEnumerable<IPlugin2> m_Plugins2;
-        }
-
-        public interface IServiceMock2
-        {
-        }
-
-        public class ServiceMock2 : IServiceMock2
-        {
-        }
-
+    public class LocalFileSystemPluginsManagerTest
+    {   
         [Test]
-        public void InitTest() 
+        public async Task InitTest() 
         {
             var assmBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()), 
                 AssemblyBuilderAccess.RunAndCollect);
@@ -96,10 +87,12 @@ namespace Core.Tests
             
             var typeBuilder1 = moduleBuilder.DefineType("Plugin1", TypeAttributes.Public);
             typeBuilder1.AddInterfaceImplementation(typeof(IPlugin));
+            typeBuilder1.SetParent(typeof(PluginMock1));
             typeBuilder1.CreateType();
 
             var typeBuilder2 = moduleBuilder.DefineType("Plugin2", TypeAttributes.Public);
             typeBuilder2.AddInterfaceImplementation(typeof(IPlugin));
+            typeBuilder2.SetParent(typeof(PluginMock2));
             var p2 = typeBuilder2.CreateType();
 
             var assm = moduleBuilder.Assembly;
@@ -113,17 +106,20 @@ namespace Core.Tests
             {
                 PluginsFolder = Location.FromPath("D:\\Plugins"),
                 Plugins = new string[] { "plugin2" }.ToList()
-            }, fs);
+            }, fs, new Mock<IDocifyApplication>().Object);
 
-            var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPlugin>;
+            await mgr.LoadPlugins();
+
+            var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPluginBase>;
 
             Assert.AreEqual(1, res.Count());
             Assert.IsInstanceOf(typeof(IPlugin), res.First());
             Assert.AreEqual(p2.FullName, res.First().GetType().FullName);
+            Assert.IsNotNull((res.First() as PluginMock2).App);
         }
 
         [Test]
-        public void LoadDefaultSettingsTest()
+        public async Task LoadDefaultSettingsTest()
         {
             var assmBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()),
                 AssemblyBuilderAccess.RunAndCollect);
@@ -131,11 +127,8 @@ namespace Core.Tests
             var moduleBuilder = assmBuilder.DefineDynamicModule(Guid.NewGuid().ToString());
 
             var typeBuilder = moduleBuilder.DefineType("Plugin1", TypeAttributes.Public);
-
-            //need this line to properly load Base.dll
             typeBuilder.AddInterfaceImplementation(typeof(IPlugin<MockSettings1>));
             typeBuilder.SetParent(typeof(PluginMock<MockSettings1>));
-
             typeBuilder.CreateType();
 
             var assm = moduleBuilder.Assembly;
@@ -149,9 +142,10 @@ namespace Core.Tests
             conf.PluginsFolder = Location.FromPath("D:\\Plugins");
             conf.Plugins = new List<string>(new string[] { "plugin1" });
 
-            var mgr = new LocalFileSystemPluginsManager(conf, fs);
+            var mgr = new LocalFileSystemPluginsManager(conf, fs, new Mock<IDocifyApplication>().Object);
+            await mgr.LoadPlugins();
 
-            var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPlugin>;
+            var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPluginBase>;
             var plg = res.OfType<PluginMock<MockSettings1>>().FirstOrDefault();
 
             Assert.IsNotNull(plg);
@@ -159,10 +153,11 @@ namespace Core.Tests
             Assert.AreEqual("A", plg.Settings.Prp1);
             Assert.AreEqual(0, plg.Settings.PropTwo);
             Assert.IsNull(plg.Settings.Prp3);
+            Assert.IsNotNull(plg.App);
         }
         
         [Test]
-        public void LoadSettingsTest()
+        public async Task LoadSettingsTest()
         {
             var assmBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()),
                 AssemblyBuilderAccess.RunAndCollect);
@@ -188,56 +183,18 @@ namespace Core.Tests
             conf.PluginsFolder = Location.FromPath("D:\\Plugins");
             conf.Plugins = new List<string>(new string[] { "plg1" });
 
-            var mgr = new LocalFileSystemPluginsManager(conf, fs);
+            var mgr = new LocalFileSystemPluginsManager(conf, fs, new Mock<IDocifyApplication>().Object);
+            await mgr.LoadPlugins();
 
-            var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPlugin>;
+            var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPluginBase>;
             var plg = res.OfType<PluginMock<MockSettings1>>().FirstOrDefault();
 
             Assert.IsNotNull(plg);
             Assert.IsNotNull(plg.Settings);
+            Assert.IsNotNull(plg.App);
             Assert.AreEqual("A", plg.Settings.Prp1);
             Assert.AreEqual(0.1, plg.Settings.PropTwo);
             Assert.That(new string[] { "A", "B" }.SequenceEqual(plg.Settings.Prp3));
-        }
-
-        [Test]
-        public void LoadPluginsTest() 
-        {
-            var mgr = new LocalFileSystemPluginsManager(new Configuration());
-            var field = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic);
-            var p1 = new Plugin1();
-            var p2 = new Plugin2();
-            var p3 = new Plugin3();
-            field.SetValue(mgr, new IPlugin[] { p1, p2, p3 });
-            
-            var svcMock = new ServiceMock1();
-            mgr.LoadPlugins(svcMock, false);
-
-            var res1 = svcMock.GetType().GetField("m_Plugins1", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(svcMock) as IEnumerable<IPlugin1>;
-            var res2 = svcMock.GetType().GetField("m_Plugins2", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(svcMock) as IEnumerable<IPlugin2>;
-
-            Assert.AreEqual(2, res1.Count());
-            Assert.AreEqual(2, res2.Count());
-            Assert.That(res1.Contains(p1));
-            Assert.That(res1.Contains(p3));
-            Assert.That(res2.Contains(p2));
-            Assert.That(res2.Contains(p3));
-        }
-
-        [Test]
-        public void LoadPluginImportsTest()
-        {
-            var mgr = new LocalFileSystemPluginsManager(new Configuration());
-            var field = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic);
-            var p1 = new Plugin4();
-            field.SetValue(mgr, new IPlugin[] { p1 });
-
-            var svcMock = new ServiceMock2();
-            mgr.LoadPlugins(svcMock, true);
-
-            var res1 = p1.GetType().GetProperty("Service", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(p1) as ServiceMock2;
-
-            Assert.AreEqual(svcMock, res1);
         }
     }
 }

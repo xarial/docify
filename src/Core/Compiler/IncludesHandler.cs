@@ -20,6 +20,7 @@ using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Helpers;
 using Xarial.Docify.Core.Plugin;
+using Xarial.Docify.Core.Plugin.Extensions;
 using YamlDotNet.Serialization;
 
 namespace Xarial.Docify.Core.Compiler
@@ -35,33 +36,25 @@ namespace Xarial.Docify.Core.Compiler
 
         private readonly PlaceholdersParser m_PlcParser;
 
-        [ImportPlugins]
-        private IEnumerable<IIncludeResolverPlugin> m_IncludeResolverPlugins = null;
+        private readonly IIncludesHandlerExtension m_Ext;
 
-        public IncludesHandler(IContentTransformer transformer) 
+        public IncludesHandler(IContentTransformer transformer, IIncludesHandlerExtension ext) 
         {
             m_Transformer = transformer;
             m_PlcParser = new PlaceholdersParser(START_TAG, END_TAG);
+
+            m_Ext = ext;
         }
         
         public async Task<string> Render(string name, IMetadata param, 
             ISite site, IPage page, string url)
         {
-            var includePlugins = m_IncludeResolverPlugins?.Where(p => string.Equals(p.IncludeName,
-                name, StringComparison.CurrentCultureIgnoreCase));
-
             var include = site.Includes.FirstOrDefault(i => string.Equals(i.Name,
                 name, StringComparison.CurrentCultureIgnoreCase));
-
-            var pluginsCount = includePlugins?.Count();
-
+            
             if (include != null)
             {
-                if (pluginsCount > 0) 
-                {
-                    //TODO: create specific extension
-                    throw new Exception($"Both plugin and include registered for '{name}'");
-                }
+                //TODO: check if any plugins register for this include to find the conflict
 
                 var data = ComposeDataParameters(name, param, site, page);
                 data = data.Merge(include.Data);
@@ -71,27 +64,8 @@ namespace Xarial.Docify.Core.Compiler
             }
             else 
             {
-                if (pluginsCount == 1)
-                {
-                    var includePlugin = includePlugins.First();
-
-                    if (param == null)
-                    {
-                        param = new Metadata();
-                    }
-
-                    var data = ComposeDataParameters(name, param, site, page);
-                    return await includePlugin.ResolveInclude(data, page);
-                }
-                else if (pluginsCount > 1)
-                {
-                    //TODO: create specific exception
-                    throw new Exception($"Too many plugins registered for the '{name}' include rendering");
-                }
-                else
-                {
-                    throw new MissingIncludeException(name);
-                }
+                var data = ComposeDataParameters(name, param, site, page);
+                return await m_Ext.ResolveInclude(name, data, page);
             }
         }
 

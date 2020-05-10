@@ -50,7 +50,7 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("image-optimizer")]
-    public class ImageOptimizerPlugin : IPreCompilePlugin, IPrePublishFilePlugin, IPlugin<ImageOptimizerSettings>
+    public class ImageOptimizerPlugin : IPlugin<ImageOptimizerSettings>
     {
         private const string IMAGE_TAG_NAME = "image";
         private const string REPLACE_IMAGE_TAG_NAME = "image-png";
@@ -59,12 +59,18 @@ namespace Xarial.Docify.Lib.Plugins
 
         private ImageOptimizerSettings m_Settings;
 
-        public void Init(ImageOptimizerSettings setts)
+        private IDocifyApplication m_App;
+
+        public void Init(IDocifyApplication app, ImageOptimizerSettings setts)
         {
+            m_App = app;
             m_Settings = setts;
+
+            m_App.Compiler.PreCompile += OnPreCompile;
+            m_App.Publisher.PrePublishFile += OnPrePublishFile;
         }
 
-        public Task PreCompile(ISite site)
+        private Task OnPreCompile(ISite site)
         {
             foreach (var page in AssetsHelper.GetAllPages(site.MainPage)) 
             {
@@ -132,7 +138,7 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
+        private Task<PrePublishResult> OnPrePublishFile(ILocation outLoc, IFile file)
         {
             var res = new PrePublishResult()
             {

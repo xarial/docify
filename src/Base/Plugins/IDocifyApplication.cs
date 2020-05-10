@@ -5,14 +5,13 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Xarial.Docify.Base.Plugins
 {
-    public interface IRenderImagePlugin : IPlugin
+    public interface IDocifyApplication
     {
-        void RenderImage(StringBuilder html);
+        IIncludesHandlerManager Includes { get; }
+        ICompilerManager Compiler { get; }
+        IComposerManager Composer { get; }
+        IPublisherManager Publisher { get; }
     }
 }

@@ -22,6 +22,7 @@ using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Core.Plugin;
 using Xarial.Docify.Core.Helpers;
 using Xarial.Docify.Core.Data;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -33,30 +34,26 @@ namespace Xarial.Docify.Core.Compiler
         private readonly ILayoutParser m_LayoutParser;
         private readonly IIncludesHandler m_IncludesHandler;
 
-        [ImportPlugins]
-        private IEnumerable<IPreCompilePlugin> m_PreCompilePlugins = null;
+        private readonly ICompilerExtension m_Ext;
 
-        [ImportPlugins]
-        private IEnumerable<IPageContentWriterPlugin> m_PageContentWriterPlugins = null;
 
-        [ImportPlugins]
-        private IEnumerable<IPostCompilePlugin> m_PostCompilePluginPlugins = null;
-        
         public BaseCompiler(BaseCompilerConfig config,
             ILogger logger, ILayoutParser layoutParser,
             IIncludesHandler includesHandler,
-            IContentTransformer contentTransformer) 
+            IContentTransformer contentTransformer, ICompilerExtension ext) 
         {
             m_Config = config;
             m_Logger = logger;
             m_LayoutParser = layoutParser;
             m_ContentTransformer = contentTransformer;
             m_IncludesHandler = includesHandler;
+
+            m_Ext = ext;
         }
 
         public async IAsyncEnumerable<IFile> Compile(ISite site)
         {
-            await m_PreCompilePlugins.InvokePluginsIfAnyAsync(async (p) => await p.PreCompile(site));
+            await m_Ext.PreCompile(site);
 
             var outFiles = new List<IFile>();
 
@@ -65,9 +62,14 @@ namespace Xarial.Docify.Core.Compiler
                 yield return file;
             }
 
-            await foreach (var addFile in m_PostCompilePluginPlugins.InvokePluginsIfAnyAsync((p) => p.AddFilesPostCompile()))
+            var additionalFiles = m_Ext.AddFilesPostCompile();
+
+            if (additionalFiles != null)
             {
-                yield return addFile;
+                await foreach (var addFile in additionalFiles)
+                {
+                    yield return addFile;
+                }
             }
         }
 
@@ -145,8 +147,7 @@ namespace Xarial.Docify.Core.Compiler
 
             content = await m_IncludesHandler.ReplaceAll(content, site, page, url);
 
-            await m_PageContentWriterPlugins.InvokePluginsIfAnyAsync(async (p) 
-                => content = await p.WritePageContent(content, page.Data, url));
+            content = await m_Ext.WritePageContent(content, page.Data, url);
 
             return new File(loc, ContentExtension.ToByteArray(content), page.Id);
         }

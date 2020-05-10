@@ -17,21 +17,22 @@ using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Plugin;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
     public class MarkdigMarkdownContentTransformer : IContentTransformer
     {
         private MarkdownPipeline m_MarkdownEngine;
-        
-        [ImportPlugins]
-        private IEnumerable<IRenderUrlPlugin> m_RenderUrlPlugins = null;
 
-        [ImportPlugins]
-        private IEnumerable<IRenderImagePlugin> m_RenderImagePlugins = null;
+        private readonly ICompilerExtension m_Ext;
 
-        [ImportPlugins]
-        private IEnumerable<IRenderCodeBlockPlugin> m_RenderCodeBlockPlugins = null;
+        //TODO: might need to separate the extension to a specific markdown
+
+        public MarkdigMarkdownContentTransformer(ICompilerExtension ext) 
+        {
+            m_Ext = ext;
+        }
 
         private MarkdownPipeline MarkdownEngine
         {
@@ -41,8 +42,8 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
                 {
                     m_MarkdownEngine = new MarkdownPipelineBuilder()
                         .UseAdvancedExtensions()
-                        .UseObservableLinks(m_RenderUrlPlugins, m_RenderImagePlugins)
-                        .UseObservableCodeBlocks(m_RenderCodeBlockPlugins)
+                        .UseObservableLinks(m_Ext)
+                        .UseObservableCodeBlocks(m_Ext)
                         .UseProtectedTags(IncludesHandler.START_TAG, IncludesHandler.END_TAG) //TODO: should be a dependency
                         .Build();
                 }

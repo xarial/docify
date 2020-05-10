@@ -15,6 +15,7 @@ using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Compiler.Context;
 using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -23,7 +24,8 @@ namespace Xarial.Docify.Core.Compiler
         private readonly MarkdigMarkdownContentTransformer m_MarkdownTransformer;
         private readonly RazorLightContentTransformer m_RazorTransformer;
         
-        public MarkdigRazorLightTransformer() : this(new MarkdigMarkdownContentTransformer(), new RazorLightContentTransformer())
+        public MarkdigRazorLightTransformer(ICompilerExtension ext) 
+            : this(new MarkdigMarkdownContentTransformer(ext), new RazorLightContentTransformer())
         {
         }
 

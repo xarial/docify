@@ -19,16 +19,29 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core;
 using Tests.Common.Mocks;
+using Xarial.Docify.Core.Plugin.Extensions;
+using Moq;
+using Xarial.Docify.Base.Plugins;
 
 namespace Core.Tests
 {
     public class LocalFileSystemPublisherTest
     {
+        private LocalFileSystemPublisher NewPublisher(MockFileSystem fs) 
+        {
+            var pubExt = new Mock<IPublisherExtension>();
+            pubExt.Setup(m => m.PrePublishFile(It.IsAny<ILocation>(), It.IsAny<IFile>()))
+                .Returns((ILocation c, IFile f) => Task.FromResult(new PrePublishResult() { File = f, SkipFile = false }));
+
+            return new LocalFileSystemPublisher(new LocalFileSystemPublisherConfig(), fs,
+                pubExt.Object);
+        }
+
         [Test]
         public async Task WriteTextTest() 
         {
             var fs = new MockFileSystem();
-            var publisher = new LocalFileSystemPublisher(new LocalFileSystemPublisherConfig(), fs);
+            var publisher = NewPublisher(fs);
 
             var pages = new FileMock[]
             {
@@ -52,7 +65,7 @@ namespace Core.Tests
         public async Task WriteBinaryTest()
         {
             var fs = new MockFileSystem();
-            var publisher = new LocalFileSystemPublisher(new LocalFileSystemPublisherConfig(), fs);
+            var publisher = NewPublisher(fs);
 
             var assets = new IFile[]
             {
@@ -73,7 +86,7 @@ namespace Core.Tests
             fs.AddFile("C:\\site\\page1.html", new MockFileData("xyz"));
             fs.AddFile("C:\\site\\page2.html", new MockFileData("klm"));
 
-            var publisher = new LocalFileSystemPublisher(new LocalFileSystemPublisherConfig(), fs);
+            var publisher = NewPublisher(fs);
 
             var pages = new IFile[]
             {

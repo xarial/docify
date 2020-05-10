@@ -24,6 +24,7 @@ using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Compiler.Context;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Core.Tests
 {
@@ -197,22 +198,19 @@ namespace Core.Tests
         [Test]
         public async Task Render_PluginIncludes()
         {
-            var includesHandler = CreateNewIncludesHandler();
+            var extMock = new Mock<IIncludesHandlerExtension>();
+            extMock.Setup(m => m.ResolveInclude(It.IsAny<string>(), It.IsAny<IMetadata>(), It.IsAny<IPage>()))
+                .Returns((string i, IMetadata m, IPage p) => Task.FromResult($"_{i}_render-result"));
 
-            var includePluginMock = new Mock<IIncludeResolverPlugin>();
-            includePluginMock.SetupGet(x => x.IncludeName).Returns("plugin-include");
-            includePluginMock.Setup(x => x.ResolveInclude(It.IsAny<IMetadata>(), It.IsAny<IPage>()))
-                .Returns(new Func<IMetadata, IPage, Task<string>>((m, p) => Task.FromResult("render-result")));
-
-            includesHandler.GetType().GetField("m_IncludeResolverPlugins", BindingFlags.NonPublic | BindingFlags.Instance)
-                .SetValue(includesHandler, new IIncludeResolverPlugin[] { includePluginMock.Object });
+            var includesHandler = new IncludesHandler(new Mock<IContentTransformer>().Object,
+                extMock.Object);
 
             var p1 = new PageMock("", "{% plugin-include { param1: x, param2: b} %}");
             var s = new Site("", p1, null);
 
             var res = await includesHandler.Render("plugin-include", new Metadata(), s, p1, "/page1/");
 
-            Assert.AreEqual("render-result", res);
+            Assert.AreEqual("_plugin-include_render-result", res);
         }
 
         [Test]
@@ -325,7 +323,11 @@ namespace Core.Tests
                     (c, k, m) => Task.FromResult(
                         $"{c}_{GetPageName((m as ContextModel).Page)}_{string.Join(",", (m as IncludeContextModel).Data.OrderBy(p => p.Key).Select(p => $"{p.Key}={p.Value}").ToArray())}")));
 
-            return new IncludesHandler(mock.Object);
+            var incExt = new Mock<IIncludesHandlerExtension>();
+            incExt.Setup(m => m.ResolveInclude(It.IsAny<string>(), It.IsAny<IMetadata>(), It.IsAny<IPage>()))
+                .Returns((string c, IMetadata m, IPage p) => throw new MissingIncludeException(c));
+            
+            return new IncludesHandler(mock.Object, incExt.Object);
         }
     }
 }

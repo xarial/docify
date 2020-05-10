@@ -16,6 +16,7 @@ using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Helpers;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Composer
 {
@@ -31,7 +32,7 @@ namespace Xarial.Docify.Core.Composer
         private readonly StringComparer m_Comparer;
         private readonly StringComparison m_Comparison;
 
-        public BaseSiteComposer(ILayoutParser parser, IConfiguration config) 
+        public BaseSiteComposer(ILayoutParser parser, IConfiguration config, IComposerExtension ext) 
         {
             m_LayoutParser = parser;
             m_Config = config;

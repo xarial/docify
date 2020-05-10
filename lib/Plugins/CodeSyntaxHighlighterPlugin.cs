@@ -27,8 +27,7 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("code-syntax-highlighter")]
-    public class CodeSyntaxHighlighterPlugin : IRenderCodeBlockPlugin, IPreCompilePlugin,
-        IPageContentWriterPlugin, IPlugin<CodeSyntaxHighlighterSettings>
+    public class CodeSyntaxHighlighterPlugin : IPlugin<CodeSyntaxHighlighterSettings>
     {
         private CodeSyntaxHighlighterSettings m_Settings;
 
@@ -36,12 +35,19 @@ namespace Xarial.Docify.Lib.Plugins
 
         private const string CSS_FILE_PATH = "assets/styles/syntax-highlight.css";
 
-        public void Init(CodeSyntaxHighlighterSettings setts)
-        {
-            m_Settings = setts;
-        }
+        private IDocifyApplication m_App;
 
-        public Task PreCompile(ISite site)
+        public void Init(IDocifyApplication app, CodeSyntaxHighlighterSettings setts)
+        {
+            m_App = app;
+            m_Settings = setts;
+
+            m_App.Compiler.PreCompile += OnPreCompile;
+            m_App.Compiler.RenderCodeBlock += OnRenderCodeBlock;
+            m_App.Compiler.WritePageContent += OnWritePageContent;
+        }
+        
+        private Task OnPreCompile(ISite site)
         {
             if (!m_Settings.EmbedStyle)
             {
@@ -73,7 +79,7 @@ namespace Xarial.Docify.Lib.Plugins
             return codeLang;
         }
 
-        public void RenderCodeBlock(string rawCode, string lang, string args, StringBuilder html)
+        private void OnRenderCodeBlock(string rawCode, string lang, string args, StringBuilder html)
         {
             var codeLang = FileLanguageCodeById(lang);
 
@@ -101,11 +107,13 @@ namespace Xarial.Docify.Lib.Plugins
             html.Append(pre);
         }
 
-        public Task<string> WritePageContent(string content, IMetadata data, string url)
+        private Task<string> OnWritePageContent(string content, IMetadata data, string url)
         {
             if (!m_Settings.EmbedStyle)
             {
-                content = this.WriteToPageHead(content, w => w.AddStyleSheets(CSS_FILE_PATH));
+                var writer = new HtmlHeadWriter(content);
+                writer.AddStyleSheets(CSS_FILE_PATH);
+                content = writer.Content;
             }
 
             return Task.FromResult(content);

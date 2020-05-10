@@ -22,6 +22,7 @@ using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Compiler.Context;
 using Xarial.Docify.Core.Data;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Core.Tests
 {
@@ -78,11 +79,16 @@ namespace Core.Tests
                 It.IsAny<Page>(), It.IsAny<string>()))
                 .Returns<string, Site, Page, string>((c, s, p, u) => Task.FromResult(c));
 
+            var compExt = new Mock<ICompilerExtension>();
+            compExt.Setup(m => m.WritePageContent(It.IsAny<string>(), It.IsAny<IMetadata>(), It.IsAny<string>()))
+                .Returns((string c, IMetadata m, string u) => Task.FromResult(c));
+
             m_Compiler = new BaseCompiler(new BaseCompilerConfig(),
                 new Mock<ILogger>().Object,
                 layoutMock.Object,
                 includesHandlerMock.Object,
-                contTransMock.Object);
+                contTransMock.Object,
+                compExt.Object);
         }
 
         [Test]

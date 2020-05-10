@@ -10,14 +10,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Base.Plugins;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
     public static class ObservableCodeBlocksExtensionFunctions
     {
-        public static MarkdownPipelineBuilder UseObservableCodeBlocks(this MarkdownPipelineBuilder pipeline, IEnumerable<IRenderCodeBlockPlugin> plugins)
+        public static MarkdownPipelineBuilder UseObservableCodeBlocks(this MarkdownPipelineBuilder pipeline,
+            ICompilerExtension ext)
         {
-            pipeline.Extensions.AddIfNotAlready(new ObservableCodeBlockExtension(plugins));
+            pipeline.Extensions.AddIfNotAlready(new ObservableCodeBlockExtension(ext));
 
             return pipeline;
         }

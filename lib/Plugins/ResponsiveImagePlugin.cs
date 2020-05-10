@@ -21,19 +21,30 @@ using Xarial.Docify.Lib.Plugins.Properties;
 namespace Xarial.Docify.Lib.Plugins
 {
     [Plugin("responsive-image")]
-    public class ResponsiveImagePlugin : IPreCompilePlugin, IPageContentWriterPlugin, IRenderImagePlugin
+    public class ResponsiveImagePlugin : IPlugin
     {
         private const string CSS_FILE_PATH = "assets/styles/responsive-image.css";
         private const string CLASS_NAME = "responsive";
 
-        public Task PreCompile(ISite site)
+        private IDocifyApplication m_App;
+
+        public void Init(IDocifyApplication app)
+        {
+            m_App = app;
+
+            m_App.Compiler.PreCompile += OnPreCompile;
+            m_App.Compiler.RenderImage += OnRenderImage;
+            m_App.Compiler.WritePageContent += OnWritePageContent;
+        }
+        
+        private Task OnPreCompile(ISite site)
         {
             AssetsHelper.AddTextAsset(Resources.responsive_image, site.MainPage, CSS_FILE_PATH);
 
             return Task.CompletedTask;
         }
         
-        public void RenderImage(StringBuilder html)
+        private void OnRenderImage(StringBuilder html)
         {
             var img = html.ToString();
             
@@ -64,10 +75,12 @@ namespace Xarial.Docify.Lib.Plugins
             html.Append(string.Format(Resources.img_figure, img, imgSrc, imgAlt));
         }
 
-        public Task<string> WritePageContent(string content, IMetadata data, string url)
+        private Task<string> OnWritePageContent(string content, IMetadata data, string url)
         {
-            content = this.WriteToPageHead(content, w => w.AddStyleSheets(CSS_FILE_PATH));
-            return Task.FromResult(content);
+            var htmlWriter = new HtmlHeadWriter(content);
+            htmlWriter.AddStyleSheets(CSS_FILE_PATH);
+            
+            return Task.FromResult(htmlWriter.Content);
         }
     }
 }

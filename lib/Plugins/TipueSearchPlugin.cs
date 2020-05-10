@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
@@ -24,12 +25,12 @@ namespace Xarial.Docify.Lib.Plugins
 {
     public class PageSearchData
     {
-        public string title { get; set; }
-        public string text { get; set; }
-        public string url { get; set; }
-        public string tags { get; set; }
-        public string img { get; set; }
-        public string note { get; set; }
+        public string Title { get; set; }
+        public string Text { get; set; }
+        public string Url { get; set; }
+        public string Tags { get; set; }
+        public string Img { get; set; }
+        public string Note { get; set; }
     }
 
     public class TipueSearchPluginSettings
@@ -40,7 +41,7 @@ namespace Xarial.Docify.Lib.Plugins
     }
 
     [Plugin("tipue-search")]
-    public class TipueSearchPlugin : IPlugin<TipueSearchPluginSettings>, IPreCompilePlugin, IIncludeResolverPlugin, IPageContentWriterPlugin, IPostCompilePlugin
+    public class TipueSearchPlugin : IPlugin<TipueSearchPluginSettings>
     {
         private readonly string[] STOP_WORDS = new string[] { "a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at", "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", "can't", "cannot", "could", "couldn't", "did", "didn't", "do", "does", "doesn't", "doing", "don't", "down", "during", "each", "few", "for", "from", "further", "had", "hadn't", "has", "hasn't", "have", "haven't", "having", "he", "he'd", "he'll", "he's", "her", "here", "here's", "hers", "herself", "him", "himself", "his", "how", "how's", "i", "i'd", "i'll", "i'm", "i've", "if", "in", "into", "is", "isn't", "it", "it's", "its", "itself", "let's", "me", "more", "most", "mustn't", "my", "myself", "no", "nor", "not", "of", "off", "on", "once", "only", "or", "other", "ought", "our", "ours	ourselves", "out", "over", "own", "same", "shan't", "she", "she'd", "she'll", "she's", "should", "shouldn't", "so", "some", "such", "than", "that", "that's", "the", "their", "theirs", "them", "themselves", "then", "there", "there's", "these", "they", "they'd", "they'll", "they're", "they've", "this", "those", "through", "to", "too", "under", "until", "up", "very", "was", "wasn't", "we", "we'd", "we'll", "we're", "we've", "were", "weren't", "what", "what's", "when", "when's", "where", "where's", "which", "while", "who", "who's", "whom", "why", "why's", "with", "won't", "would", "wouldn't", "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves" };
 
@@ -49,25 +50,30 @@ namespace Xarial.Docify.Lib.Plugins
         private const string TITLE_PARAM = "title";
 
         private const string SEARCH_PAGE_NAME = "search";
-
-        public string IncludeName => "tipue-search";
-
+        
         private ISite m_Site;
         private List<PageSearchData> m_SearchIndex;
 
         private TipueSearchPluginSettings m_Setts;
 
-        public void Init(TipueSearchPluginSettings setts)
-        {
-            m_Setts = setts;
-        }
+        private IDocifyApplication m_App;
 
-        public Task<string> ResolveInclude(IMetadata data, IPage page)
+        public void Init(IDocifyApplication app, TipueSearchPluginSettings setts)
+        {
+            m_App = app;
+            m_Setts = setts;
+            m_App.Includes.RegisterCustomIncludeHandler("tipue-search", InsertSearchBox);
+            m_App.Compiler.PreCompile += OnPreCompile;
+            m_App.Compiler.WritePageContent += OnWritePageContent;
+            m_App.Compiler.AddFilesPostCompile += OnAddFilesPostCompile;
+        }
+        
+        private Task<string> InsertSearchBox(IMetadata data, IPage page)
         {
             return Task.FromResult(Resources.tipue_search_box);
         }
 
-        public Task PreCompile(ISite site)
+        private Task OnPreCompile(ISite site)
         {
             m_Site = site;
             m_SearchIndex = new List<PageSearchData>();
@@ -101,6 +107,41 @@ namespace Xarial.Docify.Lib.Plugins
                 Guid.NewGuid().ToString(), data, layout));
 
             return Task.CompletedTask;
+        }
+
+        private Task<string> OnWritePageContent(string content, IMetadata data, string url)
+        {
+            if ((!data.ContainsKey(SITEMAP_PARAM) || data.GetParameterOrDefault<bool>(SITEMAP_PARAM))
+                && (!data.ContainsKey(SEARCH_PARAM) || data.GetParameterOrDefault<bool>(SEARCH_PARAM)))
+            {
+                var text = HtmlToPlainText(content, m_Setts.PageContentNode, out string title);
+
+                m_SearchIndex.Add(new PageSearchData()
+                {
+                    Title = title,
+                    Text = NormalizeText(text),
+                    Url = url
+                });
+            }
+
+            return Task.FromResult(content);
+        }
+
+        private async IAsyncEnumerable<IFile> OnAddFilesPostCompile()
+        {
+            //to remove the warning
+            await Task.CompletedTask;
+
+            var opts = new JsonSerializerOptions()
+            {
+                IgnoreNullValues = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+
+            var searchContent = System.Text.Json.JsonSerializer.Serialize(m_SearchIndex, opts).ToString();
+
+            yield return new PluginFile($"var tipuesearch = {{ \"pages\": {searchContent} }};", 
+                new PluginLocation("search-content.js", new string[] { SEARCH_PAGE_NAME }));
         }
 
         private string HtmlToPlainText(string html, string node, out string title)
@@ -152,40 +193,6 @@ namespace Xarial.Docify.Lib.Plugins
 
             return string.Join(' ', words.Select(w => w.Trim())
                 .Where(w => !STOP_WORDS.Contains(w, StringComparer.CurrentCultureIgnoreCase)));
-        }
-
-        public Task<string> WritePageContent(string content, IMetadata data, string url)
-        {
-            if ((!data.ContainsKey(SITEMAP_PARAM) || data.GetParameterOrDefault<bool>(SITEMAP_PARAM))
-                && (!data.ContainsKey(SEARCH_PARAM) || data.GetParameterOrDefault<bool>(SEARCH_PARAM)))
-            {
-                var text = HtmlToPlainText(content, m_Setts.PageContentNode, out string title);
-
-                m_SearchIndex.Add(new PageSearchData()
-                {
-                    title = title,
-                    text = NormalizeText(text),
-                    url = url
-                });
-            }
-
-            return Task.FromResult(content);
-        }
-
-        public async IAsyncEnumerable<IFile> AddFilesPostCompile()
-        {
-            //to remove the warning
-            await Task.CompletedTask;
-
-            var opts = new System.Text.Json.JsonSerializerOptions()
-            {
-                IgnoreNullValues = true
-            };
-
-            var searchContent = System.Text.Json.JsonSerializer.Serialize(m_SearchIndex, opts).ToString();
-
-            yield return new PluginFile($"var tipuesearch = {{ \"pages\": {searchContent} }};", 
-                new PluginLocation("search-content.js", new string[] { SEARCH_PAGE_NAME }));
         }
     }
 }

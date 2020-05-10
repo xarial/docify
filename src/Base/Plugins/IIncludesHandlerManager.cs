@@ -5,16 +5,17 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Base.Plugins
 {
-    public interface IPageContentWriterPlugin : IPlugin
+    public delegate Task<string> ResolveCustomIncludeDelegate(IMetadata data, IPage page);
+
+    public interface IIncludesHandlerManager
     {
-        Task<string> WritePageContent(string content, IMetadata data, string url);
+        IIncludesHandler Instance { get; }
+        void RegisterCustomIncludeHandler(string includeName, ResolveCustomIncludeDelegate handler);
     }
 }

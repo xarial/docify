@@ -14,19 +14,17 @@ using System.Text;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Core.Plugin;
 using Markdig.Renderers.Html.Inlines;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
     public class ObservableLinkInlineRenderer : LinkInlineRenderer
     {
-        private readonly IEnumerable<IRenderUrlPlugin> m_UrlPlugins;
-        private readonly IEnumerable<IRenderImagePlugin> m_ImagePlugins;
-
-        public ObservableLinkInlineRenderer(IEnumerable<IRenderUrlPlugin> urlPlugins,
-            IEnumerable<IRenderImagePlugin> imagePlugins)
+        private readonly ICompilerExtension m_Ext;
+        
+        public ObservableLinkInlineRenderer(ICompilerExtension ext)
         {
-            m_UrlPlugins = urlPlugins;
-            m_ImagePlugins = imagePlugins;
+            m_Ext = ext;
         }
 
         protected override void Write(HtmlRenderer renderer, LinkInline link)
@@ -40,11 +38,11 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
             
             if (!link.IsImage)
             {
-                m_UrlPlugins.InvokePluginsIfAny(p => p.RenderUrl(linkOut));
+                m_Ext.RenderUrl(linkOut);
             }
             else 
             {
-                m_ImagePlugins.InvokePluginsIfAny(p => p.RenderImage(linkOut));
+                m_Ext.RenderImage(linkOut);
             }
 
             renderer.Write(linkOut.ToString());

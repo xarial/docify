@@ -7,4 +7,8 @@ namespace Xarial.Docify.Core.Plugin.Extensions
     public interface IComposerExtension
     {
     }
+
+    public class ComposerExtension : IComposerExtension
+    {
+    }
 }

@@ -11,4 +11,14 @@ namespace Xarial.Docify.Core.Plugin.Extensions
     {
         Task<string> ResolveInclude(string includeName, IMetadata md, IPage page);
     }
+
+    public class IncludesHandlerExtension : IIncludesHandlerExtension
+    {
+        public event Func<string, IMetadata, IPage, Task<string>> RequestResolveInclude;
+
+        public Task<string> ResolveInclude(string includeName, IMetadata md, IPage page)
+        {
+            return RequestResolveInclude.Invoke(includeName, md, page);
+        }
+    }
 }

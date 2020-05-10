@@ -16,16 +16,17 @@ using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Core.Plugin;
 using Markdig.Renderers.Html;
 using System.IO;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
     public class ObservableCodeBlockRenderer : CodeBlockRenderer
     {
-        private readonly IEnumerable<IRenderCodeBlockPlugin> m_Plugins;
+        private readonly ICompilerExtension m_Ext;
 
-        public ObservableCodeBlockRenderer(IEnumerable<IRenderCodeBlockPlugin> plugins) 
+        public ObservableCodeBlockRenderer(ICompilerExtension ext) 
         {
-            m_Plugins = plugins;
+            m_Ext = ext;
         }
 
         protected override void Write(HtmlRenderer renderer, CodeBlock obj)
@@ -44,7 +45,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
                     base.Write(new HtmlRenderer(strWriter), obj);
                 }
                 
-                m_Plugins.InvokePluginsIfAny(p => p.RenderCodeBlock(code, lang, args, codeOut));
+                m_Ext.RenderCodeBlock(code, lang, args, codeOut);
 
                 renderer.Write(codeOut.ToString());
             }

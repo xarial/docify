@@ -23,11 +23,7 @@ namespace Xarial.Docify.Core.Publisher
         private readonly LocalFileSystemPublisherConfig m_Config;
         private readonly System.IO.Abstractions.IFileSystem m_FileSystem;
 
-        [ImportPlugins]
-        private IEnumerable<IPrePublishFilePlugin> m_PrePublishFilePlugins = null;
-
-        [ImportPlugins]
-        private IEnumerable<IPostPublishPlugin> m_PostPublishPlugins = null;
+        private readonly IPublisherExtension m_Ext;
 
         public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config,
             IPublisherExtension ext) 
@@ -40,6 +36,7 @@ namespace Xarial.Docify.Core.Publisher
         {
             m_Config = config;
             m_FileSystem = fileSystem;
+            m_Ext = ext;
         }
 
         public async Task Write(ILocation loc, IAsyncEnumerable<IFile> files)
@@ -71,34 +68,18 @@ namespace Xarial.Docify.Core.Publisher
                         m_FileSystem.Directory.CreateDirectory(dir);
                     }
                 }
-
-                bool skip = false;
-
-                IFile outFile = new Data.File(outLoc, file.Content, file.Id);
                 
-                await m_PrePublishFilePlugins.InvokePluginsIfAnyAsync(async (p) =>
+                var res = await m_Ext.PrePublishFile(outLoc, file);
+                
+                if (!res.SkipFile)
                 {
-                    var res = await p.PrePublishFile(loc, outFile);
-
-                    if (res.SkipFile)
-                    {
-                        skip = true;
-                    }
-                    else 
-                    {
-                        outFile = res.File;
-                    }
-                });
-
-                if (!skip)
-                {
-                    outFilePath = outFile.Location.ToPath();
+                    outFilePath = res.File.Location.ToPath();
                     CreateDirectoryIfNeeded();
-                    await m_FileSystem.File.WriteAllBytesAsync(outFilePath, outFile.Content);
+                    await m_FileSystem.File.WriteAllBytesAsync(outFilePath, res.File.Content);
                 }
             }
 
-            await m_PostPublishPlugins.InvokePluginsIfAnyAsync(async (p) => await p.PostPublish(loc));
+            await m_Ext.PostPublish(loc);
         }
     }
 }

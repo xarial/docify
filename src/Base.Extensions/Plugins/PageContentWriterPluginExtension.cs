@@ -57,12 +57,13 @@ namespace Xarial.Docify.Base.Plugins
 
     public static class PageContentWriterPluginExtension
     {
-        public static string WriteToPageHead(this IPageContentWriterPlugin plugin, 
-            string content, Action<IHeadWriter> headWriter)
-        {
-            var htmlWriter = new HtmlHeadWriter(content);
-            headWriter.Invoke(htmlWriter);
-            return htmlWriter.Content;
-        }
+        //TODO: fix
+        //public static string WriteToPageHead(this IPageContentWriterPlugin plugin, 
+        //    string content, Action<IHeadWriter> headWriter)
+        //{
+        //    var htmlWriter = new HtmlHeadWriter(content);
+        //    headWriter.Invoke(htmlWriter);
+        //    return htmlWriter.Content;
+        //}
     }
 }

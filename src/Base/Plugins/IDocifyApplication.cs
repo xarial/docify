@@ -5,17 +5,13 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Xarial.Docify.Core.Plugin.Extensions
+namespace Xarial.Docify.Base.Plugins
 {
-    public interface IComposerExtension
+    public interface IDocifyApplication
     {
-    }
-
-    public class ComposerExtension : IComposerExtension
-    {
+        IIncludesHandlerManager Includes { get; }
+        ICompilerManager Compiler { get; }
+        IComposerManager Composer { get; }
+        IPublisherManager Publisher { get; }
     }
 }

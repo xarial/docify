@@ -59,18 +59,18 @@ namespace Xarial.Docify.Lib.Plugins
 
         private ImageOptimizerSettings m_Settings;
 
-        private IEngine m_Engine;
+        private IDocifyApplication m_Engine;
 
-        public void Init(IEngine engine, ImageOptimizerSettings setts)
+        public void Init(IDocifyApplication engine, ImageOptimizerSettings setts)
         {
             m_Engine = engine;
             m_Settings = setts;
 
-            m_Engine.Compiler.PreCompile += PreCompile;
-            m_Engine.Publisher.PrePublishFile += PrePublishFile;
+            m_Engine.Compiler.PreCompile += OnPreCompile;
+            m_Engine.Publisher.PrePublishFile += OnPrePublishFile;
         }
 
-        public Task PreCompile(ISite site)
+        private Task OnPreCompile(ISite site)
         {
             foreach (var page in AssetsHelper.GetAllPages(site.MainPage)) 
             {
@@ -138,7 +138,7 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
+        private Task<PrePublishResult> OnPrePublishFile(ILocation outLoc, IFile file)
         {
             var res = new PrePublishResult()
             {

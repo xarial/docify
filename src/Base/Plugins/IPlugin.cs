@@ -19,12 +19,12 @@ namespace Xarial.Docify.Base.Plugins
 
     public interface IPlugin : IPluginBase
     {
-        void Init(IEngine engine);
+        void Init(IDocifyApplication engine);
     }
     
     public interface IPlugin<TSettings> : IPluginBase
         where TSettings : new()
     {
-        void Init(IEngine engine, TSettings setts);
+        void Init(IDocifyApplication engine, TSettings setts);
     }
 }

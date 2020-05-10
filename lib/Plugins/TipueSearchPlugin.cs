@@ -49,28 +49,30 @@ namespace Xarial.Docify.Lib.Plugins
         private const string TITLE_PARAM = "title";
 
         private const string SEARCH_PAGE_NAME = "search";
-
-        public string IncludeName => "tipue-search";
-
+        
         private ISite m_Site;
         private List<PageSearchData> m_SearchIndex;
 
         private TipueSearchPluginSettings m_Setts;
 
-        private IEngine m_Engine;
+        private IDocifyApplication m_Engine;
 
-        public void Init(IEngine engine, TipueSearchPluginSettings setts)
+        public void Init(IDocifyApplication engine, TipueSearchPluginSettings setts)
         {
             m_Engine = engine;
             m_Setts = setts;
+            m_Engine.Includes.RegisterCustomIncludeHandler("tipue-search", InsertSearchBox);
+            m_Engine.Compiler.PreCompile += OnPreCompile;
+            m_Engine.Compiler.WritePageContent += OnWritePageContent;
+            m_Engine.Compiler.AddFilesPostCompile += OnAddFilesPostCompile;
         }
         
-        public Task<string> ResolveInclude(IMetadata data, IPage page)
+        private Task<string> InsertSearchBox(IMetadata data, IPage page)
         {
             return Task.FromResult(Resources.tipue_search_box);
         }
 
-        public Task PreCompile(ISite site)
+        private Task OnPreCompile(ISite site)
         {
             m_Site = site;
             m_SearchIndex = new List<PageSearchData>();
@@ -104,6 +106,40 @@ namespace Xarial.Docify.Lib.Plugins
                 Guid.NewGuid().ToString(), data, layout));
 
             return Task.CompletedTask;
+        }
+
+        private Task<string> OnWritePageContent(string content, IMetadata data, string url)
+        {
+            if ((!data.ContainsKey(SITEMAP_PARAM) || data.GetParameterOrDefault<bool>(SITEMAP_PARAM))
+                && (!data.ContainsKey(SEARCH_PARAM) || data.GetParameterOrDefault<bool>(SEARCH_PARAM)))
+            {
+                var text = HtmlToPlainText(content, m_Setts.PageContentNode, out string title);
+
+                m_SearchIndex.Add(new PageSearchData()
+                {
+                    title = title,
+                    text = NormalizeText(text),
+                    url = url
+                });
+            }
+
+            return Task.FromResult(content);
+        }
+
+        private async IAsyncEnumerable<IFile> OnAddFilesPostCompile()
+        {
+            //to remove the warning
+            await Task.CompletedTask;
+
+            var opts = new System.Text.Json.JsonSerializerOptions()
+            {
+                IgnoreNullValues = true
+            };
+
+            var searchContent = System.Text.Json.JsonSerializer.Serialize(m_SearchIndex, opts).ToString();
+
+            yield return new PluginFile($"var tipuesearch = {{ \"pages\": {searchContent} }};", 
+                new PluginLocation("search-content.js", new string[] { SEARCH_PAGE_NAME }));
         }
 
         private string HtmlToPlainText(string html, string node, out string title)
@@ -155,40 +191,6 @@ namespace Xarial.Docify.Lib.Plugins
 
             return string.Join(' ', words.Select(w => w.Trim())
                 .Where(w => !STOP_WORDS.Contains(w, StringComparer.CurrentCultureIgnoreCase)));
-        }
-
-        public Task<string> WritePageContent(string content, IMetadata data, string url)
-        {
-            if ((!data.ContainsKey(SITEMAP_PARAM) || data.GetParameterOrDefault<bool>(SITEMAP_PARAM))
-                && (!data.ContainsKey(SEARCH_PARAM) || data.GetParameterOrDefault<bool>(SEARCH_PARAM)))
-            {
-                var text = HtmlToPlainText(content, m_Setts.PageContentNode, out string title);
-
-                m_SearchIndex.Add(new PageSearchData()
-                {
-                    title = title,
-                    text = NormalizeText(text),
-                    url = url
-                });
-            }
-
-            return Task.FromResult(content);
-        }
-
-        public async IAsyncEnumerable<IFile> AddFilesPostCompile()
-        {
-            //to remove the warning
-            await Task.CompletedTask;
-
-            var opts = new System.Text.Json.JsonSerializerOptions()
-            {
-                IgnoreNullValues = true
-            };
-
-            var searchContent = System.Text.Json.JsonSerializer.Serialize(m_SearchIndex, opts).ToString();
-
-            yield return new PluginFile($"var tipuesearch = {{ \"pages\": {searchContent} }};", 
-                new PluginLocation("search-content.js", new string[] { SEARCH_PAGE_NAME }));
         }
     }
 }

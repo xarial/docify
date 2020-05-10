@@ -36,34 +36,7 @@ namespace Xarial.Docify.CLI
         T Resove<T>();
         Task Build();
     }
-
-    //public static class AutoFacExtension
-    //{
-    //    private const string IMPORT_SERVICE_TO_PLUGINS = "import_service_to_plugins";
-
-    //    public static IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> ImportServiceToPlugins<TLimit, TActivatorData, TRegistrationStyle>(
-    //        this IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> regBuilder)
-    //    {
-    //        regBuilder.WithMetadata(IMPORT_SERVICE_TO_PLUGINS, true);
-    //        return regBuilder;
-    //    }
-
-    //    public static bool IsImportServiceToPlugins(this IComponentRegistration compReg) 
-    //    {
-    //        object importService;
-            
-    //        if (compReg.Metadata.TryGetValue(IMPORT_SERVICE_TO_PLUGINS, out importService)) 
-    //        {
-    //            if (importService is bool) 
-    //            {
-    //                return (bool)importService;
-    //            }
-    //        }
-
-    //        return false;
-    //    }
-    //}
-
+    
     public class DocifyEngine : IDocifyEngine
     {
         private readonly IContainer m_Container;
@@ -192,26 +165,13 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<PublisherManager>().As<IPublisherManager>();
 
-            builder.RegisterType<Engine>().As<IEngine>();
+            builder.RegisterType<DocifyApplication>().As<IDocifyApplication>();
         }
 
         private void LoadPlugins()
         {
             var plugMgr = m_Container.Resolve<IPluginsManager>();
             plugMgr.LoadPlugins();
-
-            //foreach (var reg in m_Container.ComponentRegistry.Registrations)
-            //{
-            //    //TODO: activated is called on all resolves which makes duplicate calls for the same reference
-            //    reg.Activated += (o, eventArgs) =>
-            //    {
-            //        if (plugMgr != null)
-            //        {
-            //            plugMgr.LoadPlugins(eventArgs.Instance,
-            //                eventArgs.Component.IsImportServiceToPlugins());
-            //        }
-            //    };
-            //}
         }
     }
 }

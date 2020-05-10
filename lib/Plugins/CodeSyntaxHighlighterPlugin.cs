@@ -35,19 +35,19 @@ namespace Xarial.Docify.Lib.Plugins
 
         private const string CSS_FILE_PATH = "assets/styles/syntax-highlight.css";
 
-        private IEngine m_Engine;
+        private IDocifyApplication m_Engine;
 
-        public void Init(IEngine engine, CodeSyntaxHighlighterSettings setts)
+        public void Init(IDocifyApplication engine, CodeSyntaxHighlighterSettings setts)
         {
             m_Engine = engine;
             m_Settings = setts;
 
-            m_Engine.Compiler.PreCompile += PreCompile;
-            m_Engine.Compiler.RenderCodeBlock += RenderCodeBlock;
-            m_Engine.Compiler.WritePageContent += WritePageContent;
+            m_Engine.Compiler.PreCompile += OnPreCompile;
+            m_Engine.Compiler.RenderCodeBlock += OnRenderCodeBlock;
+            m_Engine.Compiler.WritePageContent += OnWritePageContent;
         }
         
-        public Task PreCompile(ISite site)
+        private Task OnPreCompile(ISite site)
         {
             if (!m_Settings.EmbedStyle)
             {
@@ -79,7 +79,7 @@ namespace Xarial.Docify.Lib.Plugins
             return codeLang;
         }
 
-        public void RenderCodeBlock(string rawCode, string lang, string args, StringBuilder html)
+        private void OnRenderCodeBlock(string rawCode, string lang, string args, StringBuilder html)
         {
             var codeLang = FileLanguageCodeById(lang);
 
@@ -107,7 +107,7 @@ namespace Xarial.Docify.Lib.Plugins
             html.Append(pre);
         }
 
-        public Task<string> WritePageContent(string content, IMetadata data, string url)
+        private Task<string> OnWritePageContent(string content, IMetadata data, string url)
         {
             if (!m_Settings.EmbedStyle)
             {

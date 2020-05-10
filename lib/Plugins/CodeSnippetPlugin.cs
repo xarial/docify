@@ -52,20 +52,20 @@ namespace Xarial.Docify.Lib.Plugins
 
         private ISite m_Site;
 
-        private IEngine m_Engine;
+        private IDocifyApplication m_Engine;
 
-        public void Init(IEngine engine, CodeSnippetSettings setts)
+        public void Init(IDocifyApplication engine, CodeSnippetSettings setts)
         {
             m_Engine = engine;
             m_Settings = setts;
 
-            m_Engine.Compiler.PreCompile += PreCompile;
-            m_Engine.Includes.RegisterCustomIncludeHandler("code-snippet", ResolveInclude);
-            m_Engine.Publisher.PrePublishFile += PrePublishFile;
-            m_Engine.Compiler.WritePageContent += WritePageContent;
+            m_Engine.Compiler.PreCompile += OnPreCompile;
+            m_Engine.Includes.RegisterCustomIncludeHandler("code-snippet", InsertCodeSnippet);
+            m_Engine.Publisher.PrePublishFile += OnPrePublishFile;
+            m_Engine.Compiler.WritePageContent += OnWritePageContent;
         }
 
-        public Task PreCompile(ISite site)
+        private Task OnPreCompile(ISite site)
         {
             m_Site = site;
 
@@ -111,7 +111,7 @@ namespace Xarial.Docify.Lib.Plugins
             return Task.CompletedTask;
         }
 
-        public async Task<string> ResolveInclude(IMetadata data, IPage page)
+        private async Task<string> InsertCodeSnippet(IMetadata data, IPage page)
         {
             var snipData = data.ToObject<CodeSnippetData>();
 
@@ -205,7 +205,7 @@ namespace Xarial.Docify.Lib.Plugins
             }
         }
 
-        public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
+        private Task<PrePublishResult> OnPrePublishFile(ILocation outLoc, IFile file)
         {
             var res = new PrePublishResult()
             {
@@ -217,7 +217,7 @@ namespace Xarial.Docify.Lib.Plugins
             return Task.FromResult(res);
         }
 
-        public Task<string> WritePageContent(string content, IMetadata data, string url)
+        private Task<string> OnWritePageContent(string content, IMetadata data, string url)
         {
             var writer = new HtmlHeadWriter(content);
             writer.AddStyleSheets(CSS_FILE_PATH);

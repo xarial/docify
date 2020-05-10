@@ -1,4 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿//*********************************************************************
+//docify
+//Copyright(C) 2020 Xarial Pty Limited
+//Product URL: https://www.docify.net
+//License: https://github.com/xarial/docify/blob/master/LICENSE
+//*********************************************************************
+
+using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;

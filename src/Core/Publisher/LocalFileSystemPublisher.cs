@@ -68,8 +68,10 @@ namespace Xarial.Docify.Core.Publisher
                         m_FileSystem.Directory.CreateDirectory(dir);
                     }
                 }
-                
-                var res = await m_Ext.PrePublishFile(outLoc, file);
+
+                IFile outFile = new Data.File(outLoc, file.Content, file.Id);
+
+                var res = await m_Ext.PrePublishFile(outLoc, outFile);
                 
                 if (!res.SkipFile)
                 {

@@ -1,4 +1,11 @@
-﻿using Xarial.Docify.Base.Plugins;
+﻿//*********************************************************************
+//docify
+//Copyright(C) 2020 Xarial Pty Limited
+//Product URL: https://www.docify.net
+//License: https://github.com/xarial/docify/blob/master/LICENSE
+//*********************************************************************
+
+using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Plugin.Extensions;
 

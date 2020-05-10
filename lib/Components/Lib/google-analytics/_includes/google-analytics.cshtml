@@ -1,6 +1,6 @@
 ﻿---
-traking_code:
-production_only: true
+traking-code:
+production-only: true
 ---
 @using RazorLight
 @using System
@@ -8,11 +8,11 @@ production_only: true
 @{
     string trackingCode = "";
 
-    var enable = Model.Data.Get<bool>("production_only") ? Model.Site.Configuration.Environment == Xarial.Docify.Base.Environment_e.Production : true;
+    var enable = Model.Data.Get<bool>("production-only") ? Model.Site.Configuration.Environment == Xarial.Docify.Base.Environment_e.Production : true;
 
     if (enable)
     {
-        trackingCode = Model.Data.GetOrDefault<string>("traking_code");
+        trackingCode = Model.Data.GetOrDefault<string>("traking-code");
 
         if (string.IsNullOrEmpty(trackingCode)) 
         {

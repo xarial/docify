@@ -1,8 +1,8 @@
 ﻿---
-title_attribute: caption
-home_menu: true
+title-attribute: caption
+home-menu: true
 menu:
-home_menu_title: Welcome
+home-menu-title: Welcome
 ---
 @using RazorLight
 @using System
@@ -13,7 +13,7 @@ home_menu_title: Welcome
 @inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
 @{
     const string MENU_OPT = "menu";
-    const string HOME_MENU_OPT = "home_menu";
+    const string HOME_MENU_OPT = "home-menu";
     const string PAGE_DISABLED_ATT = "disabled";
     const string PAGE_EXCLUDE_ATT = "toc";
     const string PAGE_ORDER_ATT = "order";
@@ -32,7 +32,7 @@ home_menu_title: Welcome
         homePage = NavigationMenuHelper.BuildPage(Model.Site.MainPage, Model.Data, "Home");
     }
 
-    var homeMenuTitle = Model.Data.Get<string>("home_menu_title");
+    var homeMenuTitle = Model.Data.Get<string>("home-menu-title");
 
     int idCounter = 0;
 

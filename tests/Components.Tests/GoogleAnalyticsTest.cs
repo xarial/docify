@@ -27,7 +27,7 @@ namespace Components.Tests
         [Test]
         public async Task DefaultParamsTestEnvTest()
         {
-            var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics { traking_code:  } %}\r\n</head>", INCLUDE_PATH,
+            var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics { traking-code:  } %}\r\n</head>", INCLUDE_PATH,
                 null,
                 new Configuration { Environment = Environment_e.Test });
 
@@ -39,7 +39,7 @@ namespace Components.Tests
         [Test]
         public async Task ProdEnvTest()
         {
-            var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics { traking_code: ABC } %}\r\n</head>", INCLUDE_PATH,
+            var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics { traking-code: ABC } %}\r\n</head>", INCLUDE_PATH,
                 null,
                 new Configuration { Environment = Environment_e.Production });
 
@@ -51,7 +51,7 @@ namespace Components.Tests
         [Test]
         public async Task TestEnvIgnoreEnvTest()
         {
-            var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics { production_only: false, traking_code: ABC } %}\r\n</head>", INCLUDE_PATH,
+            var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics { production-only: false, traking-code: ABC } %}\r\n</head>", INCLUDE_PATH,
                 null,
                 new Configuration { Environment = Environment_e.Test });
 

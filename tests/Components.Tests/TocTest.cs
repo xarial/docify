@@ -42,7 +42,7 @@ namespace Components.Tests
         [Test]
         public async Task AutoMenuTest()
         {
-            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% toc home_menu: false %}\r\n</div>", INCLUDE_PATH);
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% toc home-menu: false %}\r\n</div>", INCLUDE_PATH);
             var p1 = new PageMock("Page1", "", ComponentsTest.Instance.GetData<Metadata>("title: p1"));
             p1.SubPages.Add(new PageMock("SubPage1", "", ComponentsTest.Instance.GetData<Metadata>("title: sp1")));
             p1.SubPages.Add(new PageMock("SubPage2", "", ComponentsTest.Instance.GetData<Metadata>("title: sp2")));
@@ -70,7 +70,7 @@ namespace Components.Tests
         public async Task CustomTitleTest()
         {
             var site = ComponentsTest.Instance.NewSite("<div>\r\n{% toc %}\r\n</div>", INCLUDE_PATH, null,
-                ComponentsTest.Instance.GetData<Configuration>("$toc:\r\n  home_menu: false\r\n  title_attribute: abc"));
+                ComponentsTest.Instance.GetData<Configuration>("$toc:\r\n  home-menu: false\r\n  title-attribute: abc"));
             var p1 = new PageMock("Page1", "", ComponentsTest.Instance.GetData<Metadata>("title: p1\r\nabc: x1"));
             site.MainPage.SubPages.Add(p1);
             
@@ -82,7 +82,7 @@ namespace Components.Tests
         [Test]
         public async Task RootPageTest()
         {
-            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% toc { home_menu: false, root_page: /page1/ } %}\r\n</div>", INCLUDE_PATH);
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% toc { home-menu: false, root-page: /page1/ } %}\r\n</div>", INCLUDE_PATH);
             var p1 = new PageMock("Page1", "", ComponentsTest.Instance.GetData<Metadata>("title: p1"));
             p1.SubPages.Add(new PageMock("SubPage1", "", ComponentsTest.Instance.GetData<Metadata>("title: sp1")));
             p1.SubPages.Add(new PageMock("SubPage2", "", ComponentsTest.Instance.GetData<Metadata>("title: sp2")));
@@ -97,7 +97,7 @@ namespace Components.Tests
         [Test]
         public void RootPageInvalidTest()
         {
-            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% toc { home_menu: false, root_page: /page1.html } %}\r\n</div>", INCLUDE_PATH);
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% toc { home-menu: false, root-page: /page1.html } %}\r\n</div>", INCLUDE_PATH);
 
             Assert.ThrowsAsync<NullReferenceException>(() => ComponentsTest.Instance.CompileMainPageNormalize(site));
         }
@@ -105,7 +105,7 @@ namespace Components.Tests
         [Test]
         public async Task CustomHomeMenuTitleTest()
         {
-            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% toc home_menu_title: custom-title %}\r\n</div>", INCLUDE_PATH);
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% toc home-menu-title: custom-title %}\r\n</div>", INCLUDE_PATH);
             
             var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 

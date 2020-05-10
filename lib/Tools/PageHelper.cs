@@ -15,7 +15,7 @@ namespace Xarial.Docify.Lib.Tools
 {
     public static class PageHelper
     {
-        public const string TITLE_ATT = "title_attribute";
+        public const string TITLE_ATT = "title-attribute";
         private const string DEFAULT_TITLE_ATT = "title";
 
         public static IEnumerable<IContextPage> GetAllPages(IContextPage page)

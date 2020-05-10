@@ -1,7 +1,7 @@
 ﻿---
-home_menu: true
+home-menu: true
 menu:
-root_page:
+root-page:
 ---
 @using RazorLight
 @using System
@@ -12,7 +12,7 @@ root_page:
 @inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
 @{
     const string MENU_OPT = "menu";
-    const string HOME_MENU_OPT = "home_menu";
+    const string HOME_MENU_OPT = "home-menu";
 
     var menu = NavigationMenuHelper.BuildPredefinedMenu(MENU_OPT, Model.Site, Model.Data)?.ToList();
 

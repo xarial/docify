@@ -10,4 +10,4 @@ plugins:
 code-syntax-highlighter:
   embed-style: false
 $toc:
-  home_menu_title: Home
+  home-menu-title: Home

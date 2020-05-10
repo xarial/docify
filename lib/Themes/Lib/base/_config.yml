@@ -10,6 +10,6 @@ plugins:
   - image-optimizer
   - responsive-image
   - tipue-search
-title_attribute: caption
+title-attribute: caption
 ignore:
   - _config.yml

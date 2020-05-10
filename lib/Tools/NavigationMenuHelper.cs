@@ -19,18 +19,15 @@ namespace Xarial.Docify.Lib.Tools
 {
     public static class NavigationMenuHelper
     {   
-        private const string ROOT_PAGE_ATT = "root_page";
+        private const string ROOT_PAGE_ATT = "root-page";
 
         public class MenuPage : IContextPage
         {
             public string Url { get; set; }
             public string FullUrl { get; set; }
-            //public string Name { get; }
             public IContextMetadata Data { get; }
             public IReadOnlyList<IContextPage> SubPages => SubPagesList;
             public List<MenuPage> SubPagesList { get; }
-
-            //public string RawContent { get; }
 
             public IReadOnlyList<IContextAsset> Assets => throw new NotSupportedException();
 
@@ -42,7 +39,6 @@ namespace Xarial.Docify.Lib.Tools
 
             public MenuPage(IContextMetadata data)
             {
-                //Name = name;
                 SubPagesList = new List<MenuPage>();
                 Data = data;
             }

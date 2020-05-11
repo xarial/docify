@@ -6,11 +6,15 @@ show_title: true
 @inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
 @{ 
     var logo = Model.Site.MainPage.Data.GetOrDefault<string>("image");
+    if (!logo.StartsWith("/")) 
+    {
+        logo = "/" + logo;
+    }
     var title = Xarial.Docify.Lib.Tools.PageHelper.GetCaption(Model.Site.MainPage, Model.Site.Configuration)?.ToUpper();
     var description = Model.Site.MainPage.Data.GetOrDefault<string>("description");
     var iconWidth = Model.Data.Get<string>("icon_width");
     var showTitle = Model.Data.Get<bool>("show_title");
-    if (!showTitle) 
+    if (!showTitle)
     {
         title = "";
     }

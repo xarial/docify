@@ -109,7 +109,7 @@ namespace Xarial.Docify.Core.Compiler
             foreach (var asset in folder.Assets)
             {
                 var thisLoc = baseLoc.Combine(new Location(asset.FileName));
-
+                
                 if (PathMatcher.Matches(m_Config.CompilableAssetsFilter, thisLoc.ToId()))
                 {
                     yield return await CompileAsset(asset, site, page, thisLoc);

@@ -18,10 +18,10 @@ namespace Xarial.Docify.Core.Helpers
         public static bool Matches(IEnumerable<string> filters, string path) 
         {
             //TODO: combine into single regex
-            var ignoreRegex = filters.Select(
+            var regex = filters.Select(
                 i => (i.StartsWith("*") ? "" : "^") + Regex.Escape(i).Replace("\\*", ".*").Replace("\\?", ".") + (i.EndsWith("*") ? "" : "$")).ToArray();
 
-            return ignoreRegex.Any(i => Regex.IsMatch(path, i, RegexOptions.IgnoreCase));
+            return regex.Any(i => Regex.IsMatch(path, i, RegexOptions.IgnoreCase));
         }
     }
 }

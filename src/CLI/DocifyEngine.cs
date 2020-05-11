@@ -91,7 +91,7 @@ namespace Xarial.Docify.CLI
                 .UsingConstructor(typeof(IConfiguration));
 
             builder.RegisterType<BaseCompilerConfig>()
-                .WithParameter(new TypedParameter(typeof(string), ""));
+                .UsingConstructor(typeof(IConfiguration));
 
             builder.RegisterType<LocalFileSystemPublisherConfig>();
 

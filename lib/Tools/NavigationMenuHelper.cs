@@ -109,7 +109,6 @@ namespace Xarial.Docify.Lib.Tools
 
             if (!string.IsNullOrEmpty(rootPageUrl))
             {
-
                 var rootPage = PageHelper.GetAllPages(model.Site.MainPage).Prepend(model.Site.MainPage)
                     .FirstOrDefault(p => string.Equals(p.Url, rootPageUrl, StringComparison.CurrentCultureIgnoreCase));
 

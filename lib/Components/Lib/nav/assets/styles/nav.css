@@ -4,6 +4,7 @@
     list-style: none;
     padding: 0;
     margin: 0;
+    right: 10px;
     background-color: #f9f9f9;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
@@ -26,7 +27,7 @@
 
 .sub-menu-item-container .menu-item a {
     display: block;
-    padding: 1em;
+    padding: 0.5em;
     text-decoration: none;
     white-space: nowrap;
 }
@@ -60,6 +61,10 @@
     font-weight: bold;
 }
 
+.menu-item.not-active {
+    font-weight: normal;
+}
+
 /*---hover---*/
 .sub-menu-item-container .menu-item a:hover {
     text-decoration: underline;
@@ -90,20 +95,22 @@
 
 @media screen and (max-width: 600px) {
     .menu.responsive {
-        position: relative;
-    }
-
-    .menu.responsive .menu-icon {
         position: absolute;
-        right: 0;
-        top: 0;
+        right: 20px;
+        top: 15px;
     }
 
-    .menu.responsive li {
-        float: none;
-        display: block;
-        text-align: left;
-    }
+        .menu.responsive .menu-icon {
+            position: absolute;
+            right: 0px;
+            top: 10px;
+        }
+
+        .menu.responsive li {
+            float: none;
+            display: block;
+            text-align: left;
+        }
 
     .menu.responsive {
         background-color: #f9f9f9;
@@ -133,4 +140,3 @@
     -webkit-transform: rotate(45deg) translate(-8px, -10px);
     transform: rotate(45deg) translate(-8px, -10px);
 }
-

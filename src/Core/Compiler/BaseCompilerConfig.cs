@@ -7,19 +7,33 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Compiler
 {
     public class BaseCompilerConfig
     {
-        public string[] CompilableAssetsFilter = new string[]
-        {
-            "*.xml", "*.json"
-        };
+        private const string COMPILABLE_ASSETS_FILTER_PARAM = "compilable-assets";
 
-        public BaseCompilerConfig()
+        public string[] CompilableAssetsFilter { get; }
+
+        public BaseCompilerConfig(IConfiguration conf)
         {
+            var filter = conf.GetParameterOrDefault<IEnumerable<string>>(COMPILABLE_ASSETS_FILTER_PARAM);
+
+            if (filter != null)
+            {
+                CompilableAssetsFilter = filter.ToArray();
+            }
+            else 
+            {
+                CompilableAssetsFilter = new string[]
+                {
+                    "*.xml", "*.json"
+                };
+            }
         }
     }
 }

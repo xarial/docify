@@ -3,6 +3,7 @@ title-attribute: caption
 home-menu: true
 menu:
 home-menu-title: Welcome
+root-page:
 ---
 @using RazorLight
 @using System
@@ -21,15 +22,16 @@ home-menu-title: Welcome
     var menu = NavigationMenuHelper.BuildPredefinedMenu(MENU_OPT, Model.Site, Model.Data)?.ToList();
 
     IContextPage homePage = null;
+    IContextPage rootPage = NavigationMenuHelper.GetRootPage(Model);
 
     if (menu == null)
     {
-        menu = NavigationMenuHelper.GetRootPage(Model).SubPages.ToList();
+        menu = rootPage.SubPages.ToList();
     }
 
     if (Model.Data.GetOrDefault<bool>(HOME_MENU_OPT))
     {
-        homePage = NavigationMenuHelper.BuildPage(Model.Site.MainPage, Model.Data, "Home");
+        homePage = NavigationMenuHelper.BuildPage(rootPage, Model.Data, "Home");
     }
 
     var homeMenuTitle = Model.Data.Get<string>("home-menu-title");

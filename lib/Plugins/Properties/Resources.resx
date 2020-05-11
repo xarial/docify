@@ -124,6 +124,9 @@
   <data name="img_figure" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\img_figure.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="redirect" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\redirect.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="responsive_image" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\responsive-image.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

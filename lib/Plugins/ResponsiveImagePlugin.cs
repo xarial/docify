@@ -77,10 +77,17 @@ namespace Xarial.Docify.Lib.Plugins
 
         private Task<string> OnWritePageContent(string content, IMetadata data, string url)
         {
-            var htmlWriter = new HtmlHeadWriter(content);
-            htmlWriter.AddStyleSheets(CSS_FILE_PATH);
-            
-            return Task.FromResult(htmlWriter.Content);
+            if (!string.IsNullOrEmpty(content))
+            {
+                var htmlWriter = new HtmlHeadWriter(content);
+                htmlWriter.AddStyleSheets(CSS_FILE_PATH);
+
+                return Task.FromResult(htmlWriter.Content);
+            }
+            else 
+            {
+                return Task.FromResult(content);
+            }
         }
     }
 }

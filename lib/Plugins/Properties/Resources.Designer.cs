@@ -94,6 +94,16 @@ namespace Xarial.Docify.Lib.Plugins.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;meta http-equiv=&quot;refresh&quot; content=&quot;0; url={0}&quot;&gt;
+        ///&lt;link rel=&quot;canonical&quot; href=&quot;{0}&quot; /&gt;.
+        /// </summary>
+        internal static string redirect {
+            get {
+                return ResourceManager.GetString("redirect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to .responsive {
         ///    height: auto;
         ///    max-height: 100%;

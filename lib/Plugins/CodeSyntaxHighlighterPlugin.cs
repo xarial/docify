@@ -111,9 +111,16 @@ namespace Xarial.Docify.Lib.Plugins
         {
             if (!m_Settings.EmbedStyle)
             {
-                var writer = new HtmlHeadWriter(content);
-                writer.AddStyleSheets(CSS_FILE_PATH);
-                content = writer.Content;
+                if (!string.IsNullOrEmpty(content))
+                {
+                    var writer = new HtmlHeadWriter(content);
+                    writer.AddStyleSheets(CSS_FILE_PATH);
+                    content = writer.Content;
+                }
+                else
+                {
+                    return Task.FromResult(content);
+                }
             }
 
             return Task.FromResult(content);

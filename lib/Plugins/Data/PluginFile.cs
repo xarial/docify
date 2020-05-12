@@ -29,6 +29,11 @@ namespace Xarial.Docify.Lib.Plugins.Data
         {
         }
 
+        public PluginFile(string content, ILocation loc, string id)
+            : this(ContentExtension.ToByteArray(content), loc, id)
+        {
+        }
+
         public PluginFile(byte[] content, ILocation loc, string id) 
         {
             Content = content;

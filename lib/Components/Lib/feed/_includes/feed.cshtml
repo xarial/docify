@@ -24,7 +24,7 @@ title-attribute: title
 
     if (!string.IsNullOrEmpty(img))
     {
-        img = Model.Site.BaseUrl + img;
+        img = Model.Site.BaseUrl + "/" + img.TrimStart('/');
     }
 
     var pages = PageHelper.GetAllPages(Model.Site.MainPage).Where(p => !p.Data.ContainsKey("sitemap") || p.Data.Get<bool>("sitemap"));

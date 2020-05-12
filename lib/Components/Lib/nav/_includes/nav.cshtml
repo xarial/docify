@@ -39,6 +39,11 @@ upper-case: false
             caption = caption.ToUpper();
         }
 
+        if(page.SubPages.Any())
+        {
+            caption += "▾";
+        }
+
         return caption;
     }
 

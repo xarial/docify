@@ -15,6 +15,7 @@ namespace Xarial.Docify.Core.Helpers
 {
     public static class PathMatcher
     {
+        //TODO: move to toolkit
         public static bool Matches(IEnumerable<string> filters, string path) 
         {
             //TODO: combine into single regex

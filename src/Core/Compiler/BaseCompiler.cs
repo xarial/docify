@@ -55,22 +55,12 @@ namespace Xarial.Docify.Core.Compiler
         {
             await m_Ext.PreCompile(site);
 
-            var outFiles = new List<IFile>();
-
             await foreach (var file in CompileAll(site.MainPage, site, Location.Empty))
             {
-                yield return file;
+                yield return await m_Ext.PostCompileFile(file);
             }
 
-            var additionalFiles = m_Ext.AddFilesPostCompile();
-
-            if (additionalFiles != null)
-            {
-                await foreach (var addFile in additionalFiles)
-                {
-                    yield return addFile;
-                }
-            }
+            await m_Ext.PostCompile();
         }
 
         private async IAsyncEnumerable<IFile> CompileAll(IPage page, ISite site, ILocation baseLoc) 

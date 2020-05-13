@@ -65,7 +65,7 @@ namespace Xarial.Docify.Lib.Plugins
             m_App.Includes.RegisterCustomIncludeHandler("tipue-search", InsertSearchBox);
             m_App.Compiler.PreCompile += OnPreCompile;
             m_App.Compiler.WritePageContent += OnWritePageContent;
-            m_App.Compiler.AddFilesPostCompile += OnAddFilesPostCompile;
+            m_App.Publisher.PostAddPublishFiles += OnPostAddPublishFiles;
         }
         
         private Task<string> InsertSearchBox(IMetadata data, IPage page)
@@ -127,7 +127,7 @@ namespace Xarial.Docify.Lib.Plugins
             return Task.FromResult(content);
         }
 
-        private async IAsyncEnumerable<IFile> OnAddFilesPostCompile()
+        private async IAsyncEnumerable<IFile> OnPostAddPublishFiles(ILocation outLoc)
         {
             //to remove the warning
             await Task.CompletedTask;
@@ -138,10 +138,10 @@ namespace Xarial.Docify.Lib.Plugins
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
-            var searchContent = System.Text.Json.JsonSerializer.Serialize(m_SearchIndex, opts).ToString();
+            var searchContent = JsonSerializer.Serialize(m_SearchIndex, opts).ToString();
 
             yield return new PluginFile($"var tipuesearch = {{ \"pages\": {searchContent} }};", 
-                new PluginLocation("search-content.js", new string[] { SEARCH_PAGE_NAME }));
+                outLoc.Combine(new PluginLocation("search-content.js", new string[] { SEARCH_PAGE_NAME })));
         }
 
         private string HtmlToPlainText(string html, string node, out string title)

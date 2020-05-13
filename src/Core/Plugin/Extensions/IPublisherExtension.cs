@@ -19,12 +19,14 @@ namespace Xarial.Docify.Core.Plugin.Extensions
     {
         Task PostPublish(ILocation loc);
         Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file);
+        IAsyncEnumerable<IFile> PostAddPublishFiles(ILocation outLoc);
     }
 
     public class PublisherExtension : IPublisherExtension
     {
         public event PostPublishDelegate RequestPostPublish;
         public event PrePublishFileDelegate RequestPrePublishFile;
+        public event PostAddPublishFilesDelegate RequestPostAddPublishFiles;
 
         public Task PostPublish(ILocation loc)
         {
@@ -34,6 +36,11 @@ namespace Xarial.Docify.Core.Plugin.Extensions
         public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
         {
             return RequestPrePublishFile.Invoke(outLoc, file);
+        }
+
+        public IAsyncEnumerable<IFile> PostAddPublishFiles(ILocation outLoc)
+        {
+            return RequestPostAddPublishFiles.Invoke(outLoc);
         }
     }
 }

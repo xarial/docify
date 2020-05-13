@@ -5,6 +5,7 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -52,36 +53,53 @@ namespace Xarial.Docify.Core.Publisher
             {
                 var outFilePath = file.Location.ToPath();
 
-                if (!Path.IsPathRooted(outFilePath)) 
+                if (!Path.IsPathRooted(outFilePath))
                 {
                     outFilePath = Path.Combine(outDir, outFilePath);
                 }
 
                 var outLoc = Location.FromPath(outFilePath);
-                
-                void CreateDirectoryIfNeeded()
-                {
-                    var dir = Path.GetDirectoryName(outFilePath);
-
-                    if (!m_FileSystem.Directory.Exists(dir))
-                    {
-                        m_FileSystem.Directory.CreateDirectory(dir);
-                    }
-                }
 
                 IFile outFile = new Data.File(outLoc, file.Content, file.Id);
 
-                var res = await m_Ext.PrePublishFile(outLoc, outFile);
-                
+                var res = await m_Ext.PrePublishFile(loc, outFile);
+
                 if (!res.SkipFile)
                 {
-                    outFilePath = res.File.Location.ToPath();
-                    CreateDirectoryIfNeeded();
-                    await m_FileSystem.File.WriteAllBytesAsync(outFilePath, res.File.Content);
+                    await WriteFile(res.File);
+                }
+            }
+
+            var additionalFiles = m_Ext.PostAddPublishFiles(loc);
+
+            if (additionalFiles != null)
+            {
+                await foreach (var addFile in additionalFiles)
+                {
+                    await WriteFile(addFile);
                 }
             }
 
             await m_Ext.PostPublish(loc);
+        }
+
+        private async Task WriteFile(IFile file)
+        {
+            var outFilePath = file.Location.ToPath();
+
+            if (!Path.IsPathRooted(outFilePath)) 
+            {
+                throw new Exception($"Path of file to publish {outFilePath} must be rooted");
+            }
+
+            var dir = Path.GetDirectoryName(outFilePath);
+
+            if (!m_FileSystem.Directory.Exists(dir))
+            {
+                m_FileSystem.Directory.CreateDirectory(dir);
+            }
+
+            await m_FileSystem.File.WriteAllBytesAsync(outFilePath, file.Content);
         }
     }
 }

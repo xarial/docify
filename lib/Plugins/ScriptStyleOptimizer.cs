@@ -2,44 +2,79 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Lib.Plugins.Data;
+using Xarial.Docify.Lib.Plugins.Helpers;
 using Yahoo.Yui.Compressor;
 
 namespace Xarial.Docify.Lib.Plugins
 {
-    public class Bundle 
-    {
-        public string BundlePath { get; set; }
-        public string[] Files { get; set; }
-    }
-
     public class ScriptStyleOptimizerPluginSettings
     {
         public bool MinifyCss { get; set; }
         public bool MinifyJs { get; set; }
 
-        public Bundle[] Bundles { get; set; }
+        public string AssetsPath { get; set; }
+        public bool DeleteUnusedCss { get; set; }
+        public bool DeleteUnusedJs { get; set; }
+        public CasesInsensitiveDictionary<string[]> Bundles { get; set; }
+    }
+
+    public class CasesInsensitiveDictionary<TValue> : Dictionary<string, TValue> 
+    {
+        public CasesInsensitiveDictionary() : base(StringComparer.CurrentCultureIgnoreCase) 
+        {
+        }
     }
 
     [Plugin("script-style-optimizer")]
     public class ScriptStyleOptimizerPlugin : IPlugin<ScriptStyleOptimizerPluginSettings>
     {
+        private const string CSS_LINK_TEMPLATE = "<link rel=\"stylesheet\" type=\"text/css\" href=\"{0}\" />\r\n";
+        private const string SCRIPT_LINK_TEMPLATE = "<script src=\"{0}\"></script>";
+
         private IDocifyApplication m_App;
         private ScriptStyleOptimizerPluginSettings m_Setts;
+
+        private List<string> m_UsedScripts;
+        private List<string> m_UsedStyles;
+
+        private Dictionary<string, StringBuilder> m_BundlesContent;
+
+        private List<IFile> m_DeferredScripts;
+        private List<IFile> m_DeferredStyles;
 
         public void Init(IDocifyApplication app, ScriptStyleOptimizerPluginSettings setts)
         {
             m_App = app;
             m_Setts = setts;
 
+            m_App.Compiler.PreCompile += OnPreCompile;
             m_App.Compiler.WritePageContent += OnWritePageContent;
-            m_App.Compiler.AddFilesPostCompile += OnAddFilesPostCompile;
+            m_App.Publisher.PostAddPublishFiles += OnPostAddPublishFiles;
             m_App.Publisher.PrePublishFile += OnPrePublishFile;
+        }
+
+        private Task OnPreCompile(ISite site)
+        {
+            m_DeferredScripts = new List<IFile>();
+            m_DeferredStyles = new List<IFile>();
+
+            m_UsedScripts = new List<string>();
+            m_UsedStyles = new List<string>();
+
+            m_BundlesContent = m_Setts.Bundles.ToDictionary(
+                x => x.Key, 
+                x => new StringBuilder(), 
+                StringComparer.CurrentCultureIgnoreCase);
+
+            return Task.CompletedTask;
         }
 
         private Task<PrePublishResult> OnPrePublishFile(ILocation outLoc, IFile file)
@@ -51,64 +86,225 @@ namespace Xarial.Docify.Lib.Plugins
             };
 
             var ext = Path.GetExtension(file.Location.FileName).ToLower();
-            
+            var url = file.Location.GetRelative(outLoc).ToUrl();
+
+            var isDeleteScope = string.IsNullOrEmpty(m_Setts.AssetsPath) || Matches(url, m_Setts.AssetsPath);
+
+            var bundle = m_Setts.Bundles.FirstOrDefault(
+                b => b.Value.Contains(url, StringComparer.InvariantCultureIgnoreCase)).Key;
+
             switch (ext)
             {
                 case ".css":
+
                     if (m_Setts.MinifyCss)
                     {
+                        var txt = file.AsTextContent();
                         var css = new CssCompressor();
-                        var cssComp = css.Compress(file.AsTextContent());
-                        res.File = new PluginFile(cssComp, file.Location, file.Id);
+                        if (!string.IsNullOrEmpty(txt))
+                        {
+                            var cssComp = css.Compress(txt);
+                            res.File = new PluginFile(cssComp, file.Location, file.Id);
+                        }
                     }
+
+                    if (isDeleteScope && m_Setts.DeleteUnusedCss)
+                    {
+                        m_DeferredStyles.Add(res.File);
+                        res.SkipFile = true;
+                    }
+
                     break;
 
                 case ".js":
+
                     if (m_Setts.MinifyJs)
                     {
-                        var js = new JavaScriptCompressor();
-                        var jsComp = js.Compress(file.AsTextContent());
-                        res.File = new PluginFile(jsComp, file.Location, file.Id);
+                        var txt = file.AsTextContent();
+
+                        if (!string.IsNullOrEmpty(txt))
+                        {
+                            var js = new JavaScriptCompressor();
+                            var jsComp = js.Compress(txt);
+                            res.File = new PluginFile(jsComp, file.Location, file.Id);
+                        }
                     }
+
+                    if (isDeleteScope && m_Setts.DeleteUnusedJs)
+                    {
+                        m_DeferredScripts.Add(res.File);
+                        res.SkipFile = true;
+                    }
+
                     break;
             }
-            
+
+            if (!string.IsNullOrEmpty(bundle))
+            {
+                m_BundlesContent[bundle].AppendLine(res.File.AsTextContent());
+            }
+
             return Task.FromResult(res);
         }
 
-        private async IAsyncEnumerable<IFile> OnAddFilesPostCompile()
+        //TODO: move to toolkit
+        public static bool Matches(string path, string filter)
         {
-            //TODO: add merged assets
+            //TODO: combine into single regex
+            var regex = (filter.StartsWith("*") ? "" : "^") 
+                + Regex.Escape(filter).Replace("\\*", ".*").Replace("\\?", ".") 
+                + (filter.EndsWith("*") ? "" : "$");
+
+            return Regex.IsMatch(path, regex, RegexOptions.IgnoreCase);
+        }
+
+        private async IAsyncEnumerable<IFile> OnPostAddPublishFiles(ILocation outLoc)
+        {
             await Task.CompletedTask;
 
-            if (true) 
+            foreach (var bundle in m_BundlesContent) 
             {
-                yield return null;
+                var parts = bundle.Key.Split(AssetsHelper.PathSeparators,
+                    StringSplitOptions.RemoveEmptyEntries);
+
+                var dir = parts.Take(parts.Length - 1);
+                var fileName = parts.Last();
+
+                yield return new PluginFile(bundle.Value.ToString(), outLoc.Combine(new PluginLocation(fileName, dir)));
+            }
+
+            await foreach (var defStyle in RetrieveDeferredAssets(
+                m_Setts.DeleteUnusedCss, m_DeferredStyles.ToArray(), m_UsedStyles.ToArray(), outLoc)) 
+            {
+                yield return defStyle;
+            }
+
+            await foreach (var defScript in RetrieveDeferredAssets(
+                m_Setts.DeleteUnusedJs, m_DeferredScripts.ToArray(), m_UsedScripts.ToArray(), outLoc))
+            {
+                yield return defScript;
+            }
+        }
+
+        private async IAsyncEnumerable<IFile> RetrieveDeferredAssets(bool deleteUnused,
+            IFile[] deferredAssets, string[] usedAssets, ILocation outLoc)
+        {
+            await Task.CompletedTask;
+
+            foreach (var defAsset in deferredAssets)
+            {
+                var path = defAsset.Location.GetRelative(outLoc).ToUrl();
+
+                if (!deleteUnused || usedAssets.Contains(path))
+                {
+                    yield return new PluginFile(defAsset.Content, outLoc.Combine(defAsset.Location), defAsset.Id);
+                }
             }
         }
         
         private Task<string> OnWritePageContent(string content, IMetadata data, string url)
         {
-            var res = new StringBuilder();
-
             var doc = new HtmlDocument();
             doc.LoadHtml(content);
 
-            var scripts = doc.DocumentNode.SelectNodes("//head/script");
-            var styles = doc.DocumentNode.SelectNodes("//head/link[@rel='stylesheet']");
+            if (m_Setts.Bundles?.Any() == true)
+            {
+                var res = new StringBuilder();
 
-            var scriptNode = new HtmlNode(HtmlNodeType.Element, doc, 0);
-            scriptNode.Name = "script";
-            scriptNode.Attributes.Add("src", "");
+                var headNode = doc.DocumentNode.SelectSingleNode("//head");
 
-            var linkNode = new HtmlNode(HtmlNodeType.Element, doc, 1);
-            linkNode.Name = "link";
-            linkNode.Attributes.Add("rel", "stylesheet");
-            linkNode.Attributes.Add("type", "text/css");
-            linkNode.Attributes.Add("href", "");
+                var scripts = doc.DocumentNode.SelectNodes("//head/script");
+                var styles = doc.DocumentNode.SelectNodes("//head/link[@rel='stylesheet']");
 
-            //TODO: replace scripts references
+                bool hasChanges = false;
+
+                if (scripts?.Any() == true)
+                {
+                    ReplaceNodes(scripts, "src", headNode, SCRIPT_LINK_TEMPLATE, out bool hasScriptChanges);
+                    hasChanges |= hasScriptChanges;
+                }
+
+                if (styles?.Any() == true) 
+                {
+                    ReplaceNodes(styles, "href", headNode, CSS_LINK_TEMPLATE, out bool hasStyleChanges);
+                    hasChanges |= hasStyleChanges;
+                }
+
+                if (hasChanges)
+                {
+                    var htmlContent = new StringBuilder();
+
+                    using (var strWriter = new StringWriter(htmlContent))
+                    {
+                        doc.Save(strWriter);
+                    }
+
+                    content = htmlContent.ToString();
+                }
+            }
+
+            if (m_Setts.DeleteUnusedJs)
+            {
+                var usedScripts = doc.DocumentNode.SelectNodes("//script")
+                    ?.Where(n => n.Attributes.Contains("src"))
+                    .Select(n => n.Attributes["src"].Value);
+
+                if (usedScripts != null)
+                {
+                    m_UsedScripts.AddRange(usedScripts.Except(m_UsedScripts));
+                }
+            }
+
+            if (m_Setts.DeleteUnusedJs)
+            {
+                var usedStyles = doc.DocumentNode.SelectNodes("//link[@rel='stylesheet']")
+                    ?.Where(n => n.Attributes.Contains("href"))
+                    .Select(n => n.Attributes["href"].Value);
+
+                if (usedStyles != null)
+                {
+                    m_UsedStyles.AddRange(usedStyles.Except(m_UsedStyles));
+                }
+            }
+
             return Task.FromResult(content);
+        }
+
+        private void ReplaceNodes(IEnumerable<HtmlNode> nodes, 
+            string bundleLinkAttributeName, HtmlNode parentNode, string nodeTemplate, out bool hasChanges) 
+        {
+            hasChanges = false;
+
+            foreach (var bundle in FindBundles(nodes
+                .Where(n => n.Attributes.Contains(bundleLinkAttributeName))
+                .Select(n => n.Attributes[bundleLinkAttributeName].Value).ToArray()))
+            {
+                var scriptNode = HtmlNode.CreateNode(string.Format(nodeTemplate, bundle));
+                parentNode.AppendChild(scriptNode);
+
+                var nodesToRemove = m_Setts.Bundles[bundle];
+                foreach (var node in nodes
+                    .Where(n => nodesToRemove.Contains(n.Attributes[bundleLinkAttributeName].Value,
+                    StringComparer.CurrentCultureIgnoreCase)))
+                {
+                    parentNode.RemoveChild(node);
+                }
+
+                hasChanges = true;
+            }
+        }
+
+        private IEnumerable<string> FindBundles(string[] assets) 
+        {
+            foreach (var bundle in m_Setts.Bundles) 
+            {
+                var intersect = assets.Intersect(bundle.Value);
+                
+                if (intersect.OrderBy(x => x).SequenceEqual(bundle.Value.OrderBy(x => x)))
+                {
+                    yield return bundle.Key;
+                }
+            }
         }
     }
 }

@@ -18,25 +18,32 @@ namespace Xarial.Docify.Core.Plugin.Extensions
     public interface ICompilerExtension
     {
         Task<string> WritePageContent(string content, IMetadata data, string url);
-        IAsyncEnumerable<IFile> AddFilesPostCompile();
         Task PreCompile(ISite site);
         void RenderCodeBlock(string rawCode, string lang, string args, StringBuilder html);
         void RenderImage(StringBuilder html);
         void RenderUrl(StringBuilder html);
+        Task<IFile> PostCompileFile(IFile file);
+        Task PostCompile();
     }
 
     public class CompilerExtension : ICompilerExtension
-    {
-        public event AddFilesPostCompileDelegate RequestAddFilesPostCompile;
+    {   
         public event PreCompileDelegate RequestPreCompile;
         public event RenderCodeBlockDelegate RequestRenderCodeBlock;
         public event RenderImageDelegate RequestRenderImage;
         public event RenderUrlDelegate RequestRenderUrl;
         public event WritePageContentDelegate RequestWritePageContent;
+        public event PostCompileFileDelegate RequestPostCompileFile;
+        public event PostCompileDelegate RequestPostCompile;
 
-        public IAsyncEnumerable<IFile> AddFilesPostCompile()
+        public Task PostCompile()
         {
-            return RequestAddFilesPostCompile.Invoke();
+            return RequestPostCompile.Invoke();
+        }
+
+        public Task<IFile> PostCompileFile(IFile file)
+        {
+            return RequestPostCompileFile.Invoke(file);
         }
 
         public Task PreCompile(ISite site)

@@ -5,6 +5,7 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
@@ -20,7 +21,7 @@ namespace Xarial.Docify.Core.Plugin
 
         public event PostPublishDelegate PostPublish;
         public event PrePublishFileDelegate PrePublishFile;
-
+        public event PostAddPublishFilesDelegate PostAddPublishFiles;
         private readonly PublisherExtension m_Ext;
 
         public PublisherManager(IPublisher inst, PublisherExtension ext) 
@@ -28,8 +29,9 @@ namespace Xarial.Docify.Core.Plugin
             Instance = inst;
             m_Ext = ext;
 
-            m_Ext.RequestPostPublish += OnRequestPostPublish;
             m_Ext.RequestPrePublishFile += OnRequestPrePublishFile;
+            m_Ext.RequestPostAddPublishFiles += OnRequestPostAddPublishFiles;
+            m_Ext.RequestPostPublish += OnRequestPostPublish;
         }
 
         private async Task<PrePublishResult> OnRequestPrePublishFile(ILocation outLoc, IFile file)
@@ -46,7 +48,7 @@ namespace Xarial.Docify.Core.Plugin
                 {
                     var thisRes = await del.Invoke(outLoc, curRes.File);
                     curRes.File = thisRes.File;
-                    curRes.SkipFile &= thisRes.SkipFile;
+                    curRes.SkipFile |= thisRes.SkipFile;
                 }
             }
 
@@ -60,6 +62,20 @@ namespace Xarial.Docify.Core.Plugin
                 foreach (PostPublishDelegate del in PostPublish.GetInvocationList()) 
                 {
                     await del.Invoke(loc);
+                }
+            }
+        }
+
+        private async IAsyncEnumerable<IFile> OnRequestPostAddPublishFiles(ILocation outLoc)
+        {
+            if (PostAddPublishFiles != null)
+            {
+                foreach (PostAddPublishFilesDelegate del in PostAddPublishFiles.GetInvocationList())
+                {
+                    await foreach (var file in del.Invoke(outLoc))
+                    {
+                        yield return file;
+                    }
                 }
             }
         }

@@ -18,12 +18,13 @@ namespace Xarial.Docify.Core.Plugin
 {
     public class CompilerManager : ICompilerManager
     {
-        public event AddFilesPostCompileDelegate AddFilesPostCompile;
         public event PreCompileDelegate PreCompile;
         public event RenderCodeBlockDelegate RenderCodeBlock;
         public event RenderImageDelegate RenderImage;
         public event RenderUrlDelegate RenderUrl;
         public event WritePageContentDelegate WritePageContent;
+        public event PostCompileFileDelegate PostCompileFile;
+        public event PostCompileDelegate PostCompile;
 
         public ICompiler Instance { get; }
         public IContentTransformer ContentTransformer { get; }
@@ -35,12 +36,37 @@ namespace Xarial.Docify.Core.Plugin
             Instance = compiler;
             ContentTransformer = contTransf;
             m_Ext = ext;
-            m_Ext.RequestAddFilesPostCompile += OnRequestAddFilesPostCompile;
             m_Ext.RequestPreCompile += OnRequestPreCompile;
             m_Ext.RequestRenderCodeBlock += OnRequestRenderCodeBlock;
             m_Ext.RequestRenderImage += OnRequestRenderImage;
             m_Ext.RequestRenderUrl += OnRequestRenderUrl;
             m_Ext.RequestWritePageContent += OnRequestWritePageContent;
+            m_Ext.RequestPostCompile += OnRequestPostCompile;
+            m_Ext.RequestPostCompileFile += OnRequestPostCompileFile;
+        }
+
+        private async Task<IFile> OnRequestPostCompileFile(IFile file)
+        {
+            if (PostCompileFile != null)
+            {
+                foreach (PostCompileFileDelegate del in PostCompileFile.GetInvocationList())
+                {
+                    file = await del.Invoke(file);
+                }
+            }
+
+            return file;
+        }
+
+        private async Task OnRequestPostCompile()
+        {
+            if (PostCompile != null)
+            {
+                foreach (PostCompileDelegate del in PostCompile.GetInvocationList())
+                {
+                    await del.Invoke();
+                }
+            }
         }
 
         private async Task OnRequestPreCompile(ISite site)
@@ -50,20 +76,6 @@ namespace Xarial.Docify.Core.Plugin
                 foreach (PreCompileDelegate del in PreCompile.GetInvocationList()) 
                 {
                     await del.Invoke(site);
-                }
-            }
-        }
-
-        private async IAsyncEnumerable<IFile> OnRequestAddFilesPostCompile()
-        {
-            if (AddFilesPostCompile != null) 
-            {
-                foreach (AddFilesPostCompileDelegate del in AddFilesPostCompile.GetInvocationList()) 
-                {
-                    await foreach (var file in del.Invoke()) 
-                    {
-                        yield return file;
-                    }
                 }
             }
         }

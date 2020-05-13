@@ -49,6 +49,7 @@ namespace Xarial.Docify.Base.Data
 
         public static object ToObject(IDictionary<string, object> data, Type type)
         {
+            //TODO: consider removing the double-serialization via JSON and deserialize directly from dictionary
             var obj = JObject.FromObject(data, m_JsonSerializer);
             var res = obj.ToObject(type);
             return res;

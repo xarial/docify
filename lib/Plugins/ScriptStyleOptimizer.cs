@@ -19,8 +19,7 @@ namespace Xarial.Docify.Lib.Plugins
     {
         public bool MinifyCss { get; set; }
         public bool MinifyJs { get; set; }
-
-        public string AssetsPath { get; set; }
+        public string[] AssetsScopePaths { get; set; }
         public bool DeleteUnusedCss { get; set; }
         public bool DeleteUnusedJs { get; set; }
         public CasesInsensitiveDictionary<string[]> Bundles { get; set; }
@@ -88,55 +87,66 @@ namespace Xarial.Docify.Lib.Plugins
             var ext = Path.GetExtension(file.Location.FileName).ToLower();
             var url = file.Location.GetRelative(outLoc).ToUrl();
 
-            var isDeleteScope = string.IsNullOrEmpty(m_Setts.AssetsPath) || Matches(url, m_Setts.AssetsPath);
+            var isInScope = m_Setts.AssetsScopePaths?.Any() == false || m_Setts.AssetsScopePaths.Any(s => Matches(url, s));
 
             var bundle = m_Setts.Bundles.FirstOrDefault(
-                b => b.Value.Contains(url, StringComparer.InvariantCultureIgnoreCase)).Key;
+                    b => b.Value.Contains(url, StringComparer.InvariantCultureIgnoreCase)).Key;
 
-            switch (ext)
+            if (isInScope)
             {
-                case ".css":
+                switch (ext)
+                {
+                    case ".css":
 
-                    if (m_Setts.MinifyCss)
-                    {
-                        var txt = file.AsTextContent();
-                        var css = new CssCompressor();
-                        if (!string.IsNullOrEmpty(txt))
+                        if (m_Setts.MinifyCss)
                         {
-                            var cssComp = css.Compress(txt);
-                            res.File = new PluginFile(cssComp, file.Location, file.Id);
+                            if (!file.Location.FileName
+                                .EndsWith(".min.css", StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                var txt = file.AsTextContent();
+                                var css = new CssCompressor();
+                                if (!string.IsNullOrEmpty(txt))
+                                {
+                                    var cssComp = css.Compress(txt);
+                                    res.File = new PluginFile(cssComp, file.Location, file.Id);
+                                }
+                            }
                         }
-                    }
 
-                    if (isDeleteScope && m_Setts.DeleteUnusedCss)
-                    {
-                        m_DeferredStyles.Add(res.File);
-                        res.SkipFile = true;
-                    }
-
-                    break;
-
-                case ".js":
-
-                    if (m_Setts.MinifyJs)
-                    {
-                        var txt = file.AsTextContent();
-
-                        if (!string.IsNullOrEmpty(txt))
+                        if (m_Setts.DeleteUnusedCss)
                         {
-                            var js = new JavaScriptCompressor();
-                            var jsComp = js.Compress(txt);
-                            res.File = new PluginFile(jsComp, file.Location, file.Id);
+                            m_DeferredStyles.Add(res.File);
+                            res.SkipFile = true;
                         }
-                    }
 
-                    if (isDeleteScope && m_Setts.DeleteUnusedJs)
-                    {
-                        m_DeferredScripts.Add(res.File);
-                        res.SkipFile = true;
-                    }
+                        break;
 
-                    break;
+                    case ".js":
+
+                        if (m_Setts.MinifyJs)
+                        {
+                            if (!file.Location.FileName
+                                .EndsWith(".min.js", StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                var txt = file.AsTextContent();
+
+                                if (!string.IsNullOrEmpty(txt))
+                                {
+                                    var js = new JavaScriptCompressor();
+                                    var jsComp = js.Compress(txt);
+                                    res.File = new PluginFile(jsComp, file.Location, file.Id);
+                                }
+                            }
+                        }
+
+                        if (m_Setts.DeleteUnusedJs)
+                        {
+                            m_DeferredScripts.Add(res.File);
+                            res.SkipFile = true;
+                        }
+
+                        break;
+                }
             }
 
             if (!string.IsNullOrEmpty(bundle))
@@ -213,8 +223,9 @@ namespace Xarial.Docify.Lib.Plugins
 
                 var headNode = doc.DocumentNode.SelectSingleNode("//head");
 
-                var scripts = doc.DocumentNode.SelectNodes("//head/script");
-                var styles = doc.DocumentNode.SelectNodes("//head/link[@rel='stylesheet']");
+                var scripts = doc.DocumentNode.SelectNodes("//head/script[@src]");
+
+                var styles = doc.DocumentNode.SelectNodes("//head/link[@href][@rel='stylesheet']");
 
                 bool hasChanges = false;
 
@@ -245,8 +256,7 @@ namespace Xarial.Docify.Lib.Plugins
 
             if (m_Setts.DeleteUnusedJs)
             {
-                var usedScripts = doc.DocumentNode.SelectNodes("//script")
-                    ?.Where(n => n.Attributes.Contains("src"))
+                var usedScripts = doc.DocumentNode.SelectNodes("//script[@src]")
                     .Select(n => n.Attributes["src"].Value);
 
                 if (usedScripts != null)
@@ -257,8 +267,7 @@ namespace Xarial.Docify.Lib.Plugins
 
             if (m_Setts.DeleteUnusedJs)
             {
-                var usedStyles = doc.DocumentNode.SelectNodes("//link[@rel='stylesheet']")
-                    ?.Where(n => n.Attributes.Contains("href"))
+                var usedStyles = doc.DocumentNode.SelectNodes("//link[@href][@rel='stylesheet']")
                     .Select(n => n.Attributes["href"].Value);
 
                 if (usedStyles != null)

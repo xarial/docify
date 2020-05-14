@@ -11,6 +11,7 @@ plugins:
   - responsive-image
   - tipue-search
   - redirect
+  - embed
 title-attribute: caption
 ignore:
   - _config.yml

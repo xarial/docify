@@ -42,14 +42,14 @@ namespace Xarial.Docify.CLI
         private readonly IContainer m_Container;
 
         private readonly string m_SiteUrl;
-        private readonly string m_SrcDir;
+        private readonly ILocation[] m_SrcDirs;
         private readonly string m_OutDir;
 
-        public DocifyEngine(string srcDir, string outDir, string siteUrl, Environment_e env)
+        public DocifyEngine(string[] srcDirs, string outDir, string siteUrl, Environment_e env)
         {
             var builder = new ContainerBuilder();
             m_SiteUrl = siteUrl;
-            m_SrcDir = srcDir;
+            m_SrcDirs = srcDirs.Select(s => Location.FromPath(s)).ToArray();
             m_OutDir = outDir;
 
             RegisterDependencies(builder, env);
@@ -68,7 +68,7 @@ namespace Xarial.Docify.CLI
             var compiler = Resove<ICompiler>();
             var publisher = Resove<IPublisher>();
 
-            var srcFiles = loader.Load(Location.FromPath(m_SrcDir));
+            var srcFiles = loader.Load(m_SrcDirs);
 
             var compsLoader = Resove<IComponentsLoader>();
             srcFiles = compsLoader.Load(srcFiles);
@@ -128,7 +128,7 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<BaseCompiler>().As<ICompiler>();
 
-            builder.Register(c => c.Resolve<IConfigurationLoader>().Load(Location.FromPath(m_SrcDir)).Result);
+            builder.Register(c => c.Resolve<IConfigurationLoader>().Load(m_SrcDirs).Result);
 
             builder.RegisterType<LocalFileSystemPluginsManager>().As<IPluginsManager>();
 

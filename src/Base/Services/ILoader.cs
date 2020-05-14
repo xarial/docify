@@ -14,6 +14,6 @@ namespace Xarial.Docify.Base.Services
 {
     public interface ILoader
     {
-        IAsyncEnumerable<IFile> Load(ILocation location);
+        IAsyncEnumerable<IFile> Load(ILocation[] locations);
     }
 }

@@ -21,6 +21,14 @@ using Xarial.Docify.Core.Data;
 
 namespace Core.Tests
 {
+    public static class LocalFileSystemLoaderExtension
+    {
+        public static IAsyncEnumerable<IFile> Load(this LocalFileSystemLoader loader, ILocation location)
+        {
+            return loader.Load(new ILocation[] { location });
+        }
+    }
+
     public class LocalFileSystemLoaderTest
     {
         [Test]
@@ -80,6 +88,18 @@ namespace Core.Tests
             Assert.AreEqual(2, res.Count());
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "page1.md"));
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "img1::img1.png"));
+        }
+
+        [Test]
+        public async Task Load_MultipleLocationsTest() 
+        {
+            throw new NotImplementedException();
+        }
+
+        [Test]
+        public async Task Load_MultipleLocationsConflictTest()
+        {
+            throw new NotImplementedException();
         }
 
         [Test]

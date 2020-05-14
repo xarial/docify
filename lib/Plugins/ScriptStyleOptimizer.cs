@@ -87,7 +87,7 @@ namespace Xarial.Docify.Lib.Plugins
             var ext = Path.GetExtension(file.Location.FileName).ToLower();
             var url = file.Location.GetRelative(outLoc).ToUrl();
 
-            var isInScope = m_Setts.AssetsScopePaths?.Any() == false || m_Setts.AssetsScopePaths.Any(s => Matches(url, s));
+            var isInScope = m_Setts.AssetsScopePaths?.Any(s => Matches(url, s)) != false;
 
             var bundle = m_Setts.Bundles.FirstOrDefault(
                     b => b.Value.Contains(url, StringComparer.InvariantCultureIgnoreCase)).Key;
@@ -257,7 +257,7 @@ namespace Xarial.Docify.Lib.Plugins
             if (m_Setts.DeleteUnusedJs)
             {
                 var usedScripts = doc.DocumentNode.SelectNodes("//script[@src]")
-                    .Select(n => n.Attributes["src"].Value);
+                    ?.Select(n => n.Attributes["src"].Value);
 
                 if (usedScripts != null)
                 {
@@ -268,7 +268,7 @@ namespace Xarial.Docify.Lib.Plugins
             if (m_Setts.DeleteUnusedJs)
             {
                 var usedStyles = doc.DocumentNode.SelectNodes("//link[@href][@rel='stylesheet']")
-                    .Select(n => n.Attributes["href"].Value);
+                    ?.Select(n => n.Attributes["href"].Value);
 
                 if (usedStyles != null)
                 {

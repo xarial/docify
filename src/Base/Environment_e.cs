@@ -11,6 +11,7 @@ using System.Text;
 
 namespace Xarial.Docify.Base
 {
+    //TODO: remove this and replace with string
     public enum Environment_e
     {
         Test,

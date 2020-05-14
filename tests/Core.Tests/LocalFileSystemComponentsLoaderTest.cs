@@ -32,11 +32,11 @@ namespace Core.Tests
         {
             var loaderMock = new Mock<ILoader>();
 
-            loaderMock.Setup(m => m.Load(It.IsAny<Location>()))
-                .Returns<Location>(l => new IFile[] 
+            loaderMock.Setup(m => m.Load(It.IsAny<ILocation[]>()))
+                .Returns<ILocation[]>(l => new IFile[]
                 {
-                    new FileMock(Location.FromPath("file1.txt"), $"{l.Path.Last()}_theme_f1"),
-                    new FileMock(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2")
+                    new FileMock(Location.FromPath("file1.txt"), $"{l[0].Path.Last()}_theme_f1"),
+                    new FileMock(Location.FromPath("dir\\file2.txt"), $"{l[0].Path.Last()}_theme_f2")
                 }.ToAsyncEnumerable());
 
             m_Loader = loaderMock.Object;
@@ -97,27 +97,27 @@ namespace Core.Tests
         {
             var loaderMock = new Mock<ILoader>();
 
-            loaderMock.Setup(m => m.Load(It.IsAny<Location>()))
-                .Returns<Location>(l =>
+            loaderMock.Setup(m => m.Load(It.IsAny<ILocation[]>()))
+                .Returns<ILocation[]>(l =>
                 {
                     IFile[] res = null;
-                    if (l.Path.Last() == "A")
+                    if (l[0].Path.Last() == "A")
                     {
                         res = new IFile[]
                         {
-                            new FileMock(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2"),
-                            new FileMock(Location.FromPath("dir\\file3.txt"), $"{l.Path.Last()}_theme_f3"),
-                            new FileMock(Location.FromPath("file4.txt"), $"{l.Path.Last()}_theme_f4"),
-                            new FileMock(Location.FromPath("dir\\file4.txt"), $"{l.Path.Last()}_theme_dir-f4")
+                            new FileMock(Location.FromPath("dir\\file2.txt"), $"{l[0].Path.Last()}_theme_f2"),
+                            new FileMock(Location.FromPath("dir\\file3.txt"), $"{l[0].Path.Last()}_theme_f3"),
+                            new FileMock(Location.FromPath("file4.txt"), $"{l[0].Path.Last()}_theme_f4"),
+                            new FileMock(Location.FromPath("dir\\file4.txt"), $"{l[0].Path.Last()}_theme_dir-f4")
                         };
                     }
-                    else if (l.Path.Last() == "B")
+                    else if (l[0].Path.Last() == "B")
                     {
                         res = new IFile[]
                         {
-                            new FileMock(Location.FromPath("file1.txt"), $"{l.Path.Last()}_theme_f1"),
-                            new FileMock(Location.FromPath("dir\\file2.txt"), $"{l.Path.Last()}_theme_f2"),
-                            new FileMock(Location.FromPath("dir\\file4.txt"), $"{l.Path.Last()}_theme_f4")
+                            new FileMock(Location.FromPath("file1.txt"), $"{l[0].Path.Last()}_theme_f1"),
+                            new FileMock(Location.FromPath("dir\\file2.txt"), $"{l[0].Path.Last()}_theme_f2"),
+                            new FileMock(Location.FromPath("dir\\file4.txt"), $"{l[0].Path.Last()}_theme_f4")
                         };
                     }
 

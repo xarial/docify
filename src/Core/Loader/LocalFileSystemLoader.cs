@@ -37,26 +37,31 @@ namespace Xarial.Docify.Core.Loader
             m_FileSystem = fileSystem;
         }
 
-        public async IAsyncEnumerable<IFile> Load(ILocation location)
-        {            
-            var path = location.ToPath();
-
-            if (!m_FileSystem.Directory.Exists(path)) 
+        public async IAsyncEnumerable<IFile> Load(ILocation[] locations)
+        {
+            foreach (var location in locations)
             {
-                throw new MissingLocationException(path);
-            }
+                //TODO: validate conflict when same name files exist in multiple locations
 
-            foreach (var filePath in m_FileSystem.Directory.GetFiles(path, 
-                "*.*", SearchOption.AllDirectories))
-            {
-                var relPath = Path.GetRelativePath(path, filePath);
+                var path = location.ToPath();
 
-                if (!PathMatcher.Matches(m_Config.Ignore, relPath))
+                if (!m_FileSystem.Directory.Exists(path))
                 {
-                    var loc = Location.FromPath(relPath);
+                    throw new MissingLocationException(path);
+                }
 
-                    var content = await m_FileSystem.File.ReadAllBytesAsync(filePath);
-                    yield return new Data.File(loc, content, Guid.NewGuid().ToString());
+                foreach (var filePath in m_FileSystem.Directory.GetFiles(path,
+                    "*.*", SearchOption.AllDirectories))
+                {
+                    var relPath = Path.GetRelativePath(path, filePath);
+
+                    if (!PathMatcher.Matches(m_Config.Ignore, relPath))
+                    {
+                        var loc = Location.FromPath(relPath);
+
+                        var content = await m_FileSystem.File.ReadAllBytesAsync(filePath);
+                        yield return new Data.File(loc, content, Guid.NewGuid().ToString());
+                    }
                 }
             }
         }

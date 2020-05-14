@@ -47,6 +47,8 @@ namespace Xarial.Docify.Lib.Plugins
 
             if (redirectsFrom?.Any() == true)
             {
+                //TODO: fix the issue when redirect page ends with .html
+
                 foreach (var redirectFrom in redirectsFrom)
                 {
                     var redirectUrl = redirectFrom;
@@ -97,62 +99,6 @@ namespace Xarial.Docify.Lib.Plugins
                 TraversePages(site, page, pageUrl);
             }
         }
-
-        //private void TraversePages(ISite site, IPage parentPage, string curUrl) 
-        //{
-        //    for (int i = parentPage.SubPages.Count - 1; i >= 0; i--)
-        //    {
-        //        var page = parentPage.SubPages[i];
-
-        //        var pageUrl = curUrl + page.Name + "/";
-
-        //        var redirectsFrom = page.Data.GetParameterOrDefault<IEnumerable<string>>(REDIRECT_FROM_PARAM_NAME);
-        //        var redirectTo = page.Data.GetParameterOrDefault<string>(REDIRECT_TO_PARAM_NAME);
-
-        //        if (!string.IsNullOrEmpty(redirectTo))
-        //        {
-        //            var redirectPage = CreateRedirectPage(page.Name, page.Id, page.Data, redirectTo);
-        //            redirectPage.SubPages.AddRange(page.SubPages);
-        //            parentPage.SubPages.Remove(page);
-        //            parentPage.SubPages.Insert(i, redirectPage);
-        //            page = redirectPage;
-        //        }
-
-        //        if (redirectsFrom?.Any() == true)
-        //        {
-        //            foreach (var redirectFrom in redirectsFrom)
-        //            {
-        //                var redirectUrl = redirectFrom;
-
-        //                if (!redirectUrl.StartsWith("/")) 
-        //                {
-        //                    redirectUrl = curUrl + redirectUrl;
-        //                }
-
-        //                var parts = redirectUrl.Split('/', StringSplitOptions.RemoveEmptyEntries);
-        //                var name = parts.Last();
-
-        //                var basePage = CreatePagesPath(site, parts.Take(parts.Length - 1).ToArray());
-
-        //                var data = new PluginMetadata();
-        //                data.Add("sitemap", false);
-
-        //                if (basePage.SubPages.FirstOrDefault(
-        //                    p => string.Equals(p.Name, name, StringComparison.CurrentCultureIgnoreCase)) == null)
-        //                {
-        //                    var redirectPage = CreateRedirectPage(name, Guid.NewGuid().ToString(), data, pageUrl);
-        //                    basePage.SubPages.Add(redirectPage);
-        //                }
-        //                else 
-        //                {
-        //                    throw new Exception($"Cannot create redirect page at '{redirectUrl}' as this page already exists");
-        //                }
-        //            }
-        //        }
-
-        //        TraversePages(site, page, pageUrl);
-        //    }
-        //}
 
         private IPage CreatePagesPath(ISite site, string[] parts)
         {

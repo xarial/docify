@@ -55,7 +55,7 @@ namespace Xarial.Docify.Core.Loader
             m_Environment = env;
         }
 
-        public async Task<IConfiguration> Load(ILocation location)
+        public async Task<IConfiguration> Load(ILocation[] locations)
         {
             string NormalizeDirFunc(string dir, string defDir)
             {
@@ -76,7 +76,7 @@ namespace Xarial.Docify.Core.Loader
                 return newDir;
             };
 
-            var conf = await GetConfiguration(location);
+            var conf = await GetConfiguration(locations);
 
             var themesDir = NormalizeDirFunc(conf.GetRemoveParameterOrDefault<string>(Params.ThemesDir), DEFAULT_THEMES_DIR);
 
@@ -109,22 +109,40 @@ namespace Xarial.Docify.Core.Loader
             return conf;
         }
 
-        private async Task<Configuration> GetConfiguration(ILocation location)
+        private async Task<Configuration> GetConfiguration(params ILocation[] locations)
         {
-            var srcDir = location.ToPath();
-
-            var configFilePath = Path.Combine(srcDir, CONF_FILE_NAME);
-
-            if (m_FileSystem.File.Exists(configFilePath))
+            foreach (var location in locations) 
             {
-                var confStr = await m_FileSystem.File.ReadAllTextAsync(configFilePath);
+                //TODO: validate conflict when 2 configurations exists - or merge them instead
 
-                return new Configuration(m_ConfigSerializer.Deserialize<Dictionary<string, object>>(confStr));
+                var srcDir = location.ToPath();
+
+                var configFilePath = Path.Combine(srcDir, CONF_FILE_NAME);
+
+                if (m_FileSystem.File.Exists(configFilePath))
+                {
+                    var confStr = await m_FileSystem.File.ReadAllTextAsync(configFilePath);
+
+                    var conf = new Configuration(m_ConfigSerializer.Deserialize<Dictionary<string, object>>(confStr));
+
+                    var envConfFilePath = Path.Combine(srcDir, 
+                        Path.GetFileNameWithoutExtension(CONF_FILE_NAME) + "." + m_Environment.ToString()
+                        + Path.GetExtension(CONF_FILE_NAME));
+
+                    if (m_FileSystem.File.Exists(envConfFilePath))
+                    {
+                        var envConfStr = await m_FileSystem.File.ReadAllTextAsync(envConfFilePath);
+
+                        var envConf = new Configuration(m_ConfigSerializer.Deserialize<Dictionary<string, object>>(envConfStr));
+
+                        conf = envConf.Merge(conf);
+                    }
+
+                    return conf;
+                }
             }
-            else
-            {
-                return new Configuration();
-            }
+
+            return new Configuration();
         }
     }
 }

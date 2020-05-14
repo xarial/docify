@@ -17,6 +17,7 @@ using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
 using Xarial.Docify.Core.Data;
+using System.Text.RegularExpressions;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -53,7 +54,14 @@ namespace Xarial.Docify.Core.Compiler
         private bool HasRazorCode(string content)
         {
             //TODO: might need to have better logic to identify this
-            return content?.Contains('@') == true;
+            if (!string.IsNullOrEmpty(content))
+            {
+                return Regex.IsMatch(content, "(\n|\r|\r\n)@inherits TemplatePage<.+>(\n|\r|\r\n)");
+            }
+            else 
+            {
+                return false;
+            }
         }
     }
 }

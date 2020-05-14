@@ -59,47 +59,67 @@ namespace Xarial.Docify.Lib.Plugins
             return Task.CompletedTask;
         }
         
-        private ILanguage FileLanguageCodeById(string lang) 
+        private bool TryFileLanguageCodeById(string lang, out ILanguage codeLang) 
         {
-            var codeLang = Languages.FindById(lang);
+            codeLang = null;
 
-            if (codeLang == null)
+            if (!string.IsNullOrEmpty(lang))
             {
-                switch (lang.ToLower()) 
-                {
-                    case "vba":
-                        codeLang = Languages.VbDotNet;
-                        break;
+                codeLang = Languages.FindById(lang);
 
-                    default:
-                        throw new NotSupportedException($"Language '{lang}' is not supported");
+                if (codeLang == null)
+                {
+                    switch (lang.ToLower())
+                    {
+                        case "vba":
+                        case "vbs":
+                            codeLang = Languages.VbDotNet;
+                            break;
+
+                        case "xslt":
+                        case "wxs":
+                            codeLang = Languages.Xml;
+                            break;
+
+                        default:
+                            //TODO: write to log
+                            //throw new NotSupportedException($"Language '{lang}' is not supported");
+                            break;
+                    }
                 }
             }
 
-            return codeLang;
+            return codeLang != null;
         }
 
         private void OnRenderCodeBlock(string rawCode, string lang, string args, StringBuilder html)
         {
-            var codeLang = FileLanguageCodeById(lang);
+            XElement pre;
 
-            string formattedCode;
-            if (Formatter is HtmlFormatter)
+            if (TryFileLanguageCodeById(lang, out ILanguage codeLang))
             {
-                formattedCode = (Formatter as HtmlFormatter).GetHtmlString(rawCode, codeLang);
-            }
-            else if (Formatter is HtmlClassFormatter)
-            {
-                formattedCode = (Formatter as HtmlClassFormatter).GetHtmlString(rawCode, codeLang);
-            }
-            else
-            {
-                throw new NotSupportedException("Incorrect formatted");
-            }
+                string formattedCode;
+                if (Formatter is HtmlFormatter)
+                {
+                    formattedCode = (Formatter as HtmlFormatter).GetHtmlString(rawCode, codeLang);
+                }
+                else if (Formatter is HtmlClassFormatter)
+                {
+                    formattedCode = (Formatter as HtmlClassFormatter).GetHtmlString(rawCode, codeLang);
+                }
+                else
+                {
+                    throw new NotSupportedException("Incorrect formatted");
+                }
 
-            var node = XDocument.Parse(formattedCode, LoadOptions.PreserveWhitespace);
+                var node = XDocument.Parse(formattedCode, LoadOptions.PreserveWhitespace);
 
-            var pre = node.Element("div").Element("pre");
+                pre = node.Element("div").Element("pre");
+            }
+            else 
+            {
+                pre = new XElement("pre", rawCode);
+            }
 
             pre.Add(new XAttribute("class", $"code-snippet {lang} {args}"));
 

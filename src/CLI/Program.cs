@@ -7,6 +7,7 @@
 
 using CommandLine;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.CLI.Options;
@@ -43,7 +44,8 @@ namespace Xarial.Docify.CLI
 
                 if (buildOpts != null || serveOpts != null)
                 {
-                    engine = new DocifyEngine(buildOpts.SourceDirectory, buildOpts.OutputDirectory, buildOpts.SiteUrl, buildOpts.Environment);
+                    engine = new DocifyEngine(buildOpts.SourceDirectories.ToArray(),
+                        buildOpts.OutputDirectory, buildOpts.SiteUrl, buildOpts.Environment);
                 }
 
                 if (buildOpts != null)

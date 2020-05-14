@@ -19,6 +19,14 @@ using System.Linq;
 
 namespace Core.Tests
 {
+    public static class LocalFileSystemConfigurationLoaderExtension 
+    {
+        public static Task<IConfiguration> Load(this LocalFileSystemConfigurationLoader loader, ILocation location) 
+        {
+            return loader.Load(new ILocation[] { location });
+        }
+    }
+
     public class LocalFileSystemConfigurationLoaderTest
     {
         [Test]
@@ -123,6 +131,18 @@ namespace Core.Tests
             Assert.AreEqual(2, conf.Count);
             Assert.AreEqual("A", conf["a1"]);
             Assert.AreEqual("B", conf["a2"]);
+        }
+
+        [Test]
+        public async Task Load_EnvSpecificConfTest()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Test]
+        public async Task Load_MultipleLocationsConflilctTest()
+        {
+            throw new NotImplementedException();
         }
 
         [Test]

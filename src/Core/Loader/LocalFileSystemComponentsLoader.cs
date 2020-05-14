@@ -63,7 +63,7 @@ namespace Xarial.Docify.Core.Loader
         private async IAsyncEnumerable<IFile> LoadFiles(
             List<string> resFileIds, ILocation loc, string fragName, bool allowInherit) 
         {
-            await foreach (var newSrcFile in m_Loader.Load(loc))
+            await foreach (var newSrcFile in m_Loader.Load(new ILocation[] { loc }))
             {
                 var id = newSrcFile.Location.ToId();
 

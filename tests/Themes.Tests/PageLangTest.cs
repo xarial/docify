@@ -40,7 +40,7 @@ namespace Themes.Tests
         [Test]
         public async Task Page_SiteDefLang()
         {
-            var site = ThemesTest.Instance.NewSite("<html lang=\"{% page-lang %}\"/>", INCLUDE_PATH, null, ThemesTest.Instance.GetData<Configuration>("$page-lang:\r\n  default_lang: fr"));
+            var site = ThemesTest.Instance.NewSite("<html lang=\"{% page-lang %}\"/>", INCLUDE_PATH, null, ThemesTest.Instance.GetData<Configuration>("$page-lang:\r\n  default-lang: fr"));
 
             var res = await ThemesTest.Instance.CompileMainPageNormalize(site);
 

@@ -17,6 +17,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Lib.Plugins.Data;
+using Xarial.Docify.Lib.Plugins.Exceptions;
 using Xarial.Docify.Lib.Plugins.Helpers;
 
 namespace Xarial.Docify.Lib.Plugins
@@ -133,9 +134,16 @@ namespace Xarial.Docify.Lib.Plugins
             {
                 if (!string.IsNullOrEmpty(content))
                 {
-                    var writer = new HtmlHeadWriter(content);
-                    writer.AddStyleSheets(CSS_FILE_PATH);
-                    content = writer.Content;
+                    try
+                    {
+                        var writer = new HtmlHeadWriter(content);
+                        writer.AddStyleSheets(CSS_FILE_PATH);
+                        content = writer.Content;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new HeadAssetLinkFailedException(CSS_FILE_PATH, url, ex);
+                    }
                 }
                 else
                 {

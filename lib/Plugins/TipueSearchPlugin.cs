@@ -114,14 +114,21 @@ namespace Xarial.Docify.Lib.Plugins
             if ((!data.ContainsKey(SITEMAP_PARAM) || data.GetParameterOrDefault<bool>(SITEMAP_PARAM))
                 && (!data.ContainsKey(SEARCH_PARAM) || data.GetParameterOrDefault<bool>(SEARCH_PARAM)))
             {
-                var text = HtmlToPlainText(content, m_Setts.PageContentNode, out string title);
-
-                m_SearchIndex.Add(new PageSearchData()
+                try
                 {
-                    Title = title,
-                    Text = NormalizeText(text),
-                    Url = url
-                });
+                    var text = HtmlToPlainText(content, m_Setts.PageContentNode, out string title);
+
+                    m_SearchIndex.Add(new PageSearchData()
+                    {
+                        Title = title,
+                        Text = NormalizeText(text),
+                        Url = url
+                    });
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Failed to index page for search at '{url}'", ex);
+                }
             }
 
             return Task.FromResult(content);

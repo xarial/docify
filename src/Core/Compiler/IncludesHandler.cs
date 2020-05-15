@@ -122,11 +122,18 @@ namespace Xarial.Docify.Core.Compiler
         {
             var replacement = await m_PlcParser.ReplaceAsync(rawContent, async (string includeRawContent) => 
             {
-                string name;
-                IMetadata data;
-                await ParseParameters(includeRawContent, out name, out data);
-                var replace = await Render(name, data, site, page, url);
-                return await ReplaceAll(replace, site, page, url);
+                var name = "";
+                try
+                {
+                    IMetadata data;
+                    await ParseParameters(includeRawContent, out name, out data);
+                    var replace = await Render(name, data, site, page, url);
+                    return await ReplaceAll(replace, site, page, url);
+                }
+                catch(Exception ex)
+                {
+                    throw new Exception($"Failed to resolve include '{name}' in '{url}'", ex);
+                }
             });
 
             return replacement;

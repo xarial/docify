@@ -64,8 +64,7 @@ namespace Xarial.Docify.Lib.Plugins
                     var basePage = CreatePagesPath(site, parts.Take(parts.Length - 1).ToArray());
 
                     var data = new PluginMetadata();
-                    data.Add("sitemap", false);
-
+                    
                     if (basePage.SubPages.FirstOrDefault(
                         p => string.Equals(p.Name, name, StringComparison.CurrentCultureIgnoreCase)) == null)
                     {
@@ -132,6 +131,8 @@ namespace Xarial.Docify.Lib.Plugins
             {
                 data.Remove("layout");
             }
+
+            data["sitemap"] = false;
 
             var redirectPage = new PluginPage(name, content, id, data);
 

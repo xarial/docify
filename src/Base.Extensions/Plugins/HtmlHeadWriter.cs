@@ -22,7 +22,7 @@ namespace Xarial.Docify.Base.Plugins
 
     public class HtmlHeadWriter : IHeadWriter
     {
-        private const string CSS_LINK_TEMPLATE = "<link rel=\"stylesheet\" type=\"text/css\" href=\"/{0}\" />\r\n";
+        private const string CSS_LINK_TEMPLATE = "<link rel=\"stylesheet\" type=\"text/css\" href=\"{0}\" />\r\n";
         private const string SCRIPT_LINK_TEMPLATE = "<script src=\"{0}\"></script>";
 
         //TODO: implement this via StringBuilder

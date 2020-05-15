@@ -25,13 +25,6 @@ namespace Xarial.Docify.Lib.Plugins
         public CasesInsensitiveDictionary<string[]> Bundles { get; set; }
     }
 
-    public class CasesInsensitiveDictionary<TValue> : Dictionary<string, TValue> 
-    {
-        public CasesInsensitiveDictionary() : base(StringComparer.CurrentCultureIgnoreCase) 
-        {
-        }
-    }
-
     [Plugin("script-style-optimizer")]
     public class ScriptStyleOptimizerPlugin : IPlugin<ScriptStyleOptimizerPluginSettings>
     {
@@ -87,7 +80,7 @@ namespace Xarial.Docify.Lib.Plugins
             var ext = Path.GetExtension(file.Location.FileName).ToLower();
             var url = file.Location.GetRelative(outLoc).ToUrl();
 
-            var isInScope = m_Setts.AssetsScopePaths?.Any(s => Matches(url, s)) != false;
+            var isInScope = m_Setts.AssetsScopePaths?.Any(s => PathHelper.Matches(url, s)) != false;
 
             var bundle = m_Setts.Bundles.FirstOrDefault(
                     b => b.Value.Contains(url, StringComparer.InvariantCultureIgnoreCase)).Key;
@@ -155,17 +148,6 @@ namespace Xarial.Docify.Lib.Plugins
             }
 
             return Task.FromResult(res);
-        }
-
-        //TODO: move to toolkit
-        public static bool Matches(string path, string filter)
-        {
-            //TODO: combine into single regex
-            var regex = (filter.StartsWith("*") ? "" : "^") 
-                + Regex.Escape(filter).Replace("\\*", ".*").Replace("\\?", ".") 
-                + (filter.EndsWith("*") ? "" : "$");
-
-            return Regex.IsMatch(path, regex, RegexOptions.IgnoreCase);
         }
 
         private async IAsyncEnumerable<IFile> OnPostAddPublishFiles(ILocation outLoc)

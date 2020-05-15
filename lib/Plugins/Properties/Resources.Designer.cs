@@ -73,9 +73,44 @@ namespace Xarial.Docify.Lib.Plugins.Properties {
         ///    background-position: top center;
         ///    back [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string code_snippet {
+        internal static string code_snippet_css {
             get {
-                return ResourceManager.GetString("code_snippet", resourceCulture);
+                return ResourceManager.GetString("code_snippet_css", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to function openTab(evt, tabContainerName, tabName) {
+        ///	var i, tabcontainer, tabcontent, tablinks;
+        ///	tabcontainer = document.getElementById(tabContainerName);
+        ///	tabcontent = tabcontainer.getElementsByClassName(&quot;tabcontent&quot;);
+        ///	for (i = 0; i &lt; tabcontent.length; i++) {
+        ///		tabcontent[i].style.display = &quot;none&quot;;
+        ///	}
+        ///	tablinks = tabcontainer.getElementsByClassName(&quot;tablinks&quot;);
+        ///	for (i = 0; i &lt; tablinks.length; i++) {
+        ///		tablinks[i].className = tablinks[i].className.replace(&quot; active&quot;, &quot;&quot;);
+        ///	}
+        ///	document.getElemen [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string code_snippet_js {
+            get {
+                return ResourceManager.GetString("code_snippet_js", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div id=&quot;{0}&quot;&gt;
+        ///
+        ///&lt;div class=&quot;code-tab&quot;&gt;
+        ///   {1}
+        /// &lt;/div&gt;
+        /// {2}
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string code_snippet_tab_container {
+            get {
+                return ResourceManager.GetString("code_snippet_tab_container", resourceCulture);
             }
         }
         
@@ -94,8 +129,16 @@ namespace Xarial.Docify.Lib.Plugins.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;meta http-equiv=&quot;refresh&quot; content=&quot;0; url={0}&quot;&gt;
-        ///&lt;link rel=&quot;canonical&quot; href=&quot;{0}&quot; /&gt;.
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///&lt;head&gt;
+        ///    &lt;title&gt;Redirect&lt;/title&gt;
+        ///    &lt;meta http-equiv=&quot;refresh&quot; content=&quot;{1}; url={0}&quot;&gt;
+        ///    &lt;link rel=&quot;canonical&quot; href=&quot;{0}&quot; /&gt;
+        ///&lt;/head&gt;
+        ///&lt;body&gt;
+        ///&lt;/body&gt;
+        ///&lt;/html&gt;.
         /// </summary>
         internal static string redirect {
             get {

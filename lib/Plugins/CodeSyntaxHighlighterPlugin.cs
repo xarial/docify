@@ -34,7 +34,7 @@ namespace Xarial.Docify.Lib.Plugins
 
         private CodeColorizerBase m_Formatter;
 
-        private const string CSS_FILE_PATH = "assets/styles/syntax-highlight.css";
+        private const string CSS_FILE_PATH = "/assets/styles/syntax-highlight.css";
 
         private IDocifyApplication m_App;
 

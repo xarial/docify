@@ -23,45 +23,43 @@ namespace Xarial.Docify.Lib.Plugins.Helpers
         private static readonly string[] m_PathSeparators = new string[] { "\\", "/", "::" };
         internal static string[] PathSeparators => m_PathSeparators;
 
-        public static IAsset FindAsset(ISite site, IAssetsFolder page, string path)
+        public static ILocation LocationFromPath(string path) 
         {
             var isRel = !PathSeparators.Any(s => path.StartsWith(s));
-            
             var parts = path.Split(PathSeparators, StringSplitOptions.RemoveEmptyEntries);
 
-            var dir = parts.Take(parts.Length - 1);
-            var fileName = parts.Last();
+            var offset = 0;
+            var fileName = "";
 
-            IAssetsFolder curFolder = null;
-
-            if (isRel)
+            if (parts.Any() && Path.HasExtension(parts.Last())) 
             {
-                curFolder = page;
-            }
-            else 
-            {
-                curFolder = site.MainPage;
+                offset = 1;
+                fileName = parts.Last();
             }
 
-            foreach (var curDir in dir) 
+            var dir = parts.Take(parts.Length - offset);
+
+            if (!isRel) 
             {
-                var nextDir = curFolder.Folders.FirstOrDefault(f => string.Equals(f.Name, curDir));
-
-                if (nextDir == null) 
-                {
-                    if (curFolder is IPage) 
-                    {
-                        nextDir = (curFolder as IPage).SubPages.FirstOrDefault(p => string.Equals(p.Name, curDir));
-                    }
-                }
-
-                if (nextDir == null) 
-                {
-                    throw new AssetNotFoundException(curFolder, curDir);
-                }
-
-                curFolder = nextDir;
+                dir = new string[] { "" }.Union(dir);
             }
+
+            return new PluginLocation(fileName, dir);
+        }
+
+        public static IAsset FindAsset(ISite site, IAssetsFolder page, string path)
+            => FindAsset(site, page, LocationFromPath(path));
+
+        public static IAsset FindAsset(ISite site, IAssetsFolder page, ILocation path)
+        {
+            if (!path.IsFile()) 
+            {
+                throw new Exception("Location is not a file");
+            }
+
+            var fileName = path.FileName;
+
+            var curFolder = FindAssetsFolder(site, page, path);
 
             var asset = curFolder.Assets.FirstOrDefault(a => string.Equals(a.FileName, fileName));
 
@@ -71,6 +69,44 @@ namespace Xarial.Docify.Lib.Plugins.Helpers
             }
 
             return asset;
+        }
+
+        public static IAssetsFolder FindAssetsFolder(ISite site, IAssetsFolder page, ILocation path) 
+        {
+            var isRel = !path.Path.Any() || !string.IsNullOrEmpty(path.Path[0]);
+            
+            IAssetsFolder curFolder = null;
+
+            if (isRel)
+            {
+                curFolder = page;
+            }
+            else
+            {
+                curFolder = site.MainPage;
+            }
+
+            foreach (var curDir in path.Path.Skip(isRel ? 0 : 1))
+            {
+                var nextDir = curFolder.Folders.FirstOrDefault(f => string.Equals(f.Name, curDir));
+
+                if (nextDir == null)
+                {
+                    if (curFolder is IPage)
+                    {
+                        nextDir = (curFolder as IPage).SubPages.FirstOrDefault(p => string.Equals(p.Name, curDir));
+                    }
+                }
+
+                if (nextDir == null)
+                {
+                    throw new AssetNotFoundException(curFolder, curDir);
+                }
+
+                curFolder = nextDir;
+            }
+
+            return curFolder;
         }
 
         public static void AddTextAsset(string content, IPage page, string path)

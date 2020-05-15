@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
@@ -28,6 +29,7 @@ namespace Xarial.Docify.Lib.Plugins
     {
         public string SnippetsFolder { get; set; } = "";
         public bool ExcludeSnippets { get; set; } = true;
+        public CasesInsensitiveDictionary<string> AutoTabs { get; set; }
     }
 
     public class CodeSnippetData
@@ -45,7 +47,8 @@ namespace Xarial.Docify.Lib.Plugins
     {
         private CodeSnippetSettings m_Settings;
 
-        private const string CSS_FILE_PATH = "assets/styles/code-snippet.css";
+        private const string CSS_FILE_PATH = "/assets/styles/code-snippet.css";
+        private const string JS_FILE_PATH = "/assets/scripts/code-snippet.js";
         private const char SNIPPETS_FOLDER_PATH = '~';
 
         private IAssetsFolder m_SnippetsFolder;
@@ -70,7 +73,8 @@ namespace Xarial.Docify.Lib.Plugins
         {
             m_Site = site;
 
-            AssetsHelper.AddTextAsset(Resources.code_snippet, site.MainPage, CSS_FILE_PATH);
+            AssetsHelper.AddTextAsset(Resources.code_snippet_css, site.MainPage, CSS_FILE_PATH);
+            AssetsHelper.AddTextAsset(Resources.code_snippet_js, site.MainPage, JS_FILE_PATH);
 
             m_SnippetFileIds = new List<string>();
 
@@ -116,17 +120,98 @@ namespace Xarial.Docify.Lib.Plugins
         {
             var snipData = data.ToObject<CodeSnippetData>();
 
+            if (!string.IsNullOrEmpty(snipData.FileName)
+                && snipData.Tabs?.Any() == true) 
+            {
+                throw new Exception("Specify either file name or tabs");
+            }
+
+            if (snipData.FileName?.EndsWith(".*") == true) 
+            {
+                if (m_Settings.AutoTabs?.Any() != true) 
+                {
+                    throw new Exception($"{nameof(m_Settings.AutoTabs)} setting must be set to use automatic code snippet tabs");
+                }
+
+                var fileName = Path.GetFileName(snipData.FileName);
+                var dir = snipData.FileName.Substring(0, snipData.FileName.Length - fileName.Length);
+                var snipsFolder = AssetsHelper.FindAssetsFolder(
+                    m_Site, page, 
+                    AssetsHelper.LocationFromPath(dir));
+
+                snipData.Tabs = new Dictionary<string, string>();
+
+                foreach (var asset in snipsFolder.Assets
+                    .Where(a => string.Equals(Path.GetFileNameWithoutExtension(a.FileName),
+                    Path.GetFileNameWithoutExtension(fileName), StringComparison.CurrentCultureIgnoreCase))) 
+                {
+                    string ext = Path.GetExtension(asset.FileName).TrimStart('.');
+                    
+                    if (m_Settings.AutoTabs.TryGetValue(ext, out string tabName))
+                    {
+                        snipData.Tabs.Add(tabName, dir + asset.FileName);
+                    }
+                }
+            }
+
+            if (snipData.Tabs?.Any() == true) 
+            {
+                var tabsHtml = new StringBuilder();
+                var tabsCode = new StringBuilder();
+
+                bool isFirst = true;
+
+                var tabId = ConvertToId(snipData.Tabs.First().Value.Substring(0, snipData.Tabs.First().Value.LastIndexOf(".")));
+
+                foreach (var tab in snipData.Tabs) 
+                {
+                    var tabName = tab.Key;
+                    var tabFile = tab.Value;
+
+                    var snipId = ConvertToId(tabFile);
+
+                    tabsHtml.AppendLine($"<button class=\"tablinks{(isFirst ? " active" : "")}\" onclick=\"openTab(event, '{tabId}', '{snipId}')\">{HttpUtility.HtmlEncode(tabName)}</button>");
+
+                    tabsCode.AppendLine($"<div id=\"{snipId}\" class=\"tabcontent\" style=\"display: {(isFirst ? "block" : "none")}\">");
+                    await WriteCodeSnippet(tabsCode, page, tabFile, snipData.Lang,
+                        snipData.ExclRegions, snipData.LeftAlign, snipData.Regions);
+                    tabsCode.AppendLine("</div>");
+
+                    isFirst = false;
+                }
+
+                return string.Format(Resources.code_snippet_tab_container, tabId, tabsHtml.ToString(), tabsCode.ToString());
+            }
+            else
+            {
+                var html = new StringBuilder();
+                
+                await WriteCodeSnippet(html, page, snipData.FileName, snipData.Lang,
+                    snipData.ExclRegions, snipData.LeftAlign, snipData.Regions);
+
+                return html.ToString();
+            }
+        }
+
+        private string ConvertToId(string val) => val
+            .Replace(".", "-")
+            .Replace("/", "-")
+            .Replace("\\", "-")
+            .Replace("::", "-")
+            .Replace(" ", "-");
+
+        private async Task WriteCodeSnippet(StringBuilder html, IPage page, 
+            string fileName, string lang, string[] exclRegs, bool leftAlign, string[] regs) 
+        {
             IAsset snipAsset;
 
             try
             {
-                var fileName = snipData.FileName;
-
                 IAssetsFolder searchFolder = null;
 
                 if (fileName.StartsWith(SNIPPETS_FOLDER_PATH))
                 {
-                    if (m_SnippetsFolder == null) 
+                    if (m_SnippetsFolder == null)
                     {
                         throw new Exception("Snippets folder is not set");
                     }
@@ -134,7 +219,7 @@ namespace Xarial.Docify.Lib.Plugins
                     fileName = fileName.TrimStart(SNIPPETS_FOLDER_PATH);
                     searchFolder = m_SnippetsFolder;
                 }
-                else 
+                else
                 {
                     searchFolder = page;
                 }
@@ -143,9 +228,9 @@ namespace Xarial.Docify.Lib.Plugins
             }
             catch (Exception ex)
             {
-                throw new NullReferenceException($"Failed to find code snippet: '{snipData.FileName}'", ex);
+                throw new NullReferenceException($"Failed to find code snippet: '{fileName}'", ex);
             }
-            
+
             if (snipAsset != null)
             {
                 if (!m_SnippetFileIds.Contains(snipAsset.Id))
@@ -154,28 +239,24 @@ namespace Xarial.Docify.Lib.Plugins
                 }
 
                 var rawCode = snipAsset.AsTextContent();
-
-                var lang = snipData.Lang;
-
-                if (string.IsNullOrEmpty(lang)) 
+                
+                if (string.IsNullOrEmpty(lang))
                 {
                     lang = Path.GetExtension(snipAsset.FileName).TrimStart('.').ToLower();
                 }
 
                 var snips = CodeSnippetHelper.Select(rawCode, lang, new CodeSelectorOptions()
                 {
-                    ExcludeRegions = snipData.ExclRegions,
-                    LeftAlign = snipData.LeftAlign,
-                    Regions = snipData.Regions
+                    ExcludeRegions = exclRegs,
+                    LeftAlign = leftAlign,
+                    Regions = regs
                 });
-
-                var res = new StringBuilder();
 
                 foreach (var snip in snips)
                 {
                     var snipClass = "";
 
-                    switch (snip.Location) 
+                    switch (snip.Location)
                     {
                         case SnippetLocation_e.Full:
                             snipClass = "";
@@ -195,14 +276,12 @@ namespace Xarial.Docify.Lib.Plugins
                     }
 
                     var code = $"~~~{lang} {snipClass}\r\n{snip.Code}\r\n~~~";
-                    res.AppendLine(await m_App.Compiler.ContentTransformer.Transform(code, Guid.NewGuid().ToString(), null));
+                    html.AppendLine(await m_App.Compiler.ContentTransformer.Transform(code, Guid.NewGuid().ToString(), null));
                 }
-
-                return res.ToString();
             }
-            else 
+            else
             {
-                throw new InvalidCastException($"Failed to find an asset at '{snipData.FileName}'");
+                throw new InvalidCastException($"Failed to find an asset at '{fileName}'");
             }
         }
 
@@ -226,6 +305,7 @@ namespace Xarial.Docify.Lib.Plugins
                 {
                     var writer = new HtmlHeadWriter(content);
                     writer.AddStyleSheets(CSS_FILE_PATH);
+                    writer.AddScripts(JS_FILE_PATH);
                     return Task.FromResult(writer.Content);
                 }
                 catch (Exception ex)

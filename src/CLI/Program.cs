@@ -19,8 +19,6 @@ namespace Xarial.Docify.CLI
     {
         static async Task Main(string[] args)
         {
-            System.Diagnostics.Debugger.Launch();
-
             var parser = new Parser(p =>
             {
                 p.CaseInsensitiveEnumValues = true;

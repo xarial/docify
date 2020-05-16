@@ -73,12 +73,23 @@ namespace Xarial.Docify.Core.Compiler
             {
                 thisLoc = baseLoc.Combine(new Location(PAGE_FILE_NAME, page.Name));
             }
-            else 
+            else
             {
                 thisLoc = new Location(PAGE_FILE_NAME);
             }
 
-            yield return await CompilePage(page, site, thisLoc);
+            ILocation pageLoc;
+
+            if (!System.IO.Path.HasExtension(page.Name))
+            {
+                pageLoc = thisLoc;
+            }
+            else 
+            {
+                pageLoc = baseLoc.Combine(new Location(page.Name));
+            }
+
+            yield return await CompilePage(page, site, pageLoc);
 
             await foreach (var asset in CompileAssets(page, page, site, thisLoc))
             {

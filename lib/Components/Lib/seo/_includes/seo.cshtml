@@ -4,6 +4,7 @@ twitter: true
 linkedin: true
 ---
 @using RazorLight
+@using Xarial.Docify.Lib.Tools
 @inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
 @functions{
     public class LinkedInMetadata
@@ -21,7 +22,7 @@ linkedin: true
 @{
     var title = Model.Page.Data.GetOrDefault<string>("title");
     var description = Model.Page.Data.GetOrDefault<string>("description");
-    var lang = Model.Page.Data.GetOrDefault<string>("lang");
+    var lang = PageHelper.GetLanguage(Model.Site, Model.Page);
     var image = Model.Page.Data.GetOrDefault<string>("image-png");
 
     if (string.IsNullOrEmpty(image)) 
@@ -37,8 +38,8 @@ linkedin: true
         }
     }
 
-    var siteTitle = Model.Site.Configuration.GetOrDefault<string>("title");
-    var siteDescription = Model.Site.Configuration.GetOrDefault<string>("description");
+    var siteTitle = Model.Site.MainPage.Data.GetOrDefault<string>("caption");
+    var siteDescription = Model.Site.MainPage.Data.GetOrDefault<string>("description");
 
     var og = Model.Data.Get<bool>("og");
     var twitter = Model.Data.Get<bool>("twitter");

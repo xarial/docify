@@ -51,12 +51,13 @@ namespace Xarial.Docify.Core.Compiler
             }
         }
 
+        //TODO: consider only using this resolver to resolve the includes but not pages
         private bool HasRazorCode(string content)
         {
             //TODO: might need to have better logic to identify this
             if (!string.IsNullOrEmpty(content))
             {
-                return Regex.IsMatch(content, "(\n|\r|\r\n)@inherits TemplatePage<.+>(\n|\r|\r\n)");
+                return Regex.IsMatch(content, "@inherits TemplatePage<.+>(\n|\r|\r\n)");
             }
             else 
             {

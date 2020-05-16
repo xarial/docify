@@ -95,7 +95,7 @@ namespace Xarial.Docify.Lib.Plugins
 
         private void OnRenderCodeBlock(string rawCode, string lang, string args, StringBuilder html)
         {
-            XElement pre;
+            XElement cont;
 
             if (TryFileLanguageCodeById(lang, out ILanguage codeLang))
             {
@@ -115,17 +115,21 @@ namespace Xarial.Docify.Lib.Plugins
 
                 var node = XDocument.Parse(formattedCode, LoadOptions.PreserveWhitespace);
 
-                pre = node.Element("div").Element("pre");
+                cont = node.Element("div");
+                cont.RemoveAttributes();
             }
             else 
             {
-                pre = new XElement("pre", rawCode);
+                cont = new XElement("div");
+                cont.Add(new XElement("pre", rawCode));
             }
 
+            cont.Add(new XAttribute("class", "code-snippet-container"));
+            var pre = cont.Element("pre");
             pre.Add(new XAttribute("class", $"code-snippet {lang} {args}"));
 
             html.Clear();
-            html.Append(pre);
+            html.Append(cont);
         }
 
         private Task<string> OnWritePageContent(string content, IMetadata data, string url)

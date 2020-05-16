@@ -201,5 +201,22 @@ namespace Core.Tests
             Assert.AreEqual("a1", a1.AsTextContent());
             Assert.AreEqual("a2", a2.AsTextContent());
         }
+
+        //TODO: thsi is throwing error - investigate
+        //[Test]
+        //public async Task ComposeSite_NonDefaultPageAsset()
+        //{
+        //    var src = new FileMock[]
+        //    {
+        //        new FileMock(Location.FromPath(@"index.md"), ""),
+        //        new FileMock(Location.FromPath(@"page1\page2.md"), ""),
+        //        new FileMock(Location.FromPath(@"page1\page2\asset1.txt"), "a1"),
+        //        new FileMock(Location.FromPath(@"page3\index.md"), ""),//commenting this line - works OK
+        //        //new FileMock(Location.FromPath(@"page3\page4.md"), ""),
+        //        //new FileMock(Location.FromPath(@"page3\page4\asset2.txt"), "a2")
+        //    }.ToAsyncEnumerable();
+
+        //    var site = await m_Composer.ComposeSite(src, "");
+        //}
     }
 }

@@ -23,6 +23,12 @@ namespace Xarial.Docify.Lib.Plugins
         public bool DeleteUnusedCss { get; set; }
         public bool DeleteUnusedJs { get; set; }
         public CasesInsensitiveDictionary<string[]> Bundles { get; set; }
+
+        public ScriptStyleOptimizerPluginSettings() 
+        {
+            Bundles = new CasesInsensitiveDictionary<string[]>();
+            AssetsScopePaths = new string[0];
+        }
     }
 
     [Plugin("script-style-optimizer")]
@@ -61,7 +67,7 @@ namespace Xarial.Docify.Lib.Plugins
             m_UsedScripts = new List<string>();
             m_UsedStyles = new List<string>();
 
-            m_BundlesContent = m_Setts.Bundles.ToDictionary(
+            m_BundlesContent = m_Setts.Bundles?.ToDictionary(
                 x => x.Key, 
                 x => new StringBuilder(), 
                 StringComparer.CurrentCultureIgnoreCase);

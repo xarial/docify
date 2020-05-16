@@ -128,6 +128,19 @@ namespace Core.Tests
         }
 
         [Test]
+        public async Task Compile_NonDefaultPageTest()
+        {
+            var site = new Site("", new PageMock("", "P1"), null);
+            var p2 = new PageMock("page2.html", "P2");
+            site.MainPage.SubPages.Add(p2);
+
+            var files = await m_Compiler.Compile(site).ToListAsync();
+
+            Assert.AreEqual("P1", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
+            Assert.AreEqual("P2", files.First(f => f.Location.ToId() == "page2.html").AsTextContent());
+        }
+
+        [Test]
         public async Task Compile_SimpleTemplatePageTest()
         {
             var site = new Site("",

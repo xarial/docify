@@ -70,5 +70,19 @@ namespace Xarial.Docify.Lib.Tools
 
             return caption;
         }
+
+        public static string GetLanguage(IContextSite site, IContextPage page)
+        {
+            const string LANG_VAR = "lang";
+
+            var lang = page.Data.GetOrDefault<string>(LANG_VAR);
+
+            if (string.IsNullOrEmpty(lang))
+            {
+                lang = site.Configuration.GetOrDefault<string>(LANG_VAR);
+            }
+
+            return lang;
+        }
     }
 }

@@ -93,13 +93,46 @@ namespace Core.Tests
         [Test]
         public async Task Load_MultipleLocationsTest() 
         {
-            throw new NotImplementedException();
+            var loader = new LocalFileSystemLoader(new LocalFileSystemLoaderConfig(new string[0].ToList()),
+            new MockFileSystem(new Dictionary<string, MockFileData>()
+            {
+                { @"C:\site\index.md", new MockFileData("abc") },
+                { @"C:\site\1.txt", null },
+                { @"C:\site1\page2\index.md", new MockFileData("xyz") },
+                { @"C:\site1\page2\2.txt", null }
+            }));
+
+            var res = await loader.Load(new ILocation[] { Location.FromPath("C:\\site"), Location.FromPath("C:\\site1") }).ToListAsync();
+
+            Assert.AreEqual(4, res.Count());
+            Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "index.md"));
+            Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "1.txt"));
+            Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "page2::index.md"));
+            Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "page2::2.txt"));
         }
 
         [Test]
         public async Task Load_MultipleLocationsConflictTest()
         {
-            throw new NotImplementedException();
+            var loader = new LocalFileSystemLoader(new LocalFileSystemLoaderConfig(new string[0].ToList()),
+            new MockFileSystem(new Dictionary<string, MockFileData>()
+            {
+                { @"C:\site\index.md", new MockFileData("abc") },
+                { @"C:\site1\index.md", new MockFileData("xyz") },
+            }));
+
+            Exception ex = null;
+
+            try
+            {
+                await loader.Load(new ILocation[] { Location.FromPath("C:\\site"), Location.FromPath("C:\\site1") }).ToListAsync();
+            }
+            catch (Exception e)
+            {
+                ex = e;
+            }
+
+            Assert.IsInstanceOf<DuplicateFileException>(ex);
         }
 
         [Test]

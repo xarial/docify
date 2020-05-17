@@ -18,6 +18,7 @@ using Xarial.Docify.Base.Data;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler.Context;
 using Xarial.Docify.Core.Data;
+using Xarial.Docify.Lib.Tools.Exceptions;
 
 namespace Components.Tests
 {
@@ -95,11 +96,21 @@ namespace Components.Tests
         }
 
         [Test]
-        public void RootPageInvalidTest()
+        public async Task RootPageInvalidTest()
         {
             var site = ComponentsTest.Instance.NewSite("<div>\r\n{% nav { home-menu: false, root-page: /page1.html } %}\r\n</div>", INCLUDE_PATH);
 
-            Assert.ThrowsAsync<NullReferenceException>(() => ComponentsTest.Instance.CompileMainPageNormalize(site));
+            Exception innerEx = null;
+            try
+            {
+                await ComponentsTest.Instance.CompileMainPageNormalize(site);
+            }
+            catch (Exception ex)
+            {
+                innerEx = ex.InnerException;
+            }
+
+            Assert.IsInstanceOf<RootPageNotFoundException>(innerEx);
         }
     }
 }

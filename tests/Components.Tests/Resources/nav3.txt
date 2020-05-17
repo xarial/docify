@@ -8,7 +8,7 @@
 <li class="menu-item active">
 <a href="/">Home</a>
 </li>
-<li class="menu-item">
+<li class="menu-item not-active">
 <a href="/Page1/">p1</a>
 </li>
 </ul>

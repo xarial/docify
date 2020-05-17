@@ -14,6 +14,6 @@
     <meta name="twitter:description" content="d1" />
     <meta name="twitter:image" content="www.example.com/img1.png" />
     <script type="application/ld+json">
-        {"url":"www.example.com","description":"d1","headline":null,"image":"www.example.com/img1.png","@type":"WebPage","@context":"http://schema.org"}
+        {"url":"www.example.com","description":"d1","headline":"d1","image":"www.example.com/img1.png","@type":"WebPage","@context":"http://schema.org"}
     </script>
 </p>

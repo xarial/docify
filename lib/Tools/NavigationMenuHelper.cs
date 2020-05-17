@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Lib.Tools.Exceptions;
 
 namespace Xarial.Docify.Lib.Tools
 {
@@ -118,7 +119,7 @@ namespace Xarial.Docify.Lib.Tools
                 }
                 else
                 {
-                    throw new NullReferenceException("Specified root page is not found");
+                    throw new RootPageNotFoundException(rootPageUrl);
                 }
             }
             else 

@@ -32,8 +32,7 @@ namespace Components.Tests
         public async Task DefaultParamsTest()
         {
             var site = ComponentsTest.Instance.NewSite("<head>\r\n{% seo %}\r\n</head>", INCLUDE_PATH,
-                ComponentsTest.Instance.GetData<Metadata>("title: p1\r\ndescription: d1"),
-                ComponentsTest.Instance.GetData<Configuration>("title: t1\r\ndescription: sd1"));
+                ComponentsTest.Instance.GetData<Metadata>("title: p1\r\ncaption: t1\r\ndescription: d1"));
 
             var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 
@@ -44,8 +43,7 @@ namespace Components.Tests
         public async Task OgParamsTest()
         {
             var site = ComponentsTest.Instance.NewSite("<head>\r\n{% seo { og: true, twitter: false, linkedin: false} %}\r\n</head>", INCLUDE_PATH,
-                ComponentsTest.Instance.GetData<Metadata>("title: p1\r\ndescription: d1"),
-                ComponentsTest.Instance.GetData<Configuration>("title: t1\r\ndescription: sd1"));
+                ComponentsTest.Instance.GetData<Metadata>("title: p1\r\ncaption: t1\r\ndescription: d1"));
 
             var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 

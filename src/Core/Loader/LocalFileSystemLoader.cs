@@ -39,6 +39,8 @@ namespace Xarial.Docify.Core.Loader
 
         public async IAsyncEnumerable<IFile> Load(ILocation[] locations)
         {
+            var loadedPaths = new List<string>();
+
             foreach (var location in locations)
             {
                 //TODO: validate conflict when same name files exist in multiple locations
@@ -57,6 +59,13 @@ namespace Xarial.Docify.Core.Loader
 
                     if (!PathMatcher.Matches(m_Config.Ignore, relPath))
                     {
+                        if (loadedPaths.Contains(relPath, StringComparer.CurrentCultureIgnoreCase)) 
+                        {
+                            throw new DuplicateFileException(path, relPath);
+                        }
+
+                        loadedPaths.Add(relPath);
+
                         var loc = Location.FromPath(relPath);
 
                         var content = await m_FileSystem.File.ReadAllBytesAsync(filePath);

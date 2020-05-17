@@ -111,10 +111,10 @@ namespace Xarial.Docify.Core.Loader
 
         private async Task<Configuration> GetConfiguration(params ILocation[] locations)
         {
+            var conf = new Configuration();
+
             foreach (var location in locations) 
             {
-                //TODO: validate conflict when 2 configurations exists - or merge them instead
-
                 var srcDir = location.ToPath();
 
                 var configFilePath = Path.Combine(srcDir, CONF_FILE_NAME);
@@ -123,7 +123,8 @@ namespace Xarial.Docify.Core.Loader
                 {
                     var confStr = await m_FileSystem.File.ReadAllTextAsync(configFilePath);
 
-                    var conf = new Configuration(m_ConfigSerializer.Deserialize<Dictionary<string, object>>(confStr));
+                    var thisConf = new Configuration(m_ConfigSerializer.Deserialize<Dictionary<string, object>>(confStr));
+                    conf = thisConf.Merge(conf);
 
                     var envConfFilePath = Path.Combine(srcDir, 
                         Path.GetFileNameWithoutExtension(CONF_FILE_NAME) + "." + m_Environment.ToString()
@@ -137,12 +138,10 @@ namespace Xarial.Docify.Core.Loader
 
                         conf = envConf.Merge(conf);
                     }
-
-                    return conf;
                 }
             }
 
-            return new Configuration();
+            return conf;
         }
     }
 }

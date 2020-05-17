@@ -132,7 +132,7 @@ namespace Xarial.Docify.Core.Compiler
                 }
                 catch(Exception ex)
                 {
-                    throw new Exception($"Failed to resolve include '{name}' in '{url}'", ex);
+                    throw new IncludeResolveException(name, url, ex);
                 }
             });
 

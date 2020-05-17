@@ -136,13 +136,38 @@ namespace Core.Tests
         [Test]
         public async Task Load_EnvSpecificConfTest()
         {
-            throw new NotImplementedException();
+            var fs = new MockFileSystem();
+            fs.AddFile("C:\\site\\page.html", null);
+            fs.AddFile("C:\\site\\_config.yml", new MockFileData("a1: A\r\na2: B"));
+            fs.AddFile("C:\\site\\_config.test.yml", new MockFileData("a1: A1\r\na3: C"));
+
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
+
+            var conf = await confLoader.Load(Location.FromPath("C:\\site"));
+
+            Assert.AreEqual(3, conf.Count);
+            Assert.AreEqual("A1", conf["a1"]);
+            Assert.AreEqual("B", conf["a2"]);
+            Assert.AreEqual("C", conf["a3"]);
         }
 
         [Test]
-        public async Task Load_MultipleLocationsConflilctTest()
+        public async Task Load_MultipleLocationsConfigsTest()
         {
-            throw new NotImplementedException();
+            var fs = new MockFileSystem();
+            fs.AddFile("C:\\site\\page.html", null);
+            fs.AddFile("C:\\site\\_config.yml", new MockFileData("a1: A\r\na2: B"));
+            fs.AddFile("C:\\site1\\_config.yml", new MockFileData("a1: A1\r\na3: C"));
+
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
+
+            var conf = await confLoader.Load(new ILocation[] { Location.FromPath("C:\\site"),
+                Location.FromPath("C:\\site1") });
+
+            Assert.AreEqual(3, conf.Count);
+            Assert.AreEqual("A1", conf["a1"]);
+            Assert.AreEqual("B", conf["a2"]);
+            Assert.AreEqual("C", conf["a3"]);
         }
 
         [Test]

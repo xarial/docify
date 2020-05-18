@@ -8,6 +8,7 @@ youtube:
 nuget:
 twitter:
 rss:
+email:
 color:
 ---
 @using RazorLight
@@ -25,6 +26,7 @@ color:
     var nugetColor = "#004880";
     var twitterColor = "#1DA1F2";
     var rssColor = "#FFA500";
+    var emailColor = "#527dd5";
 
     if (!string.IsNullOrEmpty(color))
     {
@@ -37,6 +39,7 @@ color:
         nugetColor = color;
         twitterColor = color;
         rssColor = color;
+        emailColor = color;
     }
 
     var linkedinLink = Model.Data.Get<string>("linkedin");
@@ -48,6 +51,7 @@ color:
     var nugetLink = Model.Data.Get<string>("nuget");
     var twitterLink = Model.Data.Get<string>("twitter");
     var rssLink = Model.Data.Get<string>("rss");
+    var emailLink = Model.Data.Get<string>("email");
 }
     <div class="social-links-list">
         @if (!string.IsNullOrEmpty(linkedinLink))
@@ -119,6 +123,14 @@ color:
             <a href="@rssLink" title="RSS">
                 <svg alt="RSS" class="social-link" fill="@rssColor" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <use xlink:href="/assets/images/social-links.svg#rss" />
+                </svg>
+            </a>
+        }
+        @if (!string.IsNullOrEmpty(emailLink))
+        {
+            <a href="mailto:@emailLink" title="e-mail">
+                <svg alt="e-mail" class="social-link" fill="@emailColor" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <use xlink:href="/assets/images/social-links.svg#email" />
                 </svg>
             </a>
         }

@@ -83,8 +83,7 @@ namespace Xarial.Docify.Lib.Plugins
                             break;
 
                         default:
-                            //TODO: write to log
-                            //throw new NotSupportedException($"Language '{lang}' is not supported");
+                            m_App.Logger.LogWarning($"Language '{lang}' is not supported");
                             break;
                     }
                 }

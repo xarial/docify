@@ -13,7 +13,9 @@ namespace Xarial.Docify.Base.Services
 {
     public interface ILogger
     {
-        //TODO: add log for warning and errors
-        void Log();
+        void Log(string msg);
+        void LogWarning(string msg);
+        void LogError(string msg);
+        void LogInformation(string msg);
     }
 }

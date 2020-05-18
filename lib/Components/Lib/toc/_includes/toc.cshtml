@@ -16,7 +16,7 @@ root-page:
     const string MENU_OPT = "menu";
     const string HOME_MENU_OPT = "home-menu";
     const string PAGE_DISABLED_ATT = "disabled";
-    const string PAGE_EXCLUDE_ATT = "toc";
+    const string PAGE_TOC_ATT = "toc";
     const string PAGE_ORDER_ATT = "order";
 
     var menu = NavigationMenuHelper.BuildPredefinedMenu(MENU_OPT, Model.Site, Model.Data)?.ToList();
@@ -69,10 +69,11 @@ root-page:
 
         foreach (var menuPage in orderedPages)
         {
-            var includeToc = !menuPage.Data.ContainsKey(PAGE_EXCLUDE_ATT) || menuPage.Data.Get<bool>(PAGE_EXCLUDE_ATT);
+            var forceIncludeToc = menuPage.Data.ContainsKey(PAGE_TOC_ATT) && menuPage.Data.Get<bool>(PAGE_TOC_ATT);
+            var includeToc = !menuPage.Data.ContainsKey(PAGE_TOC_ATT) || menuPage.Data.Get<bool>(PAGE_TOC_ATT);
             var includeSitemap = !menuPage.Data.ContainsKey("sitemap") || menuPage.Data.Get<bool>("sitemap");
 
-            if (includeToc && includeSitemap)
+            if (forceIncludeToc || (includeToc && includeSitemap))
             {
                 var entryId = "";
 

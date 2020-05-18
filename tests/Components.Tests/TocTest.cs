@@ -141,6 +141,18 @@ namespace Components.Tests
             var site = ComponentsTest.Instance.NewSite("<div>\r\n{% toc %}\r\n</div>", INCLUDE_PATH);
             site.MainPage.SubPages.Add(new PageMock("SubPage1", "", ComponentsTest.Instance.GetData<Metadata>("title: sp1\r\ntoc: false")));
             site.MainPage.SubPages.Add(new PageMock("SubPage2", "", ComponentsTest.Instance.GetData<Metadata>("title: sp2")));
+            site.MainPage.SubPages.Add(new PageMock("SubPage2", "", ComponentsTest.Instance.GetData<Metadata>("title: sp2\r\nsitemap: false")));
+
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
+
+            Assert.AreEqual(Resources.toc8, res);
+        }
+
+        [Test]
+        public async Task ForceIncludePageTest()
+        {
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% toc %}\r\n</div>", INCLUDE_PATH);
+            site.MainPage.SubPages.Add(new PageMock("SubPage2", "", ComponentsTest.Instance.GetData<Metadata>("title: sp2\r\nsitemap: false\r\ntoc: true")));
 
             var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 

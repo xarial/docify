@@ -73,7 +73,9 @@ upper-case: false
 
             var activeClassName = isActive ? "active" : "not-active";
             html.AppendLine($"<li class=\"menu-item {activeClassName}\">");
-            html.AppendLine($"<a href=\"{menuPageUrl}\">{GetMenuTitle(menuPage)}</a>");
+
+            var href = !string.IsNullOrEmpty(menuPageUrl) ? $" href=\"{menuPageUrl}\"" : "";
+            html.AppendLine($"<a{href}>{GetMenuTitle(menuPage)}</a>");
 
             if (menuPage.SubPages.Any())
             {

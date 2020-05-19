@@ -6,6 +6,7 @@
 //*********************************************************************
 
 using NUnit.Framework;
+using System;
 using Xarial.Docify.Lib.Plugins;
 using Xarial.Docify.Lib.Plugins.Helpers;
 
@@ -284,6 +285,31 @@ namespace Plugins.Tests
                 });
 
             Assert.AreEqual(SnippetLocation_e.Middle, res1[0].Location);
+        }
+
+        [Test]
+        public void SelectMidRegions()
+        {
+            var res = CodeSnippetHelper.Select("'---Reg1\r\nline1\r\nline2\r\n'---\r\n \r\n'--- Reg2\r\nline3\r\nline4\r\n'---\r\n \r\n'--- Reg3\r\nline5\r\nline6\r\n'---\r\nfree text", "vb", new CodeSelectorOptions()
+            {
+                Regions = new string[] { "Reg1", "Reg3" }
+            });
+
+            Assert.AreEqual(2, res.Length);
+            Assert.AreEqual("line1\r\nline2", res[0].Code);
+            Assert.AreEqual("line5\r\nline6", res[1].Code);
+        }
+
+        [Test]
+        public void OpenRegionTest()
+        {
+            Assert.Throws<Exception>(() => 
+            {
+                var res = CodeSnippetHelper.Select("'---Reg1\r\nline1\r\n'---\r\n \r\n'--- Reg2\r\nline2\r\n'----\r\n'--- Reg3\r\nline3\r\n'---\r\nfree text", "vb", new CodeSelectorOptions()
+                {
+                    Regions = new string[] { "Reg1", "Reg2", "Reg3" }
+                });
+            });
         }
     }
 }

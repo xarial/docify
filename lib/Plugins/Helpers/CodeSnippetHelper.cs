@@ -271,6 +271,11 @@ namespace Xarial.Docify.Lib.Plugins.Helpers
                 }
             }
 
+            if (isRecordingRegion) 
+            {
+                throw new Exception("Region is not closed");
+            }
+
             if (!inner) 
             {
                 FlushCurrentGroup();

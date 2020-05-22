@@ -40,16 +40,6 @@ stages:
           solution: 'src\CLI\CLI.csproj'
           configuration: '$(BuildConfiguration)'
 
-      - task: codesigning@2
-        displayName: 'Signing .exe files'
-        inputs:
-          secureFileId: xarial-code-signing.pfx
-          signCertPassword: $(CODE_SIGN_CERT_PWD)
-          files: 'src/CLI/**/*.exe'
-          timeServer: 'http://timestamp.comodoca.com'
-          hashingAlgorithm: 'SHA256'
-          description: 'Docify'
-
       - task: DotNetCoreCLI@2
         inputs:
           command: custom
@@ -70,31 +60,98 @@ stages:
             !**\obj\**
           configuration: '$(BuildConfiguration)'
 
-      - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/build-pipelne'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+      - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest')) }}:
         - task: VSBuild@1
           displayName: 'Build production version'
           inputs:
             solution: 'src\CLI\CLI.csproj'
             configuration: '$(BuildConfiguration)'
             clean: true
-      
-      - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/build-pipelne'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-        - task: codesigning@2
-          displayName: 'Signing .exe files'
-          inputs:
-            secureFileId: xarial-code-signing.pfx
-            signCertPassword: $(CODE_SIGN_CERT_PWD)
-            files: 'src/CLI/**/*.exe'
-            timeServer: 'http://timestamp.comodoca.com'
-            hashingAlgorithm: 'SHA256'
-            description: 'Docify'
 
-      - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/build-pipelne'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+      - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest')) }}:
         - task: DotNetCoreCLI@2
           inputs:
             command: custom
             custom: pack
-            arguments: src/CLI/CLI.csproj --output $(Build.ArtifactStagingDirectory)/packages/prod --no-build /p:Configuration=$(BuildConfiguration)
+            arguments: src/CLI/CLI.csproj --output $(Build.ArtifactStagingDirectory)/packages/release --no-build /p:Configuration=$(BuildConfiguration)
       
       - publish: '$(Build.ArtifactStagingDirectory)/packages'
         artifact: 'packages'
+
+- stage: 'PublishPreviewNuGetPackage'
+  displayName: 'Publish Preview NuGet Package to xarial nuget feed'
+  dependsOn: 'Build'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'), ne(variables['Build.Reason'], 'PullRequest'))
+  jobs:
+  - deployment:
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: preview
+    strategy: 
+        runOnce:
+          deploy:
+            steps:
+            - checkout: none
+
+            - download: current
+              artifact: packages
+
+            - task: NuGetCommand@2
+              displayName: 'Push NuGet Package'
+              inputs:
+                command: 'push'
+                packagesToPush: '$(Pipeline.Workspace)/packages/preview/*.nupkg'
+                nuGetFeedType: 'internal'
+                publishVstsFeed: 'xarial'
+
+- stage: 'PublishPreReleaseNuGetPackage'
+  displayName: 'Publish Preview NuGet Package to xarial nuget feed'
+  dependsOn: 'Build'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest'))
+  jobs:
+  - deployment:
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: preview
+    strategy: 
+        runOnce:
+          deploy:
+            steps:
+            - checkout: none
+
+            - download: current
+              artifact: packages
+
+            - task: NuGetCommand@2
+              displayName: 'Push NuGet Package'
+              inputs:
+                command: 'push'
+                packagesToPush: '$(Pipeline.Workspace)/packages/release/*.nupkg'
+                nuGetFeedType: 'internal'
+                publishVstsFeed: 'xarial'
+
+- stage: 'PublishProductionNuGetPackage'
+  displayName: 'Publish Preview NuGet Package to xarial nuget feed'
+  dependsOn: 'Build'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest'))
+  jobs:
+  - deployment:
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: production
+    strategy: 
+        runOnce:
+          deploy:
+            steps:
+            - checkout: none
+
+            - download: current
+              artifact: packages
+
+            - task: NuGetCommand@2
+              displayName: 'Push NuGet Package'
+              inputs:
+                command: 'push'
+                packagesToPush: '$(Pipeline.Workspace)/packages/release/*.nupkg'
+                nuGetFeedType: 'external'
+                publishFeedCredentials: 'Nuget.org'

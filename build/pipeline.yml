@@ -44,7 +44,7 @@ stages:
         inputs:
           command: pack
           projects: src/CLI/CLI.csproj
-          arguments: --version-suffix $(Build.BuildId) --output $(System.DefaultWorkingDirectory)\build\preview
+          arguments: --version-suffix $(Build.BuildId) --output $(System.DefaultWorkingDirectory)/packages/preview
       
       - task: VSBuild@1
         displayName: 'Build test projects'
@@ -65,7 +65,7 @@ stages:
       - task: CopyFiles@2
         displayName: 'Copy Nuget Package'
         inputs:
-          SourceFolder: '$(system.defaultworkingdirectory)/build'
+          SourceFolder: '$(system.defaultworkingdirectory)/packages'
           Contents: '**\*.nupkg'
           TargetFolder: '$(Build.ArtifactStagingDirectory)/packages'
       

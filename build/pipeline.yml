@@ -23,13 +23,15 @@ stages:
         - visualstudio
 
     steps:
-      - task: NuGetToolInstaller@0
-        displayName: 'Use NuGet'
-
-      - task: NuGetCommand@2
+      - task: UseDotNet@2
+        inputs:
+          packageType: 'sdk'
+        
+      - task: DotNetCoreCLI@2
         displayName: 'NuGet restore'
         inputs:
-          restoreSolution: '**\*.sln'
+          command: 'restore'
+          projects: '**\*.sln'
 
       - task: VSBuild@1
         displayName: 'Build preview version'

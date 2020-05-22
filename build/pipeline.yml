@@ -43,8 +43,8 @@ stages:
       - task: DotNetCoreCLI@2
         inputs:
           command: pack
-          projects: src\CLI\CLI.csproj
-          arguments: -Suffix $(Build.BuildId) -OutputDirectory $(System.DefaultWorkingDirectory)\build\preview
+          projects: src/CLI/CLI.csproj
+          arguments: --version-suffix $(Build.BuildId) --output $(System.DefaultWorkingDirectory)\build\preview
       
       - task: VSBuild@1
         displayName: 'Build test projects'

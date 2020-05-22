@@ -16,5 +16,5 @@
     <ProjectReference Include="..\..\src\Base\Base.csproj" />
     <ProjectReference Include="..\..\lib\Plugins\Plugins.csproj" />
   </ItemGroup>
-
+  
 </Project>

@@ -55,3 +55,9 @@ pre.jagged {
 .code-tab button.active {
     background-color: #ccc;
 }
+
+.code-snippet-container {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+}

@@ -1,0 +1,70 @@
+trigger:
+  branches:
+    include:
+    - master
+    - dev
+
+name: '$(Date:yyyyMMdd).$(Rev:r)[$(BuildID)]'
+
+stages:
+
+- stage: 'Build'
+  variables:
+    buildConfiguration: 'Release'
+    buildPlatform: 'Any CPU'
+
+  jobs:
+  - job:
+    pool:
+      name: 'Azure Pipelines'
+      vmImage: windows-latest
+      demands:
+        - msbuild
+        - visualstudio
+
+    steps:
+      - task: NuGetToolInstaller@0
+        displayName: 'Use NuGet'
+
+      - task: NuGetCommand@2
+        displayName: 'NuGet restore'
+        inputs:
+          restoreSolution: '**\*.sln'
+
+      - task: VSBuild@1
+        displayName: 'Build preview version'
+        inputs:
+          solution: 'src\CLI\CLI.csproj'
+          platform: '$(BuildPlatform)'
+          configuration: '$(BuildConfiguration)'
+
+      - task: NuGetCommand@2
+        inputs:
+          command: custom
+          arguments: pack src\CLI\CLI.csproj -Suffix $(Build.BuildId) -OutputDirectory $(System.DefaultWorkingDirectory)\build\preview
+            
+      - task: VSBuild@1
+        displayName: 'Build test projects'
+        inputs:
+            solution: 'tests\*.Tests\*.csproj'
+            platform: '$(BuildPlatform)'
+            configuration: '$(BuildConfiguration)'
+            
+      - task: VSTest@2
+        displayName: 'Unit test'
+        inputs:
+          testAssemblyVer2: |
+            tests\_build\*\*.Tests.dll
+            !**\obj\**
+          platform: '$(BuildPlatform)'
+          configuration: '$(BuildConfiguration)'
+            
+      - task: CopyFiles@2
+        displayName: 'Copy Nuget Package'
+        inputs:
+          SourceFolder: '$(system.defaultworkingdirectory)/build'
+          Contents: '**\*.nupkg'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)/packages'
+      
+      - publish: '$(Build.ArtifactStagingDirectory)/packages'
+        artifact: 'packages'

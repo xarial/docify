@@ -17,4 +17,6 @@
     <ProjectReference Include="..\..\lib\Plugins\Plugins.csproj" />
   </ItemGroup>
 
+  <Import Project="$(SolutionDir)common\common.tests.props" />
+  
 </Project>

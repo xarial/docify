@@ -17,4 +17,6 @@
     <ProjectReference Include="..\Base\Base.csproj" />
   </ItemGroup>
 
+  <Import Project="$(SolutionDir)common\common.props" />
+  
 </Project>

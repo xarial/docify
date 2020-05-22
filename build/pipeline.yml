@@ -10,7 +10,9 @@ stages:
 
 - stage: 'Build'
   variables:
-    buildConfiguration: 'Release'
+  - group: build-vars
+  - name: buildConfiguration
+    value: Release
 
   jobs:
   - job:

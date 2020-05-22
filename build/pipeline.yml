@@ -30,7 +30,7 @@ stages:
       - task: DotNetCoreCLI@2
         displayName: 'NuGet restore'
         inputs:
-          command: 'restore'
+          command: restore
           projects: '**\*.sln'
 
       - task: VSBuild@1
@@ -42,8 +42,9 @@ stages:
 
       - task: DotNetCoreCLI@2
         inputs:
-          command: 'custom'
-          arguments: pack src\CLI\CLI.csproj -Suffix $(Build.BuildId) -OutputDirectory $(System.DefaultWorkingDirectory)\build\preview
+          command: pack
+          projects: src\CLI\CLI.csproj
+          arguments: -Suffix $(Build.BuildId) -OutputDirectory $(System.DefaultWorkingDirectory)\build\preview
       
       - task: VSBuild@1
         displayName: 'Build test projects'

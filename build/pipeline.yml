@@ -11,7 +11,6 @@ stages:
 - stage: 'Build'
   variables:
     buildConfiguration: 'Release'
-    buildPlatform: 'Any CPU'
 
   jobs:
   - job:
@@ -37,7 +36,6 @@ stages:
         displayName: 'Build preview version'
         inputs:
           solution: 'src\CLI\CLI.csproj'
-          platform: '$(BuildPlatform)'
           configuration: '$(BuildConfiguration)'
 
       - task: DotNetCoreCLI@2
@@ -50,7 +48,6 @@ stages:
         displayName: 'Build test projects'
         inputs:
             solution: 'tests\*.Tests\*.csproj'
-            platform: '$(BuildPlatform)'
             configuration: '$(BuildConfiguration)'
             
       - task: VSTest@2
@@ -59,7 +56,6 @@ stages:
           testAssemblyVer2: |
             tests\**\*.Tests.dll
             !**\obj\**
-          platform: '$(BuildPlatform)'
           configuration: '$(BuildConfiguration)'
       
       - publish: '$(Build.ArtifactStagingDirectory)/packages'

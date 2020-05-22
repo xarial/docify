@@ -42,8 +42,11 @@ stages:
 
       - task: DotNetCoreCLI@2
         inputs:
-          command: custom
-          custom: pack src/CLI/CLI.csproj --version-suffix $(Build.BuildId) --output $(System.DefaultWorkingDirectory)/packages/preview
+          command: pack
+          packagesToPack: src/CLI/CLI.csproj
+          arguments: --version-suffix $(Build.BuildId)
+          nobuild: true
+          outputDir: '$(Build.ArtifactStagingDirectory)/packages/preview'
       
       - task: VSBuild@1
         displayName: 'Build test projects'
@@ -60,13 +63,6 @@ stages:
             !**\obj\**
           platform: '$(BuildPlatform)'
           configuration: '$(BuildConfiguration)'
-            
-      - task: CopyFiles@2
-        displayName: 'Copy Nuget Package'
-        inputs:
-          SourceFolder: '$(system.defaultworkingdirectory)/packages'
-          Contents: '**\*.nupkg'
-          TargetFolder: '$(Build.ArtifactStagingDirectory)/packages'
       
       - publish: '$(Build.ArtifactStagingDirectory)/packages'
         artifact: 'packages'

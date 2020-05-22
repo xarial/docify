@@ -45,9 +45,9 @@
   </ItemGroup>
 
   <ItemGroup>
-   <LibDir Include="$(SolutionDir)\lib\Components\Lib\**\*" TargetPath="$(OutDir)\Components\%(RecursiveDir)%(Filename)%(Extension)" />
-	 <LibDir Include="$(SolutionDir)\lib\Themes\Lib\**\*" TargetPath="$(OutDir)\Themes\%(RecursiveDir)%(Filename)%(Extension)" />
-   <LibDir Include="$(SolutionDir)\lib\Plugins\$(OutDir)\**\*" TargetPath="$(OutDir)\Plugins\%(RecursiveDir)%(Filename)%(Extension)" />
+   <LibDir Include="..\..\lib\Components\Lib\**\*" TargetPath="$(OutDir)\Components\%(RecursiveDir)%(Filename)%(Extension)" />
+	 <LibDir Include="..\..\lib\Themes\Lib\**\*" TargetPath="$(OutDir)\Themes\%(RecursiveDir)%(Filename)%(Extension)" />
+   <LibDir Include="..\..\lib\Plugins\$(OutDir)\**\*" TargetPath="$(OutDir)\Plugins\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <!--<Target Name="RemoveLib" BeforeTargets="CopyLib">
     <RemoveDir ContinueOnError="true" Directories="$(OutDir)\Components;$(OutDir)\Themes;$(OutDir)\Plugins" />
@@ -56,5 +56,5 @@
     <Copy SourceFiles="@(LibDir)" DestinationFiles="@(LibDir->'%(TargetPath)')" OverwriteReadOnlyFiles="true" />
   </Target>-->
   
-  <Import Project="$(SolutionDir)common\common.props" />
+  <Import Project="..\..\common\common.props" />
 </Project>

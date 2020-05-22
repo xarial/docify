@@ -40,11 +40,11 @@ stages:
           platform: '$(BuildPlatform)'
           configuration: '$(BuildConfiguration)'
 
-      - task: NuGetCommand@2
+      - task: DotNetCoreCLI@2
         inputs:
-          command: custom
+          command: 'custom'
           arguments: pack src\CLI\CLI.csproj -Suffix $(Build.BuildId) -OutputDirectory $(System.DefaultWorkingDirectory)\build\preview
-            
+      
       - task: VSBuild@1
         displayName: 'Build test projects'
         inputs:

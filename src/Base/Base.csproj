@@ -9,6 +9,6 @@
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.1.0" />
   </ItemGroup>
 
-  <Import Project="$(SolutionDir)common\common.props" />
+  <Import Project="..\..\common\common.props" />
   
 </Project>

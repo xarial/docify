@@ -20,6 +20,6 @@
     <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
   </ItemGroup>
 
-  <Import Project="$(SolutionDir)common\common.tests.props" />
+  <Import Project="..\..\common\common.tests.props" />
   
 </Project>

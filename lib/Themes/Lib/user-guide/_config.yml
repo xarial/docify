@@ -1,0 +1,9 @@
+﻿theme: base
+components:
+  - $
+  - toc
+  - disqus
+plugins:
+  - $
+  - code-syntax-highlighter
+  - code-snippet

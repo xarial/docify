@@ -1,0 +1,19 @@
+﻿.social-share-link {
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 10px;
+    transition: transform .2s;
+}
+
+.social-share-link:hover {
+    transform: scale(1.2);
+}
+
+.social-share-list a {
+    list-style: none;
+    margin-left: 5px;
+    cursor: pointer;
+    text-decoration: none;
+}

@@ -1,0 +1,13 @@
+﻿theme: base
+components:
+  - $
+  - toc
+  - disqus
+plugins:
+  - $
+  - code-syntax-highlighter
+  - code-snippet
+^code-syntax-highlighter:
+  embed-style: false
+$toc:
+  home-menu-title: Home

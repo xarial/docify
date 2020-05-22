@@ -1,0 +1,19 @@
+<p><title>p1</title>
+<meta name="generator" content="Docify" />
+<meta name="description" />
+<link rel="canonical" href="www.example.com/Page1/" />
+    <meta property="og:title" content="p1" />
+    <meta property="og:locale" />
+    <meta property="og:description" />
+    <meta property="og:url" content="www.example.com/Page1/" />
+    <meta property="og:site_name" />
+    <meta property="og:image" content="www.example.com/Page1/img2.png" />
+    <meta name="twitter:card" />
+    <meta name="twitter:site" content="www.example.com/Page1/" />
+    <meta name="twitter:title" content="p1" />
+    <meta name="twitter:description" />
+    <meta name="twitter:image" content="www.example.com/Page1/img2.png" />
+    <script type="application/ld+json">
+        {"url":"www.example.com/Page1/","description":null,"headline":"d1","image":"www.example.com/Page1/img2.png","@type":"WebPage","@context":"http://schema.org"}
+    </script>
+</p>

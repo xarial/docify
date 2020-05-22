@@ -1,0 +1,17 @@
+﻿---
+layout: default
+---
+@using RazorLight
+@using System
+@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>
+<article class="post">
+    <header>
+        <h1 class="page-title">@Xarial.Docify.Lib.Tools.PageHelper.GetTitle(Model.Page, Model.Site.Configuration)</h1>
+        <a href="@Model.Page.FullUrl#disqus_thread" data-disqus-identifier="@Model.Page.FullUrl"></a>
+        {% social-share %}
+    </header>
+    <div>
+        {{ content }}
+    </div>
+    {% disqus %}
+</article>

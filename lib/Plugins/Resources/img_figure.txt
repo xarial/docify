@@ -1,0 +1,6 @@
+<figure>
+   <a href="{1}" imageanchor="1">
+   {0}
+   <figcaption>{2}</figcaption>
+   </a>
+</figure>

@@ -1,0 +1,163 @@
+﻿.layout-header {
+    grid-area: header;
+}
+
+.layout-left-pane {
+    grid-area: left;
+}
+
+.layout-main {
+    grid-area: main;
+    min-height: 800px;
+}
+
+.layout-right-pane {
+    grid-area: right;
+}
+
+.layout {
+    display: grid;
+    grid-template-areas: 'none1 header none2' 'left main right';
+    grid-template-columns: 250px auto 250px;
+    grid-gap: 10px;
+    padding: 10px 200px 10px 200px;
+}
+
+.page-title {
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+.page-date {
+    color: gray;
+    margin-bottom: 20px;
+}
+
+.header-icon {
+    cursor: pointer;
+}
+
+.post-preview-icon {
+    grid-area: icon;
+}
+
+.post-preview-date {
+    color: gray;
+}
+
+.post-preview-title {
+    grid-area: title;
+}
+
+.post-preview-description {
+    grid-area: description;
+}
+
+.post-preview {
+    display: grid;
+    grid-template-areas: 'icon title' 'icon description';
+    grid-template-columns: max-content auto;
+    grid-gap: 10px;
+    padding: 10px 10px 50px 10px;
+    justify-content: left;
+    align-items: center;
+}
+
+#mc-embedded-subscribe-form {
+    background-color: gray;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0px 0px 5px gray;
+}
+
+#mc_embed_signup_scroll {
+    margin: 10px;
+}
+
+.subs-title {
+    text-align: center;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    font-size: large;
+    margin: 10px;
+}
+
+#mce-EMAIL {
+    background-color: white;
+    color: darkgray;
+    height: 100%;
+    border: 1px solid darkgray;
+    padding: 15px 0px;
+    text-align: center;
+    height: 18px;
+    width: 100%;
+}
+
+#mc-embedded-subscribe {
+    background-color: rgb(243, 93, 92);
+    border: 1px solid rgb(215, 84, 83);
+    color: white;
+    width: 100%;
+    font: bold 16px "trebuchet MS", "Tahoma";
+    padding: 15px;
+    text-align: center;
+    height: 50px;
+    margin: 10px auto;
+    cursor: pointer;
+}
+
+#mc-embedded-subscribe:hover {
+    background-color: red;
+    border: 1px solid red;
+}
+
+.tipue_search_group {
+    text-align: right;
+    margin: 5px 0px;
+}
+
+.tipue_search_button {
+    float: right;
+    margin: 3px;
+}
+
+#tipue_search_input {
+    width: 100%;
+    margin: 2px;
+}
+
+@media screen and (max-width: 1500px) and (min-width: 1200px) {
+    .layout {
+        padding: 10px 100px 10px 100px;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .layout {
+        grid-template-areas: 'header' 'left' 'main' 'right';
+        grid-template-columns: auto;
+        padding: 10px;
+    }
+
+    .layout-main {
+        min-height: 400px;
+        min-width: 0;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .post-preview {
+        grid-template-areas: 'icon' 'title' 'description';
+        grid-template-columns: auto;
+    }
+
+    .post-preview-icon {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .post-preview-title {
+        text-align: center;
+    }
+}

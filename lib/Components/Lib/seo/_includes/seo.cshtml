@@ -1,0 +1,90 @@
+﻿---
+og: true
+twitter: true
+linkedin: true
+---
+@using RazorLight
+@using Xarial.Docify.Lib.Tools
+@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
+@functions{
+    public class LinkedInMetadata
+    {
+        public string url { get; set; }
+        public string description { get; set; }
+        public string headline { get; set; }
+        public string image { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("@type")]
+        public string type { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("@context")]
+        public string context { get; set; }
+    }
+}
+@{
+    var title = Model.Page.Data.GetOrDefault<string>("title");
+    var description = Model.Page.Data.GetOrDefault<string>("description");
+    var lang = PageHelper.GetLanguage(Model.Site, Model.Page);
+    var image = Model.Page.Data.GetOrDefault<string>("image-png");
+
+    if (string.IsNullOrEmpty(image)) 
+    { 
+        image = Model.Page.Data.GetOrDefault<string>("image");
+    }
+
+    if (!string.IsNullOrEmpty(image))
+    {
+        if (!image.StartsWith("/"))
+        {
+            image = Model.Page.FullUrl.TrimEnd('/') + "/" + image;
+        }
+    }
+
+    var siteTitle = Model.Site.MainPage.Data.GetOrDefault<string>("caption");
+    var siteDescription = Model.Site.MainPage.Data.GetOrDefault<string>("description");
+
+    var og = Model.Data.Get<bool>("og");
+    var twitter = Model.Data.Get<bool>("twitter");
+    var linkedin = Model.Data.Get<bool>("linkedin");
+
+    var ld = "";
+
+    if (linkedin)
+    {
+        ld = System.Text.Json.JsonSerializer.Serialize(
+            new LinkedInMetadata
+            {
+                url = Model.Page.FullUrl,
+                description = description,
+                headline = siteDescription,
+                image = image,
+                type = "WebPage",
+                context = "http://schema.org"
+            }).ToString();
+    }
+}
+<title>@title</title>
+<meta name="generator" content="Docify" />
+<meta name="description" content="@description" />
+<link rel="canonical" href="@Model.Page.FullUrl" />
+@if (og)
+{
+    <meta property="og:title" content="@title" />
+    <meta property="og:locale" content="@lang" />
+    <meta property="og:description" content="@description" />
+    <meta property="og:url" content="@Model.Page.FullUrl" />
+    <meta property="og:site_name" content="@siteTitle" />
+    <meta property="og:image" content="@image" />
+}
+@if (twitter)
+{
+    <meta name="twitter:card" content="@description" />
+    <meta name="twitter:site" content="@Model.Page.FullUrl" />
+    <meta name="twitter:title" content="@title" />
+    <meta name="twitter:description" content="@description" />
+    <meta name="twitter:image" content="@image" />
+}
+@if (linkedin)
+{
+    <script type="application/ld+json">
+        @Raw(@ld)
+    </script>
+}

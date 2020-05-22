@@ -1,0 +1,4 @@
+﻿theme: base
+components:
+  - $
+  - nav

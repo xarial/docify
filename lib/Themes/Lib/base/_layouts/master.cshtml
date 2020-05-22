@@ -1,0 +1,45 @@
+﻿@using RazorLight
+@using System.Collections.Generic
+@using Xarial.Docify.Lib.Tools
+@using System.Linq
+@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>
+<!DOCTYPE html>
+<html lang="{% page-lang %}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="@string.Format("{0}/{1}", Model.Site.BaseUrl, "favicon.ico")">
+    <link rel="alternate" type="application/rss+xml" title="@PageHelper.GetTitle(Model.Site.MainPage, null) - Feed" href="@Model.Site.BaseUrl/feed.xml">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <link rel="stylesheet" type="text/css" href="/assets/styles/social-share.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/styles/youtube.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/styles/base.css" />
+    @{
+        var styles = Model.Page.Data.GetOrDefault<IEnumerable<object>>("styles");
+        if (styles?.Any() == true)
+        {
+            foreach (var style in styles)
+            {
+                <link rel="stylesheet" type="text/css" href="@style" />
+            }
+        }
+
+        var scripts = Model.Page.Data.GetOrDefault<IEnumerable<object>>("scripts");
+        if (scripts?.Any() == true)
+        {
+            foreach (var script in scripts)
+            {
+                <script src="@script"></script>
+            }
+        }
+    }
+    {% seo %}
+    {% layout::head %}
+    {% google-analytics %}
+    {% cookie-consent %}
+</head>
+<body>
+{{ content }}
+</body>
+{% layout::foot %}
+</html>

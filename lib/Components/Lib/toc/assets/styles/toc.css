@@ -1,0 +1,50 @@
+.pointer {
+    cursor: pointer;
+}
+
+.tree-toc-node {
+    padding: 4px;
+}
+
+.toc-container {
+    padding-left: 0;
+    margin-bottom: 0;
+    margin-left: 30px;
+    list-style: none;
+}
+
+.collapse {
+    display: none;
+  }
+
+.collapse.in {
+    display: block;
+  }
+
+.toc-entry.active {
+    font-weight: bold;
+  }
+
+span.unavailable {
+    color: grey;
+    font-style: italic;
+    cursor: default
+  }
+
+.article {
+    background-image: url('../icons/article.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.section {
+    background-image: url('../icons/section.svg');
+    background-repeat: no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-size: cover;
+}

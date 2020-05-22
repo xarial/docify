@@ -1,0 +1,10 @@
+<div>
+<div class="social-share-list">
+<i>Share</i>
+<a href="https://www.linkedin.com/shareArticle?mini=true&url=www.example.com" onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn">
+<svg alt="Share on LinkedIn" class="social-share-link" fill="#0077B5" xmlns:xlink="http://www.w3.org/1999/xlink">
+<use xlink:href="/assets/images/social-share.svg#linkedin" />
+</svg>
+</a>
+</div>
+</div>

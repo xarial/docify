@@ -1,0 +1,146 @@
+﻿---
+title-attribute: caption
+home-menu: true
+menu:
+home-menu-title: Welcome
+root-page:
+---
+@using RazorLight
+@using System
+@using System.Linq
+@using System.Collections.Generic
+@using Xarial.Docify.Lib.Tools
+@using Xarial.Docify.Base.Context
+@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
+@{
+    const string MENU_OPT = "menu";
+    const string HOME_MENU_OPT = "home-menu";
+    const string PAGE_DISABLED_ATT = "disabled";
+    const string PAGE_TOC_ATT = "toc";
+    const string PAGE_ORDER_ATT = "order";
+
+    var menu = NavigationMenuHelper.BuildPredefinedMenu(MENU_OPT, Model.Site, Model.Data)?.ToList();
+
+    IContextPage homePage = null;
+    IContextPage rootPage = NavigationMenuHelper.GetRootPage(Model);
+
+    if (menu == null)
+    {
+        menu = rootPage.SubPages.ToList();
+    }
+
+    if (Model.Data.GetOrDefault<bool>(HOME_MENU_OPT))
+    {
+        homePage = NavigationMenuHelper.BuildPage(rootPage, Model.Data, "Home");
+    }
+
+    var homeMenuTitle = Model.Data.Get<string>("home-menu-title");
+
+    int idCounter = 0;
+
+    bool IsActive(IContextPage page)
+    {
+        return string.Equals(page.Url, Model.Page?.Url, StringComparison.CurrentCultureIgnoreCase);
+    }
+
+    string GetActiveAttribute(IContextPage page)
+    {
+        return IsActive(page) ? " active" : "";
+    }
+
+    string RenderToc(IEnumerable<IContextPage> pages, out bool hasActive, string parentId = "")
+    {
+        var html = new System.Text.StringBuilder();
+
+        hasActive = false;
+
+        var orderedPages = pages.OrderBy(p =>
+        {
+            int order = -1;
+            if (p.Data.TryGet<int>(PAGE_ORDER_ATT, out order))
+            {
+                return order;
+            }
+            else
+            {
+                return int.MaxValue;
+            }
+        });
+
+        foreach (var menuPage in orderedPages)
+        {
+            var forceIncludeToc = menuPage.Data.ContainsKey(PAGE_TOC_ATT) && menuPage.Data.Get<bool>(PAGE_TOC_ATT);
+            var includeToc = !menuPage.Data.ContainsKey(PAGE_TOC_ATT) || menuPage.Data.Get<bool>(PAGE_TOC_ATT);
+            var includeSitemap = !menuPage.Data.ContainsKey("sitemap") || menuPage.Data.Get<bool>("sitemap");
+
+            if (forceIncludeToc || (includeToc && includeSitemap))
+            {
+                var entryId = "";
+
+                if (menuPage.SubPages.Any())
+                {
+                    entryId = $"n{++idCounter}";
+                }
+
+                html.AppendLine("<li>");
+
+                var onClick = menuPage.SubPages.Any() ? $"onclick=\"javascript:toggle({entryId}Span, {entryId});\"" : "";
+                html.AppendLine($"<div class=\"tree-toc-node pointer\" {onClick}>");
+
+                if (menuPage.SubPages.Any())
+                {
+                    html.AppendLine($"<span class=\"expbutton\" id=\"{entryId}Span\">&#9656;</span>");
+                }
+
+                var pageType = menuPage.SubPages.Any() ? "section" : "article";
+                html.AppendLine($"<span class=\"{pageType}\"></span>");
+                var title = PageHelper.GetCaption(menuPage, Model.Data);
+
+                if (!menuPage.Data.GetOrDefault<bool>(PAGE_DISABLED_ATT))
+                {
+                    html.AppendLine($"<a href=\"{menuPage.Url}\" class=\"toc-entry{GetActiveAttribute(menuPage)}\">{title}</a>");
+                }
+                else
+                {
+                    html.AppendLine($"<span class=\"unavailable\">{title}</span>");
+                }
+                html.AppendLine("</li>");
+
+                var isActive = IsActive(menuPage);
+
+                if (isActive)
+                {
+                    hasActive = true;
+                }
+
+                if (menuPage.SubPages.Any())
+                {
+                    var hasChildActive = false;
+
+                    var toc = RenderToc(menuPage.SubPages, out hasChildActive, entryId);
+                    var exp = hasChildActive || isActive ? " in" : "";
+
+                    if (hasChildActive)
+                    {
+                        hasActive = true;
+                    }
+
+                    html.AppendLine($"<ul id=\"{entryId}\" class=\"toc-container collapse {exp}\">");
+                    html.AppendLine(toc);
+                    html.AppendLine("</ul>");
+                }
+            }
+        }
+
+        return html.ToString();
+    }
+}
+<div id="toc">
+    @if (homePage != null)
+    {
+        <a href="@homePage.Url" class="toc-entry @GetActiveAttribute(homePage)">@homeMenuTitle</a>
+    }
+    <ul style="margin: 0px" class="toc-container collapse in">
+        @Raw(RenderToc(menu, out bool _))
+    </ul>
+</div>

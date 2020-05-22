@@ -1,0 +1,32 @@
+﻿---
+traking-code:
+production-only: true
+---
+@using RazorLight
+@using System
+@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
+@{
+    string trackingCode = "";
+
+    var enable = Model.Data.Get<bool>("production-only") ? Model.Site.Configuration.Environment == Xarial.Docify.Base.Environment_e.Production : true;
+
+    if (enable)
+    {
+        trackingCode = Model.Data.GetOrDefault<string>("traking-code");
+
+        if (string.IsNullOrEmpty(trackingCode)) 
+        {
+            enable = false;
+        }
+    }
+}
+@if(enable)
+{
+<script async src="https://www.googletagmanager.com/gtag/js?id=@trackingCode"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', '@trackingCode');
+</script>
+}

@@ -1,0 +1,60 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RootNamespace>Xarial.Docify.CLI</RootNamespace>
+    <StartupObject>Xarial.Docify.CLI.Program</StartupObject>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <PackageId>Docify</PackageId>
+    <PackageProjectUrl>https://docify.net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/xarial/docify</RepositoryUrl>
+    <PackageTags>toolkit,settings,reflection</PackageTags>
+    <Description>Static site generator</Description>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconUrl>https://docify.net/icon.png</PackageIconUrl>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>docify</ToolCommandName>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="..\..\LICENSE.md" Link="LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\..\data\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath></OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.4" />
+    <PackageReference Include="CommandLineParser" Version="2.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\Tools\Tools.csproj" />
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+   <LibDir Include="..\..\lib\Components\Lib\**\*" TargetPath="$(OutDir)\Components\%(RecursiveDir)%(Filename)%(Extension)" />
+	 <LibDir Include="..\..\lib\Themes\Lib\**\*" TargetPath="$(OutDir)\Themes\%(RecursiveDir)%(Filename)%(Extension)" />
+   <LibDir Include="..\..\lib\Plugins\$(OutDir)\**\*" TargetPath="$(OutDir)\Plugins\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <!--<Target Name="RemoveLib" BeforeTargets="CopyLib">
+    <RemoveDir ContinueOnError="true" Directories="$(OutDir)\Components;$(OutDir)\Themes;$(OutDir)\Plugins" />
+  </Target>
+  <Target Name="CopyLib" AfterTargets="AfterBuild">
+    <Copy SourceFiles="@(LibDir)" DestinationFiles="@(LibDir->'%(TargetPath)')" OverwriteReadOnlyFiles="true" />
+  </Target>-->
+  
+  <Import Project="..\..\common\common.props" />
+</Project>

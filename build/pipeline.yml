@@ -75,8 +75,9 @@ stages:
             custom: pack
             arguments: src/CLI/CLI.csproj --output $(Build.ArtifactStagingDirectory)/packages/release --no-build /p:Configuration=$(BuildConfiguration)
       
-      - publish: '$(Build.ArtifactStagingDirectory)/packages'
-        artifact: 'packages'
+      - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+        - publish: '$(Build.ArtifactStagingDirectory)/packages'
+          artifact: 'packages'
 
 - stage: 'PublishPreviewNuGetPackage'
   displayName: 'Publish Preview NuGet Package to xarial nuget feed'

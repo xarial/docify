@@ -15,7 +15,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Tools\Tools.csproj" />
   </ItemGroup>
-
-  <Import Project="..\..\common\common.tests.props" />
   
 </Project>

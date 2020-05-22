@@ -1,8 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-     <OutputPath>$(SolutionDir)_build\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup>
     <VersionPrefix>0.1.0</VersionPrefix>
     <Authors>Xarial</Authors>
     <Company>Xarial Pty Limited</Company>

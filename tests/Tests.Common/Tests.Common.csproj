@@ -13,6 +13,5 @@
     <ProjectReference Include="..\..\src\CLI\CLI.csproj" />
     <ProjectReference Include="..\..\src\Core\Core.csproj" />
   </ItemGroup>
-
-  <Import Project="..\..\common\common.tests.props" />
+  
 </Project>

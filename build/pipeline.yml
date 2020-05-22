@@ -42,11 +42,9 @@ stages:
 
       - task: DotNetCoreCLI@2
         inputs:
-          command: pack
-          packagesToPack: src/CLI/CLI.csproj
-          arguments: --version-suffix $(Build.BuildId)
-          nobuild: true
-          outputDir: '$(Build.ArtifactStagingDirectory)/packages/preview'
+          command: custom
+          custom: pack
+          arguments: src/CLI/CLI.csproj --version-suffix $(Build.BuildId) --output $(Build.ArtifactStagingDirectory)/packages/preview --no-build /p:Configuration=$(BuildConfiguration)
       
       - task: VSBuild@1
         displayName: 'Build test projects'
@@ -59,7 +57,7 @@ stages:
         displayName: 'Unit test'
         inputs:
           testAssemblyVer2: |
-            tests\_build\*\*.Tests.dll
+            tests\**\*.Tests.dll
             !**\obj\**
           platform: '$(BuildPlatform)'
           configuration: '$(BuildConfiguration)'

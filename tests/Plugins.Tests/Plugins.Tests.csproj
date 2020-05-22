@@ -16,7 +16,5 @@
     <ProjectReference Include="..\..\src\Base\Base.csproj" />
     <ProjectReference Include="..\..\lib\Plugins\Plugins.csproj" />
   </ItemGroup>
-
-  <Import Project="..\..\common\common.tests.props" />
   
 </Project>

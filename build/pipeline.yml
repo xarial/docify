@@ -43,7 +43,7 @@ stages:
         inputs:
           secureFileId: xarial-code-signing.pfx
           signCertPassword: $(CODE_SIGN_CERT_PWD)
-          files: 'src/CLI/*.exe'
+          files: 'src/CLI/**/*.exe'
           timeServer: 'http://timestamp.comodoca.com'
           hashingAlgorithm: 'SHA256'
           description: 'Docify'
@@ -68,7 +68,7 @@ stages:
             !**\obj\**
           configuration: '$(BuildConfiguration)'
 
-      - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/build-pipeline'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+      - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/build-pipelne'), ne(variables['Build.Reason'], 'PullRequest')) }}:
         - task: VSBuild@1
           displayName: 'Build production version'
           inputs:
@@ -76,18 +76,18 @@ stages:
             configuration: '$(BuildConfiguration)'
             clean: true
       
-      - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/build-pipeline'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+      - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/build-pipelne'), ne(variables['Build.Reason'], 'PullRequest')) }}:
         - task: codesigning@2
           displayName: 'Signing .exe files'
           inputs:
             secureFileId: xarial-code-signing.pfx
             signCertPassword: $(CODE_SIGN_CERT_PWD)
-            files: 'src/CLI/*.exe'
+            files: 'src/CLI/**/*.exe'
             timeServer: 'http://timestamp.comodoca.com'
             hashingAlgorithm: 'SHA256'
             description: 'Docify'
 
-      - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/build-pipeline'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+      - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/build-pipelne'), ne(variables['Build.Reason'], 'PullRequest')) }}:
         - task: DotNetCoreCLI@2
           inputs:
             command: custom

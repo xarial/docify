@@ -32,13 +32,13 @@ namespace Xarial.Docify.Core.Compiler
         
         private const string NAME_PARAMS_SPLIT_SYMBOL = " ";
 
-        private readonly IContentTransformer m_Transformer;
+        private readonly IDynamicContentTransformer m_Transformer;
 
         private readonly PlaceholdersParser m_PlcParser;
 
         private readonly IIncludesHandlerExtension m_Ext;
 
-        public IncludesHandler(IContentTransformer transformer, IIncludesHandlerExtension ext) 
+        public IncludesHandler(IDynamicContentTransformer transformer, IIncludesHandlerExtension ext) 
         {
             m_Transformer = transformer;
             m_PlcParser = new PlaceholdersParser(START_TAG, END_TAG);
@@ -46,7 +46,7 @@ namespace Xarial.Docify.Core.Compiler
             m_Ext = ext;
         }
         
-        public async Task<string> Render(string name, IMetadata param, 
+        private async Task<string> Render(string name, IMetadata param, 
             ISite site, IPage page, string url)
         {
             var include = site.Includes.FirstOrDefault(i => string.Equals(i.Name,
@@ -60,7 +60,7 @@ namespace Xarial.Docify.Core.Compiler
                 data = data.Merge(include.Data);
 
                 return await m_Transformer.Transform(include.RawContent, include.Id,
-                    new IncludeContextModel(site, page, data, url));
+                    new ContextModel(site, page, data, url));
             }
             else 
             {
@@ -85,7 +85,7 @@ namespace Xarial.Docify.Core.Compiler
                 }
             }
 
-            //page can be null if the include used on asset file
+            //page can be null if the include used on asset file, check this as now page of asset is added so it should never be null
             if (page != null)
             {
                 param = param.Merge(GetData(page.Data, name));
@@ -96,7 +96,7 @@ namespace Xarial.Docify.Core.Compiler
             return param;
         }
 
-        public Task ParseParameters(string includeRawContent, out string name, out IMetadata param) 
+        private Task ParseParameters(string includeRawContent, out string name, out IMetadata param) 
         {
             includeRawContent = includeRawContent.Trim();
 
@@ -118,7 +118,7 @@ namespace Xarial.Docify.Core.Compiler
             return Task.CompletedTask;
         }
 
-        public async Task<string> ReplaceAll(string rawContent, ISite site, IPage page, string url)
+        public async Task<string> ResolveAll(string rawContent, ISite site, IPage page, string url)
         {
             var replacement = await m_PlcParser.ReplaceAsync(rawContent, async (string includeRawContent) => 
             {
@@ -128,7 +128,7 @@ namespace Xarial.Docify.Core.Compiler
                     IMetadata data;
                     await ParseParameters(includeRawContent, out name, out data);
                     var replace = await Render(name, data, site, page, url);
-                    return await ReplaceAll(replace, site, page, url);
+                    return await ResolveAll(replace, site, page, url);
                 }
                 catch(Exception ex)
                 {

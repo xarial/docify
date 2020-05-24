@@ -32,8 +32,14 @@ namespace Core.Tests
         {
             var layoutMock = new Mock<ILayoutParser>();
 
-            layoutMock.Setup(m => m.ContainsPlaceholder(It.IsAny<string>()))
-                .Returns<string>(c => c.Contains("_C_"));
+            layoutMock.Setup(m => m.ValidateLayout(It.IsAny<string>()))
+                .Callback<string>(c => 
+                {
+                    if (!c.Contains("_C_")) 
+                    {
+                        throw new Exception(); 
+                    }
+                });
 
             m_Composer = new BaseSiteComposer(layoutMock.Object, null, new Mock<IComposerExtension>().Object);
         }
@@ -138,7 +144,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
-            Assert.ThrowsAsync<LayoutMissingContentPlaceholderException>(() => m_Composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<InvalidLayoutException>(() => m_Composer.ComposeSite(src, ""));
         }
 
         [Test]

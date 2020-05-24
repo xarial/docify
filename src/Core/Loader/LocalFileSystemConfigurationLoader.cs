@@ -41,14 +41,14 @@ namespace Xarial.Docify.Core.Loader
 
         private readonly IFileSystem m_FileSystem;
         private readonly MetadataSerializer m_ConfigSerializer;
-        private readonly Environment_e m_Environment;
+        private readonly string m_Environment;
 
-        public LocalFileSystemConfigurationLoader(Environment_e env)
+        public LocalFileSystemConfigurationLoader(string env)
             : this(new FileSystem(), env)
         {
         }
 
-        public LocalFileSystemConfigurationLoader(IFileSystem fileSystem, Environment_e env) 
+        public LocalFileSystemConfigurationLoader(IFileSystem fileSystem, string env) 
         {
             m_FileSystem = fileSystem;
             m_ConfigSerializer = new MetadataSerializer();

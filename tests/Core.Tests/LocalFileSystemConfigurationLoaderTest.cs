@@ -35,7 +35,7 @@ namespace Core.Tests
             var fs = new MockFileSystem();
             fs.AddFile("C:\\site\\page.html", null);
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
 
             var conf = await confLoader.Load(Location.FromPath("C:\\site"));
 
@@ -49,7 +49,7 @@ namespace Core.Tests
             fs.AddFile("C:\\site\\page.html", null);
             fs.AddFile("C:\\site\\_config.yml", new MockFileData("components_dir: D:\\components\r\ncomponents:\r\n  - component1\r\n  - component2"));
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
 
             var conf = await confLoader.Load(Location.FromPath("C:\\site"));
 
@@ -68,7 +68,7 @@ namespace Core.Tests
             fs.AddFile("C:\\site\\page.html", null);
             fs.AddFile("C:\\site\\_config.yml", new MockFileData("plugins_dir: D:\\plugins\r\rplugins:\r\n  - plugin1\r\n  - plugin2"));
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
 
             var conf = await confLoader.Load(Location.FromPath("C:\\site"));
 
@@ -86,7 +86,7 @@ namespace Core.Tests
             fs.AddFile("C:\\site\\page.html", null);
             fs.AddFile("C:\\site\\_config.yml", new MockFileData("a1: val\r\nwork_dir: D:\\work\r\nthemes_dir: D:\\themes\r\ntheme: theme1"));
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, Xarial.Docify.Base.Environment_e.Test);
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
 
             var conf = await confLoader.Load(Location.FromPath("C:\\site"));
 
@@ -104,7 +104,7 @@ namespace Core.Tests
             var fs = new MockFileSystem();
             fs.AddFile("C:\\site\\page.html", null);
             
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
 
             var conf = await confLoader.Load(Location.FromPath("C:\\site"));
 
@@ -124,7 +124,7 @@ namespace Core.Tests
             fs.AddFile("C:\\site\\page.html", null);
             fs.AddFile("C:\\site\\_config.yml", new MockFileData("a1: A\r\na2: B"));
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
 
             var conf = await confLoader.Load(Location.FromPath("C:\\site"));
 
@@ -141,7 +141,7 @@ namespace Core.Tests
             fs.AddFile("C:\\site\\_config.yml", new MockFileData("a1: A\r\na2: B"));
             fs.AddFile("C:\\site\\_config.test.yml", new MockFileData("a1: A1\r\na3: C"));
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
 
             var conf = await confLoader.Load(Location.FromPath("C:\\site"));
 
@@ -159,7 +159,7 @@ namespace Core.Tests
             fs.AddFile("C:\\site\\_config.yml", new MockFileData("a1: A\r\na2: B"));
             fs.AddFile("C:\\site1\\_config.yml", new MockFileData("a1: A1\r\na3: C"));
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
 
             var conf = await confLoader.Load(new ILocation[] { Location.FromPath("C:\\site"),
                 Location.FromPath("C:\\site1") });
@@ -178,7 +178,7 @@ namespace Core.Tests
             fs.AddFile("C:\\themes\\theme1\\_config.yml", new MockFileData("x1: C\r\nx2: D\r\na1: E"));
             fs.AddFile("C:\\site\\_config.yml", new MockFileData("theme: theme1\r\na1: A\r\na2: B\r\nthemes_dir: C:\\themes"));
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
 
             var conf = await confLoader.Load(Location.FromPath("C:\\site"));
 
@@ -202,7 +202,7 @@ namespace Core.Tests
             fs.AddFile("C:\\themes\\theme2\\_config.yml", new MockFileData("a: 3\r\nc: 4\r\ntheme: theme1"));
             fs.AddFile("C:\\site\\_config.yml", new MockFileData("theme: theme2\r\nb: 5\r\nthemes_dir: C:\\themes"));
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
 
             var conf = await confLoader.Load(Location.FromPath("C:\\site"));
 
@@ -226,7 +226,7 @@ namespace Core.Tests
             fs.AddFile("C:\\themes\\theme2\\_config.yml", new MockFileData("a:\r\n  - $\r\n  - 3\r\n  - 4\r\ntheme: theme1"));
             fs.AddFile("C:\\site\\_config.yml", new MockFileData("theme: theme2\r\nb: 5\r\nthemes_dir: C:\\themes"));
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, Environment_e.Test);
+            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
 
             var conf = await confLoader.Load(Location.FromPath("C:\\site"));
             

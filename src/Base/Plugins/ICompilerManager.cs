@@ -32,6 +32,7 @@ namespace Xarial.Docify.Base.Plugins
         event PostCompileDelegate PostCompile;
 
         ICompiler Instance { get; }
-        IContentTransformer ContentTransformer { get; }
+        IDynamicContentTransformer DynamicContentTransformer { get; }
+        IStaticContentTransformer StaticContentTransformer { get; }
     }
 }

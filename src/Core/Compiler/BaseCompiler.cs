@@ -29,7 +29,7 @@ namespace Xarial.Docify.Core.Compiler
     public class BaseCompiler : ICompiler
     {
         private readonly ILogger m_Logger;
-        private readonly IContentTransformer m_ContentTransformer;
+        private readonly IStaticContentTransformer m_ContentTransformer;
         private readonly BaseCompilerConfig m_Config;
         private readonly ILayoutParser m_LayoutParser;
         private readonly IIncludesHandler m_IncludesHandler;
@@ -40,7 +40,7 @@ namespace Xarial.Docify.Core.Compiler
         public BaseCompiler(BaseCompilerConfig config,
             ILogger logger, ILayoutParser layoutParser,
             IIncludesHandler includesHandler,
-            IContentTransformer contentTransformer, ICompilerExtension ext) 
+            IStaticContentTransformer contentTransformer, ICompilerExtension ext) 
         {
             m_Config = config;
             m_Logger = logger;
@@ -135,18 +135,17 @@ namespace Xarial.Docify.Core.Compiler
         private async Task<IFile> CompilePage(IPage page, ISite site, ILocation loc)
         {
             var url = loc.ToUrl();
-            var model = new ContextModel(site, page, url);
-
-            var content = await m_ContentTransformer.Transform(page.RawContent, page.Id, model);
+            
+            var content = await m_ContentTransformer.Transform(page.RawContent);
             
             var layout = page.Layout;
 
             if (layout != null)
             {
-                content = await m_LayoutParser.InsertContent(layout, content, model);
+                content = await m_LayoutParser.InsertContent(layout, content, site, page, url);
             }
 
-            content = await m_IncludesHandler.ReplaceAll(content, site, page, url);
+            content = await m_IncludesHandler.ResolveAll(content, site, page, url);
 
             content = await m_Ext.WritePageContent(content, page.Data, url);
 
@@ -158,7 +157,7 @@ namespace Xarial.Docify.Core.Compiler
             var url = loc.ToUrl();
 
             var rawContent = asset.AsTextContent();
-            var content = await m_IncludesHandler.ReplaceAll(rawContent, site, page, url);
+            var content = await m_IncludesHandler.ResolveAll(rawContent, site, page, url);
 
             return new File(loc, ContentExtension.ToByteArray(content), asset.Id);
         }

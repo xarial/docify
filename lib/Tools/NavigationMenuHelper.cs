@@ -104,7 +104,7 @@ namespace Xarial.Docify.Lib.Tools
             return page;
         }
 
-        public static IContextPage GetRootPage(IIncludeContextModel model) 
+        public static IContextPage GetRootPage(IContextModel model) 
         {
             var rootPageUrl = model.Data.GetOrDefault<string>(ROOT_PAGE_ATT);
 

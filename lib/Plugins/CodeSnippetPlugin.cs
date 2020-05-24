@@ -276,7 +276,7 @@ namespace Xarial.Docify.Lib.Plugins
                     }
 
                     var code = $"~~~{lang} {snipClass}\r\n{snip.Code}\r\n~~~";
-                    html.AppendLine(await m_App.Compiler.ContentTransformer.Transform(code, Guid.NewGuid().ToString(), null));
+                    html.AppendLine(await m_App.Compiler.StaticContentTransformer.Transform(code));
                 }
             }
             else

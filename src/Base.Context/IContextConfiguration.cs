@@ -11,9 +11,8 @@ using System.Text;
 
 namespace Xarial.Docify.Base.Context
 {
-    public interface IContextModel
+    public interface IContextConfiguration : IContextMetadata
     {
-        IContextSite Site { get; }
-        IContextPage Page { get; }
+        string Environment { get; }
     }
 }

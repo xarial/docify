@@ -8,20 +8,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Base;
-using Xarial.Docify.Base.Data;
+using System.Threading.Tasks;
 using Xarial.Docify.Base.Context;
+using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Core.Compiler.Context
+namespace Xarial.Docify.Base.Services
 {
-    public class IncludeContextModel : ContextModel, IIncludeContextModel
+    public interface IStaticContentTransformer
     {
-        public IContextMetadata Data { get; }
-
-        internal IncludeContextModel(ISite site, IPage page, IMetadata data, string url)
-            : base(site, page, url)
-        {
-            Data = new ContextMetadata(data);
-        }
+        Task<string> Transform(string content);
     }
 }

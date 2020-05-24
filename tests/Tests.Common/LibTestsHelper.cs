@@ -66,7 +66,7 @@ namespace Tests.Common
 
         public async Task<string> CompileMainPageNormalize(Site site)
         {
-            var compiler = new DocifyEngine(new string[] { "" }, "", "", Environment_e.Test).Resove<ICompiler>();
+            var compiler = new DocifyEngine(new string[] { "" }, "", "", "Test").Resove<ICompiler>();
 
             var files = await compiler.Compile(site).ToListAsync();
 

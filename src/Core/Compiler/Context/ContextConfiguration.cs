@@ -16,7 +16,7 @@ namespace Xarial.Docify.Core.Compiler.Context
 {
     public class ContextConfiguration : ContextMetadata, IContextConfiguration
     {
-        public Environment_e Environment { get; }
+        public string Environment { get; }
 
         public ContextConfiguration(IConfiguration conf) : base(conf) 
         {

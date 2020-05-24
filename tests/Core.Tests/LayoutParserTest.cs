@@ -19,6 +19,7 @@ using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Compiler.Context;
 using Xarial.Docify.Core.Data;
+using Xarial.Docify.Base;
 
 namespace Core.Tests
 {
@@ -29,7 +30,7 @@ namespace Core.Tests
         [SetUp]
         public void Setup() 
         {
-            var mock = new Mock<IContentTransformer>();
+            var mock = new Mock<IDynamicContentTransformer>();
             mock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ContextModel>()))
                 .Returns(new Func<string, string, IContextModel, Task<string>>(
                     (c, k, m) => Task.FromResult(c)));
@@ -40,44 +41,50 @@ namespace Core.Tests
         [Test]
         public void ContainsPlaceholder()
         {
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("Hello {{ content }}"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("{{ content }}"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("{{ content }} AAA"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("ABC {{ content }} aaa"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("{{    content }}"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("Hello {{ content }}"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("{{ content  }}"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("{{ content}} AAA"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("ABC {{content}} aaa"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("{{ content}} AAA\r\n{{ content }}"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("{{content }}"));
-            Assert.IsFalse(m_Parser.ContainsPlaceholder("{content} Some Text"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("Hello {{ content }}"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{ content }}"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{ content }} AAA"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("ABC {{ content }} aaa"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{    content }}"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("Hello {{ content }}"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{ content  }}"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{ content}} AAA"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("ABC {{content}} aaa"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{ content}} AAA\r\n{{ content }}"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{content }}"));
+            Assert.Throws<Exception>(() => m_Parser.ValidateLayout("{content} Some Text"));
         }
 
         [Test]
         public async Task InsertContent()
         {
-            Assert.AreEqual("Hello __replacement__", await m_Parser.InsertContent(new TemplateMock("", "Hello {{ content }}"), "__replacement__", null));
-            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new TemplateMock("", "{{ content }}"), "__replacement__", null));
-            Assert.AreEqual("__replacement__ AAA", await m_Parser.InsertContent(new TemplateMock("", "{{ content }} AAA"), "__replacement__", null));
-            Assert.AreEqual("ABC __replacement__ aaa", await m_Parser.InsertContent(new TemplateMock("", "ABC {{ content }} aaa"), "__replacement__", null));
-            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new TemplateMock("", "{{    content }}"), "__replacement__", null));
-            Assert.AreEqual("Hello __replacement__", await m_Parser.InsertContent(new TemplateMock("", "Hello {{ content }}"), "__replacement__", null));
-            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new TemplateMock("", "{{ content  }}"), "__replacement__", null));
-            Assert.AreEqual("__replacement__ AAA", await m_Parser.InsertContent(new TemplateMock("", "{{ content}} AAA"), "__replacement__", null));
-            Assert.AreEqual("ABC __replacement__ aaa", await m_Parser.InsertContent(new TemplateMock("", "ABC {{content}} aaa"), "__replacement__", null));
-            Assert.AreEqual("__replacement__ AAA\r\n__replacement__", await m_Parser.InsertContent(new TemplateMock("", "{{ content}} AAA\r\n{{ content }}"), "__replacement__", null));
-            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new TemplateMock("", "{{content }}"), "__replacement__", null));
-            Assert.AreEqual("{content} Some Text", await m_Parser.InsertContent(new TemplateMock("", "{content} Some Text"), "__replacement__", null));
+            var site = new Mock<ISite>().Object;
+            var page = new Mock<IPage>().Object;
+
+            Assert.AreEqual("Hello __replacement__", await m_Parser.InsertContent(new TemplateMock("", "Hello {{ content }}"), "__replacement__", site, page, ""));
+            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new TemplateMock("", "{{ content }}"), "__replacement__", site, page, ""));
+            Assert.AreEqual("__replacement__ AAA", await m_Parser.InsertContent(new TemplateMock("", "{{ content }} AAA"), "__replacement__", site, page, ""));
+            Assert.AreEqual("ABC __replacement__ aaa", await m_Parser.InsertContent(new TemplateMock("", "ABC {{ content }} aaa"), "__replacement__", site, page, ""));
+            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new TemplateMock("", "{{    content }}"), "__replacement__", site, page, ""));
+            Assert.AreEqual("Hello __replacement__", await m_Parser.InsertContent(new TemplateMock("", "Hello {{ content }}"), "__replacement__", site, page, ""));
+            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new TemplateMock("", "{{ content  }}"), "__replacement__", site, page, ""));
+            Assert.AreEqual("__replacement__ AAA", await m_Parser.InsertContent(new TemplateMock("", "{{ content}} AAA"), "__replacement__", site, page, ""));
+            Assert.AreEqual("ABC __replacement__ aaa", await m_Parser.InsertContent(new TemplateMock("", "ABC {{content}} aaa"), "__replacement__", site, page, ""));
+            Assert.AreEqual("__replacement__ AAA\r\n__replacement__", await m_Parser.InsertContent(new TemplateMock("", "{{ content}} AAA\r\n{{ content }}"), "__replacement__", site, page, ""));
+            Assert.AreEqual("__replacement__", await m_Parser.InsertContent(new TemplateMock("", "{{content }}"), "__replacement__", site, page, ""));
+            Assert.AreEqual("{content} Some Text", await m_Parser.InsertContent(new TemplateMock("", "{content} Some Text"), "__replacement__", site, page, ""));
         }
 
         [Test]
         public async Task InsertContentNested()
         {
+            var site = new Mock<ISite>().Object;
+            var page = new Mock<IPage>().Object;
+
             var t1 = new TemplateMock("", "T1 {{ content }} T1");
             var t2 = new TemplateMock("", "T2 {{ content }} T2", null, t1);
 
-            Assert.AreEqual("T1 T2 __replacement__ T2 T1", await m_Parser.InsertContent(t2, "__replacement__", null));
+            Assert.AreEqual("T1 T2 __replacement__ T2 T1", await m_Parser.InsertContent(t2, "__replacement__", site, page, ""));
         }
     }
 }

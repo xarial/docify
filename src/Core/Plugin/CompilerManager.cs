@@ -27,14 +27,21 @@ namespace Xarial.Docify.Core.Plugin
         public event PostCompileDelegate PostCompile;
 
         public ICompiler Instance { get; }
-        public IContentTransformer ContentTransformer { get; }
+
+        public IDynamicContentTransformer DynamicContentTransformer { get; }
+        public IStaticContentTransformer StaticContentTransformer { get; }
 
         private readonly CompilerExtension m_Ext;
 
-        public CompilerManager(ICompiler compiler, IContentTransformer contTransf, CompilerExtension ext) 
+        public CompilerManager(ICompiler compiler, 
+            IStaticContentTransformer staticContTransf,
+            IDynamicContentTransformer dynContTransf, 
+            CompilerExtension ext) 
         {
             Instance = compiler;
-            ContentTransformer = contTransf;
+            StaticContentTransformer = staticContTransf;
+            DynamicContentTransformer = dynContTransf;
+
             m_Ext = ext;
             m_Ext.RequestPreCompile += OnRequestPreCompile;
             m_Ext.RequestRenderCodeBlock += OnRequestRenderCodeBlock;

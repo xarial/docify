@@ -13,12 +13,12 @@ namespace CLI.Tests
     {
         public IFileSystem FileSystem { get; private set; }
 
-        public DocifyEngineMock(string srcDir, string outDir, string siteUrl, Environment_e env)
+        public DocifyEngineMock(string srcDir, string outDir, string siteUrl, string env)
             : base(new string[] { srcDir }, outDir, siteUrl, env)
         {
         }
 
-        protected override void RegisterDependencies(ContainerBuilder builder, Environment_e env)
+        protected override void RegisterDependencies(ContainerBuilder builder, string env)
         {
             base.RegisterDependencies(builder, env);
             FileSystem = new MockFileSystem();

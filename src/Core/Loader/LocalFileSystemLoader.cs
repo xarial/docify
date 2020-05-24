@@ -43,8 +43,6 @@ namespace Xarial.Docify.Core.Loader
 
             foreach (var location in locations)
             {
-                //TODO: validate conflict when same name files exist in multiple locations
-
                 var path = location.ToPath();
 
                 if (!m_FileSystem.Directory.Exists(path))

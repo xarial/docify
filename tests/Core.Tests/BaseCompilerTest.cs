@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Tests.Common.Mocks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Data;
@@ -33,9 +32,9 @@ namespace Core.Tests
         [SetUp]
         public void Setup() 
         {
-            string GetPageName(IContextPage page) 
+            string GetPageName(string url) 
             {
-                var name = page.Url.Split("/", StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+                var name = url.Split("/", StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
                 if (string.IsNullOrEmpty(name))
                 {
                     name = "index";
@@ -45,19 +44,24 @@ namespace Core.Tests
                 return name;
             }
 
-            var contTransMock = new Mock<IContentTransformer>();
-            contTransMock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IContextModel>()))
-                .Returns<string, string, IContextModel>((c, k, m) => Task.FromResult(
-                    c.Replace("_FN_", GetPageName((m as ContextModel).Page))
-                    .Replace("_CC_", (m as ContextModel).Site.MainPage.SubPages.Count().ToString())));
+            var contTransMock = new Mock<IStaticContentTransformer>();
+            contTransMock.Setup(m => m.Transform(It.IsAny<string>()))
+                .Returns<string>(c => Task.FromResult($"CT_{c}_CT"));
 
             var layoutMock = new Mock<ILayoutParser>();
 
-            layoutMock.Setup(m => m.ContainsPlaceholder(It.IsAny<string>()))
-                .Returns<string>(c => c.Contains("_C_"));
+            layoutMock.Setup(m => m.ValidateLayout(It.IsAny<string>()))
+                .Callback<string>(c =>
+                {
+                    if (!c.Contains("_C_")) 
+                    {
+                        throw new Exception();
+                    }
+                });
 
-            layoutMock.Setup(m => m.InsertContent(It.IsAny<Template>(), It.IsAny<string>(), It.IsAny<IContextModel>()))
-                .Returns<Template, string, IContextModel>((t, c, m) =>
+            layoutMock.Setup(m => m.InsertContent(
+                It.IsAny<ITemplate>(), It.IsAny<string>(), It.IsAny<ISite>(), It.IsAny<IPage>(), It.IsAny<string>()))
+                .Returns<ITemplate, string, ISite, IPage, string>((t, c, s, p, u) =>
                 {
                     string r = c;
                     ITemplate tt = t;
@@ -65,8 +69,8 @@ namespace Core.Tests
                     while (tt != null)
                     {
                         r = tt.RawContent.Replace("_C_", r)
-                        .Replace("_FN_", GetPageName((m as ContextModel).Page))
-                        .Replace("_CC_", (m as ContextModel).Site.MainPage.SubPages.Count().ToString());
+                        .Replace("_FN_", GetPageName(u))
+                        .Replace("_CC_", s.MainPage.SubPages.Count().ToString());
 
                         tt = tt.Layout;
                     }
@@ -75,7 +79,7 @@ namespace Core.Tests
                 });
 
             var includesHandlerMock = new Mock<IIncludesHandler>();
-            includesHandlerMock.Setup(m => m.ReplaceAll(It.IsAny<string>(), It.IsAny<Site>(), 
+            includesHandlerMock.Setup(m => m.ResolveAll(It.IsAny<string>(), It.IsAny<Site>(), 
                 It.IsAny<Page>(), It.IsAny<string>()))
                 .Returns<string, Site, Page, string>((c, s, p, u) => Task.FromResult(c));
 
@@ -101,7 +105,7 @@ namespace Core.Tests
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
-            Assert.AreEqual("abc 0 index.html test", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
+            Assert.AreEqual("CT_abc _CC_ _FN_ test_CT", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
         }
 
         [Test]
@@ -120,11 +124,11 @@ namespace Core.Tests
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
-            Assert.AreEqual("P1", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
-            Assert.AreEqual("P2", files.First(f => f.Location.ToId() == "page2::index.html").AsTextContent());
-            Assert.AreEqual("P3", files.First(f => f.Location.ToId() == "page2::page3::index.html").AsTextContent());
-            Assert.AreEqual("P4", files.First(f => f.Location.ToId() == "page2::page4::index.html").AsTextContent());
-            Assert.AreEqual("P5", files.First(f => f.Location.ToId() == "page2::page4::page5::index.html").AsTextContent());
+            Assert.AreEqual("CT_P1_CT", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
+            Assert.AreEqual("CT_P2_CT", files.First(f => f.Location.ToId() == "page2::index.html").AsTextContent());
+            Assert.AreEqual("CT_P3_CT", files.First(f => f.Location.ToId() == "page2::page3::index.html").AsTextContent());
+            Assert.AreEqual("CT_P4_CT", files.First(f => f.Location.ToId() == "page2::page4::index.html").AsTextContent());
+            Assert.AreEqual("CT_P5_CT", files.First(f => f.Location.ToId() == "page2::page4::page5::index.html").AsTextContent());
         }
 
         [Test]
@@ -136,8 +140,8 @@ namespace Core.Tests
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
-            Assert.AreEqual("P1", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
-            Assert.AreEqual("P2", files.First(f => f.Location.ToId() == "page2.html").AsTextContent());
+            Assert.AreEqual("CT_P1_CT", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
+            Assert.AreEqual("CT_P2_CT", files.First(f => f.Location.ToId() == "page2.html").AsTextContent());
         }
 
         [Test]
@@ -149,7 +153,7 @@ namespace Core.Tests
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
-            Assert.AreEqual("TemplateText1 My Page Content TemplateText2", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
+            Assert.AreEqual("TemplateText1 CT_My Page Content_CT TemplateText2", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
         }
 
         [Test]
@@ -163,7 +167,7 @@ namespace Core.Tests
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
-            Assert.AreEqual("T2 T1 My Page Content T1 T2", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
+            Assert.AreEqual("T2 T1 CT_My Page Content_CT T1 T2", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
         }
 
         [Test]
@@ -180,8 +184,8 @@ namespace Core.Tests
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
-            Assert.AreEqual("T2 index.html T1 index.html Page1 index.html T1 T2", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
-            Assert.AreEqual("T2 page2.html T1 page2.html Page2 page2.html T1 T2", files.First(f => f.Location.ToId() == "page2::index.html").AsTextContent());
+            Assert.AreEqual("T2 index.html T1 index.html CT_Page1 index.html_CT T1 T2", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
+            Assert.AreEqual("T2 page2.html T1 page2.html CT_Page2 page2.html_CT T1 T2", files.First(f => f.Location.ToId() == "page2::index.html").AsTextContent());
         }
     }
 }

@@ -35,60 +35,123 @@ namespace Core.Tests
         [SetUp]
         public void Setup()
         {
-            m_Handler = CreateNewIncludesHandler();
+            string GetPageName(IContextPage page)
+            {
+                var name = page.Url.Split("/", StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+                if (string.IsNullOrEmpty(name))
+                {
+                    name = "index";
+                }
+                name += ".html";
+
+                return name;
+            }
+
+            var mock = new Mock<IDynamicContentTransformer>();
+            mock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ContextModel>()))
+                .Returns(new Func<string, string, IContextModel, Task<string>>(
+                    (c, k, m) => Task.FromResult(
+                        $"{c}_{GetPageName((m as ContextModel).Page)}_{string.Join(",", m.Data.OrderBy(p => p.Key).Select(p => $"{p.Key}={p.Value}").ToArray())}")));
+
+            var incExt = new Mock<IIncludesHandlerExtension>();
+            incExt.Setup(m => m.ResolveInclude(It.IsAny<string>(), It.IsAny<IMetadata>(), It.IsAny<IPage>()))
+                .Returns((string c, IMetadata m, IPage p) => throw new MissingIncludeException(c));
+
+            m_Handler = new IncludesHandler(mock.Object, incExt.Object);
         }
 
         [Test]
-        public void ParseParameters_SingleLine() 
+        public async Task ParseParameters_SingleLine()
         {
-            string n1, n2, n3;
-            IMetadata p1, p2, p3;
-            
-            m_Handler.ParseParameters("include a1: A", out n1, out p1);
-            m_Handler.ParseParameters(" include  a1: A", out n2, out p2);
-            m_Handler.ParseParameters("include { a1: A, a2: 0.2 }", out n3, out p3);
+            IContextMetadata data = null;
 
-            Assert.AreEqual("include", n1);
+            var mock = new Mock<IDynamicContentTransformer>();
+            mock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ContextModel>()))
+                .Returns(new Func<string, string, IContextModel, Task<string>>(
+                    (c, k, m) =>
+                    {
+                        data = m.Data;
+                        return Task.FromResult("");
+                    }));
+                       
+            var handler = new IncludesHandler(mock.Object, new Mock<IIncludesHandlerExtension>().Object);
+
+            var s = new Site("", new PageMock("", ""), null);
+            s.Includes.Add(new TemplateMock("include", ""));
+            
+            IContextMetadata p1, p2, p3;
+
+            await handler.ResolveAll("{% include a1: A %}", s, s.MainPage, "");
+            p1 = data;
+
+            await handler.ResolveAll("{%  include  a1: A %}", s, s.MainPage, "");
+            p2 = data;
+
+            await handler.ResolveAll("{% include { a1: A, a2: 0.2 } %}", s, s.MainPage, "");
+            p3 = data;
+
             Assert.AreEqual(1, p1.Count);
             Assert.AreEqual("A", p1["a1"]);
 
-            Assert.AreEqual("include", n2);
             Assert.AreEqual(1, p2.Count);
             Assert.AreEqual("A", p2["a1"]);
 
-            Assert.AreEqual("include", n3);
             Assert.AreEqual(2, p3.Count);
             Assert.AreEqual("A", p3["a1"]);
             Assert.AreEqual("0.2", p3["a2"]);
         }
 
         [Test]
-        public void ParseParameters_MultipleLine()
+        public async Task ParseParameters_MultipleLine()
         {
-            string n1;
-            IMetadata p1;
+            IContextMetadata data = null;
 
-            m_Handler.ParseParameters("include a1: A\r\na2: B\r\na3:\r\n    - X\r\n    - Y", out n1, out p1);
+            var mock = new Mock<IDynamicContentTransformer>();
+            mock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ContextModel>()))
+                .Returns(new Func<string, string, IContextModel, Task<string>>(
+                    (c, k, m) =>
+                    {
+                        data = m.Data;
+                        return Task.FromResult("");
+                    }));
 
-            Assert.AreEqual("include", n1);
-            Assert.AreEqual(3, p1.Count);
-            Assert.AreEqual("A", p1["a1"]);
-            Assert.AreEqual("B", p1["a2"]);
-            Assert.AreEqual(2, (p1["a3"] as List<object>).Count);
-            Assert.AreEqual("X", (p1["a3"] as List<object>)[0]);
-            Assert.AreEqual("Y", (p1["a3"] as List<object>)[1]);
+            var handler = new IncludesHandler(mock.Object, new Mock<IIncludesHandlerExtension>().Object);
+
+            var s = new Site("", new PageMock("", ""), null);
+            s.Includes.Add(new TemplateMock("include", ""));
+            
+            await handler.ResolveAll("{% include a1: A\r\na2: B\r\na3:\r\n    - X\r\n    - Y %}", s, s.MainPage, "");
+            
+            Assert.AreEqual(3, data.Count);
+            Assert.AreEqual("A", data["a1"]);
+            Assert.AreEqual("B", data["a2"]);
+            Assert.AreEqual(2, (data["a3"] as List<object>).Count);
+            Assert.AreEqual("X", (data["a3"] as List<object>)[0]);
+            Assert.AreEqual("Y", (data["a3"] as List<object>)[1]);
         }
 
         [Test]
-        public void ParseParameters_NoParameters()
+        public async Task ParseParameters_NoParameters()
         {
-            string n1;
-            IMetadata p1;
+            IContextMetadata data = null;
 
-            m_Handler.ParseParameters("include", out n1, out p1);
+            var mock = new Mock<IDynamicContentTransformer>();
+            mock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ContextModel>()))
+                .Returns(new Func<string, string, IContextModel, Task<string>>(
+                    (c, k, m) =>
+                    {
+                        data = m.Data;
+                        return Task.FromResult("");
+                    }));
 
-            Assert.AreEqual("include", n1);
-            Assert.AreEqual(0, p1.Count);
+            var handler = new IncludesHandler(mock.Object, new Mock<IIncludesHandlerExtension>().Object);
+
+            var s = new Site("", new PageMock("", ""), null);
+            s.Includes.Add(new TemplateMock("include", ""));
+
+            await handler.ResolveAll("{% include %}", s, s.MainPage, "");
+
+            Assert.AreEqual(0, data.Count);
         }
 
         [Test]
@@ -99,9 +162,9 @@ namespace Core.Tests
             var s = new Site("", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
             p1.SubPages.Add(p2);
-
-            var res1 = await m_Handler.Render("i1", new Metadata() { { "a1", "A" } }, s, p1, "/page1/");
-            var res2 = await m_Handler.Render("i1", new Metadata() { { "a2", "B" } }, s, p2, "/page1/page2/");
+            
+            var res1 = await m_Handler.ResolveAll("{% i1 a1: A %}", s, p1, "/page1/");
+            var res2 = await m_Handler.ResolveAll("{% i1 a2: B %}", s, p2, "/page1/page2/");
 
             Assert.AreEqual("abc_page1.html_a1=A", res1);
             Assert.AreEqual("abc_page2.html_a2=B", res2);
@@ -114,7 +177,7 @@ namespace Core.Tests
             var s = new Site("", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc", new Metadata() { { "a1", "A" }, { "a2", "B" } }));
 
-            var res1 = await m_Handler.Render("i1", new Metadata() { { "a1", "X" }, { "a3", "Y" } }, s, p1, "/page1/");
+            var res1 = await m_Handler.ResolveAll("{% i1 { a1: X, a3: Y} %}", s, p1, "/page1/");
 
             Assert.AreEqual("abc_page1.html_a1=X,a2=B,a3=Y", res1);
         }
@@ -123,7 +186,7 @@ namespace Core.Tests
         public async Task Render_MergedPageParameters()
         {
             var md = new Metadata();
-            md.Add("$i1", new Dictionary<string, object>() 
+            md.Add("$i1", new Dictionary<string, object>()
             {
                 { "a1", "Z" },
                 { "a4", "J" }
@@ -133,7 +196,7 @@ namespace Core.Tests
             var s = new Site("", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc", new Metadata() { { "a1", "A" }, { "a2", "B" } }));
 
-            var res1 = await m_Handler.Render("i1", new Metadata() { { "a1", "X" }, { "a3", "Y" } }, s, p1, "/page1/");
+            var res1 = await m_Handler.ResolveAll("{% i1 { a1: X, a3: Y } %}", s, p1, "/page1/");
 
             Assert.AreEqual("abc_page1.html_a1=X,a2=B,a3=Y,a4=J", res1);
         }
@@ -152,7 +215,7 @@ namespace Core.Tests
             var s = new Site("", p1, conf);
             s.Includes.Add(new TemplateMock("i1", "abc", new Metadata() { { "a1", "A" }, { "a2", "B" } }));
 
-            var res1 = await m_Handler.Render("i1", new Metadata() { { "a1", "X" }, { "a3", "Y" } }, s, p1, "/page1/");
+            var res1 = await m_Handler.ResolveAll("{% i1 { a1: X, a3: Y } %}", s, p1, "/page1/");
 
             Assert.AreEqual("abc_page1.html_a1=X,a2=B,a3=Y,a4=J", res1);
         }
@@ -180,19 +243,30 @@ namespace Core.Tests
             var s = new Site("", p1, conf);
             s.Includes.Add(new TemplateMock("i1", "abc", new Metadata() { { "a1", "T1" }, { "a2", "T2" }, { "a3", "" }, { "a4", "T4" } }));
 
-            var res1 = await m_Handler.Render("i1", new Metadata() { { "a1", "I1" }, { "a2", null }, { "a4", "" } }, s, p1, "/page1/");
+            var res1 = await m_Handler.ResolveAll("{% i1 { a1: I1, a2:, a4: } %}", s, p1, "/page1/");
 
             Assert.AreEqual("abc_page1.html_a1=I1,a2=P2,a3=S3,a4=T4", res1);
         }
 
         [Test]
-        public void Render_MissingIncludes()
+        public async Task Render_MissingIncludes()
         {
             var p1 = new PageMock("", "");
             var s = new Site("", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
 
-            Assert.ThrowsAsync<MissingIncludeException>(() => m_Handler.Render("i2", new Metadata(), s, p1, "/page1/"));
+            MissingIncludeException e = null;
+
+            try
+            {
+                await m_Handler.ResolveAll("{% i2 %}", s, p1, "/page1/");
+            }
+            catch (IncludeResolveException ex)
+            {
+                e = ex.InnerException as MissingIncludeException;
+            }
+
+            Assert.IsNotNull(e);
         }
 
         [Test]
@@ -202,13 +276,13 @@ namespace Core.Tests
             extMock.Setup(m => m.ResolveInclude(It.IsAny<string>(), It.IsAny<IMetadata>(), It.IsAny<IPage>()))
                 .Returns((string i, IMetadata m, IPage p) => Task.FromResult($"_{i}_render-result"));
 
-            var includesHandler = new IncludesHandler(new Mock<IContentTransformer>().Object,
+            var includesHandler = new IncludesHandler(new Mock<IDynamicContentTransformer>().Object,
                 extMock.Object);
 
             var p1 = new PageMock("", "{% plugin-include { param1: x, param2: b} %}");
             var s = new Site("", p1, null);
 
-            var res = await includesHandler.Render("plugin-include", new Metadata(), s, p1, "/page1/");
+            var res = await includesHandler.ResolveAll("{% plugin-include %}", s, p1, "/page1/");
 
             Assert.AreEqual("_plugin-include_render-result", res);
         }
@@ -220,7 +294,7 @@ namespace Core.Tests
             var s = new Site("", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
 
-            var res = await m_Handler.ReplaceAll("abc\r\n{% i1 a1: x %}\r\nxyz", s, p1, "/page1/");
+            var res = await m_Handler.ResolveAll("abc\r\n{% i1 a1: x %}\r\nxyz", s, p1, "/page1/");
 
             Assert.AreEqual("abc\r\nabc_page1.html_a1=x\r\nxyz", res);
         }
@@ -232,7 +306,7 @@ namespace Core.Tests
             var s = new Site("", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
 
-            var res = await m_Handler.ReplaceAll("abc{% i1 a1: x %}xyz", s, p1, "/page1/");
+            var res = await m_Handler.ResolveAll("abc{% i1 a1: x %}xyz", s, p1, "/page1/");
 
             Assert.AreEqual("abcabc_page1.html_a1=xxyz", res);
         }
@@ -244,7 +318,7 @@ namespace Core.Tests
             var s = new Site("", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
 
-            var res = await m_Handler.ReplaceAll("abc{% i1 a1: x\r\na2: y %}xyz", s, p1, "/page1/");
+            var res = await m_Handler.ResolveAll("abc{% i1 a1: x\r\na2: y %}xyz", s, p1, "/page1/");
 
             Assert.AreEqual("abcabc_page1.html_a1=x,a2=yxyz", res);
         }
@@ -256,8 +330,8 @@ namespace Core.Tests
             var s = new Site("", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
 
-            var res1 = await m_Handler.ReplaceAll("<div>{% i1 a1: x %}</div>", s, p1, "/page1/");
-            var res2 = await m_Handler.ReplaceAll("<div>\r\n{% i1 a1: x %}\r\n</div>", s, p1, "/page1/");
+            var res1 = await m_Handler.ResolveAll("<div>{% i1 a1: x %}</div>", s, p1, "/page1/");
+            var res2 = await m_Handler.ResolveAll("<div>\r\n{% i1 a1: x %}\r\n</div>", s, p1, "/page1/");
 
             Assert.AreEqual("<div>abc_page1.html_a1=x</div>", res1);
             Assert.AreEqual("<div>\r\nabc_page1.html_a1=x\r\n</div>", res2);
@@ -271,7 +345,7 @@ namespace Core.Tests
             s.Includes.Add(new TemplateMock("i1", "abc"));
             s.Includes.Add(new TemplateMock("i2", "xyz"));
 
-            var res1 = await m_Handler.ReplaceAll("__{% i1 a1: x %}__{% i2 a2: y %}++{% i1 a1: z %}--", s, p1, "/page1/");
+            var res1 = await m_Handler.ResolveAll("__{% i1 a1: x %}__{% i2 a2: y %}++{% i1 a1: z %}--", s, p1, "/page1/");
 
             Assert.AreEqual("__abc_page1.html_a1=x__xyz_page1.html_a2=y++abc_page1.html_a1=z--", res1);
         }
@@ -284,7 +358,7 @@ namespace Core.Tests
             s.Includes.Add(new TemplateMock("i1", "abc"));
             s.Includes.Add(new TemplateMock("i2", "xyz{% i1 a1: z %}"));
 
-            var res1 = await m_Handler.ReplaceAll("__{% i1 a1: x %}__{% i2 a2: y %}", s, p1, "/page1/");
+            var res1 = await m_Handler.ResolveAll("__{% i1 a1: x %}__{% i2 a2: y %}", s, p1, "/page1/");
 
             Assert.AreEqual("__abc_page1.html_a1=x__xyzabc_page1.html_a1=z_page1.html_a2=y", res1);
         }
@@ -298,36 +372,9 @@ namespace Core.Tests
             s.Includes.Add(new TemplateMock("i2", "xyz{% i1 a1: z %}"));
             s.Includes.Add(new TemplateMock("i3", "abc{% i2 %}"));
 
-            var res1 = await m_Handler.ReplaceAll("{% i3 %}__{% i1 %}", s, p1, "/page1/");
+            var res1 = await m_Handler.ResolveAll("{% i3 %}__{% i1 %}", s, p1, "/page1/");
 
             Assert.AreEqual("abcxyzabc_page1.html_a1=z_page1.html__page1.html___abc_page1.html_", res1);
-        }
-
-        private IncludesHandler CreateNewIncludesHandler()
-        {
-            string GetPageName(IContextPage page)
-            {
-                var name = page.Url.Split("/", StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
-                if (string.IsNullOrEmpty(name))
-                {
-                    name = "index";
-                }
-                name += ".html";
-
-                return name;
-            }
-
-            var mock = new Mock<IContentTransformer>();
-            mock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ContextModel>()))
-                .Returns(new Func<string, string, IContextModel, Task<string>>(
-                    (c, k, m) => Task.FromResult(
-                        $"{c}_{GetPageName((m as ContextModel).Page)}_{string.Join(",", (m as IncludeContextModel).Data.OrderBy(p => p.Key).Select(p => $"{p.Key}={p.Value}").ToArray())}")));
-
-            var incExt = new Mock<IIncludesHandlerExtension>();
-            incExt.Setup(m => m.ResolveInclude(It.IsAny<string>(), It.IsAny<IMetadata>(), It.IsAny<IPage>()))
-                .Returns((string c, IMetadata m, IPage p) => throw new MissingIncludeException(c));
-            
-            return new IncludesHandler(mock.Object, incExt.Object);
         }
     }
 }

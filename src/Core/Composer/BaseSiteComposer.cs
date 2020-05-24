@@ -235,11 +235,15 @@ namespace Xarial.Docify.Core.Composer
             string baseLayoutName;
             ParseTextFile(layoutFile, out rawContent, out data, out baseLayoutName);
 
-            if (!m_LayoutParser.ContainsPlaceholder(rawContent)) 
+            try
             {
-                throw new LayoutMissingContentPlaceholderException(layoutName);
+                m_LayoutParser.ValidateLayout(rawContent);
             }
-
+            catch (Exception ex)
+            {
+                throw new InvalidLayoutException(layoutName, ex);
+            }
+            
             Template baseLayout = null;
 
             if (!string.IsNullOrEmpty(baseLayoutName))

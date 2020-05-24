@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Base;
+using Xarial.Docify.Core.Compiler.Context;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -20,19 +22,22 @@ namespace Xarial.Docify.Core.Compiler
     {
         private const string CONTENT_PLACEHOLDER_REGEX = "{{ *content *}}";
 
-        private readonly IContentTransformer m_Transformer;
+        private readonly IDynamicContentTransformer m_Transformer;
 
-        public LayoutParser(IContentTransformer transformer) 
+        public LayoutParser(IDynamicContentTransformer transformer) 
         {
             m_Transformer = transformer;
         }
 
-        public bool ContainsPlaceholder(string content)
+        public void ValidateLayout(string content)
         {
-            return Regex.IsMatch(content, CONTENT_PLACEHOLDER_REGEX);
+            if (!Regex.IsMatch(content, CONTENT_PLACEHOLDER_REGEX))
+            {
+                throw new Exception("Layout doesn't doesn't contain the placeholder: {{ content }}");
+            }
         }
 
-        public async Task<string> InsertContent(ITemplate layout, string content, IContextModel model)
+        public async Task<string> InsertContent(ITemplate layout, string content, ISite site, IPage page, string url)
         {
             if (layout == null) 
             {
@@ -41,6 +46,8 @@ namespace Xarial.Docify.Core.Compiler
 
             while (layout != null)
             {
+                var model = new ContextModel(site, page, layout.Data, url);
+
                 var layoutContent = await m_Transformer.Transform(layout.RawContent, layout.Id, model);
 
                 content = ReplaceContent(layoutContent, content);

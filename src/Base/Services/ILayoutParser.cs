@@ -16,7 +16,8 @@ namespace Xarial.Docify.Base.Services
 {
     public interface ILayoutParser
     {
+        //TODO: rename to validate layout
         bool ContainsPlaceholder(string content);
-        Task<string> InsertContent(ITemplate layout, string content, IContextModel model);
+        Task<string> InsertContent(ITemplate layout, string content, ISite site, IPage page, string url);
     }
 }

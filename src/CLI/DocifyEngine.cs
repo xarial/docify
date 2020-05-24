@@ -108,19 +108,16 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<LocalFileSystemComponentsLoader>().As<IComponentsLoader>();
 
-            builder.RegisterType<RazorLightContentTransformer>();
-
-            builder.RegisterType<MarkdigMarkdownContentTransformer>();
-
-            builder.RegisterType<IncludesHandler>().As<IIncludesHandler>().WithParameter(
-                new ResolvedParameter(
-                    (pi, ctx) => pi.ParameterType == typeof(IContentTransformer),
-                    (pi, ctx) => ctx.Resolve<RazorLightContentTransformer>()))
+            //NOTE: need this to be single instance to maximize performance and reuse precompiled templates
+            builder.RegisterType<RazorLightContentTransformer>()
+                .As<IDynamicContentTransformer>()
                 .SingleInstance();
 
-            builder.RegisterType<MarkdigRazorLightTransformer>().As<IContentTransformer>()
-                .SingleInstance();
+            builder.RegisterType<MarkdigMarkdownContentTransformer>()
+                .As<IStaticContentTransformer>();
 
+            builder.RegisterType<IncludesHandler>().As<IIncludesHandler>();
+            
             builder.RegisterType<LocalFileSystemConfigurationLoader>().As<IConfigurationLoader>()
                 .WithParameter(new TypedParameter(typeof(string), env));
 

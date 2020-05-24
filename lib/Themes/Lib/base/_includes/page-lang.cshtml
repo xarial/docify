@@ -3,7 +3,7 @@ default-lang: en
 ---
 @using RazorLight
 @using Xarial.Docify.Lib.Tools
-@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
+@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>
 @{ 
     var lang = PageHelper.GetLanguage(Model.Site, Model.Page);
     if (string.IsNullOrEmpty(lang))

@@ -14,7 +14,7 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Services
 {
-    public interface IContentTransformer
+    public interface IDynamicContentTransformer
     {
         Task<string> Transform(string content, string key, IContextModel model);
     }

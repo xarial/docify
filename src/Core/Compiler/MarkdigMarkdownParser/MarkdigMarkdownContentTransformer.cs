@@ -21,7 +21,7 @@ using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
-    public class MarkdigMarkdownContentTransformer : IContentTransformer
+    public class MarkdigMarkdownContentTransformer : IStaticContentTransformer
     {
         private MarkdownPipeline m_MarkdownEngine;
 
@@ -52,7 +52,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
             }
         }
 
-        public Task<string> Transform(string content, string key, IContextModel model)
+        public Task<string> Transform(string content)
         {
             var context = new MarkdownParserContext();
 

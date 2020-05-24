@@ -8,7 +8,7 @@ message: This website uses cookies to ensure you get the best experience on our 
 @using System.Collections.Generic
 @using Xarial.Docify.Lib.Tools
 @using System.Runtime.Serialization
-@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
+@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>
 @{
     var enable = Model.Data.Get<bool>("enable");
     var msg = Model.Data.Get<string>("message");

@@ -3,7 +3,7 @@ icon_width: 75px
 show_title: true
 ---
 @using RazorLight
-@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
+@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>
 @{ 
     var logo = Model.Site.MainPage.Data.GetOrDefault<string>("image");
     if (!logo.StartsWith("/")) 

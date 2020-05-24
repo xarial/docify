@@ -18,7 +18,8 @@ namespace CLI.Tests
             Assert.DoesNotThrow(() => engine.Resove<IComponentsLoader>(), "IComponentsLoader");
             Assert.DoesNotThrow(() => engine.Resove<IComposer>(), "IComposer");
             Assert.DoesNotThrow(() => engine.Resove<IConfigurationLoader>(), "IConfigurationLoader");
-            Assert.DoesNotThrow(() => engine.Resove<IContentTransformer>(), "IContentTransformer");
+            Assert.DoesNotThrow(() => engine.Resove<IStaticContentTransformer>(), "IStaticContentTransformer");
+            Assert.DoesNotThrow(() => engine.Resove<IDynamicContentTransformer>(), "IDynamicContentTransformer");
             Assert.DoesNotThrow(() => engine.Resove<IIncludesHandler>(), "IIncludesHandler");
             Assert.DoesNotThrow(() => engine.Resove<ILayoutParser>(), "ILayoutParser");
             Assert.DoesNotThrow(() => engine.Resove<ILoader>(), "ILoader");

@@ -36,10 +36,10 @@ namespace CLI.Tests
         public async Task NoTemplatePageTest()
         {
             var p1 = new PageMock("page1",
-                "@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>\r\n<div>@Model.Site.MainPage.SubPages.Count <a href=\"@Model.Page.Url\">Test</a></div>");
+                "<div>@Model.Site.MainPage.SubPages.Count <a href=\"@Model.Page.Url\">Test</a></div>");
                         
             var p2 = new PageMock("page2",
-                "@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>\r\n<p>@Model.Site.MainPage.SubPages.Count</p>\n\n[page](@Model.Site.BaseUrl@Model.Page.Url)");
+                "<p>@Model.Site.MainPage.SubPages.Count</p>\n\n[page](/)");
             
             p1.SubPages.Add(p2);
 
@@ -47,8 +47,8 @@ namespace CLI.Tests
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
-            Assert.AreEqual("<div>1 <a href=\"/\">Test</a></div>", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
-            Assert.AreEqual("<p>1</p>\n<p><a href=\"https://www.mysite.com/page2/\">page</a></p>", files.First(f => f.Location.ToId() == "page2::index.html").AsTextContent());
+            Assert.AreEqual("<div>@Model.Site.MainPage.SubPages.Count <a href=\"@Model.Page.Url\">Test</a></div>", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
+            Assert.AreEqual("<p>@Model.Site.MainPage.SubPages.Count</p>\n<p><a href=\"/\">page</a></p>", files.First(f => f.Location.ToId() == "page2::index.html").AsTextContent());
         }
         
         [Test]
@@ -61,19 +61,19 @@ namespace CLI.Tests
             
             var files = await m_Compiler.Compile(site).ToListAsync();
 
-            Assert.AreEqual("<p>TemplateText1<p>My Page Content</p>TemplateText2</p>", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
+            Assert.AreEqual("TemplateText1<p>My Page Content</p>TemplateText2", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
         }
         
         [Test]
         public async Task NestedTemplatePageTest()
         {
-            var t2 = new TemplateMock("t2", "@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>\r\n*T2* @Model.Page.Url {{ content }}_T2");
-            var t1 = new TemplateMock("t1", "@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>\r\n*T1* @Model.Page.Url {{ content }}_T1", null, t2);
+            var t2 = new TemplateMock("t2", "*T2* @Model.Page.Url {{ content }}_T2");
+            var t1 = new TemplateMock("t1", "*T1* @Model.Page.Url {{ content }}_T1", null, t2);
             var t3 = new TemplateMock("t3", "T3{{ content }}T3");
             var t4 = new TemplateMock("t4", "T4{{ content }}T4", null, t3);
 
-            var p1 = new PageMock("page1", "@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>\r\n **Page1** @Model.Page.Url", t1);
-            var p2 = new PageMock("page2", "@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>\r\n **Page2** @Model.Page.Url", t1);
+            var p1 = new PageMock("page1", "**Page1** @Model.Page.Url", t1);
+            var p2 = new PageMock("page2", "**Page2** @Model.Page.Url", t1);
             var p3 = new PageMock("page3", "Page3", t4);
             var p4 = new PageMock("page4", "Page4", t4);
 
@@ -85,31 +85,31 @@ namespace CLI.Tests
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
-            Assert.AreEqual("<p><em>T2</em> / <p><em>T1</em> / <p><strong>Page1</strong> /</p>_T1</p>_T2</p>", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
-            Assert.AreEqual("<p><em>T2</em> /page2/ <p><em>T1</em> /page2/ <p><strong>Page2</strong> /page2/</p>_T1</p>_T2</p>", files.First(f => f.Location.ToId() == "page2::index.html").AsTextContent());
-            Assert.AreEqual("<p>T3<p>T4<p>Page3</p>T4</p>T3</p>", files.First(f => f.Location.ToId() == "page3::index.html").AsTextContent());
-            Assert.AreEqual("<p>T3<p>T4<p>Page4</p>T4</p>T3</p>", files.First(f => f.Location.ToId() == "page4::index.html").AsTextContent());
+            Assert.AreEqual("*T2* / *T1* / <p><strong>Page1</strong> @Model.Page.Url</p>_T1_T2", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
+            Assert.AreEqual("*T2* /page2/ *T1* /page2/ <p><strong>Page2</strong> @Model.Page.Url</p>_T1_T2", files.First(f => f.Location.ToId() == "page2::index.html").AsTextContent());
+            Assert.AreEqual("T3T4<p>Page3</p>T4T3", files.First(f => f.Location.ToId() == "page3::index.html").AsTextContent());
+            Assert.AreEqual("T3T4<p>Page4</p>T4T3", files.First(f => f.Location.ToId() == "page4::index.html").AsTextContent());
         }
 
         [Test]
         public async Task IncludePageTest()
         {
             var p1 = new PageMock("page1",
-                "@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>\r\n*@Model.Site.MainPage.SubPages.Count* {% i1 %}");
+                "p1 {% i1 %}");
 
             var p2 = new PageMock("page2",
-                "@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>\r\n@Model.Page.Url\r\n{% i1 p1: B %}\r\n{% i2 p2: X %}");
+                "{% i1 p1: B %} {% i2 p2: X %}");
 
             p1.SubPages.Add(p2);
 
             var site = new Site("", p1, null);
-            site.Includes.Add(new TemplateMock("i1", "@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>\r\nSome Value\r\n@Model.Data[\"p1\"]", new Metadata() { { "p1", "A" } }));
-            site.Includes.Add(new TemplateMock("i2", "@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>\r\n**@Model.Page.Url**\r\n@Model.Data.Count", new Metadata() { { "p1", "A" }, { "p2", "X" } }));
+            site.Includes.Add(new TemplateMock("i1", "Some Value @Model.Data[\"p1\"] @Model.Page.Url", new Metadata() { { "p1", "A" } }));
+            site.Includes.Add(new TemplateMock("i2", "**@Model.Page.Url** @Model.Data.Count", new Metadata() { { "p1", "A" }, { "p2", "X" } }));
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
-            Assert.AreEqual("<p><em>1</em> Some Value\r\nA</p>", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
-            Assert.AreEqual("<p>/page2/\nSome Value\r\nB\n**/page2/**\r\n2</p>", files.First(f => f.Location.ToId() == "page2::index.html").AsTextContent());
+            Assert.AreEqual("<p>p1 Some Value A /</p>", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
+            Assert.AreEqual("<p>Some Value B /page2/ **/page2/** 2</p>", files.First(f => f.Location.ToId() == "page2::index.html").AsTextContent());
         }
 
         [Test]
@@ -135,11 +135,11 @@ namespace CLI.Tests
                 "p1 {% i1 %}", l1);
 
             var site = new Site("", p1, null);
-            site.Includes.Add(new TemplateMock("i1", "@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>\r\nSome Value: @Model.Data[\"p1\"]", new Metadata() { { "p1", "A" } }));
+            site.Includes.Add(new TemplateMock("i1", "@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>\r\nSome Value: @Model.Data[\"p1\"]", new Metadata() { { "p1", "A" } }));
             
             var files = await m_Compiler.Compile(site).ToListAsync();
 
-            Assert.AreEqual("<p>abc Some Value: B klm <p>p1 Some Value: A</p> xyz</p>", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
+            Assert.AreEqual("abc Some Value: B klm <p>p1 Some Value: A</p> xyz", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
         }
 
         [Test]

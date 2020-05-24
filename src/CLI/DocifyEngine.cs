@@ -45,7 +45,7 @@ namespace Xarial.Docify.CLI
         private readonly ILocation[] m_SrcDirs;
         private readonly string m_OutDir;
 
-        public DocifyEngine(string[] srcDirs, string outDir, string siteUrl, Environment_e env)
+        public DocifyEngine(string[] srcDirs, string outDir, string siteUrl, string env)
         {
             var builder = new ContainerBuilder();
             m_SiteUrl = siteUrl;
@@ -57,8 +57,6 @@ namespace Xarial.Docify.CLI
             m_Container = builder.Build();
 
             LoadPlugins();
-
-            MarkdownHelper.MarkdownTransformer = m_Container.Resolve<MarkdigMarkdownContentTransformer>();
         }
 
         public async Task Build()
@@ -85,7 +83,7 @@ namespace Xarial.Docify.CLI
             return m_Container.Resolve<T>();
         }
 
-        protected virtual void RegisterDependencies(ContainerBuilder builder, Environment_e env) 
+        protected virtual void RegisterDependencies(ContainerBuilder builder, string env) 
         {
             builder.RegisterType<LocalFileSystemLoaderConfig>()
                 .UsingConstructor(typeof(IConfiguration));
@@ -124,7 +122,7 @@ namespace Xarial.Docify.CLI
                 .SingleInstance();
 
             builder.RegisterType<LocalFileSystemConfigurationLoader>().As<IConfigurationLoader>()
-                .WithParameter(new TypedParameter(typeof(Environment_e), env));
+                .WithParameter(new TypedParameter(typeof(string), env));
 
             builder.RegisterType<BaseCompiler>().As<ICompiler>();
 

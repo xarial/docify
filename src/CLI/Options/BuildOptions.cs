@@ -26,6 +26,6 @@ namespace Xarial.Docify.CLI.Options
         public string SiteUrl { get; set; }
 
         [Option('e', "env", HelpText = "Build environment, either standard set or custom",  Required = false)]
-        public Environment_e Environment { get; set; } = Environment_e.Test;
+        public string Environment { get; set; }
     }
 }

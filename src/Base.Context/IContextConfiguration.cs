@@ -8,18 +8,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
-using Xarial.Docify.Base.Services;
 
-namespace Xarial.Docify.Lib.Tools
+namespace Xarial.Docify.Base.Context
 {
-    public static class MarkdownHelper
+    public interface IContextConfiguration : IContextMetadata
     {
-        public static IContentTransformer MarkdownTransformer { get; set; }
-
-        public static Task<string> ToHtml(string raw)
-        {
-            return MarkdownTransformer.Transform(raw, Guid.NewGuid().ToString(), null);
-        }
+        string Environment { get; }
     }
 }

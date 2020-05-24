@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Base.Context\Base.Context.csproj" />
     <ProjectReference Include="..\..\src\Base.Extensions\Base.Extensions.csproj" />
     <ProjectReference Include="..\..\src\Base\Base.csproj" />
   </ItemGroup>

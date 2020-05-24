@@ -41,7 +41,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins.Tests", "tests\Plug
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Themes.Tests", "tests\Themes.Tests\Themes.Tests.csproj", "{B3FC3FBD-3C19-42D4-B93E-CCEAEF6F4811}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Common", "tests\Tests.Common\Tests.Common.csproj", "{E24618B1-3279-45FE-B04E-A8B7F21734F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Common", "tests\Tests.Common\Tests.Common.csproj", "{E24618B1-3279-45FE-B04E-A8B7F21734F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base.Context", "src\Base.Context\Base.Context.csproj", "{7A866678-41A0-4254-9019-ECFB0E7770F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,6 +111,10 @@ Global
 		{E24618B1-3279-45FE-B04E-A8B7F21734F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E24618B1-3279-45FE-B04E-A8B7F21734F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E24618B1-3279-45FE-B04E-A8B7F21734F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A866678-41A0-4254-9019-ECFB0E7770F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A866678-41A0-4254-9019-ECFB0E7770F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A866678-41A0-4254-9019-ECFB0E7770F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A866678-41A0-4254-9019-ECFB0E7770F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

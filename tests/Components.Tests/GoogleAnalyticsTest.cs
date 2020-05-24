@@ -29,7 +29,7 @@ namespace Components.Tests
         {
             var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics { traking-code:  } %}\r\n</head>", INCLUDE_PATH,
                 null,
-                new Configuration { Environment = Environment_e.Test });
+                new Configuration { Environment = "Test" });
 
             var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 
@@ -41,7 +41,7 @@ namespace Components.Tests
         {
             var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics { traking-code: ABC } %}\r\n</head>", INCLUDE_PATH,
                 null,
-                new Configuration { Environment = Environment_e.Production });
+                new Configuration { Environment = "Production" });
 
             var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 
@@ -53,7 +53,7 @@ namespace Components.Tests
         {
             var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics { production-only: false, traking-code: ABC } %}\r\n</head>", INCLUDE_PATH,
                 null,
-                new Configuration { Environment = Environment_e.Test });
+                new Configuration { Environment = "Test" });
 
             var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 
@@ -65,7 +65,7 @@ namespace Components.Tests
         {
             var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics %}\r\n</head>", INCLUDE_PATH,
                 null,
-                new Configuration { Environment = Environment_e.Production });
+                new Configuration { Environment = "Production" });
 
             var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
             

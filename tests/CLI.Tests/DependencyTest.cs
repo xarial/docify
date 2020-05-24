@@ -12,7 +12,7 @@ namespace CLI.Tests
         [Test]
         public void ResolveTest() 
         {
-            var engine = new DocifyEngineMock(@"D:\src", @"D:\out", "www.xarial.com", Environment_e.Test);
+            var engine = new DocifyEngineMock(@"D:\src", @"D:\out", "www.xarial.com", "Test");
 
             Assert.DoesNotThrow(() => engine.Resove<ICompiler>(), "ICompiler");
             Assert.DoesNotThrow(() => engine.Resove<IComponentsLoader>(), "IComponentsLoader");

@@ -15,7 +15,7 @@ namespace Xarial.Docify.Core.Data
 {
     public class Configuration : Metadata, IConfiguration
     {
-        public Environment_e Environment { get; set; }
+        public string Environment { get; set; }
         public string WorkingFolder { get; set; }
         public ILocation ComponentsFolder { get; set; }
         public List<string> Components { get; set; }
@@ -30,7 +30,7 @@ namespace Xarial.Docify.Core.Data
 
         public Configuration(IDictionary<string, dynamic> parameters) : base(parameters)
         {
-            Environment = Environment_e.Test;
+            Environment = "";
             ThemesHierarchy = new List<string>();
         }
 

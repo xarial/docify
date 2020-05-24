@@ -1,6 +1,6 @@
 ﻿---
 traking-code:
-production-only: true
+environment: production
 ---
 @using RazorLight
 @using System
@@ -8,7 +8,9 @@ production-only: true
 @{
     string trackingCode = "";
 
-    var enable = Model.Data.Get<bool>("production-only") ? Model.Site.Configuration.Environment == Xarial.Docify.Base.Environment_e.Production : true;
+    var env = Model.Data.Get<string>("environment");
+
+    var enable = string.IsNullOrEmpty(env) || string.Equals(Model.Site.Configuration.Environment, env, StringComparison.CurrentCultureIgnoreCase);
 
     if (enable)
     {

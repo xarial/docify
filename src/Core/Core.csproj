@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Base.Context\Base.Context.csproj" />
     <ProjectReference Include="..\Base.Extensions\Base.Extensions.csproj" />
     <ProjectReference Include="..\Base\Base.csproj" />
   </ItemGroup>

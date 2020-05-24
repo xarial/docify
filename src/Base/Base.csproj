@@ -9,6 +9,14 @@
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Context\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Base.Context\Base.Context.csproj" />
+  </ItemGroup>
+
   <Import Project="..\..\common\common.props" />
   
 </Project>

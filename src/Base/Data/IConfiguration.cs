@@ -12,7 +12,7 @@ namespace Xarial.Docify.Base.Data
 {
     public interface IConfiguration : IMetadata
     {
-        Environment_e Environment { get; set; }
+        string Environment { get; set; }
         string WorkingFolder { get; set; }
         ILocation ComponentsFolder { get; set; }
         List<string> Components { get; set; }

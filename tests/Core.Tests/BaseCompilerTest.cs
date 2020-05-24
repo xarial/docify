@@ -50,8 +50,14 @@ namespace Core.Tests
 
             var layoutMock = new Mock<ILayoutParser>();
 
-            layoutMock.Setup(m => m.ContainsPlaceholder(It.IsAny<string>()))
-                .Returns<string>(c => c.Contains("_C_"));
+            layoutMock.Setup(m => m.ValidateLayout(It.IsAny<string>()))
+                .Callback<string>(c =>
+                {
+                    if (!c.Contains("_C_")) 
+                    {
+                        throw new Exception();
+                    }
+                });
 
             layoutMock.Setup(m => m.InsertContent(
                 It.IsAny<ITemplate>(), It.IsAny<string>(), It.IsAny<ISite>(), It.IsAny<IPage>(), It.IsAny<string>()))

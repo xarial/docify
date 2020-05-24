@@ -29,9 +29,12 @@ namespace Xarial.Docify.Core.Compiler
             m_Transformer = transformer;
         }
 
-        public bool ContainsPlaceholder(string content)
+        public void ValidateLayout(string content)
         {
-            return Regex.IsMatch(content, CONTENT_PLACEHOLDER_REGEX);
+            if (!Regex.IsMatch(content, CONTENT_PLACEHOLDER_REGEX))
+            {
+                throw new Exception("Layout doesn't doesn't contain the placeholder: {{ content }}");
+            }
         }
 
         public async Task<string> InsertContent(ITemplate layout, string content, ISite site, IPage page, string url)

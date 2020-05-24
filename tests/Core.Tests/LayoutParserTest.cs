@@ -41,18 +41,18 @@ namespace Core.Tests
         [Test]
         public void ContainsPlaceholder()
         {
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("Hello {{ content }}"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("{{ content }}"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("{{ content }} AAA"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("ABC {{ content }} aaa"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("{{    content }}"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("Hello {{ content }}"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("{{ content  }}"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("{{ content}} AAA"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("ABC {{content}} aaa"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("{{ content}} AAA\r\n{{ content }}"));
-            Assert.IsTrue(m_Parser.ContainsPlaceholder("{{content }}"));
-            Assert.IsFalse(m_Parser.ContainsPlaceholder("{content} Some Text"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("Hello {{ content }}"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{ content }}"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{ content }} AAA"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("ABC {{ content }} aaa"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{    content }}"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("Hello {{ content }}"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{ content  }}"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{ content}} AAA"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("ABC {{content}} aaa"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{ content}} AAA\r\n{{ content }}"));
+            Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{content }}"));
+            Assert.Throws<Exception>(() => m_Parser.ValidateLayout("{content} Some Text"));
         }
 
         [Test]

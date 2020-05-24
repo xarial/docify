@@ -11,10 +11,10 @@ using System.Text;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class LayoutMissingContentPlaceholderException : Exception
+    public class InvalidLayoutException : Exception
     {
-        public LayoutMissingContentPlaceholderException(string layoutName)
-            : base($"Layout: '{layoutName}' doesn't contain the placeholder")
+        public InvalidLayoutException(string layoutName, Exception inner)
+            : base($"Invalid layout '{layoutName}'", inner)
         {
         }
     }

@@ -73,7 +73,7 @@ namespace Core.Tests
                 });
 
             var includesHandlerMock = new Mock<IIncludesHandler>();
-            includesHandlerMock.Setup(m => m.ReplaceAll(It.IsAny<string>(), It.IsAny<Site>(), 
+            includesHandlerMock.Setup(m => m.ResolveAll(It.IsAny<string>(), It.IsAny<Site>(), 
                 It.IsAny<Page>(), It.IsAny<string>()))
                 .Returns<string, Site, Page, string>((c, s, p, u) => Task.FromResult(c));
 

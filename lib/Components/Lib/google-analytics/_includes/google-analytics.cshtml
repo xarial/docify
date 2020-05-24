@@ -10,7 +10,7 @@ environment: production
 
     var env = Model.Data.Get<string>("environment");
 
-    var enable = string.IsNullOrEmpty(env) || string.Equals(Model.Site.Configuration.Environment, env, StringComparison.CurrentCultureIgnoreCase);
+    var enable = env == "-" || string.Equals(Model.Site.Configuration.Environment, env, StringComparison.CurrentCultureIgnoreCase);
 
     if (enable)
     {

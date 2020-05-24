@@ -30,10 +30,6 @@
     </None>
   </ItemGroup>
   
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath></OutputPath>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.4" />
     <PackageReference Include="CommandLineParser" Version="2.6.0" />
@@ -49,12 +45,12 @@
 	 <LibDir Include="..\..\lib\Themes\Lib\**\*" TargetPath="$(OutDir)\Themes\%(RecursiveDir)%(Filename)%(Extension)" />
    <LibDir Include="..\..\lib\Plugins\$(OutDir)\**\*" TargetPath="$(OutDir)\Plugins\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
-  <!--<Target Name="RemoveLib" BeforeTargets="CopyLib">
+  <Target Name="RemoveLib" BeforeTargets="CopyLib" Condition="'$(Configuration)'=='Debug'">
     <RemoveDir ContinueOnError="true" Directories="$(OutDir)\Components;$(OutDir)\Themes;$(OutDir)\Plugins" />
   </Target>
-  <Target Name="CopyLib" AfterTargets="AfterBuild">
+  <Target Name="CopyLib" AfterTargets="AfterBuild" Condition="'$(Configuration)'=='Debug'">
     <Copy SourceFiles="@(LibDir)" DestinationFiles="@(LibDir->'%(TargetPath)')" OverwriteReadOnlyFiles="true" />
-  </Target>-->
+  </Target>
   
   <Import Project="..\..\common\common.props" />
 </Project>

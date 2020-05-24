@@ -47,8 +47,6 @@ namespace Xarial.Docify.Lib.Plugins
 
             if (redirectsFrom?.Any() == true)
             {
-                //TODO: fix the issue when redirect page ends with .html
-
                 foreach (var redirectFrom in redirectsFrom)
                 {
                     var redirectUrl = redirectFrom;

@@ -145,7 +145,7 @@ namespace Xarial.Docify.Core.Compiler
                 content = await m_LayoutParser.InsertContent(layout, content, site, page, url);
             }
 
-            content = await m_IncludesHandler.ReplaceAll(content, site, page, url);
+            content = await m_IncludesHandler.ResolveAll(content, site, page, url);
 
             content = await m_Ext.WritePageContent(content, page.Data, url);
 
@@ -157,7 +157,7 @@ namespace Xarial.Docify.Core.Compiler
             var url = loc.ToUrl();
 
             var rawContent = asset.AsTextContent();
-            var content = await m_IncludesHandler.ReplaceAll(rawContent, site, page, url);
+            var content = await m_IncludesHandler.ResolveAll(rawContent, site, page, url);
 
             return new File(loc, ContentExtension.ToByteArray(content), asset.Id);
         }

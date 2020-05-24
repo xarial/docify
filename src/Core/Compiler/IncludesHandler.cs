@@ -118,7 +118,7 @@ namespace Xarial.Docify.Core.Compiler
             return Task.CompletedTask;
         }
 
-        public async Task<string> ReplaceAll(string rawContent, ISite site, IPage page, string url)
+        public async Task<string> ResolveAll(string rawContent, ISite site, IPage page, string url)
         {
             var replacement = await m_PlcParser.ReplaceAsync(rawContent, async (string includeRawContent) => 
             {
@@ -128,7 +128,7 @@ namespace Xarial.Docify.Core.Compiler
                     IMetadata data;
                     await ParseParameters(includeRawContent, out name, out data);
                     var replace = await Render(name, data, site, page, url);
-                    return await ReplaceAll(replace, site, page, url);
+                    return await ResolveAll(replace, site, page, url);
                 }
                 catch(Exception ex)
                 {

@@ -51,7 +51,7 @@ namespace Components.Tests
         [Test]
         public async Task TestEnvIgnoreEnvTest()
         {
-            var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics { production-only: false, traking-code: ABC } %}\r\n</head>", INCLUDE_PATH,
+            var site = ComponentsTest.Instance.NewSite("<head>\r\n{% google-analytics { environment: -, traking-code: ABC } %}\r\n</head>", INCLUDE_PATH,
                 null,
                 new Configuration { Environment = "Test" });
 

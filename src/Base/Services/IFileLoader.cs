@@ -12,8 +12,9 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Services
 {
-    public interface ILoader
+    public interface IFileLoader
     {
-        IAsyncEnumerable<IFile> Load(ILocation[] locations);
+        IAsyncEnumerable<IFile> LoadFolder(ILocation location, string[] filters = null);
+        Task<IFile> LoadFile(ILocation loc);
     }
 }

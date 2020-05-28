@@ -13,12 +13,12 @@ namespace Xarial.Docify.Base.Data
     public interface IConfiguration : IMetadata
     {
         string Environment { get; set; }
-        string WorkingFolder { get; set; }
-        ILocation ComponentsFolder { get; set; }
+        //string WorkingFolder { get; set; }
+        //ILocation ComponentsFolder { get; set; }
         List<string> Components { get; set; }
-        ILocation PluginsFolder { get; set; }
+        //ILocation PluginsFolder { get; set; }
         List<string> Plugins { get; set; }
-        ILocation ThemesFolder { get; set; }
+        //ILocation ThemesFolder { get; set; }
         List<string> ThemesHierarchy { get; }
     }
 }

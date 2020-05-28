@@ -13,8 +13,8 @@ namespace Xarial.Docify.Core.Exceptions
 {
     public class DuplicateComponentSourceFileException : Exception
     {
-        public DuplicateComponentSourceFileException(string compName, string id)
-            : base($"Specified file '{id}' from '{compName}' component already present in the source files")
+        public DuplicateComponentSourceFileException(string id)
+            : base($"Specified file '{id}' component already present in the source files")
         {
         }
     }

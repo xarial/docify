@@ -56,21 +56,18 @@ namespace Xarial.Docify.CLI
 
             m_Container = builder.Build();
 
-            LoadPlugins();
+            //LoadPlugins();
         }
 
         public async Task Build()
         {
-            var loader = Resove<ILoader>();
+            var loader = Resove<IProjectLoader>();
             var composer = Resove<IComposer>();
             var compiler = Resove<ICompiler>();
             var publisher = Resove<IPublisher>();
 
             var srcFiles = loader.Load(m_SrcDirs);
-
-            var compsLoader = Resove<IComponentsLoader>();
-            srcFiles = compsLoader.Load(srcFiles);
-
+            
             var site = await composer.ComposeSite(srcFiles, m_SiteUrl);
 
             var writables = compiler.Compile(site);
@@ -85,8 +82,8 @@ namespace Xarial.Docify.CLI
 
         protected virtual void RegisterDependencies(ContainerBuilder builder, string env) 
         {
-            builder.RegisterType<LocalFileSystemLoaderConfig>()
-                .UsingConstructor(typeof(IConfiguration));
+            //builder.RegisterType<LocalFileSystemFileLoaderConfig>()
+            //    .UsingConstructor(typeof(IConfiguration));
 
             builder.RegisterType<BaseCompilerConfig>()
                 .UsingConstructor(typeof(IConfiguration));
@@ -96,8 +93,8 @@ namespace Xarial.Docify.CLI
             builder.RegisterType<LocalFileSystemPublisher>()
                 .As<IPublisher>();
 
-            builder.RegisterType<LocalFileSystemLoader>()
-                .As<ILoader>();
+            builder.RegisterType<LocalFileSystemFileLoader>()
+                .As<IFileLoader>();
 
             builder.RegisterType<LayoutParser>()
                 .As<ILayoutParser>();
@@ -106,7 +103,7 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<ConsoleLogger>().As<ILogger>();
 
-            builder.RegisterType<LocalFileSystemComponentsLoader>().As<IComponentsLoader>();
+            builder.RegisterType<ProjectLoader>().As<IProjectLoader>();
 
             //NOTE: need this to be single instance to maximize performance and reuse precompiled templates
             builder.RegisterType<RazorLightContentTransformer>()
@@ -118,14 +115,14 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<IncludesHandler>().As<IIncludesHandler>();
             
-            builder.RegisterType<LocalFileSystemConfigurationLoader>().As<IConfigurationLoader>()
+            builder.RegisterType<ConfigurationLoader>().As<IConfigurationLoader>()
                 .WithParameter(new TypedParameter(typeof(string), env));
 
             builder.RegisterType<BaseCompiler>().As<ICompiler>();
 
             builder.Register(c => c.Resolve<IConfigurationLoader>().Load(m_SrcDirs).Result);
 
-            builder.RegisterType<LocalFileSystemPluginsManager>().As<IPluginsManager>();
+            builder.RegisterType<PluginsManager>().As<IPluginsManager>();
 
             RegisterApiExtensions(builder);
         }
@@ -163,10 +160,10 @@ namespace Xarial.Docify.CLI
             builder.RegisterType<DocifyApplication>().As<IDocifyApplication>();
         }
 
-        private void LoadPlugins()
-        {
-            var plugMgr = m_Container.Resolve<IPluginsManager>();
-            plugMgr.LoadPlugins();
-        }
+        //private void LoadPlugins()
+        //{
+        //    var plugMgr = m_Container.Resolve<IPluginsManager>();
+        //    plugMgr.LoadPlugins();
+        //}
     }
 }

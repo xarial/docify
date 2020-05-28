@@ -16,12 +16,12 @@ namespace Xarial.Docify.Core.Data
     public class Configuration : Metadata, IConfiguration
     {
         public string Environment { get; set; }
-        public string WorkingFolder { get; set; }
-        public ILocation ComponentsFolder { get; set; }
+        //public string WorkingFolder { get; set; }
+        //public ILocation ComponentsFolder { get; set; }
         public List<string> Components { get; set; }
-        public ILocation PluginsFolder { get; set; }
+        //public ILocation PluginsFolder { get; set; }
         public List<string> Plugins { get; set; }
-        public ILocation ThemesFolder { get; set; }
+        //public ILocation ThemesFolder { get; set; }
         public List<string> ThemesHierarchy { get; }
 
         public Configuration() : this(new Dictionary<string, dynamic>())

@@ -13,16 +13,63 @@ using System.Text.RegularExpressions;
 
 namespace Xarial.Docify.Core.Helpers
 {
+    //TODO: move to toolkit
     public static class PathMatcher
     {
-        //TODO: move to toolkit
+        public const string NEGATIVE_FILTER = "|";
+        public const string ANY_FILTER = "*";
+
+        public static IEnumerable<string> RevertFilter(params string[] filters) 
+        {
+            foreach (var filter in filters) 
+            {
+                if (IsNegative(filter))
+                {
+                    yield return filter.Substring(1);
+                }
+                else
+                {
+                    yield return NEGATIVE_FILTER + filter;
+                }
+            }
+        }
+
+        private static bool IsNegative(string filter) => filter.StartsWith(NEGATIVE_FILTER);
+
         public static bool Matches(IEnumerable<string> filters, string path) 
         {
             //TODO: combine into single regex
-            var regex = filters.Select(
-                i => (i.StartsWith("*") ? "" : "^") + Regex.Escape(i).Replace("\\*", ".*").Replace("\\?", ".") + (i.EndsWith("*") ? "" : "$")).ToArray();
+            
+            foreach (var filter in filters.ToArray()) 
+            {
+                var isNegative = IsNegative(filter);
 
-            return regex.Any(i => Regex.IsMatch(path, i, RegexOptions.IgnoreCase));
+                string regexFilter;
+
+                if (isNegative)
+                {
+                    regexFilter = RevertFilter(filter).First();
+                }
+                else 
+                {
+                    regexFilter = filter;
+                }
+
+                var regex = (regexFilter.StartsWith(ANY_FILTER) ? "" : "^") 
+                    + Regex.Escape(regexFilter)
+                    .Replace($"\\{ANY_FILTER}", ".*")
+                    .Replace("\\?", ".") 
+                    + (regexFilter.EndsWith(ANY_FILTER) ? "" : "$");
+
+                var match = Regex.IsMatch(path, regex, RegexOptions.IgnoreCase);
+
+                if (match == !isNegative) 
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

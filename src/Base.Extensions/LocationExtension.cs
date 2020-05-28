@@ -16,7 +16,7 @@ namespace Xarial.Docify.Base
     public static class LocationExtension
     {
         public const string PATH_SEP = "\\";
-        private const string URL_SEP = "/";
+        public const string URL_SEP = "/";
         public const string ID_SEP = "::";
 
         private const string INDEX_PAGE_NAME = "index.html";

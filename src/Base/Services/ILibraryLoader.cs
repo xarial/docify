@@ -7,8 +7,8 @@ namespace Xarial.Docify.Base.Services
 {
     public interface ILibraryLoader
     {
-        IAsyncEnumerable<IFile> LoadThemeFiles(string themeName, string pattern = "*.*");
-        IAsyncEnumerable<IFile> LoadComponentFiles(string componentName);
-        IAsyncEnumerable<IFile> LoadPluginFiles(string pluginId);
+        IAsyncEnumerable<IFile> LoadThemeFiles(string themeName, string[] filters = null);
+        IAsyncEnumerable<IFile> LoadComponentFiles(string componentName, string[] filters = null);
+        IAsyncEnumerable<IFile> LoadPluginFiles(string pluginId, string[] filters = null);
     }
 }

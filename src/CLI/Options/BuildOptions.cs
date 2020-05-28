@@ -16,7 +16,7 @@ namespace Xarial.Docify.CLI.Options
     [Verb("build", HelpText = "Builds the static site from source")]
     public class BuildOptions
     {
-        [Option('s', "src", Required = true, HelpText = "Source directoryies")]
+        [Option('s', "src", Required = true, HelpText = "Source directories")]
         public IEnumerable<string> SourceDirectories { get; set; }
 
         [Option('o', "out", Required = true, HelpText = "Output directory")]
@@ -27,5 +27,8 @@ namespace Xarial.Docify.CLI.Options
 
         [Option('e', "env", HelpText = "Build environment, either standard set or custom",  Required = false)]
         public string Environment { get; set; }
+
+        [Option('l', "lib", HelpText = "Path to the library", Required = false)]
+        public string Library { get; set; }
     }
 }

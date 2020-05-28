@@ -78,13 +78,15 @@ namespace Xarial.Docify.Core.Loader
 
                 if (!string.IsNullOrEmpty(theme))
                 {
-                    await foreach (var themeConfFile in m_LibraryLoader.LoadThemeFiles(theme, "*::" + CONF_FILE_NAME)) 
+                    await foreach (var themeConfFile in m_LibraryLoader.LoadThemeFiles(theme,
+                        new string[] { CONF_FILE_NAME })) 
                     {
                         var themeConf = ConfigurationFromFile(themeConfFile);
                         conf = conf.Merge(themeConf);
                     }
 
-                    await foreach (var themeConfFile in m_LibraryLoader.LoadThemeFiles(theme, "*::" + m_EnvConfFileName))
+                    await foreach (var themeConfFile in m_LibraryLoader.LoadThemeFiles(theme,
+                        new string[] { m_EnvConfFileName }))
                     {
                         var themeConf = ConfigurationFromFile(themeConfFile);
                         conf = conf.Merge(themeConf);
@@ -110,7 +112,7 @@ namespace Xarial.Docify.Core.Loader
                 var confFile = await m_FileLoader.LoadFile(loc);
                 return ConfigurationFromFile(confFile);
             }
-            catch (FileNotFoundException)
+            catch (FileNotFoundException)//TODO: use better way to handle this case
             {
             }
 
@@ -122,19 +124,5 @@ namespace Xarial.Docify.Core.Loader
             var confStr = file.AsTextContent();
             return new Configuration(m_ConfigSerializer.Deserialize<Dictionary<string, object>>(confStr));
         }
-
-        //private async Task<Configuration> GetConfiguration(ILocation confFileLocation)
-        //{
-        //    var conf = new Configuration();
-
-            
-
-        //    await LoadConfigurationFromLocationIfExists(confFileLocation);
-
-        //    var envConfFileLoc = confFileLocation.Copy(m_EnvConfFileName, confFileLocation.Path);
-        //    await LoadConfigurationFromLocationIfExists(envConfFileLoc);
-
-        //    return conf;
-        //}
     }
 }

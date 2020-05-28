@@ -14,7 +14,7 @@ namespace CLI.Tests
         public IFileSystem FileSystem { get; private set; }
 
         public DocifyEngineMock(string srcDir, string outDir, string siteUrl, string env)
-            : base(new string[] { srcDir }, outDir, siteUrl, env)
+            : base(new string[] { srcDir }, outDir, "", siteUrl, env)
         {
         }
 

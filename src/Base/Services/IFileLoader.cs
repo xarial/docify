@@ -14,7 +14,7 @@ namespace Xarial.Docify.Base.Services
 {
     public interface IFileLoader
     {
-        IAsyncEnumerable<IFile> LoadFolder(ILocation location, string[] filters = null);
+        IAsyncEnumerable<IFile> LoadFolder(ILocation location, string[] filters);
         Task<IFile> LoadFile(ILocation loc);
     }
 }

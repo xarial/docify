@@ -49,7 +49,17 @@ namespace Xarial.Docify.Core.Plugin
 
                 var cb = new ConventionBuilder();
 
-                cb.ForTypesMatching(t => typeof(IPluginBase).IsAssignableFrom(t)).Export<IPluginBase>();
+                cb.ForTypesMatching(t =>
+                {
+                    if (typeof(IPluginBase).IsAssignableFrom(t))
+                    {
+                        var id = GetPluginId(t);
+
+                        return m_Conf.Plugins.Contains(id, StringComparer.InvariantCultureIgnoreCase);
+                    }
+
+                    return false;
+                }).Export<IPluginBase>();
 
                 var pluginAssemblies = new List<Assembly>();
 

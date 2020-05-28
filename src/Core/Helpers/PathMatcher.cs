@@ -39,7 +39,12 @@ namespace Xarial.Docify.Core.Helpers
         public static bool Matches(IEnumerable<string> filters, string path) 
         {
             //TODO: combine into single regex
-            
+
+            if (filters == null) 
+            {
+                return true;
+            }
+
             foreach (var filter in filters.ToArray()) 
             {
                 var isNegative = IsNegative(filter);

@@ -35,8 +35,7 @@ namespace Xarial.Docify.Core.Loader
             m_FileSystem = fileSystem;
         }
 
-        public async IAsyncEnumerable<IFile> LoadFolder(ILocation location, 
-            string[] filters = null)
+        public async IAsyncEnumerable<IFile> LoadFolder(ILocation location, string[] filters)
         {
             if (filters != null) 
             {
@@ -62,10 +61,14 @@ namespace Xarial.Docify.Core.Loader
             {
                 var relPath = Path.GetRelativePath(path, filePath);
 
-                if (PathMatcher.Matches(filters, relPath))
+                var loc = Location.FromPath(relPath);
+
+                if (PathMatcher.Matches(filters, loc.ToId()))
                 {
-                    var loc = Location.FromPath(relPath);
-                    yield return await LoadFile(loc);
+                    var content = await m_FileSystem.File.ReadAllBytesAsync(filePath);
+
+                    yield return new Data.File(
+                        loc, content, Guid.NewGuid().ToString());
                 }
             }
         }

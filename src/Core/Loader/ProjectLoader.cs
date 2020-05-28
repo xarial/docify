@@ -74,7 +74,7 @@ namespace Xarial.Docify.Core.Loader
                 foreach (var compName in m_Config.Components)
                 {
                     await foreach (var srcFile in ProcessLibraryItems(
-                        m_LibraryLoader.LoadComponentFiles(compName), resFileIds, false))
+                            m_LibraryLoader.LoadComponentFiles(compName), resFileIds, false))
                     {
                         yield return srcFile;
                     }

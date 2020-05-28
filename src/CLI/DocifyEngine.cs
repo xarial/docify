@@ -10,6 +10,7 @@ using Autofac.Builder;
 using Autofac.Core;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,20 +44,27 @@ namespace Xarial.Docify.CLI
 
         private readonly string m_SiteUrl;
         private readonly ILocation[] m_SrcDirs;
-        private readonly string m_OutDir;
+        private readonly ILocation m_OutDir;
+        private readonly ILocation m_LibLoc;
 
-        public DocifyEngine(string[] srcDirs, string outDir, string siteUrl, string env)
+        public DocifyEngine(string[] srcDirs, string outDir, string libPath, string siteUrl, string env)
         {
             var builder = new ContainerBuilder();
+
             m_SiteUrl = siteUrl;
             m_SrcDirs = srcDirs.Select(s => Location.FromPath(s)).ToArray();
-            m_OutDir = outDir;
+            m_OutDir = Location.FromPath(outDir);
+
+            if (!Path.IsPathRooted(libPath)) 
+            {
+                libPath = Path.Combine(Path.GetDirectoryName(typeof(DocifyEngine).Assembly.Location), libPath);
+            }
+
+            m_LibLoc = Location.FromPath(libPath);
 
             RegisterDependencies(builder, env);
 
             m_Container = builder.Build();
-
-            //LoadPlugins();
         }
 
         public async Task Build()
@@ -70,9 +78,9 @@ namespace Xarial.Docify.CLI
             
             var site = await composer.ComposeSite(srcFiles, m_SiteUrl);
 
-            var writables = compiler.Compile(site);
+            var outFiles = compiler.Compile(site);
             
-            await publisher.Write(Location.FromPath(m_OutDir), writables);
+            await publisher.Write(m_OutDir, outFiles);
         }
 
         public T Resove<T>() 
@@ -82,14 +90,13 @@ namespace Xarial.Docify.CLI
 
         protected virtual void RegisterDependencies(ContainerBuilder builder, string env) 
         {
-            //builder.RegisterType<LocalFileSystemFileLoaderConfig>()
-            //    .UsingConstructor(typeof(IConfiguration));
+            builder.RegisterType<LibraryLoader>()
+                .As<ILibraryLoader>()
+                .WithParameter(new TypedParameter(typeof(ILocation), m_LibLoc));
 
             builder.RegisterType<BaseCompilerConfig>()
                 .UsingConstructor(typeof(IConfiguration));
-
-            builder.RegisterType<LocalFileSystemPublisherConfig>();
-
+            
             builder.RegisterType<LocalFileSystemPublisher>()
                 .As<IPublisher>();
 
@@ -120,14 +127,15 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<BaseCompiler>().As<ICompiler>();
 
-            builder.Register(c => c.Resolve<IConfigurationLoader>().Load(m_SrcDirs).Result);
+            builder.Register(c => c.Resolve<IConfigurationLoader>().Load(m_SrcDirs).Result)
+                .SingleInstance();
 
             builder.RegisterType<PluginsManager>().As<IPluginsManager>();
 
-            RegisterApiExtensions(builder);
+            RegisterExtensions(builder);
         }
 
-        protected virtual void RegisterApiExtensions(ContainerBuilder builder) 
+        protected virtual void RegisterExtensions(ContainerBuilder builder) 
         {
             builder.RegisterType<IncludesHandlerExtension>()
                 .SingleInstance()

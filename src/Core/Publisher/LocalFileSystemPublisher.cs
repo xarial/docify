@@ -21,21 +21,18 @@ namespace Xarial.Docify.Core.Publisher
 {
     public class LocalFileSystemPublisher : IPublisher
     {
-        private readonly LocalFileSystemPublisherConfig m_Config;
         private readonly System.IO.Abstractions.IFileSystem m_FileSystem;
 
         private readonly IPublisherExtension m_Ext;
 
-        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config,
-            IPublisherExtension ext) 
-            : this(config, new System.IO.Abstractions.FileSystem(), ext)
+        public LocalFileSystemPublisher(IPublisherExtension ext) 
+            : this(new System.IO.Abstractions.FileSystem(), ext)
         {
         }
 
-        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config, 
+        public LocalFileSystemPublisher( 
             System.IO.Abstractions.IFileSystem fileSystem, IPublisherExtension ext)
         {
-            m_Config = config;
             m_FileSystem = fileSystem;
             m_Ext = ext;
         }

@@ -17,7 +17,6 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
-using Xarial.Docify.Lib.Plugins.Attributes;
 using Xarial.Docify.Lib.Plugins.Data;
 using Xarial.Docify.Lib.Plugins.Exceptions;
 using Xarial.Docify.Lib.Plugins.Helpers;

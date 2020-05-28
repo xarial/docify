@@ -1,0 +1,7 @@
+<title>p1</title>
+<meta name="generator" content="Docify" />
+<meta name="description" content="d1" />
+<link rel="canonical" href="www.example.com" />
+<script type="application/ld+json">
+{"url":"www.example.com","description":"d1","headline":"d1","image":null,"@type":"WebPage","@context":"http://schema.org"}
+</script>

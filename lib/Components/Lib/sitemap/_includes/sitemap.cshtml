@@ -1,0 +1,18 @@
+﻿@using RazorLight
+@using System
+@using System.Linq
+@using System.Collections.Generic
+@using Xarial.Docify.Lib.Tools
+@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>
+@{
+    var pages = PageHelper.GetAllPages(Model.Site.MainPage).Where(p => !p.Data.ContainsKey("sitemap") || p.Data.Get<bool>("sitemap"));
+}
+    <url>
+        <loc>@(Model.Site.MainPage.FullUrl)</loc>
+    </url>
+@foreach (var page in pages)
+{
+    <url>
+        <loc>@(page.FullUrl)</loc>
+    </url>
+}

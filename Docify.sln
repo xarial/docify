@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLI", "CLI\CLI.csproj", "{83D854D7-0BCA-4C71-B024-8AAB2FEEA915}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLI", "src\CLI\CLI.csproj", "{83D854D7-0BCA-4C71-B024-8AAB2FEEA915}"
 	ProjectSection(ProjectDependencies) = postProject
 		{486F4965-1C21-4A1D-A9B4-2DCAC9014D68} = {486F4965-1C21-4A1D-A9B4-2DCAC9014D68}
 		{21F92DA2-6ECB-408B-91DA-984834827B21} = {21F92DA2-6ECB-408B-91DA-984834827B21}
@@ -11,35 +11,39 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLI", "CLI\CLI.csproj", "{8
 		{545F0EB5-9058-4F0A-B0B6-9902C4BA6C26} = {545F0EB5-9058-4F0A-B0B6-9902C4BA6C26}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{48B21798-27A0-488B-B9DC-4DAD7EE24B17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "src\Core\Core.csproj", "{48B21798-27A0-488B-B9DC-4DAD7EE24B17}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Tests", "Core.Tests\Core.Tests.csproj", "{18256E67-6849-4A8D-AC82-3B59B4CC4532}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Tests", "tests\Core.Tests\Core.Tests.csproj", "{18256E67-6849-4A8D-AC82-3B59B4CC4532}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLI.Tests", "CLI.Tests\CLI.Tests.csproj", "{75675642-CE95-4CC9-B88A-BE8E977C5137}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLI.Tests", "tests\CLI.Tests\CLI.Tests.csproj", "{75675642-CE95-4CC9-B88A-BE8E977C5137}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8FBE598C-2AA2-456A-ADDA-DFC71BECF0C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Base", "Base\Base.csproj", "{21F92DA2-6ECB-408B-91DA-984834827B21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Base", "src\Base\Base.csproj", "{21F92DA2-6ECB-408B-91DA-984834827B21}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Components", "Components\Components.csproj", "{545F0EB5-9058-4F0A-B0B6-9902C4BA6C26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Components", "lib\Components\Components.csproj", "{545F0EB5-9058-4F0A-B0B6-9902C4BA6C26}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Components.Tests", "Components.Tests\Components.Tests.csproj", "{ABD8EB0B-3803-4A26-83FD-DC9E45FBF2F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Components.Tests", "tests\Components.Tests\Components.Tests.csproj", "{ABD8EB0B-3803-4A26-83FD-DC9E45FBF2F7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Themes", "Themes\Themes.csproj", "{1A78EEA8-38A0-4EA2-AE61-04CD610C0A88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Themes", "lib\Themes\Themes.csproj", "{1A78EEA8-38A0-4EA2-AE61-04CD610C0A88}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{672CBA85-8BB8-47C8-B2CB-B42633C7BCB0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tools", "Tools\Tools.csproj", "{DFBB23AF-147C-4909-ACBD-D04E57E2EFEA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tools", "lib\Tools\Tools.csproj", "{DFBB23AF-147C-4909-ACBD-D04E57E2EFEA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins", "Plugins\Plugins.csproj", "{486F4965-1C21-4A1D-A9B4-2DCAC9014D68}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins", "lib\Plugins\Plugins.csproj", "{486F4965-1C21-4A1D-A9B4-2DCAC9014D68}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tools.Tests", "Tools.Tests\Tools.Tests.csproj", "{BF95A996-98C7-4C4D-9011-B26BFFC01AAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tools.Tests", "tests\Tools.Tests\Tools.Tests.csproj", "{BF95A996-98C7-4C4D-9011-B26BFFC01AAE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Base.Extensions", "Base.Extensions\Base.Extensions.csproj", "{BA45D95A-530D-44F9-B6C8-95ADC0FBB6B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Base.Extensions", "src\Base.Extensions\Base.Extensions.csproj", "{BA45D95A-530D-44F9-B6C8-95ADC0FBB6B5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins.Tests", "Plugins.Tests\Plugins.Tests.csproj", "{4C5B93BE-4CD9-47AB-8F45-FDA3973B679C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins.Tests", "tests\Plugins.Tests\Plugins.Tests.csproj", "{4C5B93BE-4CD9-47AB-8F45-FDA3973B679C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Themes.Tests", "Themes.Tests\Themes.Tests.csproj", "{B3FC3FBD-3C19-42D4-B93E-CCEAEF6F4811}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Themes.Tests", "tests\Themes.Tests\Themes.Tests.csproj", "{B3FC3FBD-3C19-42D4-B93E-CCEAEF6F4811}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Common", "tests\Tests.Common\Tests.Common.csproj", "{E24618B1-3279-45FE-B04E-A8B7F21734F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base.Context", "src\Base.Context\Base.Context.csproj", "{7A866678-41A0-4254-9019-ECFB0E7770F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +107,14 @@ Global
 		{B3FC3FBD-3C19-42D4-B93E-CCEAEF6F4811}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3FC3FBD-3C19-42D4-B93E-CCEAEF6F4811}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3FC3FBD-3C19-42D4-B93E-CCEAEF6F4811}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E24618B1-3279-45FE-B04E-A8B7F21734F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E24618B1-3279-45FE-B04E-A8B7F21734F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E24618B1-3279-45FE-B04E-A8B7F21734F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E24618B1-3279-45FE-B04E-A8B7F21734F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A866678-41A0-4254-9019-ECFB0E7770F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A866678-41A0-4254-9019-ECFB0E7770F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A866678-41A0-4254-9019-ECFB0E7770F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A866678-41A0-4254-9019-ECFB0E7770F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,6 +130,7 @@ Global
 		{BF95A996-98C7-4C4D-9011-B26BFFC01AAE} = {8FBE598C-2AA2-456A-ADDA-DFC71BECF0C8}
 		{4C5B93BE-4CD9-47AB-8F45-FDA3973B679C} = {8FBE598C-2AA2-456A-ADDA-DFC71BECF0C8}
 		{B3FC3FBD-3C19-42D4-B93E-CCEAEF6F4811} = {8FBE598C-2AA2-456A-ADDA-DFC71BECF0C8}
+		{E24618B1-3279-45FE-B04E-A8B7F21734F6} = {8FBE598C-2AA2-456A-ADDA-DFC71BECF0C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {680FB5AB-C7E7-4A10-9F1D-3B7D812E842C}

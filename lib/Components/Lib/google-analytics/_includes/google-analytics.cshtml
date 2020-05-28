@@ -1,0 +1,34 @@
+﻿---
+traking-code:
+environment: production
+---
+@using RazorLight
+@using System
+@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>
+@{
+    string trackingCode = "";
+
+    var env = Model.Data.Get<string>("environment");
+
+    var enable = env == "-" || string.Equals(Model.Site.Configuration.Environment, env, StringComparison.CurrentCultureIgnoreCase);
+
+    if (enable)
+    {
+        trackingCode = Model.Data.GetOrDefault<string>("traking-code");
+
+        if (string.IsNullOrEmpty(trackingCode)) 
+        {
+            enable = false;
+        }
+    }
+}
+@if(enable)
+{
+<script async src="https://www.googletagmanager.com/gtag/js?id=@trackingCode"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', '@trackingCode');
+</script>
+}

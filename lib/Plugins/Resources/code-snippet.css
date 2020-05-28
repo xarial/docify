@@ -1,0 +1,63 @@
+﻿pre.code-snippet {
+    border: none;
+    overflow: auto;
+    background: #eff0f1;
+}
+
+pre.jagged-top {
+    background-color: #eff0f1;
+    background-image: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(-135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(to top, #eff0f1 0%, #eff0f1 100%);
+    background-position: top center;
+    background-size: 0.75rem 0.75rem, 0.75rem 0.75rem, 100% 1rem;
+    background-repeat: repeat-x;
+    padding: 1rem 0;
+}
+
+pre.jagged-bottom {
+    background-color: #eff0f1;
+    background-image: linear-gradient(45deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(-45deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(to bottom, #eff0f1 0%, #eff0f1 100%);
+    background-position: bottom center;
+    background-size: 0.75rem 0.75rem, 0.75rem 0.75rem, 100% 1rem;
+    background-repeat: repeat-x;
+    padding: 1rem 0;
+}
+
+pre.jagged {
+    background-color: #eff0f1;
+    background-image: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(-135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(45deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(-45deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(to bottom, #eff0f1 0%, #eff0f1 100%), linear-gradient(to top, #eff0f1 0%, #eff0f1 100%);
+    background-position: top center, top center, bottom center, bottom center, top center, bottom center;
+    background-size: 0.75rem 0.75rem, 0.75rem 0.75rem, 0.75rem 0.75rem, 0.75rem 0.75rem, 100% 1rem, 100% 1rem;
+    background-repeat: repeat-x;
+    padding: 1rem 0;
+}
+
+.code-tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+.code-tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+.code-tab button:hover {
+    background-color: #ddd;
+}
+
+.code-tab button.active {
+    background-color: #ccc;
+}
+
+.code-snippet-container {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+}

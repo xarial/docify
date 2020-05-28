@@ -24,21 +24,13 @@ namespace Xarial.Docify.Core.Loader
     {
         private class Params
         {
-            //internal const string WorkDir = "work_dir";
-            //internal const string ComponentsDir = "components_dir";
             internal const string Components = "components";
-            //internal const string ThemesDir = "themes_dir";
             internal const string Theme = "theme";
-            //internal const string PluginsDir = "plugins_dir";
             internal const string Plugins = "plugins";
         }
 
         private const string CONF_FILE_NAME = "_config.yml";
-        //private const string DEFAULT_COMPONENTS_DIR = "Components";
-        //private const string DEFAULT_THEMES_DIR = "Themes";
-        //private const string DEFAULT_PLUGINS_DIR = "Plugins";
 
-        //private readonly IFileSystem m_FileSystem;
         private readonly MetadataSerializer m_ConfigSerializer;
         private readonly string m_Environment;
         private readonly IFileLoader m_FileLoader;
@@ -48,7 +40,6 @@ namespace Xarial.Docify.Core.Loader
 
         public ConfigurationLoader(IFileLoader fileLoader, ILibraryLoader libraryLoader, string env) 
         {
-            //m_FileSystem = fileSystem;
             m_ConfigSerializer = new MetadataSerializer();
             m_FileLoader = fileLoader;
             m_Environment = env;
@@ -60,25 +51,6 @@ namespace Xarial.Docify.Core.Loader
 
         public async Task<IConfiguration> Load(ILocation[] locations)
         {
-            //string NormalizeDirFunc(string dir, string defDir)
-            //{
-            //    var newDir = dir;
-
-            //    if (string.IsNullOrEmpty(newDir))
-            //    {
-            //        newDir = defDir;
-            //    }
-
-            //    if (!Path.IsPathRooted(newDir))
-            //    {
-            //        var appDir = Path.GetDirectoryName(this.GetType().Assembly.Location);
-
-            //        newDir = Path.Combine(appDir, newDir);
-            //    }
-
-            //    return newDir;
-            //};
-
             IConfiguration conf = new Configuration();
 
             foreach (var loc in locations)
@@ -96,9 +68,7 @@ namespace Xarial.Docify.Core.Loader
 
                 conf = conf.Merge(thisConf);
             }
-
-            //var themesDir = NormalizeDirFunc(conf.GetRemoveParameterOrDefault<string>(Params.ThemesDir), DEFAULT_THEMES_DIR);
-
+            
             var themesHierarchy = new List<string>();
             string theme;
             
@@ -126,14 +96,9 @@ namespace Xarial.Docify.Core.Loader
             while (!string.IsNullOrEmpty(theme));
             
             conf.Environment = m_Environment;
-            //conf.ThemesFolder = Location.FromPath(themesDir);
             conf.ThemesHierarchy.AddRange(themesHierarchy);
-            
-            //conf.WorkingFolder = NormalizeDirFunc(conf.GetRemoveParameterOrDefault<string>(Params.WorkDir), Path.GetTempPath());
-            //conf.ComponentsFolder = Location.FromPath(NormalizeDirFunc(conf.GetRemoveParameterOrDefault<string>(Params.ComponentsDir), DEFAULT_COMPONENTS_DIR));
-            conf.Components = conf.GetRemoveParameterOrDefault<IEnumerable<object>>(Params.Components)?.Cast<string>()?.ToList();
-            //conf.PluginsFolder = Location.FromPath(NormalizeDirFunc(conf.GetRemoveParameterOrDefault<string>(Params.PluginsDir), DEFAULT_PLUGINS_DIR));
-            conf.Plugins = conf.GetRemoveParameterOrDefault<IEnumerable<object>>(Params.Plugins)?.Cast<string>()?.ToList();
+            conf.Components = conf.GetRemoveParameterOrDefault<IEnumerable<string>>(Params.Components)?.ToList();
+            conf.Plugins = conf.GetRemoveParameterOrDefault<IEnumerable<string>>(Params.Plugins)?.ToList();
 
             return conf;
         }

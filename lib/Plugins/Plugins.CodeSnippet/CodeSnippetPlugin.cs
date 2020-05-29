@@ -15,6 +15,7 @@ using System.Web;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
+using Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers;
 using Xarial.Docify.Lib.Plugins.CodeSnippet.Properties;
 using Xarial.Docify.Lib.Plugins.Common.Exceptions;
 using Xarial.Docify.Lib.Plugins.Common.Helpers;

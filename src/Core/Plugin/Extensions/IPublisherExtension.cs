@@ -30,17 +30,48 @@ namespace Xarial.Docify.Core.Plugin.Extensions
 
         public Task PostPublish(ILocation loc)
         {
-            return RequestPostPublish.Invoke(loc);
+            if (RequestPostPublish != null)
+            {
+                return RequestPostPublish.Invoke(loc);
+            }
+            else
+            {
+                return Task.CompletedTask;
+            }
         }
 
         public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
         {
-            return RequestPrePublishFile.Invoke(outLoc, file);
+            if (RequestPrePublishFile != null)
+            {
+                return RequestPrePublishFile.Invoke(outLoc, file);
+            }
+            else
+            {
+                return Task.FromResult(new PrePublishResult() 
+                {
+                    File = file, 
+                    SkipFile = false 
+                });
+            }
         }
 
         public IAsyncEnumerable<IFile> PostAddPublishFiles(ILocation outLoc)
         {
-            return RequestPostAddPublishFiles.Invoke(outLoc);
+            if (RequestPostAddPublishFiles != null)
+            {
+                return RequestPostAddPublishFiles.Invoke(outLoc);
+            }
+            else 
+            {
+                return Empty<IFile>();
+            }
+        }
+
+        private async IAsyncEnumerable<T> Empty<T>() 
+        {
+            await Task.CompletedTask;
+            yield break;
         }
     }
 }

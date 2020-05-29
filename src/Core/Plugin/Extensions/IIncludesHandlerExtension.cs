@@ -25,7 +25,14 @@ namespace Xarial.Docify.Core.Plugin.Extensions
 
         public Task<string> ResolveInclude(string includeName, IMetadata md, IPage page)
         {
-            return RequestResolveInclude.Invoke(includeName, md, page);
+            if (RequestResolveInclude != null)
+            {
+                return RequestResolveInclude.Invoke(includeName, md, page);
+            }
+            else
+            {
+                throw new Exception("Event for include resolve is not subscribed");
+            }
         }
     }
 }

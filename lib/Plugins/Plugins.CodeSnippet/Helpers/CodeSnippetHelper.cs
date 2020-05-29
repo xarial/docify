@@ -11,36 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Xarial.Docify.Lib.Plugins.Common.Helpers
+namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
 {
-    public class CodeSelectorOptions
-    {
-        public bool LeftAlign { get; set; }
-        public string[] Regions { get; set; }
-        public string[] ExcludeRegions { get; set; }
-    }
-
-    [Flags]
-    public enum SnippetLocation_e 
-    {
-        Middle = 0,
-        Start = 1,
-        End = 2,
-        Full = Start | End
-    }
-
-    public class Snippet 
-    {
-        public SnippetLocation_e Location { get; }
-        public string Code { get; }
-
-        public Snippet(string code, SnippetLocation_e location) 
-        {
-            Location = location;
-            Code = code;
-        }
-    }
-
     public static class CodeSnippetHelper
     {
         private class ProcessingSnippet

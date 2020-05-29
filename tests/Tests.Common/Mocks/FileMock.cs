@@ -15,6 +15,11 @@ namespace Tests.Common.Mocks
         {
         }
 
+        public FileMock(string location, string content)
+            : this(Xarial.Docify.Core.Location.FromPath(location), ContentExtension.ToByteArray(content))
+        {
+        }
+
         public FileMock(Location location, byte[] content)
             : base(location, content, Guid.NewGuid().ToString())
         {

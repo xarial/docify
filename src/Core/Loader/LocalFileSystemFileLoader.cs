@@ -65,23 +65,5 @@ namespace Xarial.Docify.Core.Loader
                 }
             }
         }
-
-        public async Task<IFile> LoadFile(ILocation location)
-        {
-            if (!location.IsFile()) 
-            {
-                throw new Exception("Specified location is not a file");
-            }
-
-            var path = location.ToPath();
-
-            if (!m_FileSystem.File.Exists(path))
-            {
-                throw new MissingLocationException(path);
-            }
-
-            var content = await m_FileSystem.File.ReadAllBytesAsync(path);
-            return new Data.File(location, content, Guid.NewGuid().ToString());
-        }
     }
 }

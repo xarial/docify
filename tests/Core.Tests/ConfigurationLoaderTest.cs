@@ -18,16 +18,7 @@ using Xarial.Docify.Core.Loader;
 using System.Linq;
 
 namespace Core.Tests
-{
-    public static class LocalFileSystemConfigurationLoaderExtension 
-    {
-        public static Task<IConfiguration> Load(this LocalFileSystemConfigurationLoader loader, ILocation location) 
-        {
-            return loader.Load(new ILocation[] { location });
-        }
-    }
-
-    public class LocalFileSystemConfigurationLoaderTest
+{   public class ConfigurationLoaderTest
     {
         [Test]
         public async Task Load_NoConfig() 
@@ -35,7 +26,7 @@ namespace Core.Tests
             var fs = new MockFileSystem();
             fs.AddFile("C:\\site\\page.html", null);
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
+            var confLoader = new ConfigurationLoader(fs, "Test");
 
             var conf = await confLoader.Load(Location.FromPath("C:\\site"));
 

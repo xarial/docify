@@ -33,8 +33,7 @@ namespace Core.Tests
             pubExt.Setup(m => m.PrePublishFile(It.IsAny<ILocation>(), It.IsAny<IFile>()))
                 .Returns((ILocation c, IFile f) => Task.FromResult(new PrePublishResult() { File = f, SkipFile = false }));
 
-            return new LocalFileSystemPublisher(new LocalFileSystemPublisherConfig(), fs,
-                pubExt.Object);
+            return new LocalFileSystemPublisher(fs, pubExt.Object);
         }
 
         [Test]

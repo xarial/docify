@@ -55,18 +55,10 @@ namespace Xarial.Docify.Core.Loader
 
             foreach (var loc in locations)
             {
-                var confLoc = loc.Copy(CONF_FILE_NAME, loc.Path);
-                var thisConf = await LoadConfigurationFromLocationIfExists(confLoc);
-                
-                if(thisConf != null) 
-                {
-                    conf = conf.Merge(thisConf);
-                }
+                var confs = await LoadConfigurationsFromLocation(loc);
 
-                var envConfFileLoc = confLoc.Copy(m_EnvConfFileName, confLoc.Path);
-                thisConf = await LoadConfigurationFromLocationIfExists(envConfFileLoc);
-
-                conf = conf.Merge(thisConf);
+                conf = conf.Merge(confs.Conf);
+                conf = conf.Merge(confs.EnvConf);
             }
             
             var themesHierarchy = new List<string>();
@@ -107,18 +99,30 @@ namespace Xarial.Docify.Core.Loader
             return conf;
         }
 
-        private async Task<IConfiguration> LoadConfigurationFromLocationIfExists(ILocation loc)
+        private async Task<(IConfiguration Conf, IConfiguration EnvConf)> LoadConfigurationsFromLocation(ILocation loc)
         {
-            try
+            var res = (Conf: (IConfiguration)new Configuration(), EnvConf: (IConfiguration)new Configuration());
+
+            await foreach (var file in m_FileLoader.LoadFolder(loc, new string[] 
             {
-                var confFile = await m_FileLoader.LoadFile(loc);
-                return ConfigurationFromFile(confFile);
-            }
-            catch (FileNotFoundException)//TODO: use better way to handle this case
+                CONF_FILE_NAME, m_EnvConfFileName
+            })) 
             {
+                if (string.Equals(file.Location.FileName, CONF_FILE_NAME, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    res.Conf = ConfigurationFromFile(file);
+                }
+                else if (string.Equals(file.Location.FileName, m_EnvConfFileName, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    res.EnvConf = ConfigurationFromFile(file);
+                }
+                else 
+                {
+                    throw new Exception("Invalid configuration file");
+                }
             }
 
-            return null;
+            return res;
         }
 
         private IConfiguration ConfigurationFromFile(IFile file) 

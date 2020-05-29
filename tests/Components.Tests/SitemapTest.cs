@@ -31,7 +31,7 @@ namespace Components.Tests
             site.MainPage.SubPages.Add(p2);
             site.MainPage.Assets.Add(new AssetMock("sitemap.xml", System.IO.File.ReadAllBytes(xmlFilePath)));
 
-            var compiler = new DocifyEngine(new string[] { "" }, "", "", "", "Test").Resove<ICompiler>();
+            var compiler = new DocifyEngineMock().Resove<ICompiler>();
             var files = await compiler.Compile(site).ToListAsync();
 
             var sitemap = files.First(f => f.Location.FileName == "sitemap.xml");

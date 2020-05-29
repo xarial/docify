@@ -29,7 +29,7 @@ namespace CLI.Tests
         [SetUp]
         public void Setup()
         {
-            m_Compiler = new DocifyEngineMock(@"D:\src", @"D:\out", "www.xarial.com", "Test").Resove<ICompiler>();
+            m_Compiler = new DocifyEngineMock().Resove<ICompiler>();
         }
         
         [Test]

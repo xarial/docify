@@ -7,14 +7,14 @@ using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.CLI;
 
-namespace CLI.Tests
+namespace Tests.Common.Mocks
 {
     public class DocifyEngineMock : DocifyEngine
     {
         public IFileSystem FileSystem { get; private set; }
 
-        public DocifyEngineMock(string srcDir, string outDir, string siteUrl, string env)
-            : base(new string[] { srcDir }, outDir, "", siteUrl, env)
+        public DocifyEngineMock()
+            : base(new string[] { "D:\\src" }, "D:\\out", "", "www.xarial.com", "Test")
         {
         }
 
@@ -22,6 +22,7 @@ namespace CLI.Tests
         {
             base.RegisterDependencies(builder, env);
             FileSystem = new MockFileSystem();
+            FileSystem.Directory.CreateDirectory("D:\\src");
             builder.RegisterInstance(FileSystem);
         }
     }

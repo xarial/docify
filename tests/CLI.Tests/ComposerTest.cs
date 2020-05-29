@@ -20,7 +20,7 @@ namespace CLI.Tests
         [SetUp]
         public void Setup()
         {
-            m_Composer = new DocifyEngineMock(@"D:\src", @"D:\out", "www.xarial.com", "Test").Resove<IComposer>();
+            m_Composer = new DocifyEngineMock().Resove<IComposer>();
         }
 
         [Test]

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Tests.Common.Mocks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Services;
 
@@ -12,7 +13,7 @@ namespace CLI.Tests
         [Test]
         public void ResolveTest() 
         {
-            var engine = new DocifyEngineMock(@"D:\src", @"D:\out", "www.xarial.com", "Test");
+            var engine = new DocifyEngineMock();
 
             Assert.DoesNotThrow(() => engine.Resove<ICompiler>(), "ICompiler");
             Assert.DoesNotThrow(() => engine.Resove<IFileLoader>(), "IFileLoader");

@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PluginId>code-snippet</PluginId>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>Xarial.Docify.Lib.Plugins.CodeSnippet</RootNamespace>
   </PropertyGroup>
@@ -25,4 +26,6 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <Import Project="..\..\..\common\common.plugins.props" />
+  
 </Project>

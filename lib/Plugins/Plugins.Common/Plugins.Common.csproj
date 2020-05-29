@@ -31,4 +31,6 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <Import Project="..\..\..\common\common.assemblyinfo.props" />
+
 </Project>

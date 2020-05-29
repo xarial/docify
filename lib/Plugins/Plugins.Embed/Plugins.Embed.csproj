@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PluginId>embed</PluginId>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>Xarial.Docify.Lib.Plugins.Embed</RootNamespace>
   </PropertyGroup>
@@ -10,4 +11,6 @@
     <ProjectReference Include="..\Plugins.Common\Plugins.Common.csproj" />
   </ItemGroup>
 
+  <Import Project="..\..\..\common\common.plugins.props" />
+  
 </Project>

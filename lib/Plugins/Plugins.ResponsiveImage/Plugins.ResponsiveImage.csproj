@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PluginId>responsive-image</PluginId>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>Xarial.Docify.Lib.Plugins.ResponsiveImage</RootNamespace>
   </PropertyGroup>
@@ -25,4 +26,6 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <Import Project="..\..\..\common\common.plugins.props" />
+  
 </Project>

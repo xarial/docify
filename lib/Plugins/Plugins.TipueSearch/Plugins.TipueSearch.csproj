@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PluginId>tipue-search</PluginId>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>Xarial.Docify.Lib.Plugins.TipueSearch</RootNamespace>
   </PropertyGroup>
@@ -24,5 +25,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+
+  <Import Project="..\..\..\common\common.plugins.props" />
 
 </Project>

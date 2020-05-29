@@ -83,7 +83,10 @@ namespace Xarial.Docify.Core.Plugin
 
                 using (var host = configuration.CreateContainer())
                 {
-                    m_Plugins = host.GetExports<IPluginBase>();
+                    var plugins = host.GetExports<IPluginBase>();
+                    m_Plugins = plugins.OrderBy(p => m_Conf.Plugins.FindIndex(
+                        x => string.Equals(x, GetPluginId(p.GetType()),
+                        StringComparison.CurrentCultureIgnoreCase)));
                 }
 
                 if (m_Plugins == null)

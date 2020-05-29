@@ -83,6 +83,7 @@ namespace Xarial.Docify.Core.Loader
                     {
                         var themeConf = ConfigurationFromFile(themeConfFile);
                         conf = conf.Merge(themeConf);
+                        break;
                     }
 
                     await foreach (var themeConfFile in m_LibraryLoader.LoadThemeFiles(theme,
@@ -90,6 +91,7 @@ namespace Xarial.Docify.Core.Loader
                     {
                         var themeConf = ConfigurationFromFile(themeConfFile);
                         conf = conf.Merge(themeConf);
+                        break;
                     }
 
                     themesHierarchy.Add(theme);

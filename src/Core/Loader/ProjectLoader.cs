@@ -58,7 +58,7 @@ namespace Xarial.Docify.Core.Loader
                     filter.AddRange(m_Filter);
                 }
 
-                filter.Add(PathMatcher.NEGATIVE_FILTER + pluginFilter);
+                filter.Add(LocationExtension.NEGATIVE_FILTER + pluginFilter);
 
                 await foreach (var srcFile in m_FileLoader.LoadFolder(loc, filter.ToArray()))
                 {
@@ -107,7 +107,7 @@ namespace Xarial.Docify.Core.Loader
         private string GetPluginsFolderFilter(ILocation baseLoc) 
         {
             return baseLoc.ToId() + LocationExtension.ID_SEP
-                    + PLUGINS_FOLDER + LocationExtension.ID_SEP + PathMatcher.ANY_FILTER;
+                    + PLUGINS_FOLDER + LocationExtension.ID_SEP + LocationExtension.ANY_FILTER;
         }
 
         private async IAsyncEnumerable<IFile> LoadPluginFiles(ILocation[] locations, List<string> resFileIds) 
@@ -175,7 +175,7 @@ namespace Xarial.Docify.Core.Loader
 
                 if (vals != null)
                 {
-                    return PathMatcher.RevertFilter(vals.ToArray()).ToArray();
+                    return vals.Select(f => LocationExtension.RevertFilter(f)).ToArray();
                 }
                 else
                 {

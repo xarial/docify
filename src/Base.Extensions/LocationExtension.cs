@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Xarial.Docify.Base
 {
@@ -18,6 +19,9 @@ namespace Xarial.Docify.Base
         public const string PATH_SEP = "\\";
         public const string URL_SEP = "/";
         public const string ID_SEP = "::";
+
+        public const string NEGATIVE_FILTER = "|";
+        public const string ANY_FILTER = "*";
 
         private const string INDEX_PAGE_NAME = "index.html";
 
@@ -165,6 +169,64 @@ namespace Xarial.Docify.Base
 
             return true;
         }
+
+        public static bool Matches(this ILocation loc, IEnumerable<string> filters)
+        {
+            if (filters == null)
+            {
+                return true;
+            }
+            else
+            {
+                filters = filters.Select(f => f
+                    .Replace(PATH_SEP, ID_SEP)
+                    .Replace(URL_SEP, ID_SEP)).ToArray();
+            }
+
+            var path = loc.ToId();
+
+            //TODO: combine into single regex
+
+            bool MatchFilter(string regexFilter)
+            {
+                var regex = (regexFilter.StartsWith(ANY_FILTER) ? "" : "^")
+                    + Regex.Escape(regexFilter)
+                    .Replace($"\\{ANY_FILTER}", ".*")
+                    .Replace("\\?", ".")
+                    + (regexFilter.EndsWith(ANY_FILTER) ? "" : "$");
+
+                return Regex.IsMatch(path, regex, RegexOptions.IgnoreCase);
+            }
+
+            var posFilters = filters.Where(f => !IsNegative(f));
+            var negFilters = filters.Except(posFilters);
+
+            if (posFilters.Any(f => !MatchFilter(f)))
+            {
+                return false;
+            }
+
+            if (negFilters.Any(f => MatchFilter(RevertFilter(f))))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static string RevertFilter(string filter)
+        {
+            if (IsNegative(filter))
+            {
+                return filter.Substring(1);
+            }
+            else
+            {
+                return NEGATIVE_FILTER + filter;
+            }
+        }
+
+        private static bool IsNegative(string filter) => filter.StartsWith(NEGATIVE_FILTER);
 
         private static string FormFullLocation(ILocation loc, string basePart, string sep)
         {

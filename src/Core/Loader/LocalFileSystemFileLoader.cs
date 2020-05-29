@@ -37,13 +37,6 @@ namespace Xarial.Docify.Core.Loader
 
         public async IAsyncEnumerable<IFile> LoadFolder(ILocation location, string[] filters)
         {
-            if (filters != null) 
-            {
-                filters = filters.Select(f => f
-                    .Replace(LocationExtension.PATH_SEP, LocationExtension.ID_SEP)
-                    .Replace(LocationExtension.URL_SEP, LocationExtension.ID_SEP)).ToArray();
-            }
-
             if (location.IsFile()) 
             {
                 throw new Exception("Specified location is not a folder");
@@ -63,7 +56,7 @@ namespace Xarial.Docify.Core.Loader
 
                 var loc = Location.FromPath(relPath);
 
-                if (PathMatcher.Matches(filters, loc.ToId()))
+                if (loc.Matches(filters))
                 {
                     var content = await m_FileSystem.File.ReadAllBytesAsync(filePath);
 

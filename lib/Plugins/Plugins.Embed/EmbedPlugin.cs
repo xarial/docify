@@ -5,15 +5,10 @@ using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
-using Xarial.Docify.Lib.Plugins.Helpers;
+using Xarial.Docify.Lib.Plugins.Common.Helpers;
 
 namespace Xarial.Docify.Lib.Plugins.Embed
 {
-    public class EmbedIncludeData 
-    {
-        public string FileName { get; set; }
-    }
-
     [Plugin("embed")]
     public class EmbedPlugin : IPlugin
     {

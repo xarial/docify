@@ -11,7 +11,7 @@ using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Lib.Plugins.Exceptions
+namespace Xarial.Docify.Lib.Plugins.Common.Exceptions
 {
     public class AssetNotFoundException : Exception
     {

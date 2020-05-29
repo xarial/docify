@@ -17,29 +17,12 @@ using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
-using Xarial.Docify.Lib.Plugins.Data;
-using Xarial.Docify.Lib.Plugins.Helpers;
+using Xarial.Docify.Lib.Plugins.Common.Data;
+using Xarial.Docify.Lib.Plugins.Common.Helpers;
 using Xarial.Docify.Lib.Plugins.TipueSearch.Properties;
 
 namespace Xarial.Docify.Lib.Plugins.TipueSearch
 {
-    public class PageSearchData
-    {
-        public string Title { get; set; }
-        public string Text { get; set; }
-        public string Url { get; set; }
-        public string Tags { get; set; }
-        public string Img { get; set; }
-        public string Note { get; set; }
-    }
-
-    public class TipueSearchPluginSettings
-    {
-        public string PageContentNode { get; set; } = "//body";
-        public string SearchPageLayout { get; set; } = "";
-        public string SearchPageTitle { get; set; } = "Search Results";
-    }
-
     [Plugin("tipue-search")]
     public class TipueSearchPlugin : IPlugin<TipueSearchPluginSettings>
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xarial.Docify.Lib.Plugins.Exceptions
+namespace Xarial.Docify.Lib.Plugins.Common.Exceptions
 {
     public class HeadAssetLinkFailedException : Exception
     {

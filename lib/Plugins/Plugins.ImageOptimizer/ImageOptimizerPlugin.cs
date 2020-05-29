@@ -19,36 +19,12 @@ using System.Drawing.Imaging;
 using System.Collections;
 using System.Collections.Generic;
 using Xarial.Docify.Base.Data;
-using Xarial.Docify.Lib.Plugins.Data;
-using Xarial.Docify.Lib.Plugins.Helpers;
 using System.Threading.Tasks;
+using Xarial.Docify.Lib.Plugins.Common.Helpers;
+using Xarial.Docify.Lib.Plugins.Common.Data;
 
 namespace Xarial.Docify.Lib.Plugins.ImageOptimizer
 {
-    public class ImageOptimizerSettings 
-    {
-        public string[] MatchPattern { get; set; } = new string[]
-        {
-            "\\.png$", "\\.jpg$", "\\.jpeg$", "\\.bmp$", "\\.tif$", "\\.tiff$"
-        };
-
-        public bool IgnoreMatchCase { get; set; } = true;
-
-        public bool ImageTagConvertSvgToPng { get; set; } = true;
-
-        /// <remarks>
-        /// 0 to maintain aspect ration
-        /// </remarks>
-        public int SvgPngWidth { get; set; } = 1200;
-
-        /// <remarks>
-        /// 0 to maintain aspect ration
-        /// </remarks>
-        public int SvgPngHeight { get; set; } = 0;
-
-        public bool GenerateFavIcon { get; set; } = false;
-    }
-
     [Plugin("image-optimizer")]
     public class ImageOptimizerPlugin : IPlugin<ImageOptimizerSettings>
     {

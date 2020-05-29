@@ -11,7 +11,7 @@ using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Lib.Plugins.Data
+namespace Xarial.Docify.Lib.Plugins.Common.Data
 {
     public class PluginFile : IFile
     {

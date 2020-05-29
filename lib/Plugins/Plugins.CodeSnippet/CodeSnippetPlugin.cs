@@ -16,28 +16,11 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Lib.Plugins.CodeSnippet.Properties;
-using Xarial.Docify.Lib.Plugins.Exceptions;
-using Xarial.Docify.Lib.Plugins.Helpers;
+using Xarial.Docify.Lib.Plugins.Common.Exceptions;
+using Xarial.Docify.Lib.Plugins.Common.Helpers;
 
 namespace Xarial.Docify.Lib.Plugins.CodeSnippet
 {
-    public class CodeSnippetSettings
-    {
-        public string SnippetsFolder { get; set; } = "";
-        public bool ExcludeSnippets { get; set; } = true;
-        public CasesInsensitiveDictionary<string> AutoTabs { get; set; }
-    }
-
-    public class CodeSnippetData
-    {
-        public string FileName { get; set; }
-        public Dictionary<string, string> Tabs { get; set; }
-        public string[] Regions { get; set; }
-        public string[] ExclRegions { get; set; }
-        public bool LeftAlign { get; set; } = true;
-        public string Lang { get; set; }
-    }
-
     [Plugin("code-snippet")]
     public class CodeSnippetPlugin : IPlugin<CodeSnippetSettings>
     {

@@ -1,6 +1,7 @@
 <Project>
   <PropertyGroup>
     <OutDir>..\bin\$(Configuration)\$(TargetFramework)\$(PluginId)</OutDir>
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <Import Project="common.assemblyinfo.props" />
 </Project>

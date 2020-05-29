@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xarial.Docify.Lib.Plugins.Helpers
+namespace Xarial.Docify.Lib.Plugins.Common.Helpers
 {
     public class CasesInsensitiveDictionary<TValue> : Dictionary<string, TValue>
     {

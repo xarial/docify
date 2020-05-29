@@ -16,17 +16,11 @@ using System.Xml.Linq;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
-using Xarial.Docify.Lib.Plugins.Data;
-using Xarial.Docify.Lib.Plugins.Exceptions;
-using Xarial.Docify.Lib.Plugins.Helpers;
+using Xarial.Docify.Lib.Plugins.Common.Exceptions;
+using Xarial.Docify.Lib.Plugins.Common.Helpers;
 
 namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
 {
-    public class CodeSyntaxHighlighterSettings
-    {
-        public bool EmbedStyle { get; set; } = true;
-    }
-
     [Plugin("code-syntax-highlighter")]
     public class CodeSyntaxHighlighterPlugin : IPlugin<CodeSyntaxHighlighterSettings>
     {

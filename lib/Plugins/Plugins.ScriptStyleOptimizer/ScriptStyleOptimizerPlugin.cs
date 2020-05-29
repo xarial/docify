@@ -9,28 +9,12 @@ using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
-using Xarial.Docify.Lib.Plugins.Data;
-using Xarial.Docify.Lib.Plugins.Helpers;
+using Xarial.Docify.Lib.Plugins.Common.Data;
+using Xarial.Docify.Lib.Plugins.Common.Helpers;
 using Yahoo.Yui.Compressor;
 
 namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
 {
-    public class ScriptStyleOptimizerPluginSettings
-    {
-        public bool MinifyCss { get; set; }
-        public bool MinifyJs { get; set; }
-        public string[] AssetsScopePaths { get; set; }
-        public bool DeleteUnusedCss { get; set; }
-        public bool DeleteUnusedJs { get; set; }
-        public CasesInsensitiveDictionary<string[]> Bundles { get; set; }
-
-        public ScriptStyleOptimizerPluginSettings() 
-        {
-            Bundles = new CasesInsensitiveDictionary<string[]>();
-            AssetsScopePaths = new string[0];
-        }
-    }
-
     [Plugin("script-style-optimizer")]
     public class ScriptStyleOptimizerPlugin : IPlugin<ScriptStyleOptimizerPluginSettings>
     {

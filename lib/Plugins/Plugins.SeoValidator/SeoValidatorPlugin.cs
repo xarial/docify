@@ -7,17 +7,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
-using Xarial.Docify.Lib.Plugins.Helpers;
+using Xarial.Docify.Lib.Plugins.Common.Helpers;
 
 namespace Xarial.Docify.Lib.Plugins.SeoValidator
 {
-    public class SeoValidatorPluginSettings 
-    {
-        public string[] Scope { get; set; }
-        public bool TreatErrorAsWarning { get; set; } = true;
-        public Dictionary<string, Dictionary<string, object>> Validators { get; set; }
-    }
-
     [Plugin("seo-validator")]
     public class SeoValidatorPlugin : IPlugin<SeoValidatorPluginSettings>
     {

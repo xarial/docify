@@ -5,9 +5,19 @@ VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLI", "src\CLI\CLI.csproj", "{83D854D7-0BCA-4C71-B024-8AAB2FEEA915}"
 	ProjectSection(ProjectDependencies) = postProject
+		{50C8811C-2D78-4AC3-A977-6BF69DA51234} = {50C8811C-2D78-4AC3-A977-6BF69DA51234}
+		{88E98B2D-ED15-4C82-91BC-31835F6248AA} = {88E98B2D-ED15-4C82-91BC-31835F6248AA}
+		{75206C3B-57C4-4C7F-B202-025EED4A2478} = {75206C3B-57C4-4C7F-B202-025EED4A2478}
+		{23EA4641-E86B-4870-9FE8-8E02D5EA1FB6} = {23EA4641-E86B-4870-9FE8-8E02D5EA1FB6}
 		{21F92DA2-6ECB-408B-91DA-984834827B21} = {21F92DA2-6ECB-408B-91DA-984834827B21}
+		{F04862A7-6361-442A-9255-707BDD306C0C} = {F04862A7-6361-442A-9255-707BDD306C0C}
 		{1A78EEA8-38A0-4EA2-AE61-04CD610C0A88} = {1A78EEA8-38A0-4EA2-AE61-04CD610C0A88}
+		{ECA521A9-94CA-4476-8EFB-A4FF09644AA7} = {ECA521A9-94CA-4476-8EFB-A4FF09644AA7}
+		{9DE1A6AD-AE27-4C90-AF3B-3704D452D5DE} = {9DE1A6AD-AE27-4C90-AF3B-3704D452D5DE}
 		{545F0EB5-9058-4F0A-B0B6-9902C4BA6C26} = {545F0EB5-9058-4F0A-B0B6-9902C4BA6C26}
+		{A72E7FCB-6F8D-4D7E-9513-9671D1A1502A} = {A72E7FCB-6F8D-4D7E-9513-9671D1A1502A}
+		{6ADF6FD6-6169-4A0C-A5F2-00DCE6559CF2} = {6ADF6FD6-6169-4A0C-A5F2-00DCE6559CF2}
+		{D6D527E0-DF2D-4A75-BA27-EFCB7E326F42} = {D6D527E0-DF2D-4A75-BA27-EFCB7E326F42}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "src\Core\Core.csproj", "{48B21798-27A0-488B-B9DC-4DAD7EE24B17}"
@@ -46,23 +56,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{9656
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins.Common", "lib\Plugins\Plugins.Common\Plugins.Common.csproj", "{75206C3B-57C4-4C7F-B202-025EED4A2478}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.CodeSnippet", "lib\Plugins\Plugins.CodeSnippet\Plugins.CodeSnippet.csproj", "{88E98B2D-ED15-4C82-91BC-31835F6248AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins.CodeSnippet", "lib\Plugins\Plugins.CodeSnippet\Plugins.CodeSnippet.csproj", "{88E98B2D-ED15-4C82-91BC-31835F6248AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.CodeSyntaxHighlighter", "lib\Plugins\Plugins.CodeSyntaxHighlighter\Plugins.CodeSyntaxHighlighter.csproj", "{9DE1A6AD-AE27-4C90-AF3B-3704D452D5DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins.CodeSyntaxHighlighter", "lib\Plugins\Plugins.CodeSyntaxHighlighter\Plugins.CodeSyntaxHighlighter.csproj", "{9DE1A6AD-AE27-4C90-AF3B-3704D452D5DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.Embed", "lib\Plugins\Plugins.Embed\Plugins.Embed.csproj", "{F04862A7-6361-442A-9255-707BDD306C0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins.Embed", "lib\Plugins\Plugins.Embed\Plugins.Embed.csproj", "{F04862A7-6361-442A-9255-707BDD306C0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.ImageOptimizer", "lib\Plugins\Plugins.ImageOptimizer\Plugins.ImageOptimizer.csproj", "{6ADF6FD6-6169-4A0C-A5F2-00DCE6559CF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins.ImageOptimizer", "lib\Plugins\Plugins.ImageOptimizer\Plugins.ImageOptimizer.csproj", "{6ADF6FD6-6169-4A0C-A5F2-00DCE6559CF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.Redirect", "lib\Plugins\Plugins.Redirect\Plugins.Redirect.csproj", "{ECA521A9-94CA-4476-8EFB-A4FF09644AA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins.Redirect", "lib\Plugins\Plugins.Redirect\Plugins.Redirect.csproj", "{ECA521A9-94CA-4476-8EFB-A4FF09644AA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.ResponsiveImage", "lib\Plugins\Plugins.ResponsiveImage\Plugins.ResponsiveImage.csproj", "{A72E7FCB-6F8D-4D7E-9513-9671D1A1502A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins.ResponsiveImage", "lib\Plugins\Plugins.ResponsiveImage\Plugins.ResponsiveImage.csproj", "{A72E7FCB-6F8D-4D7E-9513-9671D1A1502A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.ScriptStyleOptimizer", "lib\Plugins\Plugins.ScriptStyleOptimizer\Plugins.ScriptStyleOptimizer.csproj", "{23EA4641-E86B-4870-9FE8-8E02D5EA1FB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins.ScriptStyleOptimizer", "lib\Plugins\Plugins.ScriptStyleOptimizer\Plugins.ScriptStyleOptimizer.csproj", "{23EA4641-E86B-4870-9FE8-8E02D5EA1FB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.SeoValidator", "lib\Plugins\Plugins.SeoValidator\Plugins.SeoValidator.csproj", "{D6D527E0-DF2D-4A75-BA27-EFCB7E326F42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins.SeoValidator", "lib\Plugins\Plugins.SeoValidator\Plugins.SeoValidator.csproj", "{D6D527E0-DF2D-4A75-BA27-EFCB7E326F42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.TipueSearch", "lib\Plugins\Plugins.TipueSearch\Plugins.TipueSearch.csproj", "{50C8811C-2D78-4AC3-A977-6BF69DA51234}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins.TipueSearch", "lib\Plugins\Plugins.TipueSearch\Plugins.TipueSearch.csproj", "{50C8811C-2D78-4AC3-A977-6BF69DA51234}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

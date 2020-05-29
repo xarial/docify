@@ -14,9 +14,8 @@ using System.Xml.Linq;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
-using Xarial.Docify.Lib.Plugins.Data;
-using Xarial.Docify.Lib.Plugins.Exceptions;
-using Xarial.Docify.Lib.Plugins.Helpers;
+using Xarial.Docify.Lib.Plugins.Common.Exceptions;
+using Xarial.Docify.Lib.Plugins.Common.Helpers;
 using Xarial.Docify.Lib.Plugins.ResponsiveImage.Properties;
 
 namespace Xarial.Docify.Lib.Plugins.ResponsiveImage

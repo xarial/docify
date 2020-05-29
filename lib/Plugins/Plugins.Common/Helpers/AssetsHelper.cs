@@ -13,10 +13,10 @@ using System.Linq;
 using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
-using Xarial.Docify.Lib.Plugins.Data;
-using Xarial.Docify.Lib.Plugins.Exceptions;
+using Xarial.Docify.Lib.Plugins.Common.Data;
+using Xarial.Docify.Lib.Plugins.Common.Exceptions;
 
-namespace Xarial.Docify.Lib.Plugins.Helpers
+namespace Xarial.Docify.Lib.Plugins.Common.Helpers
 {
     public static class AssetsHelper
     {

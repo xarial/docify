@@ -4,19 +4,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Plugins;
-using Xarial.Docify.Lib.Plugins.Helpers;
 using Xarial.Docify.Base.Data;
 using System.Linq;
-using Xarial.Docify.Lib.Plugins.Data;
 using Xarial.Docify.Lib.Plugins.Redirect.Properties;
+using Xarial.Docify.Lib.Plugins.Common.Data;
 
 namespace Xarial.Docify.Lib.Plugins.Redirect
 {
-    public class RedirectPluginSettings
-    {
-        public int WaitSeconds { get; set; } = 0;
-    }
-
     [Plugin("redirect")]
     public class RedirectPlugin : IPlugin<RedirectPluginSettings>
     {

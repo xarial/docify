@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Base.Services;
 
-namespace Xarial.Docify.Lib.Plugins.Helpers
+namespace Xarial.Docify.Lib.Plugins.Common.Helpers
 {
     public class TimeMeasureService
     {

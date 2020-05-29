@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Base.Data;
 
-namespace Xarial.Docify.Lib.Plugins.Data
+namespace Xarial.Docify.Lib.Plugins.Common.Data
 {
     public class PluginMetadata : Dictionary<string, object>, IMetadata
     {

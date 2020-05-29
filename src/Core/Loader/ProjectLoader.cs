@@ -130,7 +130,7 @@ namespace Xarial.Docify.Core.Loader
                 foreach (var pluginId in m_Config.Plugins)
                 {
                     await foreach (var srcFile in ProcessLibraryItems(
-                        m_LibraryLoader.LoadPluginFiles(pluginId), resFileIds, false))
+                        m_LibraryLoader.LoadPluginFiles(pluginId), resFileIds, true))
                     {
                         yield return srcFile;
                     }

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Base;
 
-namespace Xarial.Docify.Lib.Plugins.Data
+namespace Xarial.Docify.Lib.Plugins.Common.Data
 {
     public class PluginLocation : ILocation
     {

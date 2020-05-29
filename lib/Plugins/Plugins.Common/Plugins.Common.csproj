@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <AssemblyName>Xarial.Docify.Plugins</AssemblyName>
-    <RootNamespace>Xarial.Docify.Lib.Plugins</RootNamespace>
+    <AssemblyName>Plugins.Common</AssemblyName>
+    <RootNamespace>Xarial.Docify.Lib.Plugins.Common</RootNamespace>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Base.Extensions\Base.Extensions.csproj" />
-    <ProjectReference Include="..\..\src\Base\Base.csproj" />
+    <ProjectReference Include="..\..\..\src\Base.Extensions\Base.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\src\Base\Base.csproj" />
   </ItemGroup>
 
   <ItemGroup>

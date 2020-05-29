@@ -1,8 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ColorCode.Core" Version="2.0.6" />
+    <PackageReference Include="ColorCode.HTML" Version="2.0.6" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Base\Base.csproj" />
+    <ProjectReference Include="..\Plugins.Common\Plugins.Common.csproj" />
+  </ItemGroup>
 
 </Project>

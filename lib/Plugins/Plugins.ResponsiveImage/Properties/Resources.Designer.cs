@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Xarial.Docify.Lib.Plugins.Common.Properties {
+namespace Xarial.Docify.Lib.Plugins.ResponsiveImage.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Xarial.Docify.Lib.Plugins.Common.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Xarial.Docify.Lib.Plugins.ResponsiveImage.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,40 @@ namespace Xarial.Docify.Lib.Plugins.Common.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;figure&gt;
+        ///   &lt;a href=&quot;{1}&quot; imageanchor=&quot;1&quot;&gt;
+        ///   {0}
+        ///   &lt;figcaption&gt;{2}&lt;/figcaption&gt;
+        ///   &lt;/a&gt;
+        ///&lt;/figure&gt;.
+        /// </summary>
+        internal static string img_figure {
+            get {
+                return ResourceManager.GetString("img_figure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .responsive {
+        ///    height: auto;
+        ///    max-height: 100%;
+        ///    max-width: 100%;
+        ///    display: block;
+        ///    margin-left: auto;
+        ///    margin-right: auto;
+        ///}
+        ///
+        ///figure {
+        ///    text-align: center;
+        ///}.
+        /// </summary>
+        internal static string responsive_image {
+            get {
+                return ResourceManager.GetString("responsive_image", resourceCulture);
             }
         }
     }

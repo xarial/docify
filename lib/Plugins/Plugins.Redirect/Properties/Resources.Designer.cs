@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Xarial.Docify.Lib.Plugins.Common.Properties {
+namespace Xarial.Docify.Lib.Plugins.Redirect.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Xarial.Docify.Lib.Plugins.Common.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Xarial.Docify.Lib.Plugins.Redirect.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,24 @@ namespace Xarial.Docify.Lib.Plugins.Common.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///&lt;head&gt;
+        ///    &lt;title&gt;Redirect&lt;/title&gt;
+        ///    &lt;meta http-equiv=&quot;refresh&quot; content=&quot;{1}; url={0}&quot;&gt;
+        ///    &lt;link rel=&quot;canonical&quot; href=&quot;{0}&quot; /&gt;
+        ///&lt;/head&gt;
+        ///&lt;body&gt;
+        ///&lt;/body&gt;
+        ///&lt;/html&gt;.
+        /// </summary>
+        internal static string redirect {
+            get {
+                return ResourceManager.GetString("redirect", resourceCulture);
             }
         }
     }

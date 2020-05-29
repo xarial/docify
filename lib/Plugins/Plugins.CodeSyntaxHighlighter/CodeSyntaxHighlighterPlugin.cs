@@ -20,7 +20,7 @@ using Xarial.Docify.Lib.Plugins.Data;
 using Xarial.Docify.Lib.Plugins.Exceptions;
 using Xarial.Docify.Lib.Plugins.Helpers;
 
-namespace Xarial.Docify.Lib.Plugins
+namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
 {
     public class CodeSyntaxHighlighterSettings
     {

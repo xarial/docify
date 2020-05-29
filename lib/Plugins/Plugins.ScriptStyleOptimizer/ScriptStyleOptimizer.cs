@@ -13,7 +13,7 @@ using Xarial.Docify.Lib.Plugins.Data;
 using Xarial.Docify.Lib.Plugins.Helpers;
 using Yahoo.Yui.Compressor;
 
-namespace Xarial.Docify.Lib.Plugins
+namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
 {
     public class ScriptStyleOptimizerPluginSettings
     {

@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Composition;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,13 +15,11 @@ using System.Web;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
-using Xarial.Docify.Base.Services;
-using Xarial.Docify.Lib.Plugins.Data;
+using Xarial.Docify.Lib.Plugins.CodeSnippet.Properties;
 using Xarial.Docify.Lib.Plugins.Exceptions;
 using Xarial.Docify.Lib.Plugins.Helpers;
-using Xarial.Docify.Lib.Plugins.Properties;
 
-namespace Xarial.Docify.Lib.Plugins
+namespace Xarial.Docify.Lib.Plugins.CodeSnippet
 {
     public class CodeSnippetSettings
     {

@@ -6,11 +6,11 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Lib.Plugins.Helpers;
 using Xarial.Docify.Base.Data;
-using Xarial.Docify.Lib.Plugins.Properties;
 using System.Linq;
 using Xarial.Docify.Lib.Plugins.Data;
+using Xarial.Docify.Lib.Plugins.Redirect.Properties;
 
-namespace Xarial.Docify.Lib.Plugins
+namespace Xarial.Docify.Lib.Plugins.Redirect
 {
     public class RedirectPluginSettings
     {

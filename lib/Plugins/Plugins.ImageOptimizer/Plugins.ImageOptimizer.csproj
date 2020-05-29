@@ -5,4 +5,14 @@
     <RootNamespace>Xarial.Docify.Lib.Plugins.ImageOptimizer</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="nQuant.Core.NETStandard" Version="1.0.0" />
+    <PackageReference Include="Svg" Version="3.0.102" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Base\Base.csproj" />
+    <ProjectReference Include="..\Plugins.Common\Plugins.Common.csproj" />
+  </ItemGroup>
+
 </Project>

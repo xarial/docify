@@ -17,9 +17,9 @@ using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Lib.Plugins.Data;
 using Xarial.Docify.Lib.Plugins.Exceptions;
 using Xarial.Docify.Lib.Plugins.Helpers;
-using Xarial.Docify.Lib.Plugins.Properties;
+using Xarial.Docify.Lib.Plugins.ResponsiveImage.Properties;
 
-namespace Xarial.Docify.Lib.Plugins
+namespace Xarial.Docify.Lib.Plugins.ResponsiveImage
 {
     [Plugin("responsive-image")]
     public class ResponsiveImagePlugin : IPlugin

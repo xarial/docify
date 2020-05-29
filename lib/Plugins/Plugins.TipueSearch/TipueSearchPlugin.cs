@@ -19,9 +19,9 @@ using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Lib.Plugins.Data;
 using Xarial.Docify.Lib.Plugins.Helpers;
-using Xarial.Docify.Lib.Plugins.Properties;
+using Xarial.Docify.Lib.Plugins.TipueSearch.Properties;
 
-namespace Xarial.Docify.Lib.Plugins
+namespace Xarial.Docify.Lib.Plugins.TipueSearch
 {
     public class PageSearchData
     {

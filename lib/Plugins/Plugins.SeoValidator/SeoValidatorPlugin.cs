@@ -9,7 +9,7 @@ using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Lib.Plugins.Helpers;
 
-namespace Xarial.Docify.Lib.Plugins
+namespace Xarial.Docify.Lib.Plugins.SeoValidator
 {
     public class SeoValidatorPluginSettings 
     {

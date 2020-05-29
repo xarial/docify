@@ -23,7 +23,7 @@ using Xarial.Docify.Lib.Plugins.Data;
 using Xarial.Docify.Lib.Plugins.Helpers;
 using System.Threading.Tasks;
 
-namespace Xarial.Docify.Lib.Plugins
+namespace Xarial.Docify.Lib.Plugins.ImageOptimizer
 {
     public class ImageOptimizerSettings 
     {

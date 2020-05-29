@@ -5,4 +5,9 @@
     <RootNamespace>Xarial.Docify.Lib.Plugins.Embed</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Base\Base.csproj" />
+    <ProjectReference Include="..\Plugins.Common\Plugins.Common.csproj" />
+  </ItemGroup>
+
 </Project>

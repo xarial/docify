@@ -20,7 +20,7 @@ namespace Xarial.Docify.Lib.Plugins.Helpers
 {
     public static class AssetsHelper
     {
-        internal static string[] PathSeparators { get; } = new string[] { "\\", "/", "::" };
+        public static string[] PathSeparators { get; } = new string[] { "\\", "/", "::" };
 
         public static ILocation LocationFromPath(string path) 
         {

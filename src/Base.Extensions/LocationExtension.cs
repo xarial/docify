@@ -172,7 +172,7 @@ namespace Xarial.Docify.Base
 
         public static bool Matches(this ILocation loc, IEnumerable<string> filters)
         {
-            if (filters == null)
+            if (filters?.Any() != true)
             {
                 return true;
             }
@@ -200,8 +200,8 @@ namespace Xarial.Docify.Base
 
             var posFilters = filters.Where(f => !IsNegative(f));
             var negFilters = filters.Except(posFilters);
-
-            if (posFilters.Any(f => !MatchFilter(f)))
+            
+            if (posFilters.Any() && !posFilters.Any(f => MatchFilter(f)))
             {
                 return false;
             }

@@ -49,7 +49,7 @@ namespace Xarial.Docify.Core.Loader
                 throw new MissingLocationException(path);
             }
 
-            foreach (var filePath in m_FileSystem.Directory.GetFiles(path,
+            foreach (var filePath in m_FileSystem.Directory.EnumerateFiles(path,
                 "*.*", SearchOption.AllDirectories))
             {
                 var relPath = Path.GetRelativePath(path, filePath);

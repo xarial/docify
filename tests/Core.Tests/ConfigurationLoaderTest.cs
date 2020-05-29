@@ -16,6 +16,9 @@ using Xarial.Docify.Base.Data;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Loader;
 using System.Linq;
+using Moq;
+using Xarial.Docify.Base.Services;
+using Tests.Common.Mocks;
 
 namespace Core.Tests
 {   public class ConfigurationLoaderTest
@@ -23,29 +26,31 @@ namespace Core.Tests
         [Test]
         public async Task Load_NoConfig() 
         {
-            var fs = new MockFileSystem();
-            fs.AddFile("C:\\site\\page.html", null);
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) => AsyncEnumerable.Empty<IFile>());
+            
+            var confLoader = new ConfigurationLoader(
+                fileLoaderMock.Object, new Mock<ILibraryLoader>().Object, "Test");
 
-            var confLoader = new ConfigurationLoader(fs, "Test");
-
-            var conf = await confLoader.Load(Location.FromPath("C:\\site"));
+            var conf = await confLoader.Load(new ILocation[] { Location.FromPath("C:\\site") });
 
             Assert.AreEqual(0, conf.Count);
         }
 
         [Test]
-        public async Task Load_ComponentsLocations() 
+        public async Task Load_ComponentNames() 
         {
-            var fs = new MockFileSystem();
-            fs.AddFile("C:\\site\\page.html", null);
-            fs.AddFile("C:\\site\\_config.yml", new MockFileData("components_dir: D:\\components\r\ncomponents:\r\n  - component1\r\n  - component2"));
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) => new IFile[] { new FileMock("_config.yml", "components:\r\n  - component1\r\n  - component2") }.ToAsyncEnumerable());
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
+            var confLoader = new ConfigurationLoader(
+                fileLoaderMock.Object, new Mock<ILibraryLoader>().Object, "Test");
 
-            var conf = await confLoader.Load(Location.FromPath("C:\\site"));
+            var conf = await confLoader.Load(new ILocation[] { Location.FromPath("C:\\site") });
 
             Assert.AreEqual(0, conf.Count);
-            Assert.AreEqual("D:\\components", conf.ComponentsFolder.ToPath());
             Assert.AreEqual(2, conf.Components.Count);
             Assert.Contains("component1", conf.Components);
             Assert.Contains("component2", conf.Components);
@@ -53,71 +58,56 @@ namespace Core.Tests
         }
 
         [Test]
-        public async Task Load_PluginsLocations()
+        public async Task Load_PluginNames()
         {
-            var fs = new MockFileSystem();
-            fs.AddFile("C:\\site\\page.html", null);
-            fs.AddFile("C:\\site\\_config.yml", new MockFileData("plugins_dir: D:\\plugins\r\rplugins:\r\n  - plugin1\r\n  - plugin2"));
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) => new IFile[] { new FileMock("_config.yml", "plugins:\r\n  - plugin1\r\n  - plugin2") }.ToAsyncEnumerable());
+            
+            var confLoader = new ConfigurationLoader(
+                fileLoaderMock.Object, new Mock<ILibraryLoader>().Object, "Test");
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
-
-            var conf = await confLoader.Load(Location.FromPath("C:\\site"));
+            var conf = await confLoader.Load(new ILocation[] { Location.FromPath("C:\\site") });
 
             Assert.AreEqual(0, conf.Count);
-            Assert.AreEqual("D:\\plugins", conf.PluginsFolder.ToPath());
             Assert.AreEqual(2, conf.Plugins.Count);
             Assert.Contains("plugin1", conf.Plugins);
             Assert.Contains("plugin2", conf.Plugins);
         }
 
         [Test]
-        public async Task Load_WorkDirAndThemeLocations()
+        public async Task Load_ThemeName()
         {
-            var fs = new MockFileSystem();
-            fs.AddFile("C:\\site\\page.html", null);
-            fs.AddFile("C:\\site\\_config.yml", new MockFileData("a1: val\r\nwork_dir: D:\\work\r\nthemes_dir: D:\\themes\r\ntheme: theme1"));
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) => new IFile[] { new FileMock("_config.yml", "a1: val\r\ntheme: theme1") }.ToAsyncEnumerable());
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
+            var libLoaderMock = new Mock<ILibraryLoader>();
+            libLoaderMock.Setup(m => m.LoadThemeFiles(It.IsAny<string>(), It.IsAny<string[]>()))
+                .Returns((string t, string[] f) => AsyncEnumerable.Empty<IFile>());
 
-            var conf = await confLoader.Load(Location.FromPath("C:\\site"));
+            var confLoader = new ConfigurationLoader(
+                fileLoaderMock.Object, libLoaderMock.Object, "Test");
+
+            var conf = await confLoader.Load(new ILocation[] { Location.FromPath("C:\\site") });
 
             Assert.AreEqual(1, conf.Count);
             Assert.That(conf.ContainsKey("a1"));
-            Assert.AreEqual("D:\\work", conf.WorkingFolder);
-            Assert.AreEqual("D:\\themes", conf.ThemesFolder.ToPath());
             Assert.AreEqual(1, conf.ThemesHierarchy.Count);
             Assert.AreEqual("theme1", conf.ThemesHierarchy[0]);
         }
-
-        [Test]
-        public async Task Load_DefaultThemesWorkingComponentsFolder()
-        {
-            var fs = new MockFileSystem();
-            fs.AddFile("C:\\site\\page.html", null);
-            
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
-
-            var conf = await confLoader.Load(Location.FromPath("C:\\site"));
-
-            Assert.That(!string.IsNullOrEmpty(conf.WorkingFolder));
-            Assert.That(!conf.ThemesFolder.IsEmpty());
-            Assert.That(!conf.ComponentsFolder.IsEmpty());
-
-            Assert.That(System.IO.Path.IsPathRooted(conf.WorkingFolder));
-            Assert.That(System.IO.Path.IsPathRooted(conf.ThemesFolder.ToPath()));
-            Assert.That(System.IO.Path.IsPathRooted(conf.ComponentsFolder.ToPath()));
-        }
-
+        
         [Test]
         public async Task Load_Config()
         {
-            var fs = new MockFileSystem();
-            fs.AddFile("C:\\site\\page.html", null);
-            fs.AddFile("C:\\site\\_config.yml", new MockFileData("a1: A\r\na2: B"));
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) => new IFile[] { new FileMock("_config.yml", "a1: A\r\na2: B") }.ToAsyncEnumerable());
+            
+            var confLoader = new ConfigurationLoader(
+                fileLoaderMock.Object, new Mock<ILibraryLoader>().Object, "Test");
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
-
-            var conf = await confLoader.Load(Location.FromPath("C:\\site"));
+            var conf = await confLoader.Load(new ILocation[] { Location.FromPath("C:\\site") });
 
             Assert.AreEqual(2, conf.Count);
             Assert.AreEqual("A", conf["a1"]);
@@ -125,16 +115,64 @@ namespace Core.Tests
         }
 
         [Test]
+        public async Task Load_FiltersTest()
+        {
+            string[] filters = null;
+            string[] themeFilters = null;
+            string loc = "";
+            string theme = "";
+
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) =>
+                {
+                    loc = l.ToPath();
+                    filters = f;
+                    return new IFile[]
+                    {
+                        new FileMock("_config.yml", "theme: theme1")
+                    }.ToAsyncEnumerable();
+                });
+
+            var libLoaderMock = new Mock<ILibraryLoader>();
+            libLoaderMock.Setup(m => m.LoadThemeFiles(It.IsAny<string>(), It.IsAny<string[]>()))
+                .Returns((string t, string[] f)=>
+                {
+                    theme = t;
+                    themeFilters = f;
+                    return AsyncEnumerable.Empty<IFile>();
+                });
+
+            var confLoader = new ConfigurationLoader(
+                fileLoaderMock.Object, libLoaderMock.Object, "Test");
+
+            var conf = await confLoader.Load(new ILocation[] { Location.FromPath("C:\\site") });
+
+            Assert.AreEqual(2, filters.Length);
+            Assert.Contains("_config.yml", filters);
+            Assert.Contains("_config.Test.yml", filters);
+            Assert.AreEqual(2, themeFilters.Length);
+            Assert.Contains("_config.yml", themeFilters);
+            Assert.Contains("_config.Test.yml", themeFilters);
+            Assert.AreEqual("C:\\site", loc);
+            Assert.AreEqual("theme1", theme);
+        }
+
+        [Test]
         public async Task Load_EnvSpecificConfTest()
         {
-            var fs = new MockFileSystem();
-            fs.AddFile("C:\\site\\page.html", null);
-            fs.AddFile("C:\\site\\_config.yml", new MockFileData("a1: A\r\na2: B"));
-            fs.AddFile("C:\\site\\_config.test.yml", new MockFileData("a1: A1\r\na3: C"));
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) => new IFile[] 
+                {
+                    new FileMock("_config.yml", "a1: A\r\na2: B"),
+                    new FileMock("_config.test.yml", "a1: A1\r\na3: C")
+                }.ToAsyncEnumerable());
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
+            var confLoader = new ConfigurationLoader(
+                fileLoaderMock.Object, new Mock<ILibraryLoader>().Object, "Test");
 
-            var conf = await confLoader.Load(Location.FromPath("C:\\site"));
+            var conf = await confLoader.Load(new ILocation[] { Location.FromPath("C:\\site") });
 
             Assert.AreEqual(3, conf.Count);
             Assert.AreEqual("A1", conf["a1"]);
@@ -145,12 +183,32 @@ namespace Core.Tests
         [Test]
         public async Task Load_MultipleLocationsConfigsTest()
         {
-            var fs = new MockFileSystem();
-            fs.AddFile("C:\\site\\page.html", null);
-            fs.AddFile("C:\\site\\_config.yml", new MockFileData("a1: A\r\na2: B"));
-            fs.AddFile("C:\\site1\\_config.yml", new MockFileData("a1: A1\r\na3: C"));
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) => 
+                {
+                    if (l.ToPath() == "C:\\site")
+                    {
+                        return new IFile[]
+                        {
+                            new FileMock("_config.yml", "a1: A\r\na2: B")
+                        }.ToAsyncEnumerable();
+                    }
+                    else if (l.ToPath() == "C:\\site1") 
+                    {
+                        return new IFile[]
+                        {
+                            new FileMock("_config.yml", "a1: A1\r\na3: C")
+                        }.ToAsyncEnumerable();
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                });
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
+            var confLoader = new ConfigurationLoader(
+                fileLoaderMock.Object, new Mock<ILibraryLoader>().Object, "Test");
 
             var conf = await confLoader.Load(new ILocation[] { Location.FromPath("C:\\site"),
                 Location.FromPath("C:\\site1") });
@@ -164,14 +222,24 @@ namespace Core.Tests
         [Test]
         public async Task Load_ConfigWithTheme()
         {
-            var fs = new MockFileSystem();
-            fs.AddFile("C:\\site\\page.html", null);
-            fs.AddFile("C:\\themes\\theme1\\_config.yml", new MockFileData("x1: C\r\nx2: D\r\na1: E"));
-            fs.AddFile("C:\\site\\_config.yml", new MockFileData("theme: theme1\r\na1: A\r\na2: B\r\nthemes_dir: C:\\themes"));
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) => new IFile[]
+                {
+                    new FileMock("_config.yml", "theme: theme1\r\na1: A\r\na2: B")
+                }.ToAsyncEnumerable());
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
+            var libLoaderMock = new Mock<ILibraryLoader>();
+            libLoaderMock.Setup(m => m.LoadThemeFiles(It.IsAny<string>(), It.IsAny<string[]>()))
+                .Returns((string t, string[] f) => new IFile[]
+                {
+                    new FileMock("_config.yml", "x1: C\r\nx2: D\r\na1: E")
+                }.ToAsyncEnumerable());
 
-            var conf = await confLoader.Load(Location.FromPath("C:\\site"));
+            var confLoader = new ConfigurationLoader(
+                fileLoaderMock.Object, libLoaderMock.Object, "Test");
+
+            var conf = await confLoader.Load(new ILocation[] { Location.FromPath("C:\\site") });
 
             Assert.AreEqual(4, conf.Count);
             Assert.AreEqual("A", conf["a1"]);
@@ -181,21 +249,46 @@ namespace Core.Tests
 
             Assert.AreEqual(1, conf.ThemesHierarchy.Count);
             Assert.AreEqual("theme1", conf.ThemesHierarchy[0]);
-            Assert.AreEqual("C:\\themes", conf.ThemesFolder.ToPath());
         }
 
         [Test]
         public async Task Load_ConfigWithNestedTheme() 
         {
-            var fs = new MockFileSystem();
-            fs.AddFile("C:\\site\\page.html", null);
-            fs.AddFile("C:\\themes\\theme1\\_config.yml", new MockFileData("a: 1\r\nb: 2\r\nd: 6"));
-            fs.AddFile("C:\\themes\\theme2\\_config.yml", new MockFileData("a: 3\r\nc: 4\r\ntheme: theme1"));
-            fs.AddFile("C:\\site\\_config.yml", new MockFileData("theme: theme2\r\nb: 5\r\nthemes_dir: C:\\themes"));
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) => new IFile[]
+                {
+                    new FileMock("_config.yml", "theme: theme2\r\nb: 5")
+                }.ToAsyncEnumerable());
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
+            var libLoaderMock = new Mock<ILibraryLoader>();
+            libLoaderMock.Setup(m => m.LoadThemeFiles(It.IsAny<string>(), It.IsAny<string[]>()))
+                .Returns((string t, string[] f) =>
+                {
+                    if (t == "theme1")
+                    {
+                        return new IFile[]
+                        {
+                            new FileMock("_config.yml", "a: 1\r\nb: 2\r\nd: 6")
+                        }.ToAsyncEnumerable();
+                    }
+                    else if (t == "theme2") 
+                    {
+                        return new IFile[]
+                        {
+                            new FileMock("_config.yml", "a: 3\r\nc: 4\r\ntheme: theme1")
+                        }.ToAsyncEnumerable();
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                });
 
-            var conf = await confLoader.Load(Location.FromPath("C:\\site"));
+            var confLoader = new ConfigurationLoader(
+                fileLoaderMock.Object, libLoaderMock.Object, "Test");
+
+            var conf = await confLoader.Load(new ILocation[] { Location.FromPath("C:\\site") });
 
             Assert.AreEqual(2, conf.ThemesHierarchy.Count);
             Assert.AreEqual("theme2", conf.ThemesHierarchy[0]);
@@ -211,15 +304,41 @@ namespace Core.Tests
         [Test]
         public async Task Load_ConfigWithNestedThemeInheritList()
         {
-            var fs = new MockFileSystem();
-            fs.AddFile("C:\\site\\page.html", null);
-            fs.AddFile("C:\\themes\\theme1\\_config.yml", new MockFileData("a:\r\n  - 1\r\n  - 2"));
-            fs.AddFile("C:\\themes\\theme2\\_config.yml", new MockFileData("a:\r\n  - $\r\n  - 3\r\n  - 4\r\ntheme: theme1"));
-            fs.AddFile("C:\\site\\_config.yml", new MockFileData("theme: theme2\r\nb: 5\r\nthemes_dir: C:\\themes"));
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) => new IFile[]
+                {
+                    new FileMock("_config.yml", "theme: theme2\r\nb: 5")
+                }.ToAsyncEnumerable());
 
-            var confLoader = new LocalFileSystemConfigurationLoader(fs, "Test");
+            var libLoaderMock = new Mock<ILibraryLoader>();
+            libLoaderMock.Setup(m => m.LoadThemeFiles(It.IsAny<string>(), It.IsAny<string[]>()))
+                .Returns((string t, string[] f) =>
+                {
+                    if (t == "theme1")
+                    {
+                        return new IFile[]
+                        {
+                            new FileMock("_config.yml", "a:\r\n  - 1\r\n  - 2")
+                        }.ToAsyncEnumerable();
+                    }
+                    else if (t == "theme2")
+                    {
+                        return new IFile[]
+                        {
+                            new FileMock("_config.yml", "a:\r\n  - $\r\n  - 3\r\n  - 4\r\ntheme: theme1")
+                        }.ToAsyncEnumerable();
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                });
+            
+            var confLoader = new ConfigurationLoader(
+                fileLoaderMock.Object, libLoaderMock.Object, "Test");
 
-            var conf = await confLoader.Load(Location.FromPath("C:\\site"));
+            var conf = await confLoader.Load(new ILocation[] { Location.FromPath("C:\\site") });
             
             Assert.AreEqual(2, conf.Count);
             Assert.AreEqual("5", conf["b"]);

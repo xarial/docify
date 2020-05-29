@@ -13,13 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="ConfigurationLoaderTest.cs" />
     <Compile Remove="LocalFileSystemComponentsLoaderTest.cs" />
     <Compile Remove="LocalFileSystemPluginsManagerTest.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="ConfigurationLoaderTest.cs" />
     <None Include="LocalFileSystemComponentsLoaderTest.cs" />
     <None Include="LocalFileSystemPluginsManagerTest.cs" />
   </ItemGroup>

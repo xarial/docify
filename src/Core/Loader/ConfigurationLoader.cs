@@ -57,8 +57,8 @@ namespace Xarial.Docify.Core.Loader
             {
                 var confs = await LoadConfigurationsFromLocation(loc);
 
-                conf = conf.Merge(confs.Conf);
-                conf = conf.Merge(confs.EnvConf);
+                conf = confs.Conf.Merge(conf);
+                conf = confs.EnvConf.Merge(conf);
             }
             
             var themesHierarchy = new List<string>();
@@ -70,21 +70,28 @@ namespace Xarial.Docify.Core.Loader
 
                 if (!string.IsNullOrEmpty(theme))
                 {
-                    await foreach (var themeConfFile in m_LibraryLoader.LoadThemeFiles(theme,
-                        new string[] { CONF_FILE_NAME })) 
-                    {
-                        var themeConf = ConfigurationFromFile(themeConfFile);
-                        conf = conf.Merge(themeConf);
-                        break;
-                    }
+                    IConfiguration themeConf = new Configuration();
+                    IConfiguration themeEnvConf = new Configuration();
 
                     await foreach (var themeConfFile in m_LibraryLoader.LoadThemeFiles(theme,
-                        new string[] { m_EnvConfFileName }))
+                        new string[] { CONF_FILE_NAME, m_EnvConfFileName })) 
                     {
-                        var themeConf = ConfigurationFromFile(themeConfFile);
-                        conf = conf.Merge(themeConf);
-                        break;
+                        if (string.Equals(themeConfFile.Location.FileName, CONF_FILE_NAME, StringComparison.CurrentCultureIgnoreCase)) 
+                        {
+                            themeConf = ConfigurationFromFile(themeConfFile);
+                        }
+                        else if (string.Equals(themeConfFile.Location.FileName, m_EnvConfFileName, StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            themeEnvConf = ConfigurationFromFile(themeConfFile);
+                        }
+                        else 
+                        {
+                            throw new Exception("Invalid theme configuration file");
+                        }
                     }
+
+                    conf = conf.Merge(themeEnvConf);
+                    conf = conf.Merge(themeConf);
 
                     themesHierarchy.Add(theme);
                 }

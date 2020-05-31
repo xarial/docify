@@ -24,7 +24,7 @@ namespace Xarial.Docify.Core.Plugin
         public event PostAddPublishFilesDelegate PostAddPublishFiles;
         private readonly PublisherExtension m_Ext;
 
-        public PublisherManager(IPublisher inst, PublisherExtension ext) 
+        public PublisherManager(IPublisher inst, PublisherExtension ext)
         {
             Instance = inst;
             m_Ext = ext;
@@ -42,9 +42,9 @@ namespace Xarial.Docify.Core.Plugin
                 SkipFile = false
             };
 
-            if (PrePublishFile != null) 
+            if (PrePublishFile != null)
             {
-                foreach (PrePublishFileDelegate del in PrePublishFile.GetInvocationList()) 
+                foreach (PrePublishFileDelegate del in PrePublishFile.GetInvocationList())
                 {
                     var thisRes = await del.Invoke(outLoc, curRes.File);
                     curRes.File = thisRes.File;
@@ -57,9 +57,9 @@ namespace Xarial.Docify.Core.Plugin
 
         private async Task OnRequestPostPublish(ILocation loc)
         {
-            if (PostPublish != null) 
+            if (PostPublish != null)
             {
-                foreach (PostPublishDelegate del in PostPublish.GetInvocationList()) 
+                foreach (PostPublishDelegate del in PostPublish.GetInvocationList())
                 {
                     await del.Invoke(loc);
                 }

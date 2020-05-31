@@ -8,12 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
-using YamlDotNet.Serialization;
 using Xarial.Docify.Core.Data;
 using System.Linq;
 using Xarial.Docify.Core.Helpers;
@@ -38,7 +36,7 @@ namespace Xarial.Docify.Core.Loader
 
         private readonly string m_EnvConfFileName;
 
-        public ConfigurationLoader(IFileLoader fileLoader, ILibraryLoader libraryLoader, string env) 
+        public ConfigurationLoader(IFileLoader fileLoader, ILibraryLoader libraryLoader, string env)
         {
             m_ConfigSerializer = new MetadataSerializer();
             m_FileLoader = fileLoader;
@@ -60,10 +58,10 @@ namespace Xarial.Docify.Core.Loader
                 conf = confs.Conf.Merge(conf);
                 conf = confs.EnvConf.Merge(conf);
             }
-            
+
             var themesHierarchy = new List<string>();
             string theme;
-            
+
             do
             {
                 theme = conf.GetRemoveParameterOrDefault<string>(Params.Theme);
@@ -74,9 +72,9 @@ namespace Xarial.Docify.Core.Loader
                     IConfiguration themeEnvConf = new Configuration();
 
                     await foreach (var themeConfFile in m_LibraryLoader.LoadThemeFiles(theme,
-                        new string[] { CONF_FILE_NAME, m_EnvConfFileName })) 
+                        new string[] { CONF_FILE_NAME, m_EnvConfFileName }))
                     {
-                        if (string.Equals(themeConfFile.Location.FileName, CONF_FILE_NAME, StringComparison.CurrentCultureIgnoreCase)) 
+                        if (string.Equals(themeConfFile.Location.FileName, CONF_FILE_NAME, StringComparison.CurrentCultureIgnoreCase))
                         {
                             themeConf = ConfigurationFromFile(themeConfFile);
                         }
@@ -84,7 +82,7 @@ namespace Xarial.Docify.Core.Loader
                         {
                             themeEnvConf = ConfigurationFromFile(themeConfFile);
                         }
-                        else 
+                        else
                         {
                             throw new Exception("Invalid theme configuration file");
                         }
@@ -97,7 +95,7 @@ namespace Xarial.Docify.Core.Loader
                 }
             }
             while (!string.IsNullOrEmpty(theme));
-            
+
             conf.Environment = m_Environment;
             conf.ThemesHierarchy.AddRange(themesHierarchy);
             conf.Components = conf.GetRemoveParameterOrDefault<IEnumerable<string>>(Params.Components)?.ToList();
@@ -110,10 +108,10 @@ namespace Xarial.Docify.Core.Loader
         {
             var res = (Conf: (IConfiguration)new Configuration(), EnvConf: (IConfiguration)new Configuration());
 
-            await foreach (var file in m_FileLoader.LoadFolder(loc, new string[] 
+            await foreach (var file in m_FileLoader.LoadFolder(loc, new string[]
             {
                 CONF_FILE_NAME, m_EnvConfFileName
-            })) 
+            }))
             {
                 if (string.Equals(file.Location.FileName, CONF_FILE_NAME, StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -123,7 +121,7 @@ namespace Xarial.Docify.Core.Loader
                 {
                     res.EnvConf = ConfigurationFromFile(file);
                 }
-                else 
+                else
                 {
                     throw new Exception("Invalid configuration file");
                 }
@@ -132,7 +130,7 @@ namespace Xarial.Docify.Core.Loader
             return res;
         }
 
-        private IConfiguration ConfigurationFromFile(IFile file) 
+        private IConfiguration ConfigurationFromFile(IFile file)
         {
             var confStr = file.AsTextContent();
             return new Configuration(m_ConfigSerializer.Deserialize<Dictionary<string, object>>(confStr));

@@ -8,16 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
-using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
-using Xarial.Docify.Core.Helpers;
 
 namespace Xarial.Docify.Core.Loader
 {
@@ -37,11 +31,11 @@ namespace Xarial.Docify.Core.Loader
 
         public async IAsyncEnumerable<IFile> LoadFolder(ILocation location, string[] filters)
         {
-            if (location.IsFile()) 
+            if (location.IsFile())
             {
                 throw new Exception("Specified location is not a folder");
             }
-            
+
             var path = location.ToPath();
 
             if (!m_FileSystem.Directory.Exists(path))

@@ -5,14 +5,13 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Base.Plugins
-{   
+{
     public delegate Task PreCompileDelegate(ISite site);
     public delegate void RenderCodeBlockDelegate(string rawCode, string lang, string args, StringBuilder html);
     public delegate void RenderImageDelegate(StringBuilder html);

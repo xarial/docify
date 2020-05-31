@@ -6,9 +6,6 @@
 //*********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Lib.Plugins.Common.Data
@@ -20,7 +17,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Data
 
         public string Id { get; }
 
-        public PluginAsset(string content, string name) 
+        public PluginAsset(string content, string name)
             : this(ContentExtension.ToByteArray(content), name)
         {
         }

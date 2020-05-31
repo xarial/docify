@@ -8,12 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Exceptions;
-using Xarial.Docify.Core.Helpers;
 
 namespace Xarial.Docify.Core.Loader
 {
@@ -30,8 +28,8 @@ namespace Xarial.Docify.Core.Loader
 
         private readonly string[] m_Filter;
 
-        public ProjectLoader(IFileLoader fileLoader, 
-            ILibraryLoader libraryLoader, IPluginsManager pluginsMgr, IConfiguration conf) 
+        public ProjectLoader(IFileLoader fileLoader,
+            ILibraryLoader libraryLoader, IPluginsManager pluginsMgr, IConfiguration conf)
         {
             m_FileLoader = fileLoader;
             m_LibraryLoader = libraryLoader;
@@ -46,14 +44,14 @@ namespace Xarial.Docify.Core.Loader
             var resFileIds = new List<string>();
 
             await m_PluginsManager.LoadPlugins(LoadPluginFiles(locations, resFileIds));
-            
+
             foreach (var loc in locations)
             {
                 var pluginFilter = GetPluginsFolderFilter(loc);
 
                 var filter = new List<string>();
 
-                if (m_Filter != null) 
+                if (m_Filter != null)
                 {
                     filter.AddRange(m_Filter);
                 }
@@ -69,7 +67,7 @@ namespace Xarial.Docify.Core.Loader
                         resFileIds.Add(id);
                         yield return srcFile;
                     }
-                    else 
+                    else
                     {
                         throw new DuplicateFileException(id, loc.ToId());
                     }
@@ -104,13 +102,13 @@ namespace Xarial.Docify.Core.Loader
             }
         }
 
-        private string GetPluginsFolderFilter(ILocation baseLoc) 
+        private string GetPluginsFolderFilter(ILocation baseLoc)
         {
             return baseLoc.ToId() + LocationExtension.ID_SEP
                     + PLUGINS_FOLDER + LocationExtension.ID_SEP + LocationExtension.ANY_FILTER;
         }
 
-        private async IAsyncEnumerable<IFile> LoadPluginFiles(ILocation[] locations, List<string> resFileIds) 
+        private async IAsyncEnumerable<IFile> LoadPluginFiles(ILocation[] locations, List<string> resFileIds)
         {
             foreach (var loc in locations)
             {

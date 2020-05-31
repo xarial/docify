@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Lib.Plugins.Common.Data;
@@ -22,7 +21,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
     {
         public static string[] PathSeparators { get; } = new string[] { "\\", "/", "::" };
 
-        public static ILocation LocationFromPath(string path) 
+        public static ILocation LocationFromPath(string path)
         {
             var isRel = !PathSeparators.Any(s => path.StartsWith(s));
             var parts = path.Split(PathSeparators, StringSplitOptions.RemoveEmptyEntries);
@@ -30,7 +29,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
             var offset = 0;
             var fileName = "";
 
-            if (parts.Any() && Path.HasExtension(parts.Last())) 
+            if (parts.Any() && Path.HasExtension(parts.Last()))
             {
                 offset = 1;
                 fileName = parts.Last();
@@ -38,7 +37,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
 
             var dir = parts.Take(parts.Length - offset);
 
-            if (!isRel) 
+            if (!isRel)
             {
                 dir = new string[] { "" }.Union(dir);
             }
@@ -51,7 +50,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
 
         public static IAsset FindAsset(ISite site, IAssetsFolder page, ILocation path)
         {
-            if (!path.IsFile()) 
+            if (!path.IsFile())
             {
                 throw new Exception("Location is not a file");
             }
@@ -62,7 +61,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
 
             var asset = curFolder.Assets.FirstOrDefault(a => string.Equals(a.FileName, fileName));
 
-            if (asset == null) 
+            if (asset == null)
             {
                 throw new AssetNotFoundException(curFolder, fileName);
             }
@@ -70,10 +69,10 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
             return asset;
         }
 
-        public static IAssetsFolder FindAssetsFolder(ISite site, IAssetsFolder page, ILocation path) 
+        public static IAssetsFolder FindAssetsFolder(ISite site, IAssetsFolder page, ILocation path)
         {
             var isRel = !path.Path.Any() || !string.IsNullOrEmpty(path.Path[0]);
-            
+
             IAssetsFolder curFolder = null;
 
             if (isRel)
@@ -136,13 +135,13 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
             curFolder.Assets.Add(new PluginAsset(content, parts.Last()));
         }
 
-        public static void AddAssetsFromZip(byte[] zipBuffer, IPage page) 
+        public static void AddAssetsFromZip(byte[] zipBuffer, IPage page)
         {
-            using (var zipStream = new MemoryStream(zipBuffer)) 
+            using (var zipStream = new MemoryStream(zipBuffer))
             {
-                using (var archive = new ZipArchive(zipStream)) 
+                using (var archive = new ZipArchive(zipStream))
                 {
-                    foreach (var entry in archive.Entries) 
+                    foreach (var entry in archive.Entries)
                     {
                         if (entry.Length > 0)
                         {
@@ -158,13 +157,13 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
             }
         }
 
-        public static IEnumerable<IPage> GetAllPages(IPage page) 
+        public static IEnumerable<IPage> GetAllPages(IPage page)
         {
             yield return page;
 
-            foreach (var childPage in page.SubPages) 
+            foreach (var childPage in page.SubPages)
             {
-                foreach (var subPage in GetAllPages(childPage)) 
+                foreach (var subPage in GetAllPages(childPage))
                 {
                     yield return subPage;
                 }
@@ -173,14 +172,14 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
 
         public static IEnumerable<IAsset> GetAllAssets(IAssetsFolder folder)
         {
-            foreach (var asset in folder.Assets) 
+            foreach (var asset in folder.Assets)
             {
                 yield return asset;
             }
 
-            foreach (var subFolder in folder.Folders) 
+            foreach (var subFolder in folder.Folders)
             {
-                foreach (var subAsset in GetAllAssets(subFolder)) 
+                foreach (var subAsset in GetAllAssets(subFolder))
                 {
                     yield return subAsset;
                 }
@@ -188,9 +187,9 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
 
             if (folder is IPage)
             {
-                foreach (var subPage in (folder as IPage).SubPages) 
+                foreach (var subPage in (folder as IPage).SubPages)
                 {
-                    foreach (var subPageAsset in GetAllAssets(subPage)) 
+                    foreach (var subPageAsset in GetAllAssets(subPage))
                     {
                         yield return subPageAsset;
                     }

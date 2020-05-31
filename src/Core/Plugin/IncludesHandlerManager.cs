@@ -20,11 +20,11 @@ namespace Xarial.Docify.Core.Plugin
     public class IncludesHandlerManager : IIncludesHandlerManager
     {
         public IIncludesHandler Instance { get; }
-                
+
         private readonly Dictionary<string, ResolveCustomIncludeDelegate> m_CustomIncludesHandlers;
         private readonly IncludesHandlerExtension m_Ext;
 
-        public IncludesHandlerManager(IIncludesHandler instance, IncludesHandlerExtension ext) 
+        public IncludesHandlerManager(IIncludesHandler instance, IncludesHandlerExtension ext)
         {
             Instance = instance;
             m_Ext = ext;
@@ -41,7 +41,7 @@ namespace Xarial.Docify.Core.Plugin
             {
                 return await handler.Invoke(metadata, page);
             }
-            else 
+            else
             {
                 throw new MissingIncludeException(includeName);
             }

@@ -6,7 +6,6 @@
 //*********************************************************************
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,18 +35,18 @@ namespace Xarial.Docify.Lib.Plugins.ResponsiveImage
             m_App.Compiler.RenderImage += OnRenderImage;
             m_App.Compiler.WritePageContent += OnWritePageContent;
         }
-        
+
         private Task OnPreCompile(ISite site)
         {
             AssetsHelper.AddTextAsset(Resources.responsive_image, site.MainPage, CSS_FILE_PATH);
 
             return Task.CompletedTask;
         }
-        
+
         private void OnRenderImage(StringBuilder html)
         {
             var img = html.ToString();
-            
+
             var doc = XDocument.Parse(img);
 
             var imgSrc = doc.Root.Attributes().FirstOrDefault(
@@ -63,7 +62,7 @@ namespace Xarial.Docify.Lib.Plugins.ResponsiveImage
             {
                 classAtt.Value = $"{classAtt.Value} {CLASS_NAME}";
             }
-            else 
+            else
             {
                 classAtt = new XAttribute("class", CLASS_NAME);
                 doc.Root.Add(classAtt);
@@ -91,7 +90,7 @@ namespace Xarial.Docify.Lib.Plugins.ResponsiveImage
                     throw new HeadAssetLinkFailedException(CSS_FILE_PATH, url, ex);
                 }
             }
-            else 
+            else
             {
                 return Task.FromResult(content);
             }

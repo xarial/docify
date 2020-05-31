@@ -5,9 +5,7 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Xarial.Docify.Base;
 
 namespace Xarial.Docify.Lib.Plugins.Common.Data
@@ -18,7 +16,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Data
 
         public string FileName { get; }
 
-        public PluginLocation(string fileName, IEnumerable<string> path) 
+        public PluginLocation(string fileName, IEnumerable<string> path)
         {
             FileName = fileName;
             Path = new List<string>(path);

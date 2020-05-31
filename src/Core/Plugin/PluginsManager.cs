@@ -12,11 +12,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
-using System.Text;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
-using Xarial.Docify.Base;
 using System.Composition.Convention;
 using System.Threading.Tasks;
 
@@ -63,11 +61,11 @@ namespace Xarial.Docify.Core.Plugin
 
                 var pluginAssemblies = new List<Assembly>();
 
-                await foreach (var pluginFile in files) 
+                await foreach (var pluginFile in files)
                 {
                     var ext = Path.GetExtension(pluginFile.Location.FileName);
 
-                    if(new string[] { ".dll", ".exe" }.Contains(ext, StringComparer.CurrentCultureIgnoreCase)) 
+                    if (new string[] { ".dll", ".exe" }.Contains(ext, StringComparer.CurrentCultureIgnoreCase))
                     {
                         using (var assmStream = new MemoryStream(pluginFile.Content))
                         {
@@ -76,7 +74,7 @@ namespace Xarial.Docify.Core.Plugin
                         }
                     }
                 }
-                
+
                 var configuration = new ContainerConfiguration()
                     .WithAssemblies(pluginAssemblies)
                     .WithDefaultConventions(cb);
@@ -96,12 +94,12 @@ namespace Xarial.Docify.Core.Plugin
 
                 InitPlugins();
             }
-            else 
+            else
             {
                 throw new Exception("Plugins already loaded");
             }
         }
-                
+
         private void InitPlugins()
         {
             foreach (var plugin in m_Plugins)

@@ -7,14 +7,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Lib.Plugins.Common.Helpers
 {
     public class TimeMeasureService
     {
-        private class TimerData 
+        private class TimerData
         {
             public TimeSpan Total { get; set; }
             public DateTime? Last { get; set; }
@@ -33,14 +32,14 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
 
         public void Start(string name)
         {
-            m_Timers.Add(name, new TimerData() 
+            m_Timers.Add(name, new TimerData()
             {
-                Total = TimeSpan.Zero, 
-                Last = DateTime.Now 
+                Total = TimeSpan.Zero,
+                Last = DateTime.Now
             });
         }
 
-        public void Pause(string name) 
+        public void Pause(string name)
         {
             var timer = m_Timers[name];
             timer.Total = timer.Total + (DateTime.Now - timer.Last.Value);
@@ -53,7 +52,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
             timer.Last = DateTime.Now;
         }
 
-        public void Stop(string name) 
+        public void Stop(string name)
         {
             var timer = m_Timers[name];
 
@@ -61,7 +60,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
             {
                 timer.Total = timer.Total + (DateTime.Now - timer.Last.Value);
             }
-            
+
             m_Timers.Remove(name);
 
             m_Logger.LogInformation($"Total {name} time: {timer.Total.ToString(m_Format)}");

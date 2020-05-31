@@ -6,17 +6,10 @@
 //*********************************************************************
 
 using Markdig;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Xarial.Docify.Base;
-using Xarial.Docify.Base.Data;
-using Xarial.Docify.Base.Context;
-using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
-using Xarial.Docify.Core.Plugin;
 using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
@@ -29,7 +22,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 
         //TODO: might need to separate the extension to a specific markdown
 
-        public MarkdigMarkdownContentTransformer(ICompilerExtension ext) 
+        public MarkdigMarkdownContentTransformer(ICompilerExtension ext)
         {
             m_Ext = ext;
         }

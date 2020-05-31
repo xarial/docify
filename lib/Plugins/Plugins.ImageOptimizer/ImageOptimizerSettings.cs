@@ -7,7 +7,7 @@
 
 namespace Xarial.Docify.Lib.Plugins.ImageOptimizer
 {
-    public class ImageOptimizerSettings 
+    public class ImageOptimizerSettings
     {
         public string[] MatchPattern { get; set; } = new string[]
         {

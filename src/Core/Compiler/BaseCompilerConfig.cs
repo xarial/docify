@@ -5,10 +5,8 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Compiler
@@ -27,7 +25,7 @@ namespace Xarial.Docify.Core.Compiler
             {
                 CompilableAssetsFilter = filter.ToArray();
             }
-            else 
+            else
             {
                 CompilableAssetsFilter = new string[]
                 {

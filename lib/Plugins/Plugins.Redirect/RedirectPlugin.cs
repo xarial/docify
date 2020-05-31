@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Plugins;
@@ -63,7 +62,7 @@ namespace Xarial.Docify.Lib.Plugins.Redirect
                     var basePage = CreatePagesPath(site, parts.Take(parts.Length - 1).ToArray());
 
                     var data = new PluginMetadata();
-                    
+
                     if (basePage.SubPages.FirstOrDefault(
                         p => string.Equals(p.Name, name, StringComparison.CurrentCultureIgnoreCase)) == null)
                     {
@@ -102,12 +101,12 @@ namespace Xarial.Docify.Lib.Plugins.Redirect
         {
             IPage curPage = site.MainPage;
 
-            foreach (var part in parts) 
+            foreach (var part in parts)
             {
                 var page = curPage.SubPages.FirstOrDefault(
                     p => string.Equals(p.Name, part, StringComparison.CurrentCultureIgnoreCase));
 
-                if (page == null) 
+                if (page == null)
                 {
                     page = new PluginPage(part, "",
                         Guid.NewGuid().ToString(),
@@ -122,7 +121,7 @@ namespace Xarial.Docify.Lib.Plugins.Redirect
             return curPage;
         }
 
-        private IPage CreateRedirectPage(string name, string id, IMetadata data, string redirectTo) 
+        private IPage CreateRedirectPage(string name, string id, IMetadata data, string redirectTo)
         {
             var content = string.Format(Resources.redirect, redirectTo, m_Setts.WaitSeconds);
 

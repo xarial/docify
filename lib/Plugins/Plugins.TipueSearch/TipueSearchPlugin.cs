@@ -9,10 +9,7 @@ using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
@@ -31,7 +28,7 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch
         private const string TITLE_PARAM = "title";
 
         private const string SEARCH_PAGE_NAME = "search";
-        
+
         private ISite m_Site;
         private List<PageSearchData> m_SearchIndex;
 
@@ -48,7 +45,7 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch
             m_App.Compiler.WritePageContent += OnWritePageContent;
             m_App.Publisher.PostAddPublishFiles += OnPostAddPublishFiles;
         }
-        
+
         private Task<string> InsertSearchBox(IMetadata data, IPage page)
         {
             return Task.FromResult(Resources.tipue_search_box);
@@ -79,12 +76,12 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch
                     throw new NullReferenceException($"Specified layout: {m_Setts.SearchPageLayout} for search page cannot be found");
                 }
             }
-            else 
+            else
             {
                 content = $"<!DOCTYPE html><html><head></head><body>{content}</body></html>";
             }
 
-            m_Site.MainPage.SubPages.Add(new PluginPage(SEARCH_PAGE_NAME, content, 
+            m_Site.MainPage.SubPages.Add(new PluginPage(SEARCH_PAGE_NAME, content,
                 Guid.NewGuid().ToString(), data, layout));
 
             return Task.CompletedTask;
@@ -128,7 +125,7 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch
 
             var searchContent = JsonSerializer.Serialize(m_SearchIndex, opts).ToString();
 
-            yield return new PluginFile($"var tipuesearch = {{ \"pages\": {searchContent} }};", 
+            yield return new PluginFile($"var tipuesearch = {{ \"pages\": {searchContent} }};",
                 outLoc.Combine(new PluginLocation("search-content.js", new string[] { SEARCH_PAGE_NAME })));
         }
 

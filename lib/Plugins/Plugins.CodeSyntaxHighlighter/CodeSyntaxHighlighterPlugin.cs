@@ -8,8 +8,6 @@
 using ColorCode;
 using ColorCode.Styling;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -41,7 +39,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
             m_App.Compiler.RenderCodeBlock += OnRenderCodeBlock;
             m_App.Compiler.WritePageContent += OnWritePageContent;
         }
-        
+
         private Task OnPreCompile(ISite site)
         {
             if (!m_Settings.EmbedStyle)
@@ -53,8 +51,8 @@ namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
 
             return Task.CompletedTask;
         }
-        
-        private bool TryFileLanguageCodeById(string lang, out ILanguage codeLang) 
+
+        private bool TryFileLanguageCodeById(string lang, out ILanguage codeLang)
         {
             codeLang = null;
 
@@ -111,7 +109,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
                 cont = node.Element("div");
                 cont.RemoveAttributes();
             }
-            else 
+            else
             {
                 cont = new XElement("div");
                 cont.Add(new XElement("pre", rawCode));

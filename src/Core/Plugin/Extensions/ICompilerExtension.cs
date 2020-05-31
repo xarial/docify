@@ -5,8 +5,6 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
@@ -27,7 +25,7 @@ namespace Xarial.Docify.Core.Plugin.Extensions
     }
 
     public class CompilerExtension : ICompilerExtension
-    {   
+    {
         public event PreCompileDelegate RequestPreCompile;
         public event RenderCodeBlockDelegate RequestRenderCodeBlock;
         public event RenderImageDelegate RequestRenderImage;
@@ -66,7 +64,7 @@ namespace Xarial.Docify.Core.Plugin.Extensions
             {
                 return RequestPreCompile.Invoke(site);
             }
-            else 
+            else
             {
                 return Task.CompletedTask;
             }

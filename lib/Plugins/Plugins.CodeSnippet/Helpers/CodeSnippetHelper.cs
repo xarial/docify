@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
@@ -22,10 +21,10 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
         }
 
         private const string REGION_BLOCK = "---";
-        
-        private static string GetCommentLineSymbol(string codeLang) 
+
+        private static string GetCommentLineSymbol(string codeLang)
         {
-            switch (codeLang.ToLower()) 
+            switch (codeLang.ToLower())
             {
                 case "cs":
                 case "csharp":
@@ -40,12 +39,12 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
                 case "vb.net":
                 case "vba":
                     return "'";
-                    
+
                 default:
                     return "";
             }
         }
-        
+
         public static Snippet[] Select(string rawCode, string codeLang, CodeSelectorOptions opts)
         {
             var srcLines = Regex.Split(rawCode, "\r\n|\r|\n");
@@ -86,7 +85,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
             }
         }
 
-        private static void ProcessRegions(ref List<ProcessingSnippet> result, string[] regs, 
+        private static void ProcessRegions(ref List<ProcessingSnippet> result, string[] regs,
             bool inner, string commentSymbol)
         {
             if (regs?.Any() == true)
@@ -120,16 +119,16 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
                 }
             }
         }
-        
+
         private static IEnumerable<ProcessingSnippet> SelectRegionLines(
-            ProcessingSnippet snippet, string commentSymbol, 
+            ProcessingSnippet snippet, string commentSymbol,
             string[] regions, bool inner)
         {
             var result = new List<ProcessingSnippet>();
 
             var curGroupType = SnippetLocation_e.Middle;
             var curGroup = new List<string>();
-            
+
             var foundRegions = new List<string>();
 
             bool isRecordingRegion = false;
@@ -139,7 +138,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
 
             bool hasLinesAfterLastGroup = false;
 
-            void FlushCurrentGroup() 
+            void FlushCurrentGroup()
             {
                 if (curGroup.Any())
                 {
@@ -154,9 +153,9 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
                 }
             }
 
-            void UpdateCurGroup(string appendLine) 
+            void UpdateCurGroup(string appendLine)
             {
-                if (!curGroup.Any()) 
+                if (!curGroup.Any())
                 {
                     if (isFirstCodeLine.Value)
                     {
@@ -186,12 +185,12 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
                         isFirstCodeLine = true;
                     }
                 }
-                else 
+                else
                 {
                     isFirstCodeLine = false;
                 }
 
-                if (!(isRegEnd || isRegEnd)) 
+                if (!(isRegEnd || isRegEnd))
                 {
                     hasLinesAfterLastGroup = true;
                 }
@@ -214,7 +213,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
                 else if (isRecordingRegion)
                 {
                     if (!isEnd)
-                    {   
+                    {
                         if (inner)
                         {
                             UpdateCurGroup(snippet.Lines[i]);
@@ -237,18 +236,18 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
                         relRegLevel++;
                     }
                 }
-                else if(!inner)
+                else if (!inner)
                 {
                     UpdateCurGroup(snippet.Lines[i]);
                 }
             }
 
-            if (isRecordingRegion) 
+            if (isRecordingRegion)
             {
                 throw new Exception("Region is not closed");
             }
 
-            if (!inner) 
+            if (!inner)
             {
                 FlushCurrentGroup();
             }
@@ -276,7 +275,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
             line = line.Trim();
             var regBlock = commentSymbol + REGION_BLOCK;
 
-            if (line.StartsWith(regBlock)) 
+            if (line.StartsWith(regBlock))
             {
                 name = line.Substring(regBlock.Length).Trim();
                 return !string.IsNullOrEmpty(name);

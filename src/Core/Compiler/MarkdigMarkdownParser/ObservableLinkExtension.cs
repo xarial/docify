@@ -8,9 +8,6 @@
 using Markdig;
 using Markdig.Renderers;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
@@ -18,7 +15,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
     public class ObservableLinkExtension : IMarkdownExtension
     {
         private readonly ICompilerExtension m_Ext;
-        
+
         public ObservableLinkExtension(ICompilerExtension ext)
         {
             m_Ext = ext;
@@ -38,7 +35,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
                 htmlRenderer.ObjectRenderers.ReplaceOrAdd<Markdig.Renderers.Html.Inlines.LinkInlineRenderer>(
                     new ObservableLinkInlineRenderer(m_Ext));
             }
-            else 
+            else
             {
                 throw new NotSupportedException("Renderer is not upported");
             }

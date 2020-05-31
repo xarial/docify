@@ -7,12 +7,12 @@
 
 namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
 {
-    public class Snippet 
+    public class Snippet
     {
         public SnippetLocation_e Location { get; }
         public string Code { get; }
 
-        public Snippet(string code, SnippetLocation_e location) 
+        public Snippet(string code, SnippetLocation_e location)
         {
             Location = location;
             Code = code;

@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
@@ -59,8 +58,8 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
             m_UsedStyles = new List<string>();
 
             m_BundlesContent = m_Setts.Bundles?.ToDictionary(
-                x => x.Key, 
-                x => new StringBuilder(), 
+                x => x.Key,
+                x => new StringBuilder(),
                 StringComparer.CurrentCultureIgnoreCase);
 
             return Task.CompletedTask;
@@ -151,7 +150,7 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
         {
             await Task.CompletedTask;
 
-            foreach (var bundle in m_BundlesContent) 
+            foreach (var bundle in m_BundlesContent)
             {
                 var parts = bundle.Key.Split(AssetsHelper.PathSeparators,
                     StringSplitOptions.RemoveEmptyEntries);
@@ -163,7 +162,7 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
             }
 
             await foreach (var defStyle in RetrieveDeferredAssets(
-                m_Setts.DeleteUnusedCss, m_DeferredStyles.ToArray(), m_UsedStyles.ToArray(), outLoc)) 
+                m_Setts.DeleteUnusedCss, m_DeferredStyles.ToArray(), m_UsedStyles.ToArray(), outLoc))
             {
                 yield return defStyle;
             }
@@ -190,7 +189,7 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
                 }
             }
         }
-        
+
         private Task<string> OnWritePageContent(string content, IMetadata data, string url)
         {
             var doc = new HtmlDocument();
@@ -214,7 +213,7 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
                     hasChanges |= hasScriptChanges;
                 }
 
-                if (styles?.Any() == true) 
+                if (styles?.Any() == true)
                 {
                     ReplaceNodes(styles, "href", headNode, CSS_LINK_TEMPLATE, out bool hasStyleChanges);
                     hasChanges |= hasStyleChanges;
@@ -258,8 +257,8 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
             return Task.FromResult(content);
         }
 
-        private void ReplaceNodes(IEnumerable<HtmlNode> nodes, 
-            string bundleLinkAttributeName, HtmlNode parentNode, string nodeTemplate, out bool hasChanges) 
+        private void ReplaceNodes(IEnumerable<HtmlNode> nodes,
+            string bundleLinkAttributeName, HtmlNode parentNode, string nodeTemplate, out bool hasChanges)
         {
             hasChanges = false;
 
@@ -282,12 +281,12 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
             }
         }
 
-        private IEnumerable<string> FindBundles(string[] assets) 
+        private IEnumerable<string> FindBundles(string[] assets)
         {
-            foreach (var bundle in m_Setts.Bundles) 
+            foreach (var bundle in m_Setts.Bundles)
             {
                 var intersect = assets.Intersect(bundle.Value);
-                
+
                 if (intersect.OrderBy(x => x).SequenceEqual(bundle.Value.OrderBy(x => x)))
                 {
                     yield return bundle.Key;

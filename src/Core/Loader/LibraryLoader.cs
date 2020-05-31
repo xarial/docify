@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
@@ -24,7 +23,7 @@ namespace Xarial.Docify.Core.Loader
         private readonly ILocation m_Location;
         private readonly IFileLoader m_FileLoader;
 
-        public LibraryLoader(ILocation location, IFileLoader fileLoader) 
+        public LibraryLoader(ILocation location, IFileLoader fileLoader)
         {
             m_Location = location;
             m_FileLoader = fileLoader;

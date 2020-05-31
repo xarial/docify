@@ -6,8 +6,6 @@
 //*********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Exceptions
@@ -16,7 +14,7 @@ namespace Xarial.Docify.Core.Exceptions
     {
         public IFile[] Files { get; }
 
-        public SiteParsingException(IFile[] files) : base($"{files.Length} file(s) were not parsed") 
+        public SiteParsingException(IFile[] files) : base($"{files.Length} file(s) were not parsed")
         {
             Files = files;
         }

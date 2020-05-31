@@ -11,10 +11,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
-using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
-using Xarial.Docify.Core.Data;
-using Xarial.Docify.Core.Plugin;
 using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Publisher
@@ -25,12 +22,12 @@ namespace Xarial.Docify.Core.Publisher
 
         private readonly IPublisherExtension m_Ext;
 
-        public LocalFileSystemPublisher(IPublisherExtension ext) 
+        public LocalFileSystemPublisher(IPublisherExtension ext)
             : this(new System.IO.Abstractions.FileSystem(), ext)
         {
         }
 
-        public LocalFileSystemPublisher( 
+        public LocalFileSystemPublisher(
             System.IO.Abstractions.IFileSystem fileSystem, IPublisherExtension ext)
         {
             m_FileSystem = fileSystem;
@@ -84,7 +81,7 @@ namespace Xarial.Docify.Core.Publisher
         {
             var outFilePath = file.Location.ToPath();
 
-            if (!Path.IsPathRooted(outFilePath)) 
+            if (!Path.IsPathRooted(outFilePath))
             {
                 throw new Exception($"Path of file to publish {outFilePath} must be rooted");
             }

@@ -9,8 +9,6 @@ using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
@@ -25,8 +23,8 @@ namespace Xarial.Docify.Lib.Plugins.SeoValidator
         private SeoValidatorPluginSettings m_Setts;
 
         private readonly IValidator[] m_Validators;
-        
-        public SeoValidatorPlugin() 
+
+        public SeoValidatorPlugin()
         {
             m_Validators = new IValidator[]
             {
@@ -41,12 +39,12 @@ namespace Xarial.Docify.Lib.Plugins.SeoValidator
             m_App = app;
             m_Setts = setts;
 
-            m_App.Compiler.WritePageContent += OnWritePageContent;   
+            m_App.Compiler.WritePageContent += OnWritePageContent;
         }
 
         private Task<string> OnWritePageContent(string content, IMetadata data, string url)
         {
-            if (m_Setts.Scope?.Any() != true 
+            if (m_Setts.Scope?.Any() != true
                 || m_Setts.Scope.Any(s => PathHelper.Matches(url, s))
                 && (!data.ContainsKey("sitemap") || data.GetParameterOrDefault<bool>("sitemap")))
             {
@@ -83,7 +81,7 @@ namespace Xarial.Docify.Lib.Plugins.SeoValidator
         }
     }
 
-    public interface IValidator 
+    public interface IValidator
     {
         string Name { get; }
         void Validate(HtmlDocument doc, Dictionary<string, object> settings);
@@ -116,7 +114,7 @@ namespace Xarial.Docify.Lib.Plugins.SeoValidator
 
     public class SeoValidationFailedException : Exception
     {
-        public SeoValidationFailedException(string err, Exception inner) 
+        public SeoValidationFailedException(string err, Exception inner)
             : base(err, inner)
         {
         }
@@ -127,11 +125,11 @@ namespace Xarial.Docify.Lib.Plugins.SeoValidator
         }
     }
 
-    public static class TextLengthValidator 
+    public static class TextLengthValidator
     {
-        public static void Validate(HtmlDocument doc, 
-            string selector, int min, int max, string name, 
-            Func<HtmlNode, int> getLength) 
+        public static void Validate(HtmlDocument doc,
+            string selector, int min, int max, string name,
+            Func<HtmlNode, int> getLength)
         {
             var nodes = doc.DocumentNode.SelectNodes(selector);
 
@@ -145,7 +143,7 @@ namespace Xarial.Docify.Lib.Plugins.SeoValidator
             }
 
             var length = getLength.Invoke(nodes[0]);
-            
+
             if ((min != -1 && length < min)
                 || (max != -1 && length > max))
             {
@@ -195,7 +193,7 @@ namespace Xarial.Docify.Lib.Plugins.SeoValidator
                     {
                         return 0;
                     }
-                    else 
+                    else
                     {
                         return desc.Length;
                     }

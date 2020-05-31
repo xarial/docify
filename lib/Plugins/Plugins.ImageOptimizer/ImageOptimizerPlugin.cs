@@ -13,11 +13,8 @@ using System.IO;
 using nQuant;
 using System.Drawing;
 using System.Text.RegularExpressions;
-using System.Runtime.Serialization;
 using Svg;
 using System.Drawing.Imaging;
-using System.Collections;
-using System.Collections.Generic;
 using Xarial.Docify.Base.Data;
 using System.Threading.Tasks;
 using Xarial.Docify.Lib.Plugins.Common.Helpers;
@@ -48,7 +45,7 @@ namespace Xarial.Docify.Lib.Plugins.ImageOptimizer
 
         private Task OnPreCompile(ISite site)
         {
-            foreach (var page in AssetsHelper.GetAllPages(site.MainPage)) 
+            foreach (var page in AssetsHelper.GetAllPages(site.MainPage))
             {
                 string image;
 
@@ -56,8 +53,8 @@ namespace Xarial.Docify.Lib.Plugins.ImageOptimizer
                 {
                     if (!string.IsNullOrEmpty(image))
                     {
-                        if (string.Equals(Path.GetExtension(image), 
-                            SVG_EXT, StringComparison.CurrentCultureIgnoreCase)) 
+                        if (string.Equals(Path.GetExtension(image),
+                            SVG_EXT, StringComparison.CurrentCultureIgnoreCase))
                         {
                             IAsset imgAsset;
 
@@ -69,17 +66,17 @@ namespace Xarial.Docify.Lib.Plugins.ImageOptimizer
                             {
                                 throw new NullReferenceException($"Failed to find image asset: '{image}'", ex);
                             }
-                            
+
                             var imgName = Path.GetFileNameWithoutExtension(image) + PNG_EXT;
 
                             byte[] pngBuffer = null;
-                            
+
                             using (var svgStream = new MemoryStream(imgAsset.Content))
                             {
                                 var svgDocument = SvgDocument.Open<SvgDocument>(svgStream);
                                 var bitmap = svgDocument.Draw(m_Settings.SvgPngWidth, m_Settings.SvgPngHeight);
 
-                                using (var pngStream = new MemoryStream()) 
+                                using (var pngStream = new MemoryStream())
                                 {
                                     bitmap.Save(pngStream, ImageFormat.Png);
                                     pngBuffer = pngStream.ToArray();
@@ -102,7 +99,7 @@ namespace Xarial.Docify.Lib.Plugins.ImageOptimizer
             return Task.CompletedTask;
         }
 
-        private void GenerateFavIcon(ISite site) 
+        private void GenerateFavIcon(ISite site)
         {
             //TODO: implement
             throw new NotImplementedException();

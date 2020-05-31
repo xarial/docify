@@ -6,8 +6,6 @@
 //*********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Core.Logger
@@ -19,7 +17,7 @@ namespace Xarial.Docify.Core.Logger
         public void LogInformation(string msg) => WriteLine(msg, ConsoleColor.Green);
         public void LogWarning(string msg) => WriteLine(msg, ConsoleColor.Yellow);
 
-        private void WriteLine(string msg, ConsoleColor color = ConsoleColor.White) 
+        private void WriteLine(string msg, ConsoleColor color = ConsoleColor.White)
         {
             Console.ForegroundColor = color;
             Console.WriteLine(msg);

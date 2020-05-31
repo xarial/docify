@@ -6,14 +6,12 @@
 //*********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Xarial.Docify.Core.Exceptions
 {
     public class EmptySiteException : Exception
     {
-        public EmptySiteException() : base("Site contains no pages") 
+        public EmptySiteException() : base("Site contains no pages")
         {
         }
     }

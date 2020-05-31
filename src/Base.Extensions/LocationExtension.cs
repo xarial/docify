@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -65,13 +64,13 @@ namespace Xarial.Docify.Base
         }
 
         public static bool IsEmpty(this ILocation loc) => !loc.Path.Any() && string.IsNullOrEmpty(loc.FileName);
-                
+
         public static bool IsRoot(this ILocation loc) => !loc.Path.Any();
 
         public static string GetRoot(this ILocation loc) => loc.Path.FirstOrDefault();
 
         public static bool IsFile(this ILocation loc) => !string.IsNullOrEmpty(loc.FileName);
-        
+
         public static ILocation Combine(this ILocation loc, params string[] blocks)
         {
             return loc.Copy("", loc.Path.Union(blocks));
@@ -82,29 +81,29 @@ namespace Xarial.Docify.Base
             return loc.Copy(other.FileName, loc.Path.Union(other.Path));
         }
 
-        public static ILocation GetParent(this ILocation loc, int level = 1) 
+        public static ILocation GetParent(this ILocation loc, int level = 1)
         {
             if (loc.IsFile())
             {
                 return loc.Copy("", loc.Path.Take(loc.Path.Count - (level - 1)));
             }
-            else 
+            else
             {
                 return loc.Copy("", loc.Path.Take(loc.Path.Count - level));
             }
         }
 
-        public static bool IsInLocation(this ILocation loc, ILocation parent, 
-            StringComparison compType = StringComparison.CurrentCultureIgnoreCase) 
+        public static bool IsInLocation(this ILocation loc, ILocation parent,
+            StringComparison compType = StringComparison.CurrentCultureIgnoreCase)
         {
-            if (parent.IsFile()) 
+            if (parent.IsFile())
             {
                 throw new Exception("Parent must not be a file");
             }
 
-            if (loc.Path.Count >= parent.Path.Count) 
+            if (loc.Path.Count >= parent.Path.Count)
             {
-                for (int i = 0; i < parent.Path.Count; i++) 
+                for (int i = 0; i < parent.Path.Count; i++)
                 {
                     if (!string.Equals(loc.Path[i], parent.Path[i], compType))
                     {
@@ -118,20 +117,20 @@ namespace Xarial.Docify.Base
             return false;
         }
 
-        public static ILocation GetRelative(this ILocation loc, 
-            ILocation relativeTo, StringComparison compType = StringComparison.CurrentCultureIgnoreCase) 
+        public static ILocation GetRelative(this ILocation loc,
+            ILocation relativeTo, StringComparison compType = StringComparison.CurrentCultureIgnoreCase)
         {
             if (loc.IsInLocation(relativeTo, compType))
             {
                 return loc.Copy(loc.FileName, loc.Path.Skip(relativeTo.Path.Count));
             }
-            else 
+            else
             {
                 throw new Exception($"'{loc.ToId()}' location is not within the '{relativeTo.ToId()}'");
             }
         }
 
-        public static bool IsSame(this ILocation loc, ILocation other, 
+        public static bool IsSame(this ILocation loc, ILocation other,
             StringComparison compType = StringComparison.CurrentCultureIgnoreCase)
         {
             if (ReferenceEquals(loc, other))
@@ -144,7 +143,7 @@ namespace Xarial.Docify.Base
                 return false;
             }
 
-            if (!string.Equals(loc.FileName, other.FileName, compType)) 
+            if (!string.Equals(loc.FileName, other.FileName, compType))
             {
                 if (!string.IsNullOrEmpty(loc.FileName) || !string.IsNullOrEmpty(other.FileName))
                 {
@@ -200,7 +199,7 @@ namespace Xarial.Docify.Base
 
             var posFilters = filters.Where(f => !IsNegative(f));
             var negFilters = filters.Except(posFilters);
-            
+
             if (posFilters.Any() && !posFilters.Any(f => MatchFilter(f)))
             {
                 return false;

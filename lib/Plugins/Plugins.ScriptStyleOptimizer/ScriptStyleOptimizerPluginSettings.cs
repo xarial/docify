@@ -18,7 +18,7 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
         public bool DeleteUnusedJs { get; set; }
         public CasesInsensitiveDictionary<string[]> Bundles { get; set; }
 
-        public ScriptStyleOptimizerPluginSettings() 
+        public ScriptStyleOptimizerPluginSettings()
         {
             Bundles = new CasesInsensitiveDictionary<string[]>();
             AssetsScopePaths = new string[0];

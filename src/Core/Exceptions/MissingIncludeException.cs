@@ -6,15 +6,13 @@
 //*********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Xarial.Docify.Core.Exceptions
 {
     public class MissingIncludeException : Exception
     {
         public MissingIncludeException(string includeName)
-            : base($"Include '{includeName}' cannot be resolved") 
+            : base($"Include '{includeName}' cannot be resolved")
         {
         }
     }

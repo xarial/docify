@@ -5,9 +5,7 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 
@@ -24,7 +22,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Data
         public List<IAsset> Assets { get; }
         public List<IAssetsFolder> Folders { get; }
 
-        public PluginPage(string name, string rawContent, string id, IMetadata data, ITemplate template = null) 
+        public PluginPage(string name, string rawContent, string id, IMetadata data, ITemplate template = null)
         {
             SubPages = new List<IPage>();
             Assets = new List<IAsset>();

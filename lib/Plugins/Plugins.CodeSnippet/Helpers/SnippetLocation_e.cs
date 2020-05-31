@@ -10,7 +10,7 @@ using System;
 namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
 {
     [Flags]
-    public enum SnippetLocation_e 
+    public enum SnippetLocation_e
     {
         Middle = 0,
         Start = 1,

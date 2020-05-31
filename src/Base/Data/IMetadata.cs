@@ -5,9 +5,7 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Xarial.Docify.Base.Data
 {

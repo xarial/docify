@@ -6,8 +6,6 @@
 //*********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 
@@ -19,7 +17,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Data
         public ILocation Location { get; }
         public string Id { get; }
 
-        public PluginFile(string content, ILocation loc) 
+        public PluginFile(string content, ILocation loc)
             : this(ContentExtension.ToByteArray(content), loc)
         {
         }
@@ -34,7 +32,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Data
         {
         }
 
-        public PluginFile(byte[] content, ILocation loc, string id) 
+        public PluginFile(byte[] content, ILocation loc, string id)
         {
             Content = content;
             Location = loc;

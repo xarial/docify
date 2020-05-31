@@ -6,15 +6,13 @@
 //*********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Xarial.Docify.Core.Exceptions
 {
     public class MissingLayoutException : Exception
     {
         public MissingLayoutException(string layoutName)
-            : base($"Layout cannot be found: {layoutName}") 
+            : base($"Layout cannot be found: {layoutName}")
         {
         }
     }

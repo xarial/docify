@@ -6,16 +6,12 @@
 //*********************************************************************
 
 using Markdig;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
     public static class ProtectedTagsExtensionFunctions
     {
-        public static MarkdownPipelineBuilder UseProtectedTags(this MarkdownPipelineBuilder pipeline, 
+        public static MarkdownPipelineBuilder UseProtectedTags(this MarkdownPipelineBuilder pipeline,
             string startTag, string endTag)
         {
             if (!pipeline.Extensions.Contains<ProtectedTagsExtension>())

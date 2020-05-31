@@ -9,15 +9,13 @@ using CommandLine;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Xarial.Docify.Base.Services;
 using Xarial.Docify.CLI.Options;
-using Xarial.Docify.Core;
 
 namespace Xarial.Docify.CLI
 {
-    class Program
+    internal class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             var parser = new Parser(p =>
             {

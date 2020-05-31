@@ -5,10 +5,8 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Context;
 
@@ -32,7 +30,7 @@ namespace Xarial.Docify.Core.Compiler.Context
             {
                 return val;
             }
-            else 
+            else
             {
                 throw new KeyNotFoundException($"{prpName} is not present in the metadata");
             }
@@ -46,7 +44,7 @@ namespace Xarial.Docify.Core.Compiler.Context
             return val;
         }
 
-        public bool TryGet<T>(string prpName, out T val) 
+        public bool TryGet<T>(string prpName, out T val)
         {
             return MetadataExtension.TryGetParameter<T>(this, prpName, out val);
         }

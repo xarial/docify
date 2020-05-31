@@ -6,12 +6,9 @@
 //*********************************************************************
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Lib.Tools.Exceptions;
@@ -19,7 +16,7 @@ using Xarial.Docify.Lib.Tools.Exceptions;
 namespace Xarial.Docify.Lib.Tools
 {
     public static class NavigationMenuHelper
-    {   
+    {
         private const string ROOT_PAGE_ATT = "root-page";
 
         public class MenuPage : IContextPage
@@ -79,10 +76,10 @@ namespace Xarial.Docify.Lib.Tools
             }
         }
 
-        public static IEnumerable<IContextPage> BuildPredefinedMenu(string menuOptName, IContextSite site, IContextMetadata data) 
+        public static IEnumerable<IContextPage> BuildPredefinedMenu(string menuOptName, IContextSite site, IContextMetadata data)
         {
             List<object> menu;
-            
+
             if (data.TryGet(menuOptName, out menu) && menu != null)
             {
                 var allPages = PageHelper.GetAllPages(site.MainPage);
@@ -96,7 +93,7 @@ namespace Xarial.Docify.Lib.Tools
             }
         }
 
-        public static MenuPage BuildPage(IContextPage srcPage, IContextMetadata data, string title) 
+        public static MenuPage BuildPage(IContextPage srcPage, IContextMetadata data, string title)
         {
             var page = CreateMenuPage(null, data, title);
             page.Url = srcPage.Url;
@@ -104,7 +101,7 @@ namespace Xarial.Docify.Lib.Tools
             return page;
         }
 
-        public static IContextPage GetRootPage(IContextModel model) 
+        public static IContextPage GetRootPage(IContextModel model)
         {
             var rootPageUrl = model.Data.GetOrDefault<string>(ROOT_PAGE_ATT);
 
@@ -122,7 +119,7 @@ namespace Xarial.Docify.Lib.Tools
                     throw new RootPageNotFoundException(rootPageUrl);
                 }
             }
-            else 
+            else
             {
                 return model.Site.MainPage;
             }

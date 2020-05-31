@@ -6,14 +6,12 @@
 //*********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Xarial.Docify.Core.Exceptions
 {
     public class FrontMatterErrorException : Exception
     {
-        public FrontMatterErrorException(string msg, Exception inner = null) : base(msg, inner) 
+        public FrontMatterErrorException(string msg, Exception inner = null) : base(msg, inner)
         {
         }
     }

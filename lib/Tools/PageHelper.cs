@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xarial.Docify.Base.Context;
 
 namespace Xarial.Docify.Lib.Tools

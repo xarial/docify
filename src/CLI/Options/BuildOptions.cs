@@ -6,10 +6,7 @@
 //*********************************************************************
 
 using CommandLine;
-using System;
 using System.Collections.Generic;
-using System.Text;
-using Xarial.Docify.Base;
 
 namespace Xarial.Docify.CLI.Options
 {
@@ -25,7 +22,7 @@ namespace Xarial.Docify.CLI.Options
         [Option('u', "url", Required = true, HelpText = "Target site url")]
         public string SiteUrl { get; set; }
 
-        [Option('e', "env", HelpText = "Build environment, either standard set or custom",  Required = false)]
+        [Option('e', "env", HelpText = "Build environment, either standard set or custom", Required = false)]
         public string Environment { get; set; }
 
         [Option('l', "lib", HelpText = "Path to the library", Required = false)]

@@ -18,9 +18,9 @@ namespace Xarial.Docify.Core.Plugin
         public IComposerManager Composer { get; }
         public IPublisherManager Publisher { get; }
 
-        public DocifyApplication(IIncludesHandlerManager includes, 
-            ICompilerManager compiler, 
-            IComposerManager composer, 
+        public DocifyApplication(IIncludesHandlerManager includes,
+            ICompilerManager compiler,
+            IComposerManager composer,
             IPublisherManager publisher,
             ILogger logger)
         {

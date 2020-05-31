@@ -5,10 +5,7 @@
 //License: https://github.com/xarial/docify/blob/master/LICENSE
 //*********************************************************************
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 
 namespace Xarial.Docify.Base.Plugins
 {
@@ -21,7 +18,7 @@ namespace Xarial.Docify.Base.Plugins
     {
         void Init(IDocifyApplication app);
     }
-    
+
     public interface IPlugin<TSettings> : IPluginBase
         where TSettings : new()
     {

@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
@@ -31,7 +30,7 @@ namespace Xarial.Docify.Core.Helpers
 
         private readonly IDeserializer m_YamlSerializer;
 
-        public MetadataSerializer() 
+        public MetadataSerializer()
         {
             m_YamlSerializer = new DeserializerBuilder()
                 .WithNodeTypeResolver(new DictionaryTypeResolver())

@@ -16,12 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Base\Base.csproj" />
-    <ProjectReference Include="..\..\src\CLI\CLI.csproj" />
-    <ProjectReference Include="..\..\lib\Components\Components.csproj" />
-    <ProjectReference Include="..\..\src\Core\Core.csproj" />
-    <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
-    <ProjectReference Include="..\..\lib\Tools\Tools.csproj" />
+    <ProjectReference Include="..\..\..\src\Base\Base.csproj" />
+    <ProjectReference Include="..\..\..\src\CLI\CLI.csproj" />
+    <ProjectReference Include="..\..\..\lib\Components\Components.csproj" />
+    <ProjectReference Include="..\..\..\src\Core\Core.csproj" />
+    <ProjectReference Include="..\..\Tests.Common\Tests.Common.csproj" />
+    <ProjectReference Include="..\..\..\lib\Tools\Tools.csproj" />
   </ItemGroup>
 
   <ItemGroup>

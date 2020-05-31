@@ -7,8 +7,7 @@
 
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using Xarial.Docify.Base;
 using Xarial.Docify.Core;
 
@@ -201,6 +200,35 @@ namespace Core.Tests
             Assert.IsFalse(r1);
             Assert.IsTrue(r2);
             Assert.IsFalse(r3);
+        }
+
+        [Test]
+        public void FromStringTest()
+        {
+            var r1 = Location.FromString("abc\\xyz");
+            var r2 = Location.FromString("abc/xyz");
+            var r3 = Location.FromString("abc::xyz");
+            var r4 = Location.FromString("abc\\xyz\\file1.txt");
+            var r5 = Location.FromString("abc/xyz/file1.txt");
+            var r6 = Location.FromString("abc::xyz::file1.txt");
+            var r7 = Location.FromString("D:\\dir\\file1.txt");
+            var r8 = Location.FromString("https://www.example.com/file1.txt");
+
+            Assert.AreEqual("", r1.FileName);
+            Assert.AreEqual("", r2.FileName);
+            Assert.AreEqual("", r3.FileName);
+            Assert.AreEqual("file1.txt", r4.FileName);
+            Assert.AreEqual("file1.txt", r5.FileName);
+            Assert.AreEqual("file1.txt", r6.FileName);
+            Assert.AreEqual("file1.txt", r7.FileName);
+            Assert.AreEqual("file1.txt", r8.FileName);
+
+            Assert.IsTrue(new string[] { "abc", "xyz" }.SequenceEqual(r1.Path));
+            Assert.IsTrue(new string[] { "abc", "xyz" }.SequenceEqual(r2.Path));
+            Assert.IsTrue(new string[] { "abc", "xyz" }.SequenceEqual(r3.Path));
+            Assert.IsTrue(new string[] { "abc", "xyz" }.SequenceEqual(r4.Path));
+            Assert.IsTrue(new string[] { "abc", "xyz" }.SequenceEqual(r5.Path));
+            Assert.IsTrue(new string[] { "abc", "xyz" }.SequenceEqual(r6.Path));
         }
     }
 }

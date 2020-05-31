@@ -7,9 +7,15 @@
 
 using CommandLine;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Xarial.Docify.Base;
 using Xarial.Docify.CLI.Options;
+using Xarial.Docify.Core;
+using Xarial.Docify.Core.Loader;
+using Xarial.Docify.Core.Tools;
+using Xarial.XToolkit.Services.UserSettings;
 
 namespace Xarial.Docify.CLI
 {
@@ -30,20 +36,42 @@ namespace Xarial.Docify.CLI
 
             BuildOptions buildOpts = null;
             ServeOptions serveOpts = null;
+            GenerateLibraryManifestOptions genManOpts = null;
 
-            parser.ParseArguments<BuildOptions, ServeOptions>(args)
+            parser.ParseArguments<BuildOptions, ServeOptions, GenerateLibraryManifestOptions>(args)
                 .WithParsed<BuildOptions>(o => buildOpts = o)
                 .WithParsed<ServeOptions>(o => serveOpts = o)
+                .WithParsed<GenerateLibraryManifestOptions>(o => genManOpts = o)
                 .WithNotParsed(e => isError = true);
 
             if (!isError)
             {
                 DocifyEngine engine = null;
 
-                if (buildOpts != null || serveOpts != null)
+                if (buildOpts != null)
                 {
                     engine = new DocifyEngine(buildOpts.SourceDirectories.ToArray(),
                         buildOpts.OutputDirectory, buildOpts.Library, buildOpts.SiteUrl, buildOpts.Environment);
+                }
+                else if (serveOpts != null) 
+                {
+                    throw new NotSupportedException("This option is not supported");
+                }
+                else if (genManOpts != null)
+                {
+                    var manGen = new ManifestGenerator(new LocalFileSystemFileLoader());
+                    string publicKeyXml;
+                    var maninfest = await manGen.CreateManifest(Location.FromPath(genManOpts.LibraryPath), 
+                        genManOpts.CertificatePath, genManOpts.CertificatePassword, out publicKeyXml);
+
+                    new UserSettingsService().StoreSettings(maninfest,
+                        Path.Combine(genManOpts.LibraryPath, "library.manifest"),
+                        new BaseValueSerializer<ILocation>(x => x.ToId(), null));
+
+                    if (!string.IsNullOrEmpty(genManOpts.PublicKeyFile)) 
+                    {
+                        await File.WriteAllTextAsync(genManOpts.PublicKeyFile, publicKeyXml);
+                    }
                 }
 
                 if (buildOpts != null)

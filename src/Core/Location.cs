@@ -54,6 +54,26 @@ namespace Xarial.Docify.Core
             return new Location(fileName, blocks);
         }
 
+        public static Location FromString(string loc)
+        {
+            var blocks = loc.Split(new string[] 
+            {
+                LocationExtension.PATH_SEP,
+                LocationExtension.URL_SEP, 
+                LocationExtension.ID_SEP 
+            }, StringSplitOptions.None).ToArray();
+
+            var fileName = "";
+
+            if (!string.IsNullOrEmpty(System.IO.Path.GetExtension(blocks.Last()))) 
+            {
+                fileName = blocks.Last();
+                blocks = blocks.Take(blocks.Length - 1).ToArray();
+            }
+            
+            return new Location(fileName, blocks);
+        }
+
         public IReadOnlyList<string> Path { get; }
 
         public string FileName { get; }

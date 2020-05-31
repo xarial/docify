@@ -22,6 +22,7 @@ using Xarial.Docify.Core.Logger;
 using Xarial.Docify.Core.Plugin;
 using Xarial.Docify.Core.Plugin.Extensions;
 using Xarial.Docify.Core.Publisher;
+using Xarial.Docify.Core.Tools;
 
 namespace Xarial.Docify.CLI
 {
@@ -160,11 +161,5 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<DocifyApplication>().As<IDocifyApplication>();
         }
-
-        //private void LoadPlugins()
-        //{
-        //    var plugMgr = m_Container.Resolve<IPluginsManager>();
-        //    plugMgr.LoadPlugins();
-        //}
     }
 }

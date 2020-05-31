@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using Tests.Common.Mocks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
@@ -76,7 +77,7 @@ namespace Core.Tests
         }
     }
 
-    public class LocalFileSystemPluginsManagerTest
+    public class PluginsManagerTest
     {   
         [Test]
         public async Task InitTest() 
@@ -98,17 +99,16 @@ namespace Core.Tests
             var assm = moduleBuilder.Assembly;
 
             var assmBuffer = new Lokad.ILPack.AssemblyGenerator().GenerateAssemblyBytes(assm);
-
-            var fs = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
-            fs.AddFile("D:\\Plugins\\mockplugins.dll", new System.IO.Abstractions.TestingHelpers.MockFileData(assmBuffer));
             
-            var mgr = new LocalFileSystemPluginsManager(new Configuration()
+            var mgr = new PluginsManager(new Configuration()
             {
-                PluginsFolder = Location.FromPath("D:\\Plugins"),
                 Plugins = new string[] { "plugin2" }.ToList()
-            }, fs, new Mock<IDocifyApplication>().Object);
+            }, new Mock<IDocifyApplication>().Object);
 
-            await mgr.LoadPlugins();
+            await mgr.LoadPlugins(new IFile[] 
+            {
+                new FileMock(Location.FromPath("mockplugins.dll"), assmBuffer)
+            }.ToAsyncEnumerable());
 
             var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPluginBase>;
 
@@ -135,16 +135,16 @@ namespace Core.Tests
 
             var assmBuffer = new Lokad.ILPack.AssemblyGenerator().GenerateAssemblyBytes(assm);
 
-            var fs = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
-            fs.AddFile("D:\\Plugins\\mockplugins.dll", new System.IO.Abstractions.TestingHelpers.MockFileData(assmBuffer));
+            var mgr = new PluginsManager(new Configuration()
+            {
+                Plugins = new string[] { "plugin1" }.ToList()
+            }, new Mock<IDocifyApplication>().Object);
 
-            var conf = new Configuration();
-            conf.PluginsFolder = Location.FromPath("D:\\Plugins");
-            conf.Plugins = new List<string>(new string[] { "plugin1" });
-
-            var mgr = new LocalFileSystemPluginsManager(conf, fs, new Mock<IDocifyApplication>().Object);
-            await mgr.LoadPlugins();
-
+            await mgr.LoadPlugins(new IFile[]
+            {
+                new FileMock(Location.FromPath("mockplugins.dll"), assmBuffer)
+            }.ToAsyncEnumerable());
+            
             var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPluginBase>;
             var plg = res.OfType<PluginMock<MockSettings1>>().FirstOrDefault();
 
@@ -155,7 +155,7 @@ namespace Core.Tests
             Assert.IsNull(plg.Settings.Prp3);
             Assert.IsNotNull(plg.App);
         }
-        
+
         [Test]
         public async Task LoadSettingsTest()
         {
@@ -169,23 +169,23 @@ namespace Core.Tests
                 new Type[] { typeof(string) }), new object[] { "plg1" }));
 
             typeBuilder.SetParent(typeof(PluginMock<MockSettings1>));
-            
+
             typeBuilder.CreateType();
 
             var assm = moduleBuilder.Assembly;
 
             var assmBuffer = new Lokad.ILPack.AssemblyGenerator().GenerateAssemblyBytes(assm);
 
-            var fs = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
-            fs.AddFile("D:\\Plugins\\mockplugins.dll", new System.IO.Abstractions.TestingHelpers.MockFileData(assmBuffer));
-
             var conf = new MetadataSerializer().Deserialize<Configuration>("^plg1:\r\n  prop-two: 0.1\r\n  prp3:\r\n    - A\r\n    - B");
-            conf.PluginsFolder = Location.FromPath("D:\\Plugins");
             conf.Plugins = new List<string>(new string[] { "plg1" });
 
-            var mgr = new LocalFileSystemPluginsManager(conf, fs, new Mock<IDocifyApplication>().Object);
-            await mgr.LoadPlugins();
+            var mgr = new PluginsManager(conf, new Mock<IDocifyApplication>().Object);
 
+            await mgr.LoadPlugins(new IFile[]
+            {
+                new FileMock(Location.FromPath("mockplugins.dll"), assmBuffer)
+            }.ToAsyncEnumerable());
+            
             var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPluginBase>;
             var plg = res.OfType<PluginMock<MockSettings1>>().FirstOrDefault();
 

@@ -30,13 +30,13 @@ namespace Xarial.Docify.Core.Loader
             m_FileLoader = fileLoader;
         }
 
-        public IAsyncEnumerable<IFile> LoadComponentFiles(string componentName, string[] filters = null)
+        public IAsyncEnumerable<IFile> LoadComponentFiles(string componentName, string[] filters)
             => LoadLibraryItem(componentName, COMPONENTS_FOLDER, filters);
 
-        public IAsyncEnumerable<IFile> LoadPluginFiles(string pluginId, string[] filters = null)
+        public IAsyncEnumerable<IFile> LoadPluginFiles(string pluginId, string[] filters)
             => LoadLibraryItem(pluginId, PLUGINS_FOLDER, filters);
 
-        public IAsyncEnumerable<IFile> LoadThemeFiles(string themeName, string[] filters = null)
+        public IAsyncEnumerable<IFile> LoadThemeFiles(string themeName, string[] filters)
             => LoadLibraryItem(themeName, THEMES_FOLDER, filters);
 
         private IAsyncEnumerable<IFile> LoadLibraryItem(string itemName, string subFolder, string[] filters)

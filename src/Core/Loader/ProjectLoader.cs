@@ -81,7 +81,7 @@ namespace Xarial.Docify.Core.Loader
                 foreach (var compName in m_Config.Components)
                 {
                     await foreach (var srcFile in ProcessLibraryItems(
-                            m_LibraryLoader.LoadComponentFiles(compName), resFileIds, false))
+                            m_LibraryLoader.LoadComponentFiles(compName, null), resFileIds, false))
                     {
                         yield return srcFile;
                     }
@@ -95,7 +95,7 @@ namespace Xarial.Docify.Core.Loader
                     foreach (var themeName in m_Config.ThemesHierarchy)
                     {
                         await foreach (var srcFile in ProcessLibraryItems(
-                            m_LibraryLoader.LoadThemeFiles(themeName), resFileIds, true))
+                            m_LibraryLoader.LoadThemeFiles(themeName, null), resFileIds, true))
                         {
                             yield return srcFile;
                         }
@@ -137,7 +137,7 @@ namespace Xarial.Docify.Core.Loader
                 foreach (var pluginId in m_Config.Plugins)
                 {
                     await foreach (var srcFile in ProcessLibraryItems(
-                        m_LibraryLoader.LoadPluginFiles(pluginId), resFileIds, true))
+                        m_LibraryLoader.LoadPluginFiles(pluginId, null), resFileIds, true))
                     {
                         yield return srcFile;
                     }

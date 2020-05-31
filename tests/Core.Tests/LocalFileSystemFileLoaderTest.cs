@@ -82,7 +82,7 @@ namespace Core.Tests
         }
 
         [Test]
-        public async Task LoadFolder_MissingLocation() 
+        public void LoadFolder_MissingLocation() 
         {
             var loader = new LocalFileSystemFileLoader(
                 new MockFileSystem(new Dictionary<string, MockFileData>()
@@ -91,19 +91,7 @@ namespace Core.Tests
                     { @"C:\site\folder\page2.md", null }
                 }));
 
-            Exception err = null;
-
-            //cannot test IAsyncEnumerable with Assert.Throws or Assert.ThrowsAsync
-            try
-            {
-                await foreach (var x in loader.LoadFolder(Location.FromPath("C:\\site1"), null)) ;
-            }
-            catch (MissingLocationException ex)
-            {
-                err = ex;
-            }
-
-            Assert.IsNotNull(err);
+            Assert.Throws<MissingLocationException>(() => loader.LoadFolder(Location.FromPath("C:\\site1"), null).ToEnumerable().ToList());
         }
     }
 }

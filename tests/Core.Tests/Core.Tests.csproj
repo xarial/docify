@@ -13,16 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="LocalFileSystemComponentsLoaderTest.cs" />
-    <Compile Remove="LocalFileSystemPluginsManagerTest.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="LocalFileSystemComponentsLoaderTest.cs" />
-    <None Include="LocalFileSystemPluginsManagerTest.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Lokad.ILPack" Version="0.1.3" />
     <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="nunit" Version="3.12.0" />

@@ -84,5 +84,185 @@ namespace Core.Tests
 
             Assert.IsInstanceOf<DuplicateFileException>(ex);
         }
+
+        [Test]
+        public async Task LoadLibrary_Components()
+        {
+            var libLoaderMock = new Mock<ILibraryLoader>();
+
+            libLoaderMock.Setup(m => m.LoadComponentFiles(It.IsAny<string>(), It.IsAny<string[]>())).Returns(
+                (string n, string[] f) => 
+                {
+                    if (n == "A" && f?.Any() != true)
+                    {
+                        return new IFile[]
+                        {
+                            new FileMock(Location.FromPath("file2.txt"), "a"),
+                            new FileMock(Location.FromPath("dir\\file3.txt"), "b")
+                        }.ToAsyncEnumerable();
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                });
+
+            var loader = new ProjectLoader(new Mock<IFileLoader>().Object,
+                libLoaderMock.Object,
+                new Mock<IPluginsManager>().Object,
+                new Configuration() { Components = new string[] { "A" }.ToList() });
+
+            var res = await loader.Load(new ILocation[0]).ToListAsync();
+
+            Assert.AreEqual(2, res.Count());
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "file2.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file3.txt"));
+            Assert.AreEqual("a", res.First(f => f.Location.ToId() == "file2.txt").AsTextContent());
+            Assert.AreEqual("b", res.First(f => f.Location.ToId() == "dir::file3.txt").AsTextContent());
+        }
+
+        [Test]
+        public async Task LoadLibrary_Theme()
+        {
+            var libLoaderMock = new Mock<ILibraryLoader>();
+            libLoaderMock.Setup(m => m.LoadThemeFiles(It.IsAny<string>(), It.IsAny<string[]>())).Returns(
+                (string n, string[] f) =>
+                {
+                    if (n == "A" && f?.Any() != true)
+                    {
+                        return new IFile[]
+                        {
+                            new FileMock(Location.FromPath("file1.txt"), $"{n}_theme_f1"),
+                            new FileMock(Location.FromPath("dir\\file2.txt"), $"{n}_theme_f2")
+                        }.ToAsyncEnumerable();
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                });
+
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) => new IFile[]
+                {
+                    new FileMock(Location.FromPath("file1.txt"), "f1"),
+                    new FileMock(Location.FromPath("file2.txt"), ""),
+                    new FileMock(Location.FromPath("dir\\file3.txt"), "")
+                }.ToAsyncEnumerable());
+
+            var conf = new Configuration();
+
+            conf.ThemesHierarchy.Add("A");
+
+            var loader = new ProjectLoader(fileLoaderMock.Object,
+                libLoaderMock.Object, new Mock<IPluginsManager>().Object, conf);
+            
+            var res = await loader.Load(new ILocation[] { Location.FromPath("") }).ToListAsync();
+
+            Assert.AreEqual(4, res.Count());
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "file1.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file2.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "file2.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file3.txt"));
+            Assert.AreEqual("f1", res.First(f => f.Location.ToId() == "file1.txt").AsTextContent());
+            Assert.AreEqual("A_theme_f2", res.First(f => f.Location.ToId() == "dir::file2.txt").AsTextContent());
+        }
+
+        [Test]
+        public async Task LoadLibrary_ThemeNested()
+        {
+            var libLoader = new Mock<ILibraryLoader>();
+            libLoader.Setup(m => m.LoadThemeFiles(It.IsAny<string>(), It.IsAny<string[]>())).Returns(
+                (string n, string[] f) =>
+                {
+                    if (n == "A")
+                    {
+                        return new IFile[]
+                        {
+                            new FileMock(Location.FromPath("dir\\file2.txt"), $"{n}_theme_f2"),
+                            new FileMock(Location.FromPath("dir\\file3.txt"), $"{n}_theme_f3"),
+                            new FileMock(Location.FromPath("file4.txt"), $"{n}_theme_f4"),
+                            new FileMock(Location.FromPath("dir\\file4.txt"), $"{n}_theme_dir-f4")
+                        }.ToAsyncEnumerable();
+                    }
+                    else if (n == "B")
+                    {
+                        return new IFile[]
+                        {
+                            new FileMock(Location.FromPath("file1.txt"), $"{n}_theme_f1"),
+                            new FileMock(Location.FromPath("dir\\file2.txt"), $"{n}_theme_f2"),
+                            new FileMock(Location.FromPath("dir\\file4.txt"), $"{n}_theme_f4")
+                        }.ToAsyncEnumerable();
+                    }                    
+                    else
+                    {
+                        throw new Exception();
+                    }
+                });
+
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) => new IFile[]
+                {
+                    new FileMock(Location.FromPath("dir\\file2.txt"), "f2"),
+                    new FileMock(Location.FromPath("dir\\file3.txt"), "f3"),
+                    new FileMock(Location.FromPath("file5.txt"), "f5")
+                }.ToAsyncEnumerable());
+
+            var conf = new Configuration();
+
+            conf.ThemesHierarchy.Add("A");
+            conf.ThemesHierarchy.Add("B");
+
+            var loader = new ProjectLoader(fileLoaderMock.Object,
+                libLoader.Object, new Mock<IPluginsManager>().Object, conf);
+
+            var res = await loader.Load(new ILocation[] { Location.FromPath("") }).ToListAsync();
+            
+            Assert.AreEqual(6, res.Count());
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "file1.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file2.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file3.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "file4.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "file5.txt"));
+            Assert.IsNotNull(res.First(f => f.Location.ToId() == "dir::file4.txt"));
+
+            Assert.AreEqual("B_theme_f1", res.First(f => f.Location.ToId() == "file1.txt").AsTextContent());
+            Assert.AreEqual("f2", res.First(f => f.Location.ToId() == "dir::file2.txt").AsTextContent());
+            Assert.AreEqual("f3", res.First(f => f.Location.ToId() == "dir::file3.txt").AsTextContent());
+            Assert.AreEqual("A_theme_f4", res.First(f => f.Location.ToId() == "file4.txt").AsTextContent());
+            Assert.AreEqual("f5", res.First(f => f.Location.ToId() == "file5.txt").AsTextContent());
+            Assert.AreEqual("A_theme_dir-f4", res.First(f => f.Location.ToId() == "dir::file4.txt").AsTextContent());
+        }
+
+        [Test]
+        public void LoadLibrary_DuplicateComponents()
+        {
+            var libLoader = new Mock<ILibraryLoader>();
+            libLoader.Setup(m => m.LoadComponentFiles(It.IsAny<string>(), It.IsAny<string[]>())).Returns(
+                (string n, string[] f) => new IFile[]
+                {
+                    new FileMock(Location.FromPath("file1.txt"), "")
+                }.ToAsyncEnumerable());
+
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) => new IFile[]
+                {
+                    new FileMock(Location.FromPath("file1.txt"), "")
+                }.ToAsyncEnumerable());
+
+            var conf = new Configuration()
+            {
+                Components = new string[] { "A" }.ToList(),
+            };
+
+            var loader = new ProjectLoader(fileLoaderMock.Object,
+                libLoader.Object, new Mock<IPluginsManager>().Object, conf);
+
+            Assert.Throws<DuplicateComponentSourceFileException>(
+                () => loader.Load(new ILocation[] { Location.FromPath("") }).ToEnumerable().ToList());
+        }
     }
 }

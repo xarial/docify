@@ -1,26 +1,20 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using Markdig.Helpers;
 using Markdig.Parsers;
-using System;
-using System.Collections.Generic;
 using System.Text;
-using Xarial.Docify.Base.Data;
-using Xarial.Docify.Base.Services;
-using Xarial.Docify.Core.Compiler.Context;
-using Xarial.Docify.Core.Exceptions;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
     public class ProtectedTagsInlineParser : InlineParser
     {
-        private string m_StartTag;
-        private string m_EndTag;
+        private readonly string m_StartTag;
+        private readonly string m_EndTag;
 
         public ProtectedTagsInlineParser(string startTag, string endTag)
         {

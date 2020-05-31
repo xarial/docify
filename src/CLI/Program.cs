@@ -1,23 +1,21 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using CommandLine;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Xarial.Docify.Base.Services;
 using Xarial.Docify.CLI.Options;
-using Xarial.Docify.Core;
 
 namespace Xarial.Docify.CLI
 {
-    class Program
+    internal class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             var parser = new Parser(p =>
             {
@@ -45,7 +43,7 @@ namespace Xarial.Docify.CLI
                 if (buildOpts != null || serveOpts != null)
                 {
                     engine = new DocifyEngine(buildOpts.SourceDirectories.ToArray(),
-                        buildOpts.OutputDirectory, buildOpts.SiteUrl, buildOpts.Environment);
+                        buildOpts.OutputDirectory, buildOpts.Library, buildOpts.SiteUrl, buildOpts.Environment);
                 }
 
                 if (buildOpts != null)

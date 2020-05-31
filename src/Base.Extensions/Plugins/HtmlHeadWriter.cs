@@ -1,15 +1,12 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Xarial.Docify.Base.Plugins
 {
@@ -36,10 +33,10 @@ namespace Xarial.Docify.Base.Plugins
 
         public void AddScripts(params string[] paths)
             => AddLines(paths.Select(p => string.Format(SCRIPT_LINK_TEMPLATE, p)).ToArray());
-        
+
         public void AddStyleSheets(params string[] paths)
             => AddLines(paths.Select(p => string.Format(CSS_LINK_TEMPLATE, p)).ToArray());
-        
+
         public void AddLines(params string[] lines)
         {
             var headInd = Content.IndexOf("</head>");

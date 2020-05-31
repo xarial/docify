@@ -41,12 +41,12 @@
   </ItemGroup>
 
   <ItemGroup>
-   <LibDir Include="..\..\lib\Components\Lib\**\*" TargetPath="$(OutDir)\Components\%(RecursiveDir)%(Filename)%(Extension)" />
-	 <LibDir Include="..\..\lib\Themes\Lib\**\*" TargetPath="$(OutDir)\Themes\%(RecursiveDir)%(Filename)%(Extension)" />
-   <LibDir Include="..\..\lib\Plugins\$(OutDir)\**\*" TargetPath="$(OutDir)\Plugins\%(RecursiveDir)%(Filename)%(Extension)" />
+   <LibDir Include="..\..\lib\Components\Lib\**\*" TargetPath="$(OutDir)\_lib\_components\%(RecursiveDir)%(Filename)%(Extension)" />
+	 <LibDir Include="..\..\lib\Themes\Lib\**\*" TargetPath="$(OutDir)\_lib\_themes\%(RecursiveDir)%(Filename)%(Extension)" />
+   <LibDir Include="..\..\lib\Plugins\$(OutDir)\**\*" TargetPath="$(OutDir)\_lib\_plugins\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <Target Name="RemoveLib" BeforeTargets="CopyLib" Condition="'$(Configuration)'=='Debug'">
-    <RemoveDir ContinueOnError="true" Directories="$(OutDir)\Components;$(OutDir)\Themes;$(OutDir)\Plugins" />
+    <RemoveDir ContinueOnError="true" Directories="$(OutDir)\_lib\" />
   </Target>
   <Target Name="CopyLib" AfterTargets="AfterBuild" Condition="'$(Configuration)'=='Debug'">
     <Copy SourceFiles="@(LibDir)" DestinationFiles="@(LibDir->'%(TargetPath)')" OverwriteReadOnlyFiles="true" />

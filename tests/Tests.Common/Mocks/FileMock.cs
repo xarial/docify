@@ -1,4 +1,11 @@
-﻿using System;
+﻿//*********************************************************************
+//Docify
+//Copyright(C) 2020 Xarial Pty Limited
+//Product URL: https://docify.net
+//License: https://docify.net/license/
+//*********************************************************************
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Xarial.Docify.Base;
@@ -12,6 +19,11 @@ namespace Tests.Common.Mocks
     {
         public FileMock(Location location, string content)
             : this(location, ContentExtension.ToByteArray(content))
+        {
+        }
+
+        public FileMock(string location, string content)
+            : this(Xarial.Docify.Core.Location.FromPath(location), ContentExtension.ToByteArray(content))
         {
         }
 

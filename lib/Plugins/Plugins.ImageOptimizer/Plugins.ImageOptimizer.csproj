@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PluginId>image-optimizer</PluginId>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RootNamespace>Xarial.Docify.Lib.Plugins.ImageOptimizer</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="nQuant.Core.NETStandard" Version="1.0.0" />
+    <PackageReference Include="Svg" Version="3.0.102" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Base\Base.csproj" />
+    <ProjectReference Include="..\Plugins.Common\Plugins.Common.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\..\..\common\common.plugins.props" />
+  
+</Project>

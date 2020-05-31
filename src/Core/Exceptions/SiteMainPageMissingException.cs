@@ -1,19 +1,17 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Xarial.Docify.Core.Exceptions
 {
     public class SiteMainPageMissingException : Exception
     {
-        public SiteMainPageMissingException() : base("Site main page is not found. Add index.(md/html/cshtml) page to the root folder of the site") 
+        public SiteMainPageMissingException() : base("Site main page is not found. Add index.(md/html/cshtml) page to the root folder of the site")
         {
         }
     }

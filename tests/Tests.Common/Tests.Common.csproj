@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Linq.Async" Version="4.0.0" />
+    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="7.0.15" />
   </ItemGroup>
   
   <ItemGroup>

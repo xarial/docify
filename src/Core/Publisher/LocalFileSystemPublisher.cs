@@ -1,8 +1,8 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using System;
@@ -11,31 +11,25 @@ using System.IO;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
-using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
-using Xarial.Docify.Core.Data;
-using Xarial.Docify.Core.Plugin;
 using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Publisher
 {
     public class LocalFileSystemPublisher : IPublisher
     {
-        private readonly LocalFileSystemPublisherConfig m_Config;
         private readonly System.IO.Abstractions.IFileSystem m_FileSystem;
 
         private readonly IPublisherExtension m_Ext;
 
-        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config,
-            IPublisherExtension ext) 
-            : this(config, new System.IO.Abstractions.FileSystem(), ext)
+        public LocalFileSystemPublisher(IPublisherExtension ext)
+            : this(new System.IO.Abstractions.FileSystem(), ext)
         {
         }
 
-        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config, 
+        public LocalFileSystemPublisher(
             System.IO.Abstractions.IFileSystem fileSystem, IPublisherExtension ext)
         {
-            m_Config = config;
             m_FileSystem = fileSystem;
             m_Ext = ext;
         }
@@ -87,7 +81,7 @@ namespace Xarial.Docify.Core.Publisher
         {
             var outFilePath = file.Location.ToPath();
 
-            if (!Path.IsPathRooted(outFilePath)) 
+            if (!Path.IsPathRooted(outFilePath))
             {
                 throw new Exception($"Path of file to publish {outFilePath} must be rooted");
             }

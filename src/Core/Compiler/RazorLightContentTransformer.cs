@@ -1,23 +1,15 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using RazorLight;
-using RazorLight.Razor;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Xarial.Docify.Base;
-using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Services;
-using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
 using Xarial.Docify.Core.Data;
-using System.Text.RegularExpressions;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -25,7 +17,7 @@ namespace Xarial.Docify.Core.Compiler
     {
         private readonly RazorLightEngine m_RazorEngine;
 
-        public RazorLightContentTransformer() 
+        public RazorLightContentTransformer()
         {
             m_RazorEngine = new RazorLightEngineBuilder()
                 .AddDefaultNamespaces(typeof(Site).Namespace)
@@ -33,7 +25,7 @@ namespace Xarial.Docify.Core.Compiler
                 .UseEmbeddedResourcesProject(typeof(RazorLightContentTransformer))
                 .Build();
         }
-        
+
         public async Task<string> Transform(string content, string key, IContextModel model)
         {
             var html = content;

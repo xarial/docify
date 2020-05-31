@@ -1,8 +1,8 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using Xarial.Docify.Base.Plugins;
@@ -18,9 +18,9 @@ namespace Xarial.Docify.Core.Plugin
         public IComposerManager Composer { get; }
         public IPublisherManager Publisher { get; }
 
-        public DocifyApplication(IIncludesHandlerManager includes, 
-            ICompilerManager compiler, 
-            IComposerManager composer, 
+        public DocifyApplication(IIncludesHandlerManager includes,
+            ICompilerManager compiler,
+            IComposerManager composer,
             IPublisherManager publisher,
             ILogger logger)
         {

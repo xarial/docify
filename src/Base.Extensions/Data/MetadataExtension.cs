@@ -1,8 +1,8 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using Newtonsoft.Json;
@@ -13,7 +13,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Xarial.Docify.Base.Data
 {
@@ -59,7 +58,7 @@ namespace Xarial.Docify.Base.Data
             IDictionary<string, object> baseParams)
             where T : IMetadata
         {
-            if (baseParams == null) 
+            if (baseParams == null)
             {
                 baseParams = new Dictionary<string, object>();
             }
@@ -147,10 +146,10 @@ namespace Xarial.Docify.Base.Data
                     && IsAssignableToGenericType(typeof(T), typeof(IEnumerable<>), out Type enumerType))
                 {
                     var itemType = enumerType.GetGenericArguments().First();
-                    
+
                     var castMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.Cast),
                         BindingFlags.Static | BindingFlags.Public).MakeGenericMethod(new Type[] { itemType });
-                    
+
                     val = (T)castMethod.Invoke(null, new object[] { dynVal });
                 }
                 else if (dynVal is IConvertible)
@@ -170,7 +169,7 @@ namespace Xarial.Docify.Base.Data
                 return false;
             }
         }
-        
+
         //duplicates the function in Core, might need to put this in xToolkit and use from there
         private static bool IsAssignableToGenericType(Type givenType, Type genericType, out Type specGenericType)
         {

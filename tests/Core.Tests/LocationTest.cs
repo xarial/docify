@@ -1,8 +1,8 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using NUnit.Framework;
@@ -159,6 +159,48 @@ namespace Core.Tests
             Assert.IsFalse(r2);
             Assert.IsFalse(r3);
             Assert.IsTrue(r4);
+        }
+
+        [Test]
+        public void TestMatchPositive()
+        {
+            var r1 = Location.FromPath("D:\\path1.txt").Matches(new string[] { "D:\\*" });
+            var r2 = Location.FromPath("D:\\path1.txt").Matches(new string[] { ".dll", "*.txt" });
+            var r3 = Location.FromPath("D:\\path1.txt1").Matches(new string[] { "*.txt" });
+            var r4 = Location.FromPath("D:\\dir1\\dir2\\path1.txt").Matches(new string[] { "D:\\*\\dir2\\*" });
+            var r5 = Location.FromPath("D:\\dir2\\dir3\\path1.txt").Matches(new string[] { "D:\\*\\dir2\\*" });
+            var r6 = Location.FromPath("dir3\\path1.txt").Matches(new string[] { "*.*" });
+
+            Assert.IsTrue(r1);
+            Assert.IsTrue(r2);
+            Assert.IsFalse(r3);
+            Assert.IsTrue(r4);
+            Assert.IsFalse(r5);
+            Assert.IsTrue(r6);
+        }
+
+        [Test]
+        public void TestMatchNegative() 
+        {
+            var r1 = Location.FromPath("D:\\path1.txt").Matches(new string[] { "|D:\\*" });
+            var r2 = Location.FromPath("D:\\path1.txt").Matches(new string[] { "|.dll", "|*.txt" });
+            var r3 = Location.FromPath("D:\\path1.txt").Matches(new string[] { "|.dll" });
+
+            Assert.IsFalse(r1);
+            Assert.IsFalse(r2);
+            Assert.IsTrue(r3);
+        }
+
+        [Test]
+        public void TestMatchMixed()
+        {
+            var r1 = Location.FromPath("D:\\path1.txt").Matches(new string[] { "D:\\*", "|*.txt" });
+            var r2 = Location.FromPath("D:\\path1.txt").Matches(new string[] { "D:\\*", "|*.dll" });
+            var r3 = Location.FromPath("D:\\path1.txt").Matches(new string[] { "C:\\*", "|*.dll" });
+
+            Assert.IsFalse(r1);
+            Assert.IsTrue(r2);
+            Assert.IsFalse(r3);
         }
     }
 }

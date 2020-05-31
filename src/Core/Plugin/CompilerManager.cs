@@ -1,11 +1,10 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
@@ -33,10 +32,10 @@ namespace Xarial.Docify.Core.Plugin
 
         private readonly CompilerExtension m_Ext;
 
-        public CompilerManager(ICompiler compiler, 
+        public CompilerManager(ICompiler compiler,
             IStaticContentTransformer staticContTransf,
-            IDynamicContentTransformer dynContTransf, 
-            CompilerExtension ext) 
+            IDynamicContentTransformer dynContTransf,
+            CompilerExtension ext)
         {
             Instance = compiler;
             StaticContentTransformer = staticContTransf;
@@ -78,9 +77,9 @@ namespace Xarial.Docify.Core.Plugin
 
         private async Task OnRequestPreCompile(ISite site)
         {
-            if (PreCompile != null) 
+            if (PreCompile != null)
             {
-                foreach (PreCompileDelegate del in PreCompile.GetInvocationList()) 
+                foreach (PreCompileDelegate del in PreCompile.GetInvocationList())
                 {
                     await del.Invoke(site);
                 }
@@ -91,9 +90,9 @@ namespace Xarial.Docify.Core.Plugin
         {
             var res = content;
 
-            if (WritePageContent != null) 
+            if (WritePageContent != null)
             {
-                foreach (WritePageContentDelegate del in WritePageContent.GetInvocationList()) 
+                foreach (WritePageContentDelegate del in WritePageContent.GetInvocationList())
                 {
                     res = await del.Invoke(res, data, url);
                 }

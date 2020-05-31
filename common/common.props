@@ -1,9 +1,6 @@
 <Project>
+  <Import Project="common.assemblyinfo.props" />
   <PropertyGroup>
     <VersionPrefix>0.2.0</VersionPrefix>
-    <Authors>Xarial</Authors>
-    <Company>Xarial Pty Limited</Company>
-    <Product>Docify</Product>
-    <Copyright>© 2020 Xarial Pty Limited</Copyright>
   </PropertyGroup>
 </Project>

@@ -1,12 +1,10 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
-using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
@@ -27,7 +25,7 @@ namespace Xarial.Docify.Core.Plugin.Extensions
     }
 
     public class CompilerExtension : ICompilerExtension
-    {   
+    {
         public event PreCompileDelegate RequestPreCompile;
         public event RenderCodeBlockDelegate RequestRenderCodeBlock;
         public event RenderImageDelegate RequestRenderImage;
@@ -38,37 +36,74 @@ namespace Xarial.Docify.Core.Plugin.Extensions
 
         public Task PostCompile()
         {
-            return RequestPostCompile.Invoke();
+            if (RequestPostCompile != null)
+            {
+                return RequestPostCompile.Invoke();
+            }
+            else
+            {
+                return Task.CompletedTask;
+            }
         }
 
         public Task<IFile> PostCompileFile(IFile file)
         {
-            return RequestPostCompileFile.Invoke(file);
+            if (RequestPostCompileFile != null)
+            {
+                return RequestPostCompileFile.Invoke(file);
+            }
+            else
+            {
+                return Task.FromResult(file);
+            }
         }
 
         public Task PreCompile(ISite site)
         {
-            return RequestPreCompile.Invoke(site);
+            if (RequestPreCompile != null)
+            {
+                return RequestPreCompile.Invoke(site);
+            }
+            else
+            {
+                return Task.CompletedTask;
+            }
         }
 
         public void RenderCodeBlock(string rawCode, string lang, string args, StringBuilder html)
         {
-            RequestRenderCodeBlock.Invoke(rawCode, lang, args, html);
+            if (RequestRenderCodeBlock != null)
+            {
+                RequestRenderCodeBlock.Invoke(rawCode, lang, args, html);
+            }
         }
 
         public void RenderImage(StringBuilder html)
         {
-            RequestRenderImage.Invoke(html);
+            if (RequestRenderImage != null)
+            {
+                RequestRenderImage.Invoke(html);
+            }
         }
 
         public void RenderUrl(StringBuilder html)
         {
-            RequestRenderUrl.Invoke(html);
+            if (RequestRenderUrl != null)
+            {
+                RequestRenderUrl.Invoke(html);
+            }
         }
 
         public Task<string> WritePageContent(string content, IMetadata data, string url)
         {
-            return RequestWritePageContent.Invoke(content, data, url);
+            if (RequestWritePageContent != null)
+            {
+                return RequestWritePageContent.Invoke(content, data, url);
+            }
+            else
+            {
+                return Task.FromResult(content);
+            }
         }
     }
 }

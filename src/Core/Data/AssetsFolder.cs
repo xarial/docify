@@ -1,14 +1,12 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Data
@@ -20,7 +18,7 @@ namespace Xarial.Docify.Core.Data
         public List<IAsset> Assets { get; }
         public List<IAssetsFolder> Folders { get; }
 
-        public AssetsFolder(string name) 
+        public AssetsFolder(string name)
         {
             Name = name;
             Assets = new List<IAsset>();

@@ -1,4 +1,11 @@
-﻿using Components.Tests.Properties;
+﻿//*********************************************************************
+//Docify
+//Copyright(C) 2020 Xarial Pty Limited
+//Product URL: https://docify.net
+//License: https://docify.net/license/
+//*********************************************************************
+
+using Components.Tests.Properties;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

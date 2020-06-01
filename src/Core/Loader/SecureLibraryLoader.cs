@@ -32,21 +32,21 @@ namespace Xarial.Docify.Core.Loader
         }
 
         public IAsyncEnumerable<IFile> LoadComponentFiles(string componentName, string[] filters)
-            => ProcessLibraryItems(componentName, m_Manifest.Components);
+            => ProcessLibraryItems(Location.Library.ComponentsFolderName, componentName, m_Manifest.Components);
 
         public IAsyncEnumerable<IFile> LoadPluginFiles(string pluginId, string[] filters)
-            => ProcessLibraryItems(pluginId, m_Manifest.Plugins);
+            => ProcessLibraryItems(Location.Library.PluginsFolderName, pluginId, m_Manifest.Plugins);
 
         public IAsyncEnumerable<IFile> LoadThemeFiles(string themeName, string[] filters) 
-            => ProcessLibraryItems(themeName, m_Manifest.Themes);
+            => ProcessLibraryItems(Location.Library.ThemesFolderName, themeName, m_Manifest.Themes);
 
-        private IAsyncEnumerable<IFile> ProcessLibraryItems(string itemName, SecureLibraryItem[] itemsList) 
+        private IAsyncEnumerable<IFile> ProcessLibraryItems(string itemType, string itemName, SecureLibraryItem[] itemsList) 
         {
             var item = itemsList?.FirstOrDefault(i => string.Equals(i.Name, itemName, StringComparison.CurrentCultureIgnoreCase));
 
             if (item != null)
             {
-                var libLoc = m_Loc.Combine(item.Name);
+                var libLoc = m_Loc.Combine(itemType, item.Name);
 
                 try
                 {
@@ -67,9 +67,7 @@ namespace Xarial.Docify.Core.Loader
         {
             await foreach (var file in m_FileLoader.LoadFolder(loc, null))
             {
-                var fileRelLoc = file.Location.GetRelative(loc);
-
-                var fileManifest = files.FirstOrDefault(f => fileRelLoc.IsSame(f.Name));
+                var fileManifest = files.FirstOrDefault(f => file.Location.IsSame(f.Name));
 
                 if (fileManifest != null)
                 {

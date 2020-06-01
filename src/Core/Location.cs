@@ -14,6 +14,13 @@ namespace Xarial.Docify.Core
 {
     public class Location : ILocation
     {
+        public static class Library 
+        {
+            public const string ComponentsFolderName = "_components";
+            public const string ThemesFolderName = "_themes";
+            public const string PluginsFolderName = "_plugins";
+        }
+
         public static Location Empty => new Location(Enumerable.Empty<string>());
 
         public static Location FromPath(string path, string relTo = "")

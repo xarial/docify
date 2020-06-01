@@ -53,7 +53,7 @@ namespace Xarial.Docify.CLI
                 if (buildOpts != null)
                 {
                     engine = new DocifyEngine(buildOpts.SourceDirectories.ToArray(),
-                        buildOpts.OutputDirectory, buildOpts.Library, buildOpts.SiteUrl, buildOpts.Environment);
+                        buildOpts.OutputDirectory, buildOpts.Library?.ToArray(), buildOpts.SiteUrl, buildOpts.Environment);
                 }
                 else if (serveOpts != null) 
                 {
@@ -61,26 +61,33 @@ namespace Xarial.Docify.CLI
                 }
                 else if (genManOpts != null)
                 {
-                    var manGen = new ManifestGenerator(new LocalFileSystemFileLoader());
-                    string publicKeyXml;
-                    var maninfest = await manGen.CreateManifest(Location.FromPath(genManOpts.LibraryPath), 
-                        new Version(genManOpts.Version),
-                        genManOpts.CertificatePath, genManOpts.CertificatePassword, out publicKeyXml);
-
-                    new UserSettingsService().StoreSettings(maninfest,
-                        Path.Combine(genManOpts.LibraryPath, "library.manifest"),
-                        new BaseValueSerializer<ILocation>(x => x.ToId(), null));
-
-                    if (!string.IsNullOrEmpty(genManOpts.PublicKeyFile)) 
-                    {
-                        await File.WriteAllTextAsync(genManOpts.PublicKeyFile, publicKeyXml);
-                    }
+                    await GenerateLibraryManifest(genManOpts);
                 }
 
                 if (buildOpts != null)
                 {
                     await engine.Build();
                 }
+            }
+        }
+
+        private static async Task GenerateLibraryManifest(GenerateLibraryManifestOptions genManOpts)
+        {
+            var manGen = new ManifestGenerator(new LocalFileSystemFileLoader());
+            
+            string publicKeyXml;
+
+            var maninfest = await manGen.CreateManifest(Location.FromPath(genManOpts.LibraryPath),
+                new Version(genManOpts.Version),
+                genManOpts.CertificatePath, genManOpts.CertificatePassword, out publicKeyXml);
+
+            new UserSettingsService().StoreSettings(maninfest,
+                Path.Combine(genManOpts.LibraryPath, "library.manifest"),
+                new BaseValueSerializer<ILocation>(x => x.ToId(), null));
+
+            if (!string.IsNullOrEmpty(genManOpts.PublicKeyFile))
+            {
+                await File.WriteAllTextAsync(genManOpts.PublicKeyFile, publicKeyXml);
             }
         }
     }

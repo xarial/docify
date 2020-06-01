@@ -13,10 +13,6 @@ namespace Xarial.Docify.Core.Tools
 {
     public class ManifestGenerator
     {
-        private const string COMPONENTS_FOLDER = "_components";
-        private const string THEMES_FOLDER = "_themes";
-        private const string PLUGINS_FOLDER = "_plugins";
-
         private readonly IFileLoader m_Loader;
 
         public ManifestGenerator(IFileLoader loader) 
@@ -51,15 +47,15 @@ namespace Xarial.Docify.Core.Tools
 
                     switch (itemType.ToLower()) 
                     {
-                        case COMPONENTS_FOLDER:
+                        case Location.Library.ComponentsFolderName:
                             thisComp = components;
                             break;
 
-                        case THEMES_FOLDER:
+                        case Location.Library.ThemesFolderName:
                             thisComp = themes;
                             break;
 
-                        case PLUGINS_FOLDER:
+                        case Location.Library.PluginsFolderName:
                             thisComp = plugins;
                             break;
 

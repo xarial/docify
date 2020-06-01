@@ -16,10 +16,6 @@ namespace Xarial.Docify.Core.Loader
 {
     public class FolderLibraryLoader : ILibraryLoader
     {
-        private const string COMPONENTS_FOLDER = "_components";
-        private const string THEMES_FOLDER = "_themes";
-        private const string PLUGINS_FOLDER = "_plugins";
-
         private readonly ILocation m_Location;
         private readonly IFileLoader m_FileLoader;
 
@@ -30,13 +26,13 @@ namespace Xarial.Docify.Core.Loader
         }
 
         public IAsyncEnumerable<IFile> LoadComponentFiles(string componentName, string[] filters)
-            => LoadLibraryItem(componentName, COMPONENTS_FOLDER, filters);
+            => LoadLibraryItem(componentName, Location.Library.ComponentsFolderName, filters);
 
         public IAsyncEnumerable<IFile> LoadPluginFiles(string pluginId, string[] filters)
-            => LoadLibraryItem(pluginId, PLUGINS_FOLDER, filters);
+            => LoadLibraryItem(pluginId, Location.Library.PluginsFolderName, filters);
 
         public IAsyncEnumerable<IFile> LoadThemeFiles(string themeName, string[] filters)
-            => LoadLibraryItem(themeName, THEMES_FOLDER, filters);
+            => LoadLibraryItem(themeName, Location.Library.ThemesFolderName, filters);
 
         private IAsyncEnumerable<IFile> LoadLibraryItem(string itemName, string subFolder, string[] filters)
         {

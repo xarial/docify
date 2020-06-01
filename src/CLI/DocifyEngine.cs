@@ -16,6 +16,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.CLI.Properties;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
@@ -180,17 +181,18 @@ namespace Xarial.Docify.CLI
                     if (libPath == "*")
                     {
                         libPath = Path.Combine(Environment.GetFolderPath(
-                            Environment.SpecialFolder.LocalApplicationData), "Xarial", "Docify", "library.manifest");
+                            Environment.SpecialFolder.LocalApplicationData),
+                            "Xarial\\Docify\\Library\\library.manifest");
 
                         ILibraryLoader standardLib;
 
                         try
                         {
-                            standardLib = ResolveSecureLibrary(ctx, libPath, "");
+                            standardLib = ResolveSecureLibrary(ctx, libPath, Resources.standard_library_public_key);
                         }
                         catch (FileNotFoundException ex) 
                         {
-                            throw new Exception("Standard library is not installed. Use the --standard-library --install command to install the library", ex);
+                            throw new Exception("Standard library is not installed. Use the --library --install command to install the library", ex);
                         }
 
                         yield return standardLib;

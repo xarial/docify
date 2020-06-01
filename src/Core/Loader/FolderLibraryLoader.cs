@@ -18,7 +18,7 @@ namespace Xarial.Docify.Core.Loader
     {
         private readonly ILocation m_Location;
         private readonly IFileLoader m_FileLoader;
-
+        
         public FolderLibraryLoader(ILocation location, IFileLoader fileLoader)
         {
             m_Location = location;
@@ -34,6 +34,15 @@ namespace Xarial.Docify.Core.Loader
         public IAsyncEnumerable<IFile> LoadThemeFiles(string themeName, string[] filters)
             => LoadLibraryItem(themeName, Location.Library.ThemesFolderName, filters);
 
+        public bool ContainsTheme(string themeName) 
+            => ContainsLibraryItem(Location.Library.ThemesFolderName, themeName);
+
+        public bool ContainsComponent(string compName)
+            => ContainsLibraryItem(Location.Library.ComponentsFolderName, compName);
+
+        public bool ContainsPlugin(string pluginId)
+            => ContainsLibraryItem(Location.Library.PluginsFolderName, pluginId);
+
         private IAsyncEnumerable<IFile> LoadLibraryItem(string itemName, string subFolder, string[] filters)
         {
             try
@@ -45,6 +54,11 @@ namespace Xarial.Docify.Core.Loader
             {
                 throw new LibraryItemLoadException(itemName, subFolder, ex);
             }
+        }
+
+        private bool ContainsLibraryItem(string itemType, string itemName) 
+        {
+            return m_FileLoader.Exists(m_Location.Combine(new Location(itemType, itemName)));
         }
     }
 }

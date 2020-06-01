@@ -12,6 +12,10 @@ namespace Xarial.Docify.Base.Services
 {
     public interface ILibraryLoader
     {
+        bool ContainsTheme(string themeName);
+        bool ContainsComponent(string compName);
+        bool ContainsPlugin(string pluginId);
+
         IAsyncEnumerable<IFile> LoadThemeFiles(string themeName, string[] filters);
         IAsyncEnumerable<IFile> LoadComponentFiles(string componentName, string[] filters);
         IAsyncEnumerable<IFile> LoadPluginFiles(string pluginId, string[] filters);

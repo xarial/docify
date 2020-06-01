@@ -32,15 +32,16 @@ namespace Xarial.Docify.Core.Loader
         }
 
         public IAsyncEnumerable<IFile> LoadComponentFiles(string componentName, string[] filters)
-            => ProcessLibraryItems(Location.Library.ComponentsFolderName, componentName, m_Manifest.Components);
+            => ProcessLibraryItems(Location.Library.ComponentsFolderName, componentName, m_Manifest.Components, filters);
 
         public IAsyncEnumerable<IFile> LoadPluginFiles(string pluginId, string[] filters)
-            => ProcessLibraryItems(Location.Library.PluginsFolderName, pluginId, m_Manifest.Plugins);
+            => ProcessLibraryItems(Location.Library.PluginsFolderName, pluginId, m_Manifest.Plugins, filters);
 
         public IAsyncEnumerable<IFile> LoadThemeFiles(string themeName, string[] filters) 
-            => ProcessLibraryItems(Location.Library.ThemesFolderName, themeName, m_Manifest.Themes);
+            => ProcessLibraryItems(Location.Library.ThemesFolderName, themeName, m_Manifest.Themes, filters);
 
-        private IAsyncEnumerable<IFile> ProcessLibraryItems(string itemType, string itemName, SecureLibraryItem[] itemsList) 
+        private IAsyncEnumerable<IFile> ProcessLibraryItems(string itemType, string itemName, 
+            SecureLibraryItem[] itemsList, string[] filters) 
         {
             var item = itemsList?.FirstOrDefault(i => string.Equals(i.Name, itemName, StringComparison.CurrentCultureIgnoreCase));
 
@@ -50,7 +51,7 @@ namespace Xarial.Docify.Core.Loader
 
                 try
                 {
-                    return LoadAndValidateFiles(libLoc, item.Files);
+                    return LoadAndValidateFiles(libLoc, item.Files, filters);
                 }
                 catch (Exception ex)
                 {
@@ -63,9 +64,18 @@ namespace Xarial.Docify.Core.Loader
             }
         }
 
-        private async IAsyncEnumerable<IFile> LoadAndValidateFiles(ILocation loc, SecureLibraryItemFile[] files) 
+        public bool ContainsTheme(string themeName)
+            => ContainsLibraryItem(m_Manifest.Themes, themeName);
+
+        public bool ContainsComponent(string compName)
+            => ContainsLibraryItem(m_Manifest.Components, compName);
+
+        public bool ContainsPlugin(string pluginId)
+            => ContainsLibraryItem(m_Manifest.Plugins, pluginId);
+
+        private async IAsyncEnumerable<IFile> LoadAndValidateFiles(ILocation loc, SecureLibraryItemFile[] files, string[] filters)
         {
-            await foreach (var file in m_FileLoader.LoadFolder(loc, null))
+            await foreach (var file in m_FileLoader.LoadFolder(loc, filters))
             {
                 var fileManifest = files.FirstOrDefault(f => file.Location.IsSame(f.Name));
 
@@ -79,11 +89,16 @@ namespace Xarial.Docify.Core.Loader
 
                     yield return file;
                 }
-                else 
+                else
                 {
                     m_Logger.LogWarning($"'{file.Location.ToId()}' is not listed in the library manifest and skipped");
                 }
             }
+        }
+
+        private bool ContainsLibraryItem(SecureLibraryItem[] items, string itemName) 
+        {
+            return items.FirstOrDefault(i => string.Equals(i.Name, itemName, StringComparison.CurrentCultureIgnoreCase)) != null;
         }
     }
 }

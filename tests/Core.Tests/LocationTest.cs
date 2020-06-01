@@ -53,6 +53,8 @@ namespace Core.Tests
             var u2 = new Location("page.html");
             var u3 = new Location("index.html", "dir1", "dir2");
             var u4 = new Location("index.html");
+            var u5 = new Location("file1.txt", "http:/", "www.example.com");
+            var u6 = new Location("file1.txt", "https:/", "www.example.com");
 
             var r1 = u1.ToUrl();
             var r2 = u2.ToUrl();
@@ -62,6 +64,8 @@ namespace Core.Tests
             var r6 = u2.ToUrl("www.site.com");
             var r7 = u3.ToUrl("www.site.com");
             var r8 = u4.ToUrl("www.site.com");
+            var r9 = u5.ToUrl();
+            var r10 = u6.ToUrl();
 
             Assert.AreEqual("/dir1/dir2/page.html", r1);
             Assert.AreEqual("/page.html", r2);
@@ -71,6 +75,8 @@ namespace Core.Tests
             Assert.AreEqual("www.site.com/page.html", r6);
             Assert.AreEqual("www.site.com/dir1/dir2/", r7);
             Assert.AreEqual("www.site.com", r8);
+            Assert.AreEqual("http://www.example.com/file1.txt", r9);
+            Assert.AreEqual("https://www.example.com/file1.txt", r10);
         }
 
         [Test]
@@ -229,6 +235,28 @@ namespace Core.Tests
             Assert.IsTrue(new string[] { "abc", "xyz" }.SequenceEqual(r4.Path));
             Assert.IsTrue(new string[] { "abc", "xyz" }.SequenceEqual(r5.Path));
             Assert.IsTrue(new string[] { "abc", "xyz" }.SequenceEqual(r6.Path));
+        }
+
+        [Test]
+        public void FromUrlTest() 
+        {
+            var r1 = Location.FromUrl("http://example.com");
+            var r2 = Location.FromUrl("https://example.com");
+            var r3 = Location.FromUrl("https://example.com/url1/");
+            var r4 = Location.FromUrl("https://example.com/url1/file1.txt");
+            var r5 = Location.FromUrl("/url1/file1.txt");
+
+            Assert.AreEqual("example.com", r1.FileName);
+            Assert.AreEqual("example.com", r2.FileName);
+            Assert.AreEqual("", r3.FileName);
+            Assert.AreEqual("file1.txt", r4.FileName);
+            Assert.AreEqual("file1.txt", r5.FileName);
+
+            Assert.IsTrue(new string[] { "http:/" }.SequenceEqual(r1.Path));
+            Assert.IsTrue(new string[] { "https:/" }.SequenceEqual(r2.Path));
+            Assert.IsTrue(new string[] { "https:/", "example.com", "url1" }.SequenceEqual(r3.Path));
+            Assert.IsTrue(new string[] { "https:/", "example.com", "url1" }.SequenceEqual(r4.Path));
+            Assert.IsTrue(new string[] { "url1" }.SequenceEqual(r5.Path));
         }
     }
 }

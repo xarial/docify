@@ -180,9 +180,7 @@ namespace Xarial.Docify.CLI
 
                     if (libPath == "*")
                     {
-                        libPath = Path.Combine(Environment.GetFolderPath(
-                            Environment.SpecialFolder.LocalApplicationData),
-                            "Xarial\\Docify\\Library\\library.manifest");
+                        libPath = Location.Library.DefaultLibraryManifestFilePath.ToPath();
 
                         ILibraryLoader standardLib;
 
@@ -192,7 +190,7 @@ namespace Xarial.Docify.CLI
                         }
                         catch (FileNotFoundException ex) 
                         {
-                            throw new Exception("Standard library is not installed. Use the --library --install command to install the library", ex);
+                            throw new Exception("Standard library is not installed. Use the library --install command to install the library", ex);
                         }
 
                         yield return standardLib;

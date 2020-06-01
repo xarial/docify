@@ -19,7 +19,7 @@ namespace Xarial.Docify.Core.Loader
         private readonly RSA m_Rsa;
 
         public SecureLibraryLoader(ILocation loc, SecureLibraryManifest manifest,
-            string publicKeyXml, IFileLoader fileLoader, ILogger logger) 
+            string publicKeyXml, IFileLoader fileLoader, ILogger logger)
         {
             m_Rsa = RSA.Create();
             m_Rsa.FromXmlString(publicKeyXml);

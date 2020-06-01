@@ -11,6 +11,9 @@ namespace Xarial.Docify.CLI.Options
         [Option('l', "lib", Required = true, HelpText = "Path to the library")]
         public string LibraryPath { get; set; }
 
+        [Option('v', "version", Required = true, HelpText = "Version of the library")]
+        public string Version { get; set; }
+
         [Option('c', "cert", Required = true, HelpText = "Path to certificate to generate signature")]
         public string CertificatePath { get; set; }
 

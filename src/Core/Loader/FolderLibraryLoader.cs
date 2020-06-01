@@ -14,7 +14,7 @@ using Xarial.Docify.Core.Exceptions;
 
 namespace Xarial.Docify.Core.Loader
 {
-    public class LibraryLoader : ILibraryLoader
+    public class FolderLibraryLoader : ILibraryLoader
     {
         private const string COMPONENTS_FOLDER = "_components";
         private const string THEMES_FOLDER = "_themes";
@@ -23,7 +23,7 @@ namespace Xarial.Docify.Core.Loader
         private readonly ILocation m_Location;
         private readonly IFileLoader m_FileLoader;
 
-        public LibraryLoader(ILocation location, IFileLoader fileLoader)
+        public FolderLibraryLoader(ILocation location, IFileLoader fileLoader)
         {
             m_Location = location;
             m_FileLoader = fileLoader;

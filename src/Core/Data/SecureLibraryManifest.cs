@@ -29,6 +29,7 @@ namespace Xarial.Docify.Core.Data
     [UserSettingVersion("1.0.0", typeof(SecureLibraryManifestVersionTransformer))]
     public class SecureLibraryManifest
     {
+        public Version Version { get; set; }
         public SecureLibraryItem[] Components { get; set; }
         public SecureLibraryItem[] Themes { get; set; }
         public SecureLibraryItem[] Plugins { get; set; }

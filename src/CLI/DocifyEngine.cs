@@ -84,7 +84,7 @@ namespace Xarial.Docify.CLI
 
         protected virtual void RegisterDependencies(ContainerBuilder builder, string env)
         {
-            builder.RegisterType<LibraryLoader>()
+            builder.RegisterType<FolderLibraryLoader>()
                 .As<ILibraryLoader>()
                 .WithParameter(new TypedParameter(typeof(ILocation), m_LibLoc));
 

@@ -38,7 +38,7 @@ namespace Core.Tests
                     return AsyncEnumerable.Empty<IFile>();
                 });
 
-            var libLoader = new LibraryLoader(Location.FromPath("D:\\lib"), fileLoaderMock.Object);
+            var libLoader = new FolderLibraryLoader(Location.FromPath("D:\\lib"), fileLoaderMock.Object);
             libLoader.LoadComponentFiles("A", null);
 
             Assert.AreEqual("D:\\lib\\_components\\A", loc.ToPath());
@@ -57,7 +57,7 @@ namespace Core.Tests
                     return AsyncEnumerable.Empty<IFile>();
                 });
 
-            var libLoader = new LibraryLoader(Location.FromPath("D:\\lib"), fileLoaderMock.Object);
+            var libLoader = new FolderLibraryLoader(Location.FromPath("D:\\lib"), fileLoaderMock.Object);
             libLoader.LoadThemeFiles("A", null);
 
             Assert.AreEqual("D:\\lib\\_themes\\A", loc.ToPath());
@@ -76,7 +76,7 @@ namespace Core.Tests
                     return AsyncEnumerable.Empty<IFile>();
                 });
 
-            var libLoader = new LibraryLoader(Location.FromPath("D:\\lib"), fileLoaderMock.Object);
+            var libLoader = new FolderLibraryLoader(Location.FromPath("D:\\lib"), fileLoaderMock.Object);
             libLoader.LoadPluginFiles("A", null);
 
             Assert.AreEqual("D:\\lib\\_plugins\\A", loc.ToPath());

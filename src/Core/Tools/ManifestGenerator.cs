@@ -24,18 +24,18 @@ namespace Xarial.Docify.Core.Tools
             m_Loader = loader;
         }
 
-        public Task<SecureLibraryManifest> CreateManifest(ILocation libFolder, 
-            string certPath, string certificatePwd, out string publicKeyXml)
+        public Task<SecureLibraryManifest> CreateManifest(ILocation libFolder,
+            Version vers, string certPath, string certificatePwd, out string publicKeyXml)
         {
             var cert = new X509Certificate2(certPath, certificatePwd);
             publicKeyXml = cert.GetRSAPublicKey().ToXmlString(false);
 
             var rsaWrite = cert.GetRSAPrivateKey();
 
-            return CreateManifest(libFolder, rsaWrite);
+            return CreateManifest(libFolder, rsaWrite, vers);
         }
 
-        private async Task<SecureLibraryManifest> CreateManifest(ILocation libFolder, RSA rsaWrite)
+        private async Task<SecureLibraryManifest> CreateManifest(ILocation libFolder, RSA rsaWrite, Version vers)
         {
             var components = new Dictionary<string, List<SecureLibraryItemFile>>(StringComparer.CurrentCultureIgnoreCase);
             var themes = new Dictionary<string, List<SecureLibraryItemFile>>(StringComparer.CurrentCultureIgnoreCase);
@@ -89,6 +89,8 @@ namespace Xarial.Docify.Core.Tools
 
             var manifest = new SecureLibraryManifest()
             {
+                Version = vers,
+
                 Components = components.Select(x => new SecureLibraryItem()
                 {
                     Name = x.Key,

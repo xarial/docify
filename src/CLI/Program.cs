@@ -6,9 +6,11 @@
 //*********************************************************************
 
 using CommandLine;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.CLI.Options;
@@ -62,6 +64,7 @@ namespace Xarial.Docify.CLI
                     var manGen = new ManifestGenerator(new LocalFileSystemFileLoader());
                     string publicKeyXml;
                     var maninfest = await manGen.CreateManifest(Location.FromPath(genManOpts.LibraryPath), 
+                        new Version(genManOpts.Version),
                         genManOpts.CertificatePath, genManOpts.CertificatePassword, out publicKeyXml);
 
                     new UserSettingsService().StoreSettings(maninfest,

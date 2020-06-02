@@ -13,6 +13,7 @@ using Xarial.Docify.Base.Data;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Plugin.Extensions;
 using System.Text;
+using Xarial.Docify.Base.Plugins;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -47,7 +48,14 @@ namespace Xarial.Docify.Core.Compiler
 
             await foreach (var file in CompileAll(site.MainPage, site, Location.Empty))
             {
-                yield return await m_Ext.PostCompileFile(file);
+                var args = new PostCompileFileArgs()
+                {
+                    File = file
+                };
+
+                await m_Ext.PostCompileFile(args);
+
+                yield return args.File;
             }
 
             await m_Ext.PostCompile();

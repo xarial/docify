@@ -82,17 +82,13 @@ namespace Core.Tests
             includesHandlerMock.Setup(m => m.ResolveAll(It.IsAny<string>(), It.IsAny<Site>(), 
                 It.IsAny<Page>(), It.IsAny<string>()))
                 .Returns<string, Site, Page, string>((c, s, p, u) => Task.FromResult(c));
-
-            var compExt = new Mock<ICompilerExtension>();
             
-            compExt.Setup(m => m.PostCompileFile(It.IsAny<IFile>())).Returns((IFile f) => Task.FromResult(f));
-
             m_Compiler = new BaseCompiler(new BaseCompilerConfig(new Configuration()),
                 new Mock<ILogger>().Object,
                 layoutMock.Object,
                 includesHandlerMock.Object,
                 contTransMock.Object,
-                compExt.Object);
+                new Mock<ICompilerExtension>().Object);
         }
 
         [Test]

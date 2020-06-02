@@ -20,7 +20,7 @@ namespace Xarial.Docify.Core.Plugin.Extensions
         void RenderCodeBlock(string rawCode, string lang, string args, StringBuilder html);
         void RenderImage(StringBuilder html);
         void RenderUrl(StringBuilder html);
-        Task<IFile> PostCompileFile(IFile file);
+        Task PostCompileFile(PostCompileFileArgs args);
         Task PostCompile();
     }
 
@@ -46,15 +46,15 @@ namespace Xarial.Docify.Core.Plugin.Extensions
             }
         }
 
-        public Task<IFile> PostCompileFile(IFile file)
+        public Task PostCompileFile(PostCompileFileArgs args)
         {
             if (RequestPostCompileFile != null)
             {
-                return RequestPostCompileFile.Invoke(file);
+                return RequestPostCompileFile.Invoke(args);
             }
             else
             {
-                return Task.FromResult(file);
+                return Task.CompletedTask;
             }
         }
 

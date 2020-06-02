@@ -51,17 +51,15 @@ namespace Xarial.Docify.Core.Plugin
             m_Ext.RequestPostCompileFile += OnRequestPostCompileFile;
         }
 
-        private async Task<IFile> OnRequestPostCompileFile(IFile file)
+        private async Task OnRequestPostCompileFile(PostCompileFileArgs args)
         {
             if (PostCompileFile != null)
             {
                 foreach (PostCompileFileDelegate del in PostCompileFile.GetInvocationList())
                 {
-                    file = await del.Invoke(file);
+                    await del.Invoke(args);
                 }
             }
-
-            return file;
         }
 
         private async Task OnRequestPostCompile()

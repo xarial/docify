@@ -34,9 +34,9 @@ namespace Xarial.Docify.Core.Plugin
             m_Ext.RequestPostPublish += OnRequestPostPublish;
         }
 
-        private async Task<PrePublishResult> OnRequestPrePublishFile(ILocation outLoc, IFile file)
+        private async Task<PrePublishFileArgs> OnRequestPrePublishFile(ILocation outLoc, IFile file)
         {
-            var curRes = new PrePublishResult()
+            var curRes = new PrePublishFileArgs()
             {
                 File = file,
                 SkipFile = false

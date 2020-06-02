@@ -12,14 +12,14 @@ using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Base.Plugins
 {
-    public struct PrePublishResult
+    public struct PrePublishFileArgs
     {
         public IFile File { get; set; }
         public bool SkipFile { get; set; }
     }
 
     public delegate Task PostPublishDelegate(ILocation loc);
-    public delegate Task<PrePublishResult> PrePublishFileDelegate(ILocation outLoc, IFile file);
+    public delegate Task<PrePublishFileArgs> PrePublishFileDelegate(ILocation outLoc, IFile file);
     public delegate IAsyncEnumerable<IFile> PostAddPublishFilesDelegate(ILocation outLoc);
 
     public interface IPublisherManager

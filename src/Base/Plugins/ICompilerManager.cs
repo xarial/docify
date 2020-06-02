@@ -12,6 +12,11 @@ using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Base.Plugins
 {
+    public class PostCompileFileArgs 
+    {
+        public IFile File { get; set; }
+    }
+
     /// <summary>
     /// Delegate for <see cref="ICompilerManager.PreCompile"/> event
     /// </summary>
@@ -53,7 +58,7 @@ namespace Xarial.Docify.Base.Plugins
     /// </summary>
     /// <param name="file"></param>
     /// <returns></returns>
-    public delegate Task<IFile> PostCompileFileDelegate(IFile file);
+    public delegate Task PostCompileFileDelegate(PostCompileFileArgs args);
 
     /// <summary>
     /// Delegate for <see cref="ICompilerManager.PostCompile"/> event

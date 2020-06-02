@@ -265,9 +265,9 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
             }
         }
 
-        private Task<PrePublishResult> OnPrePublishFile(ILocation outLoc, IFile file)
+        private Task<PrePublishFileArgs> OnPrePublishFile(ILocation outLoc, IFile file)
         {
-            var res = new PrePublishResult()
+            var res = new PrePublishFileArgs()
             {
                 File = file,
                 SkipFile = m_Settings.ExcludeSnippets

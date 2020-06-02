@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core.Data;
 using Xarial.XToolkit.Services.UserSettings;
 using Xarial.XToolkit.Services.UserSettings.Attributes;
 
@@ -67,7 +70,14 @@ namespace Xarial.Docify.Core.Tools
         public async Task InstallLibrary(ILocation srcLoc, ILocation destLoc, 
             IFileLoader srcLoader, IPublisher destWriter)
         {
-            await destWriter.Write(destLoc, srcLoader.LoadFolder(srcLoc, null));
+            try
+            {
+                await destWriter.Write(destLoc, srcLoader.LoadFolder(srcLoc, null));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to install library", ex);
+            }
         }
     }
 }

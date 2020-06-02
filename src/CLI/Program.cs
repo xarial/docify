@@ -6,13 +6,10 @@
 //*********************************************************************
 
 using CommandLine;
-using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.CLI.Options;
@@ -98,7 +95,7 @@ namespace Xarial.Docify.CLI
 
             if (!string.IsNullOrEmpty(genManOpts.PublicKeyFile))
             {
-                await File.WriteAllTextAsync(genManOpts.PublicKeyFile, publicKeyXml);
+                await System.IO.File.WriteAllTextAsync(genManOpts.PublicKeyFile, publicKeyXml);
             }
         }
 
@@ -122,7 +119,9 @@ namespace Xarial.Docify.CLI
                 
                 await libInstaller.InstallLibrary(Location.FromUrl(lib.DownloadUrl), destLoc, 
                     new WebZipFileLoader(lib.Signature, Resources.standard_library_public_key),
-                    new LocalFileSystemPublisher(new PublisherExtension()));
+                    new LocalFileSystemPublisher(new PublisherExtension(), 
+                    new SecureLibraryCleaner(Location.Library.DefaultLibraryManifestFilePath.ToPath(), 
+                    Resources.standard_library_public_key)));
             }
         }
     }

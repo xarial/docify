@@ -22,26 +22,20 @@ using Tests.Common.Mocks;
 using Xarial.Docify.Core.Plugin.Extensions;
 using Moq;
 using Xarial.Docify.Base.Plugins;
+using Xarial.Docify.Core.Exceptions;
 
 namespace Core.Tests
 {
     public class LocalFileSystemPublisherTest
     {
-        private LocalFileSystemPublisher NewPublisher(MockFileSystem fs) 
-        {
-            var pubExt = new Mock<IPublisherExtension>();
-            pubExt.Setup(m => m.PrePublishFile(It.IsAny<ILocation>(), It.IsAny<IFile>()))
-                .Returns((ILocation c, IFile f) => Task.FromResult(new PrePublishResult() { File = f, SkipFile = false }));
-
-            return new LocalFileSystemPublisher(fs, pubExt.Object);
-        }
-
         [Test]
         public async Task WriteTextTest() 
         {
             var fs = new MockFileSystem();
-            var publisher = NewPublisher(fs);
 
+            var publisher = new LocalFileSystemPublisher(fs, new PublisherExtension(),
+                new Mock<ITargetDirectoryCleaner>().Object);
+            
             var pages = new FileMock[]
             {
                 new FileMock(Location.FromPath("page1.html"), "abc"),
@@ -64,7 +58,9 @@ namespace Core.Tests
         public async Task WriteBinaryTest()
         {
             var fs = new MockFileSystem();
-            var publisher = NewPublisher(fs);
+
+            var publisher = new LocalFileSystemPublisher(fs, new PublisherExtension(),
+                new Mock<ITargetDirectoryCleaner>().Object);
 
             var assets = new IFile[]
             {
@@ -81,11 +77,19 @@ namespace Core.Tests
         [Test]
         public async Task Write_ClearFolder()
         {
-            var fs = new MockFileSystem();
-            fs.AddFile("C:\\site\\page1.html", new MockFileData("xyz"));
-            fs.AddFile("C:\\site\\page2.html", new MockFileData("klm"));
+            ILocation clearLoc = null;
 
-            var publisher = NewPublisher(fs);
+            var targDirCleanerMock = new Mock<ITargetDirectoryCleaner>();
+            targDirCleanerMock.Setup(m => m.ClearDirectory(It.IsAny<ILocation>()))
+                .Returns((ILocation loc) => 
+                {
+                    clearLoc = loc;
+                    return Task.CompletedTask;
+                });
+
+            var publisher = new LocalFileSystemPublisher(
+                new MockFileSystem(), new PublisherExtension(),
+                targDirCleanerMock.Object);
 
             var pages = new IFile[]
             {
@@ -94,9 +98,25 @@ namespace Core.Tests
 
             await publisher.Write(Location.FromPath("C:\\site"), pages.ToAsyncEnumerable());
 
-            Assert.AreEqual(1, fs.Directory.GetFiles("C:\\site", "*.*", System.IO.SearchOption.AllDirectories).Length);
-            Assert.IsTrue(fs.File.Exists("C:\\site\\page1.html"));
-            Assert.AreEqual("abc", await fs.File.ReadAllTextAsync("C:\\site\\page1.html"));
+            Assert.AreEqual("C:\\site", clearLoc.ToPath());
+        }
+
+
+        [Test]
+        public void ExistingFileOverrideTest()
+        {
+            var fs = new MockFileSystem();
+            fs.AddFile("C:\\site\\page1.html", new MockFileData("xyz"));
+
+            var publisher = new LocalFileSystemPublisher(fs, new PublisherExtension(),
+                new Mock<ITargetDirectoryCleaner>().Object);
+
+            var files = new IFile[]
+            {
+                new FileMock(Location.FromPath("C:\\site\\page1.html"), "abc")
+            };
+
+            Assert.ThrowsAsync<FilePublishOverwriteForbiddenException>(() => publisher.Write(Location.FromPath("C:\\site"), files.ToAsyncEnumerable()));
         }
     }
 }

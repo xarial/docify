@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Publisher
@@ -21,28 +22,36 @@ namespace Xarial.Docify.Core.Publisher
         private readonly System.IO.Abstractions.IFileSystem m_FileSystem;
 
         private readonly IPublisherExtension m_Ext;
-
+        private readonly ITargetDirectoryCleaner m_TargetCleaner;
+        
         public LocalFileSystemPublisher(IPublisherExtension ext)
-            : this(new System.IO.Abstractions.FileSystem(), ext)
+            : this(new System.IO.Abstractions.FileSystem(), ext, 
+                  new LocalFileSystemTargetDirectoryCleaner(new System.IO.Abstractions.FileSystem(), true))
+        {
+        }
+
+        public LocalFileSystemPublisher(IPublisherExtension ext,
+            ITargetDirectoryCleaner targetCleaner)
+            : this(new System.IO.Abstractions.FileSystem(), ext, targetCleaner)
         {
         }
 
         public LocalFileSystemPublisher(
-            System.IO.Abstractions.IFileSystem fileSystem, IPublisherExtension ext)
+            System.IO.Abstractions.IFileSystem fileSystem, IPublisherExtension ext,
+            ITargetDirectoryCleaner targetCleaner)
         {
             m_FileSystem = fileSystem;
             m_Ext = ext;
+
+            m_TargetCleaner = targetCleaner;
         }
 
         public async Task Write(ILocation loc, IAsyncEnumerable<IFile> files)
         {
             var outDir = loc.ToPath();
 
-            if (m_FileSystem.Directory.Exists(outDir))
-            {
-                m_FileSystem.Directory.Delete(outDir, true);
-            }
-
+            await m_TargetCleaner.ClearDirectory(loc);
+            
             await foreach (var file in files)
             {
                 var outFilePath = file.Location.ToPath();
@@ -91,6 +100,11 @@ namespace Xarial.Docify.Core.Publisher
             if (!m_FileSystem.Directory.Exists(dir))
             {
                 m_FileSystem.Directory.CreateDirectory(dir);
+            }
+
+            if (m_FileSystem.File.Exists(outFilePath))
+            {
+                throw new FilePublishOverwriteForbiddenException(outFilePath);
             }
 
             await m_FileSystem.File.WriteAllBytesAsync(outFilePath, file.Content);

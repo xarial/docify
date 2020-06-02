@@ -277,16 +277,16 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
             return Task.FromResult(res);
         }
 
-        private Task<string> OnWritePageContent(string content, IMetadata data, string url)
+        private Task OnWritePageContent(StringBuilder html, IMetadata data, string url)
         {
-            if (!string.IsNullOrEmpty(content))
+            if (html.Length > 0)
             {
                 try
                 {
-                    var writer = new HtmlHeadWriter(content);
+                    var writer = new HtmlHeadWriter(html);
                     writer.AddStyleSheets(CSS_FILE_PATH);
                     writer.AddScripts(JS_FILE_PATH);
-                    return Task.FromResult(writer.Content);
+                    return Task.CompletedTask;
                 }
                 catch (Exception ex)
                 {
@@ -295,7 +295,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
             }
             else
             {
-                return Task.FromResult(content);
+                return Task.CompletedTask;
             }
         }
     }

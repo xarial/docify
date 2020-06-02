@@ -117,6 +117,8 @@ namespace Xarial.Docify.CLI
                 }
             }
 
+            ProcessException(ex);
+
             if (res.Length == 0) 
             {
                 res.Append("Generic error. Check trace log for more details");

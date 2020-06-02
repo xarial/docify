@@ -12,6 +12,7 @@ using Xarial.Docify.Base.Services;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Plugin.Extensions;
+using System.Text;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -136,7 +137,11 @@ namespace Xarial.Docify.Core.Compiler
 
             content = await m_IncludesHandler.ResolveAll(content, site, page, url);
 
-            content = await m_Ext.WritePageContent(content, page.Data, url);
+            var contentStrBuilder = new StringBuilder(content);
+            
+            await m_Ext.WritePageContent(contentStrBuilder, page.Data, url);
+
+            content = contentStrBuilder.ToString();
 
             return new File(loc, ContentExtension.ToByteArray(content), page.Id);
         }

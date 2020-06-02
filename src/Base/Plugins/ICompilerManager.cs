@@ -46,7 +46,7 @@ namespace Xarial.Docify.Base.Plugins
     /// <param name="data"></param>
     /// <param name="url"></param>
     /// <returns></returns>
-    public delegate Task<string> WritePageContentDelegate(string content, IMetadata data, string url);
+    public delegate Task WritePageContentDelegate(StringBuilder content, IMetadata data, string url);
 
     /// <summary>
     /// Delegate for <see cref="ICompilerManager.PostCompileFile"/> event

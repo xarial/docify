@@ -15,7 +15,7 @@ namespace Xarial.Docify.Core.Plugin.Extensions
 {
     public interface ICompilerExtension
     {
-        Task<string> WritePageContent(string content, IMetadata data, string url);
+        Task WritePageContent(StringBuilder html, IMetadata data, string url);
         Task PreCompile(ISite site);
         void RenderCodeBlock(string rawCode, string lang, string args, StringBuilder html);
         void RenderImage(StringBuilder html);
@@ -94,15 +94,15 @@ namespace Xarial.Docify.Core.Plugin.Extensions
             }
         }
 
-        public Task<string> WritePageContent(string content, IMetadata data, string url)
+        public Task WritePageContent(StringBuilder html, IMetadata data, string url)
         {
             if (RequestWritePageContent != null)
             {
-                return RequestWritePageContent.Invoke(content, data, url);
+                return RequestWritePageContent.Invoke(html, data, url);
             }
             else
             {
-                return Task.FromResult(content);
+                return Task.CompletedTask;
             }
         }
     }

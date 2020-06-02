@@ -9,6 +9,7 @@ using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
@@ -43,14 +44,14 @@ namespace Xarial.Docify.Lib.Plugins.SeoValidator
             m_App.Compiler.WritePageContent += OnWritePageContent;
         }
 
-        private Task<string> OnWritePageContent(string content, IMetadata data, string url)
+        private Task OnWritePageContent(StringBuilder html, IMetadata data, string url)
         {
             if (m_Setts.Scope?.Any() != true
                 || m_Setts.Scope.Any(s => PathHelper.Matches(url, s))
                 && (!data.ContainsKey("sitemap") || data.GetParameterOrDefault<bool>("sitemap")))
             {
-                var html = new HtmlDocument();
-                html.LoadHtml(content);
+                var htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(html.ToString());
 
                 foreach (var validator in m_Validators)
                 {
@@ -60,7 +61,7 @@ namespace Xarial.Docify.Lib.Plugins.SeoValidator
 
                     try
                     {
-                        validator.Validate(html, validatorSetts);
+                        validator.Validate(htmlDoc, validatorSetts);
                     }
                     catch (SeoValidationFailedException ex)
                     {
@@ -78,7 +79,7 @@ namespace Xarial.Docify.Lib.Plugins.SeoValidator
                 }
             }
 
-            return Task.FromResult(content);
+            return Task.CompletedTask;
         }
     }
 

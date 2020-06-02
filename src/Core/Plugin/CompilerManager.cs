@@ -86,19 +86,17 @@ namespace Xarial.Docify.Core.Plugin
             }
         }
 
-        private async Task<string> OnRequestWritePageContent(string content, IMetadata data, string url)
+        private async Task OnRequestWritePageContent(StringBuilder html, IMetadata data, string url)
         {
-            var res = content;
+            var res = html;
 
             if (WritePageContent != null)
             {
                 foreach (WritePageContentDelegate del in WritePageContent.GetInvocationList())
                 {
-                    res = await del.Invoke(res, data, url);
+                    await del.Invoke(res, data, url);
                 }
             }
-
-            return res;
         }
 
         private void OnRequestRenderUrl(StringBuilder html)

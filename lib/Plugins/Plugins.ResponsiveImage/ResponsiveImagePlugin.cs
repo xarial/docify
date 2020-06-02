@@ -74,16 +74,16 @@ namespace Xarial.Docify.Lib.Plugins.ResponsiveImage
             html.Append(string.Format(Resources.img_figure, img, imgSrc, imgAlt));
         }
 
-        private Task<string> OnWritePageContent(string content, IMetadata data, string url)
+        private Task OnWritePageContent(StringBuilder html, IMetadata data, string url)
         {
-            if (!string.IsNullOrEmpty(content))
+            if (html.Length > 0)
             {
                 try
                 {
-                    var htmlWriter = new HtmlHeadWriter(content);
+                    var htmlWriter = new HtmlHeadWriter(html);
                     htmlWriter.AddStyleSheets(CSS_FILE_PATH);
 
-                    return Task.FromResult(htmlWriter.Content);
+                    return Task.CompletedTask;
                 }
                 catch (Exception ex)
                 {
@@ -92,7 +92,7 @@ namespace Xarial.Docify.Lib.Plugins.ResponsiveImage
             }
             else
             {
-                return Task.FromResult(content);
+                return Task.FromResult(html);
             }
         }
     }

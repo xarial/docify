@@ -190,15 +190,13 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
             }
         }
 
-        private Task<string> OnWritePageContent(string content, IMetadata data, string url)
+        private Task OnWritePageContent(StringBuilder html, IMetadata data, string url)
         {
             var doc = new HtmlDocument();
-            doc.LoadHtml(content);
+            doc.LoadHtml(html.ToString());
 
             if (m_Setts.Bundles?.Any() == true)
             {
-                var res = new StringBuilder();
-
                 var headNode = doc.DocumentNode.SelectSingleNode("//head");
 
                 var scripts = doc.DocumentNode.SelectNodes("//head/script[@src]");
@@ -228,7 +226,8 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
                         doc.Save(strWriter);
                     }
 
-                    content = htmlContent.ToString();
+                    html.Clear();
+                    html.Append(htmlContent.ToString());
                 }
             }
 
@@ -254,7 +253,7 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
                 }
             }
 
-            return Task.FromResult(content);
+            return Task.CompletedTask;
         }
 
         private void ReplaceNodes(IEnumerable<HtmlNode> nodes,

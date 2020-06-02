@@ -84,9 +84,7 @@ namespace Core.Tests
                 .Returns<string, Site, Page, string>((c, s, p, u) => Task.FromResult(c));
 
             var compExt = new Mock<ICompilerExtension>();
-            compExt.Setup(m => m.WritePageContent(It.IsAny<string>(), It.IsAny<IMetadata>(), It.IsAny<string>()))
-                .Returns((string c, IMetadata m, string u) => Task.FromResult(c));
-
+            
             compExt.Setup(m => m.PostCompileFile(It.IsAny<IFile>())).Returns((IFile f) => Task.FromResult(f));
 
             m_Compiler = new BaseCompiler(new BaseCompilerConfig(new Configuration()),

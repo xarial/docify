@@ -37,14 +37,14 @@ namespace Core.Tests
             fs.AddFile("C:\\dir\\lib\\_themes\\theme1\\file2.txt", new MockFileData("f2"));
             fs.AddFile("C:\\dir\\lib\\_themes\\theme1\\subdir2\\file2.txt", new MockFileData("sb2f2"));
             fs.AddFile("C:\\dir\\lib\\_plugins\\plugin1\\file3.txt", new MockFileData("f3"));
-            fs.AddFile("C:\\dir\\lib\\_plugins\\plugin1\\subdir3\\file3.txt", new MockFileData("sb3f3"));
+            fs.AddFile("C:\\dir\\lib\\_plugins\\plugin1\\subdir3\\subdir4\\file3.txt", new MockFileData("sb3sb4f3"));
 
-            string GetSignature(string path) 
+            byte[] GetSignature(string path) 
             {
                 var buffer = fs.File.ReadAllBytes(path);
 
-                return Convert.ToBase64String(m_Rsa.SignData(buffer, 0, buffer.Length,
-                        HashAlgorithmName.SHA256, RSASignaturePadding.Pss));
+                return m_Rsa.SignData(buffer, 0, buffer.Length,
+                        HashAlgorithmName.SHA256, RSASignaturePadding.Pss);
             }
 
             var secLibMan = new SecureLibraryManifest();
@@ -104,8 +104,8 @@ namespace Core.Tests
                         },
                         new SecureLibraryItemFile()
                         {
-                            Name = Location.FromPath("subdir3\\file3.txt"),
-                            Signature = GetSignature("C:\\dir\\lib\\_plugins\\plugin1\\subdir3\\file3.txt")
+                            Name = Location.FromPath("subdir3\\subdir4\\file3.txt"),
+                            Signature = GetSignature("C:\\dir\\lib\\_plugins\\plugin1\\subdir3\\subdir4\\file3.txt")
                         }
                     }
                 }
@@ -139,15 +139,15 @@ namespace Core.Tests
             fs.AddFile("C:\\dir\\lib\\_components\\comp1\\file1.txt", new MockFileData("f1"));
             fs.AddFile("C:\\dir\\lib\\_components\\comp1\\file2.txt", new MockFileData("f2"));
             fs.AddFile("C:\\dir\\lib\\_components\\comp1\\subdir1\\file1.txt", new MockFileData("sb1f1"));
-            
-            string GetSignature(string path)
+
+            byte[] GetSignature(string path)
             {
                 var buffer = fs.File.ReadAllBytes(path);
 
-                return Convert.ToBase64String(m_Rsa.SignData(buffer, 0, buffer.Length,
-                        HashAlgorithmName.SHA256, RSASignaturePadding.Pss));
+                return m_Rsa.SignData(buffer, 0, buffer.Length,
+                        HashAlgorithmName.SHA256, RSASignaturePadding.Pss);
             }
-
+        
             var secLibMan = new SecureLibraryManifest();
             secLibMan.Components = new SecureLibraryItem[]
             {
@@ -223,12 +223,12 @@ namespace Core.Tests
             fs.AddFile("C:\\dir\\lib\\_components\\comp1\\file1.txt", new MockFileData("f1"));
             fs.AddFile("C:\\dir\\lib\\_components\\comp1\\file2.txt", new MockFileData("f2"));
 
-            string GetSignature(string path)
+            byte[] GetSignature(string path)
             {
                 var buffer = fs.File.ReadAllBytes(path);
 
-                return Convert.ToBase64String(m_Rsa.SignData(buffer, 0, buffer.Length,
-                        HashAlgorithmName.SHA256, RSASignaturePadding.Pss));
+                return m_Rsa.SignData(buffer, 0, buffer.Length,
+                        HashAlgorithmName.SHA256, RSASignaturePadding.Pss);
             }
 
             var secLibMan = new SecureLibraryManifest();

@@ -25,6 +25,8 @@ namespace Xarial.Docify.CLI
 {
     internal class Program
     {
+        private const string STANDARD_LIB_URL = "http://localhost:8081/version.json";
+
         private static async Task Main(string[] args)
         {
             var parser = new Parser(p =>
@@ -112,7 +114,7 @@ namespace Xarial.Docify.CLI
 
                 var libInstaller = new LibraryInstaller();
                 
-                var libData = await new HttpClient().GetStringAsync("http://localhost:8081/version.json");
+                var libData = await new HttpClient().GetStringAsync(STANDARD_LIB_URL);
                 var libColl = new UserSettingsService().ReadSettings<LibraryCollection>(new StringReader(libData));
 
                 var lib = libInstaller.FindLibrary(libColl, typeof(DocifyEngine).Assembly.GetName().Version, opts.Version);

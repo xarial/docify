@@ -23,7 +23,7 @@ using Xarial.Docify.Core.Loader;
 
 namespace Core.Tests
 {
-    public class LibraryLoaderTest
+    public class FolderLibraryLoaderTest
     {
         [Test]
         public void LoadComponentFilesTest() 
@@ -80,6 +80,35 @@ namespace Core.Tests
             libLoader.LoadPluginFiles("A", null);
 
             Assert.AreEqual("D:\\lib\\_plugins\\A", loc.ToPath());
+        }
+
+        [Test]
+        public void ContainsTest() 
+        {
+            var lib = new List<string>();
+            lib.Add("D:::lib::_components::c1");
+            lib.Add("D:::lib::_themes::t1");
+            lib.Add("D:::lib::_plugins::p1");
+
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.Exists(It.IsAny<ILocation>()))
+                .Returns((ILocation l) => lib.Contains(l.ToId()));
+
+            var libLoader = new FolderLibraryLoader(Location.FromPath("D:\\lib"), fileLoaderMock.Object);
+
+            var r1 = libLoader.ContainsComponent("c1");
+            var r2 = libLoader.ContainsComponent("c2");
+            var r3 = libLoader.ContainsTheme("t1");
+            var r4 = libLoader.ContainsTheme("t2");
+            var r5 = libLoader.ContainsPlugin("p1");
+            var r6 = libLoader.ContainsPlugin("p2");
+
+            Assert.IsTrue(r1);
+            Assert.IsFalse(r2);
+            Assert.IsTrue(r3);
+            Assert.IsFalse(r4);
+            Assert.IsTrue(r5);
+            Assert.IsFalse(r6);
         }
     }
 }

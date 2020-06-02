@@ -76,7 +76,7 @@ namespace Xarial.Docify.Core.Tools
                     var fileManifest = new SecureLibraryItemFile()
                     {
                         Name = file.Location.GetRelative(new Location("", itemType, itemName)),
-                        Signature = Convert.ToBase64String(signature)
+                        Signature = signature
                     };
 
                     files.Add(fileManifest);

@@ -71,16 +71,22 @@ namespace Xarial.Docify.Core.Publisher
                                 foreach (var file in item.Files)
                                 {
                                     var filePath = Path.Combine(itemDir, file.Name.ToPath());
-                                    var fileDir = Path.GetDirectoryName(filePath);
 
-                                    if (!dirs.Contains(fileDir, StringComparer.CurrentCultureIgnoreCase))
+                                    var curFileDir = itemDir;
+
+                                    foreach (var pathPart in file.Name.Path)
                                     {
-                                        dirs.Add(fileDir);
+                                        curFileDir = Path.Combine(curFileDir, pathPart);
+
+                                        if (!dirs.Contains(curFileDir, StringComparer.CurrentCultureIgnoreCase))
+                                        {
+                                            dirs.Add(curFileDir);
+                                        }
                                     }
 
                                     var buffer = await m_FileSystem.File.ReadAllBytesAsync(filePath);
 
-                                    if (m_Rsa.VerifyData(buffer, Convert.FromBase64String(file.Signature),
+                                    if (m_Rsa.VerifyData(buffer, file.Signature,
                                         HashAlgorithmName.SHA256, RSASignaturePadding.Pss))
                                     {
                                         m_FileSystem.File.Delete(filePath);
@@ -102,7 +108,7 @@ namespace Xarial.Docify.Core.Publisher
 
                     foreach (var dir in dirs.OrderByDescending(d => d.Count(c => c == '\\'))) 
                     {
-                        if (!m_FileSystem.Directory.EnumerateFileSystemEntries(dir).Any()) 
+                        if (!m_FileSystem.Directory.EnumerateFileSystemEntries(dir).Any())
                         {
                             m_FileSystem.Directory.Delete(dir);
                         }

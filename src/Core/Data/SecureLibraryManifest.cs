@@ -16,7 +16,7 @@ namespace Xarial.Docify.Core.Data
     public class SecureLibraryItemFile 
     {
         public ILocation Name { get; set; }
-        public string Signature { get; set; }
+        public byte[] Signature { get; set; }
     }
 
     public class SecureLibraryManifestVersionTransformer : BaseUserSettingsVersionsTransformer

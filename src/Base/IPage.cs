@@ -10,8 +10,14 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base
 {
+    /// <summary>
+    /// Represents HTML page of the site
+    /// </summary>
     public interface IPage : ISheet, IAssetsFolder
     {
+        /// <summary>
+        /// Sub pages of this page
+        /// </summary>
         List<IPage> SubPages { get; }
     }
 }

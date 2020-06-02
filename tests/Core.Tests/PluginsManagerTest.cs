@@ -201,5 +201,23 @@ namespace Core.Tests
             Assert.AreEqual(0.1, plg.Settings.PropTwo);
             Assert.That(new string[] { "A", "B" }.SequenceEqual(plg.Settings.Prp3));
         }
+
+        [Test]
+        public void AddinIdDuplicateTest() 
+        {
+            //TODO: implement when multiple plugin name duplicates in the PluginInfo
+        }
+
+        [Test]
+        public void NoAddInFoundTest()
+        {
+            //TODO: implement when no addins found in the addin dlls in the folder
+        }
+
+        [Test]
+        public void MultipleInstancesAddInTest()
+        {
+            //TODO: implement when multiple addins found in the single add-in name
+        }
     }
 }

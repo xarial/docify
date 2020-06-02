@@ -111,15 +111,9 @@ namespace Xarial.Docify.Lib.Plugins.ImageOptimizer
             }
         }
 
-        private Task<PrePublishFileArgs> OnPrePublishFile(ILocation outLoc, IFile file)
+        private Task OnPrePublishFile(ILocation outLoc, PrePublishFileArgs args)
         {
-            var res = new PrePublishFileArgs()
-            {
-                File = file,
-                SkipFile = false
-            };
-
-            var path = file.Location.ToPath();
+            var path = args.File.Location.ToPath();
 
             var opts = m_Settings.IgnoreMatchCase ? RegexOptions.IgnoreCase : RegexOptions.None;
 
@@ -127,7 +121,7 @@ namespace Xarial.Docify.Lib.Plugins.ImageOptimizer
             {
                 var quantizer = new WuQuantizer();
 
-                using (var inStr = new MemoryStream(file.Content))
+                using (var inStr = new MemoryStream(args.File.Content))
                 {
                     inStr.Seek(0, SeekOrigin.Begin);
 
@@ -141,7 +135,7 @@ namespace Xarial.Docify.Lib.Plugins.ImageOptimizer
                                 {
                                     quantized.Save(outStr, img.RawFormat);
                                     outStr.Seek(0, SeekOrigin.Begin);
-                                    res.File = new PluginFile(outStr.GetBuffer(), file.Location);
+                                    args.File = new PluginFile(outStr.GetBuffer(), args.File.Location);
                                 }
                             }
                         }
@@ -149,7 +143,7 @@ namespace Xarial.Docify.Lib.Plugins.ImageOptimizer
                 }
             }
 
-            return Task.FromResult(res);
+            return Task.CompletedTask;
         }
     }
 }

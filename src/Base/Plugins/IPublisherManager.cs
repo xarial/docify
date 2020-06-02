@@ -19,7 +19,7 @@ namespace Xarial.Docify.Base.Plugins
     }
 
     public delegate Task PostPublishDelegate(ILocation loc);
-    public delegate Task<PrePublishFileArgs> PrePublishFileDelegate(ILocation outLoc, IFile file);
+    public delegate Task PrePublishFileDelegate(ILocation outLoc, PrePublishFileArgs args);
     public delegate IAsyncEnumerable<IFile> PostAddPublishFilesDelegate(ILocation outLoc);
 
     public interface IPublisherManager

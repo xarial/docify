@@ -265,16 +265,12 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
             }
         }
 
-        private Task<PrePublishFileArgs> OnPrePublishFile(ILocation outLoc, IFile file)
+        private Task OnPrePublishFile(ILocation outLoc, PrePublishFileArgs args)
         {
-            var res = new PrePublishFileArgs()
-            {
-                File = file,
-                SkipFile = m_Settings.ExcludeSnippets
-                    && m_SnippetFileIds.Contains(file.Id)
-            };
+            args.SkipFile = m_Settings.ExcludeSnippets
+                && m_SnippetFileIds.Contains(args.File.Id);
 
-            return Task.FromResult(res);
+            return Task.CompletedTask;
         }
 
         private Task OnWritePageContent(StringBuilder html, IMetadata data, string url)

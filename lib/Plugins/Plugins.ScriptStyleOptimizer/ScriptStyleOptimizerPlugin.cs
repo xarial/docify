@@ -65,16 +65,10 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
             return Task.CompletedTask;
         }
 
-        private Task<PrePublishFileArgs> OnPrePublishFile(ILocation outLoc, IFile file)
+        private Task OnPrePublishFile(ILocation outLoc, PrePublishFileArgs args)
         {
-            var res = new PrePublishFileArgs()
-            {
-                File = file,
-                SkipFile = false
-            };
-
-            var ext = Path.GetExtension(file.Location.FileName).ToLower();
-            var url = file.Location.GetRelative(outLoc).ToUrl();
+            var ext = Path.GetExtension(args.File.Location.FileName).ToLower();
+            var url = args.File.Location.GetRelative(outLoc).ToUrl();
 
             var isInScope = m_Setts.AssetsScopePaths?.Any(s => PathHelper.Matches(url, s)) != false;
 
@@ -89,23 +83,23 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
 
                         if (m_Setts.MinifyCss)
                         {
-                            if (!file.Location.FileName
+                            if (!args.File.Location.FileName
                                 .EndsWith(".min.css", StringComparison.CurrentCultureIgnoreCase))
                             {
-                                var txt = file.AsTextContent();
+                                var txt = args.File.AsTextContent();
                                 var css = new CssCompressor();
                                 if (!string.IsNullOrEmpty(txt))
                                 {
                                     var cssComp = css.Compress(txt);
-                                    res.File = new PluginFile(cssComp, file.Location, file.Id);
+                                    args.File = new PluginFile(cssComp, args.File.Location, args.File.Id);
                                 }
                             }
                         }
 
                         if (m_Setts.DeleteUnusedCss)
                         {
-                            m_DeferredStyles.Add(res.File);
-                            res.SkipFile = true;
+                            m_DeferredStyles.Add(args.File);
+                            args.SkipFile = true;
                         }
 
                         break;
@@ -114,24 +108,24 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
 
                         if (m_Setts.MinifyJs)
                         {
-                            if (!file.Location.FileName
+                            if (!args.File.Location.FileName
                                 .EndsWith(".min.js", StringComparison.CurrentCultureIgnoreCase))
                             {
-                                var txt = file.AsTextContent();
+                                var txt = args.File.AsTextContent();
 
                                 if (!string.IsNullOrEmpty(txt))
                                 {
                                     var js = new JavaScriptCompressor();
                                     var jsComp = js.Compress(txt);
-                                    res.File = new PluginFile(jsComp, file.Location, file.Id);
+                                    args.File = new PluginFile(jsComp, args.File.Location, args.File.Id);
                                 }
                             }
                         }
 
                         if (m_Setts.DeleteUnusedJs)
                         {
-                            m_DeferredScripts.Add(res.File);
-                            res.SkipFile = true;
+                            m_DeferredScripts.Add(args.File);
+                            args.SkipFile = true;
                         }
 
                         break;
@@ -140,10 +134,10 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
 
             if (!string.IsNullOrEmpty(bundle))
             {
-                m_BundlesContent[bundle].AppendLine(res.File.AsTextContent());
+                m_BundlesContent[bundle].AppendLine(args.File.AsTextContent());
             }
 
-            return Task.FromResult(res);
+            return Task.CompletedTask;
         }
 
         private async IAsyncEnumerable<IFile> OnPostAddPublishFiles(ILocation outLoc)

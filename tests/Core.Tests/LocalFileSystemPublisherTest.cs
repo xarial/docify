@@ -34,7 +34,7 @@ namespace Core.Tests
         {
             var fs = new MockFileSystem();
 
-            var publisher = new LocalFileSystemPublisher(fs, new PublisherExtension(),
+            var publisher = new LocalFileSystemPublisher(fs, new Mock<IPublisherExtension>().Object,
                 new Mock<ITargetDirectoryCleaner>().Object);
             
             var pages = new FileMock[]
@@ -60,7 +60,7 @@ namespace Core.Tests
         {
             var fs = new MockFileSystem();
 
-            var publisher = new LocalFileSystemPublisher(fs, new PublisherExtension(),
+            var publisher = new LocalFileSystemPublisher(fs, new Mock<IPublisherExtension>().Object,
                 new Mock<ITargetDirectoryCleaner>().Object);
 
             var assets = new IFile[]
@@ -89,7 +89,7 @@ namespace Core.Tests
                 });
 
             var publisher = new LocalFileSystemPublisher(
-                new MockFileSystem(), new PublisherExtension(),
+                new MockFileSystem(), new Mock<IPublisherExtension>().Object,
                 targDirCleanerMock.Object);
 
             var pages = new IFile[]
@@ -109,7 +109,7 @@ namespace Core.Tests
             var fs = new MockFileSystem();
             fs.AddFile("C:\\site\\page1.html", new MockFileData("xyz"));
 
-            var publisher = new LocalFileSystemPublisher(fs, new PublisherExtension(),
+            var publisher = new LocalFileSystemPublisher(fs, new Mock<IPublisherExtension>().Object,
                 new Mock<ITargetDirectoryCleaner>().Object);
 
             var files = new IFile[]

@@ -7,9 +7,19 @@
 
 namespace Xarial.Docify.Base.Context
 {
+    /// <summary>
+    /// Representing an asset in the context of an include
+    /// </summary>
     public interface IContextAsset
     {
+        /// <summary>
+        /// Content of the asset file
+        /// </summary>
         byte[] Content { get; }
+
+        /// <summary>
+        /// Name of the file asset
+        /// </summary>
         string Name { get; }
     }
 }

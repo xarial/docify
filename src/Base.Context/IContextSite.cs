@@ -7,10 +7,24 @@
 
 namespace Xarial.Docify.Base.Context
 {
+    /// <summary>
+    /// Representing site in the context of the include
+    /// </summary>
     public interface IContextSite
     {
+        /// <summary>
+        /// Configuration of the site
+        /// </summary>
         IContextConfiguration Configuration { get; }
+        
+        /// <summary>
+        /// Base url
+        /// </summary>
         string BaseUrl { get; }
+
+        /// <summary>
+        /// Entry page of the site
+        /// </summary>
         IContextPage MainPage { get; }
     }
 }

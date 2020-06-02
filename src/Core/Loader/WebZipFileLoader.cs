@@ -36,6 +36,11 @@ namespace Xarial.Docify.Core.Loader
             m_Rsa.FromXmlString(publicKeyXml);
         }
 
+        public IAsyncEnumerable<ILocation> EnumSubFolders(ILocation location)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool Exists(ILocation location)
         {
             throw new NotImplementedException();

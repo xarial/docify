@@ -29,5 +29,12 @@ namespace Xarial.Docify.Base.Services
         /// <param name="filters">Filters for the files</param>
         /// <returns>Folder content files</returns>
         IAsyncEnumerable<IFile> LoadFolder(ILocation location, string[] filters);
+
+        /// <summary>
+        /// Enumerates children locations
+        /// </summary>
+        /// <param name="location">Parent location</param>
+        /// <returns>Children locations</returns>
+        IAsyncEnumerable<ILocation> EnumSubFolders(ILocation location);
     }
 }

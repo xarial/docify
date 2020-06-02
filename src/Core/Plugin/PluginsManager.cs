@@ -23,18 +23,6 @@ using Xarial.Docify.Core.Exceptions;
 
 namespace Xarial.Docify.Core.Plugin
 {
-    public class PluginInfo : IPluginInfo
-    {
-        public string Name { get; }
-        public IAsyncEnumerable<IFile> Files { get; }
-
-        public PluginInfo(string name, IAsyncEnumerable<IFile> files) 
-        {
-            Name = name;
-            Files = files;
-        }
-    }
-
     public class PluginsManager : IPluginsManager
     {
         private class AssemblyComparer : IEqualityComparer<Assembly>
@@ -109,8 +97,19 @@ namespace Xarial.Docify.Core.Plugin
                     return false;
                 }).Export<IPluginBase>();
 
+                var discoveredPlugins = new List<string>();
+
                 await foreach (var pluginInfo in pluginInfos)
                 {
+                    if (!discoveredPlugins.Contains(pluginInfo.Name, StringComparer.CurrentCultureIgnoreCase))
+                    {
+                        discoveredPlugins.Add(pluginInfo.Name);
+                    }
+                    else 
+                    {
+                        throw new UserMessageException($"Duplicate '{pluginInfo.Name}' plugin");
+                    }
+
                     await foreach (var pluginFile in pluginInfo.Files)
                     {
                         var ext = Path.GetExtension(pluginFile.Location.FileName);

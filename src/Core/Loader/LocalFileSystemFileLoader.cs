@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
@@ -27,6 +28,17 @@ namespace Xarial.Docify.Core.Loader
         public LocalFileSystemFileLoader(System.IO.Abstractions.IFileSystem fileSystem)
         {
             m_FileSystem = fileSystem;
+        }
+
+        public async IAsyncEnumerable<ILocation> EnumSubFolders(ILocation location)
+        {
+            await Task.CompletedTask;
+
+            foreach (var dir in m_FileSystem.Directory.EnumerateDirectories(
+                location.ToPath(), "*.*", SearchOption.TopDirectoryOnly)) 
+            {
+                yield return Location.FromPath(dir);
+            }
         }
 
         public bool Exists(ILocation location)

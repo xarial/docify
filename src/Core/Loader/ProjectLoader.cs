@@ -111,10 +111,9 @@ namespace Xarial.Docify.Core.Loader
 
                 if (m_FileLoader.Exists(pluginsLoc))
                 {
-                    await foreach (var srcFile in m_FileLoader.LoadFolder(pluginsLoc, null))
+                    await foreach (var pluginLoc in m_FileLoader.EnumSubFolders(pluginsLoc))
                     {
-                        //TODO: implement grouping by id
-                        //yield return srcFile;
+                        yield return new PluginInfo(pluginLoc.Path.Last(), m_FileLoader.LoadFolder(pluginLoc, null));
                     }
                 }
             }

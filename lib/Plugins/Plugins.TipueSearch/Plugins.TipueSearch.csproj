@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PluginId>tipue-search</PluginId>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Xarial.Docify.Lib.Plugins.TipueSearch</RootNamespace>
   </PropertyGroup>
 

@@ -17,6 +17,7 @@ using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
 using System.Composition.Convention;
 using System.Threading.Tasks;
+using Xarial.XToolkit.Reflection;
 
 namespace Xarial.Docify.Core.Plugin
 {
@@ -153,32 +154,8 @@ namespace Xarial.Docify.Core.Plugin
 
         private bool IsAssignableToGenericType(Type givenType, Type genericType, out Type specGenericType)
         {
-            var interfaceTypes = givenType.GetInterfaces();
-
-            foreach (var it in interfaceTypes)
-            {
-                if (it.IsGenericType && it.GetGenericTypeDefinition() == genericType)
-                {
-                    specGenericType = it;
-                    return true;
-                }
-            }
-
-            if (givenType.IsGenericType && givenType.GetGenericTypeDefinition() == genericType)
-            {
-                specGenericType = givenType;
-                return true;
-            }
-
-            var baseType = givenType.BaseType;
-
-            if (baseType == null)
-            {
-                specGenericType = null;
-                return false;
-            }
-
-            return IsAssignableToGenericType(baseType, genericType, out specGenericType);
+            specGenericType = givenType.TryFindGenericType(genericType);
+            return specGenericType != null;
         }
     }
 }

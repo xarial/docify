@@ -13,9 +13,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Xarial.XToolkit.Reflection;
 
 namespace Xarial.Docify.Base.Data
 {
+    /// <summary>
+    /// Provides extension methods for <see cref="IMetadata"/>
+    /// </summary>
     public static class MetadataExtension
     {
         private const string INHERIT_LIST_SYMBOL = "$";
@@ -36,16 +40,25 @@ namespace Xarial.Docify.Base.Data
             }
         }
 
+        /// <summary>
+        /// Deserializes metadata to object
+        /// </summary>
+        /// <typeparam name="T">Type of the object</typeparam>
+        /// <param name="data">Metadatda</param>
+        /// <returns>Deserialized object</returns>
         public static T ToObject<T>(IDictionary<string, object> data)
         {
             return (T)ToObject(data, typeof(T));
         }
 
+        /// <inheritdoc cref="ToObject(IDictionary{string, object}, Type)"/>
         public static T ToObject<T>(this IMetadata data)
         {
             return (T)ToObject(data, typeof(T));
         }
 
+        /// <inheritdoc cref="ToObject(IDictionary{string, object}, Type)"/>
+        /// <param name="type">Type of the object</param>
         public static object ToObject(IDictionary<string, object> data, Type type)
         {
             //TODO: consider removing the double-serialization via JSON and deserialize directly from dictionary
@@ -54,6 +67,13 @@ namespace Xarial.Docify.Base.Data
             return res;
         }
 
+        /// <summary>
+        /// Merges 2 metadatas
+        /// </summary>
+        /// <typeparam name="T">Type of the source metadata</typeparam>
+        /// <param name="thisParams">Source parameter</param>
+        /// <param name="baseParams">Base parameters. Source parameters will override base parameters where exist</param>
+        /// <returns>New merged metadata</returns>
         public static T Merge<T>(this T thisParams,
             IDictionary<string, object> baseParams)
             where T : IMetadata
@@ -109,6 +129,13 @@ namespace Xarial.Docify.Base.Data
             return val;
         }
 
+        /// <summary>
+        /// Gets the value from the metadata or default if nt exist
+        /// </summary>
+        /// <typeparam name="T">Type of the value</typeparam>
+        /// <param name="data">Metadata</param>
+        /// <param name="name">Name of parameter</param>
+        /// <returns>Parameter value</returns>
         public static T GetParameterOrDefault<T>(this IMetadata data, string name)
         {
             T val;
@@ -116,6 +143,10 @@ namespace Xarial.Docify.Base.Data
             return val;
         }
 
+        /// <summary>
+        /// Cuts the parameter from the metadata
+        /// </summary>
+        /// <inheritdoc cref="GetParameterOrDefault{T}(IMetadata, string)"/>
         public static T GetRemoveParameterOrDefault<T>(this IMetadata data, string name)
         {
             T val;
@@ -128,6 +159,12 @@ namespace Xarial.Docify.Base.Data
             return val;
         }
 
+        /// <summary>
+        /// Attempts to get parameter from the metadata
+        /// </summary>
+        /// <inheritdoc cref="GetParameterOrDefault{T}(IMetadata, string)"/>
+        /// <param name="val">Parameter value</param>
+        /// <returns>True if extracting of parameter is successfull, False if not</returns>
         public static bool TryGetParameter<T>(IDictionary<string, object> data, string name, out T val)
         {
             object dynVal;
@@ -170,35 +207,10 @@ namespace Xarial.Docify.Base.Data
             }
         }
 
-        //duplicates the function in Core, might need to put this in xToolkit and use from there
         private static bool IsAssignableToGenericType(Type givenType, Type genericType, out Type specGenericType)
         {
-            var interfaceTypes = givenType.GetInterfaces();
-
-            foreach (var it in interfaceTypes)
-            {
-                if (it.IsGenericType && it.GetGenericTypeDefinition() == genericType)
-                {
-                    specGenericType = it;
-                    return true;
-                }
-            }
-
-            if (givenType.IsGenericType && givenType.GetGenericTypeDefinition() == genericType)
-            {
-                specGenericType = givenType;
-                return true;
-            }
-
-            var baseType = givenType.BaseType;
-
-            if (baseType == null)
-            {
-                specGenericType = null;
-                return false;
-            }
-
-            return IsAssignableToGenericType(baseType, genericType, out specGenericType);
+            specGenericType = givenType.TryFindGenericType(genericType);
+            return specGenericType != null;
         }
     }
 }

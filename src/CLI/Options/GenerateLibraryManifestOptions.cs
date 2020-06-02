@@ -1,4 +1,11 @@
-﻿using CommandLine;
+﻿//*********************************************************************
+//Docify
+//Copyright(C) 2020 Xarial Pty Limited
+//Product URL: https://docify.net
+//License: https://docify.net/license/
+//*********************************************************************
+
+using CommandLine;
 using System;
 using System.Collections.Generic;
 using System.Text;

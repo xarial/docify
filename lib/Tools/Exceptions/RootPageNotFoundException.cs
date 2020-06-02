@@ -6,10 +6,11 @@
 //*********************************************************************
 
 using System;
+using Xarial.Docify.Base;
 
 namespace Xarial.Docify.Lib.Tools.Exceptions
 {
-    public class RootPageNotFoundException : Exception
+    public class RootPageNotFoundException : Exception, IUserMessageException
     {
         public RootPageNotFoundException(string url)
             : base($"Specified root page '{url}' is not found")

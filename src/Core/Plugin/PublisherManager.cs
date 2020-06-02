@@ -34,25 +34,24 @@ namespace Xarial.Docify.Core.Plugin
             m_Ext.RequestPostPublish += OnRequestPostPublish;
         }
 
-        private async Task<PrePublishResult> OnRequestPrePublishFile(ILocation outLoc, IFile file)
+        private async Task OnRequestPrePublishFile(ILocation outLoc, PrePublishFileArgs args)
         {
-            var curRes = new PrePublishResult()
-            {
-                File = file,
-                SkipFile = false
-            };
-
             if (PrePublishFile != null)
             {
                 foreach (PrePublishFileDelegate del in PrePublishFile.GetInvocationList())
                 {
-                    var thisRes = await del.Invoke(outLoc, curRes.File);
-                    curRes.File = thisRes.File;
-                    curRes.SkipFile |= thisRes.SkipFile;
+                    var thisArg = new PrePublishFileArgs()
+                    {
+                        File = args.File,
+                        SkipFile = false
+                    };
+                    
+                    await del.Invoke(outLoc, thisArg);
+
+                    args.File = thisArg.File;
+                    args.SkipFile |= thisArg.SkipFile;
                 }
             }
-
-            return curRes;
         }
 
         private async Task OnRequestPostPublish(ILocation loc)

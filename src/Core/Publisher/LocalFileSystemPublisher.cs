@@ -11,6 +11,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Plugin.Extensions;
@@ -63,13 +64,17 @@ namespace Xarial.Docify.Core.Publisher
 
                 var outLoc = Location.FromPath(outFilePath);
 
-                IFile outFile = new Data.File(outLoc, file.Content, file.Id);
-
-                var res = await m_Ext.PrePublishFile(loc, outFile);
-
-                if (!res.SkipFile)
+                var args = new PrePublishFileArgs()
                 {
-                    await WriteFile(res.File);
+                    File = new Data.File(outLoc, file.Content, file.Id),
+                    SkipFile = false
+                };
+
+                await m_Ext.PrePublishFile(loc, args);
+
+                if (!args.SkipFile)
+                {
+                    await WriteFile(args.File);
                 }
             }
 

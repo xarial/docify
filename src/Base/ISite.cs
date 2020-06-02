@@ -10,12 +10,34 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base
 {
+    /// <summary>
+    /// Represents the site of this job
+    /// </summary>
     public interface ISite
     {
+        /// <summary>
+        /// Site host url
+        /// </summary>
         string BaseUrl { get; }
+
+        /// <summary>
+        /// Main page of the site
+        /// </summary>
         IPage MainPage { get; }
+
+        /// <summary>
+        /// Available site layouts
+        /// </summary>
         List<ITemplate> Layouts { get; }
+
+        /// <summary>
+        /// Available site includes
+        /// </summary>
         List<ITemplate> Includes { get; }
+
+        /// <summary>
+        /// Configuration of the site
+        /// </summary>
         IConfiguration Configuration { get; }
     }
 }

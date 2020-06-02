@@ -123,17 +123,16 @@ namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
             html.Append(cont);
         }
 
-        private Task<string> OnWritePageContent(string content, IMetadata data, string url)
+        private Task OnWritePageContent(StringBuilder html, IMetadata data, string url)
         {
             if (!m_Settings.EmbedStyle)
             {
-                if (!string.IsNullOrEmpty(content))
+                if (html.Length > 0)
                 {
                     try
                     {
-                        var writer = new HtmlHeadWriter(content);
+                        var writer = new HtmlHeadWriter(html);
                         writer.AddStyleSheets(CSS_FILE_PATH);
-                        content = writer.Content;
                     }
                     catch (Exception ex)
                     {
@@ -142,11 +141,11 @@ namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
                 }
                 else
                 {
-                    return Task.FromResult(content);
+                    return Task.FromResult(html);
                 }
             }
 
-            return Task.FromResult(content);
+            return Task.FromResult(html);
         }
 
         private CodeColorizerBase Formatter

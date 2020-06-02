@@ -265,28 +265,24 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
             }
         }
 
-        private Task<PrePublishResult> OnPrePublishFile(ILocation outLoc, IFile file)
+        private Task OnPrePublishFile(ILocation outLoc, PrePublishFileArgs args)
         {
-            var res = new PrePublishResult()
-            {
-                File = file,
-                SkipFile = m_Settings.ExcludeSnippets
-                    && m_SnippetFileIds.Contains(file.Id)
-            };
+            args.SkipFile = m_Settings.ExcludeSnippets
+                && m_SnippetFileIds.Contains(args.File.Id);
 
-            return Task.FromResult(res);
+            return Task.CompletedTask;
         }
 
-        private Task<string> OnWritePageContent(string content, IMetadata data, string url)
+        private Task OnWritePageContent(StringBuilder html, IMetadata data, string url)
         {
-            if (!string.IsNullOrEmpty(content))
+            if (html.Length > 0)
             {
                 try
                 {
-                    var writer = new HtmlHeadWriter(content);
+                    var writer = new HtmlHeadWriter(html);
                     writer.AddStyleSheets(CSS_FILE_PATH);
                     writer.AddScripts(JS_FILE_PATH);
-                    return Task.FromResult(writer.Content);
+                    return Task.CompletedTask;
                 }
                 catch (Exception ex)
                 {
@@ -295,7 +291,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
             }
             else
             {
-                return Task.FromResult(content);
+                return Task.CompletedTask;
             }
         }
     }

@@ -7,8 +7,14 @@
 
 namespace Xarial.Docify.Base.Data
 {
+    /// <summary>
+    /// Template used for <see cref="ISheet"/>
+    /// </summary>
     public interface ITemplate : ISheet
     {
+        /// <summary>
+        /// Name of the template
+        /// </summary>
         string Name { get; }
     }
 }

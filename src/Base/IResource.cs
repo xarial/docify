@@ -7,8 +7,14 @@
 
 namespace Xarial.Docify.Base
 {
+    /// <summary>
+    /// Represents a resource element
+    /// </summary>
     public interface IResource
     {
+        /// <summary>
+        /// Id of the resource
+        /// </summary>
         string Id { get; }
     }
 }

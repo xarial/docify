@@ -12,7 +12,7 @@ namespace Xarial.Docify.Core.Logger
 {
     public class ConsoleLogger : ILogger
     {
-        public void Log(string msg) => WriteLine(msg);
+        private void Log(string msg) => WriteLine(msg);
         public void LogError(string msg) => WriteLine(msg, ConsoleColor.Red);
         public void LogInformation(string msg) => WriteLine(msg, ConsoleColor.Green);
         public void LogWarning(string msg) => WriteLine(msg, ConsoleColor.Yellow);

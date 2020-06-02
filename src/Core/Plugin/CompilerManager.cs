@@ -51,17 +51,15 @@ namespace Xarial.Docify.Core.Plugin
             m_Ext.RequestPostCompileFile += OnRequestPostCompileFile;
         }
 
-        private async Task<IFile> OnRequestPostCompileFile(IFile file)
+        private async Task OnRequestPostCompileFile(PostCompileFileArgs args)
         {
             if (PostCompileFile != null)
             {
                 foreach (PostCompileFileDelegate del in PostCompileFile.GetInvocationList())
                 {
-                    file = await del.Invoke(file);
+                    await del.Invoke(args);
                 }
             }
-
-            return file;
         }
 
         private async Task OnRequestPostCompile()
@@ -86,19 +84,17 @@ namespace Xarial.Docify.Core.Plugin
             }
         }
 
-        private async Task<string> OnRequestWritePageContent(string content, IMetadata data, string url)
+        private async Task OnRequestWritePageContent(StringBuilder html, IMetadata data, string url)
         {
-            var res = content;
+            var res = html;
 
             if (WritePageContent != null)
             {
                 foreach (WritePageContentDelegate del in WritePageContent.GetInvocationList())
                 {
-                    res = await del.Invoke(res, data, url);
+                    await del.Invoke(res, data, url);
                 }
             }
-
-            return res;
         }
 
         private void OnRequestRenderUrl(StringBuilder html)

@@ -15,6 +15,9 @@ using Xarial.Docify.Lib.Tools.Exceptions;
 
 namespace Xarial.Docify.Lib.Tools
 {
+    /// <summary>
+    /// Helper classes for navigation menu composition
+    /// </summary>
     public static class NavigationMenuHelper
     {
         private const string ROOT_PAGE_ATT = "root-page";
@@ -76,6 +79,13 @@ namespace Xarial.Docify.Lib.Tools
             }
         }
 
+        /// <summary>
+        /// Build the menu based on predefined parameter
+        /// </summary>
+        /// <param name="menuOptName">Name of the menu parameter</param>
+        /// <param name="site">Site</param>
+        /// <param name="data">Metadata or configuration</param>
+        /// <returns>Predefined menu</returns>
         public static IEnumerable<IContextPage> BuildPredefinedMenu(string menuOptName, IContextSite site, IContextMetadata data)
         {
             List<object> menu;
@@ -93,6 +103,13 @@ namespace Xarial.Docify.Lib.Tools
             }
         }
 
+        /// <summary>
+        /// Creates new menu page
+        /// </summary>
+        /// <param name="srcPage">Source page</param>
+        /// <param name="data">Page data</param>
+        /// <param name="title">Page title</param>
+        /// <returns>Menu page</returns>
         public static MenuPage BuildPage(IContextPage srcPage, IContextMetadata data, string title)
         {
             var page = CreateMenuPage(null, data, title);
@@ -101,6 +118,12 @@ namespace Xarial.Docify.Lib.Tools
             return page;
         }
 
+        /// <summary>
+        /// Finds the root page from this data
+        /// </summary>
+        /// <param name="model">Context model</param>
+        /// <returns>Root page</returns>
+        /// <remarks>Menu's root page can be defined with root-page attribute specifying the url of the root page</remarks>
         public static IContextPage GetRootPage(IContextModel model)
         {
             var rootPageUrl = model.Data.GetOrDefault<string>(ROOT_PAGE_ATT);

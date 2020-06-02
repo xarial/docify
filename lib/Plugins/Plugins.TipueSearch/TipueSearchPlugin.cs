@@ -9,6 +9,7 @@ using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
@@ -88,14 +89,14 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch
             return Task.CompletedTask;
         }
 
-        private Task<string> OnWritePageContent(string content, IMetadata data, string url)
+        private Task OnWritePageContent(StringBuilder html, IMetadata data, string url)
         {
             if ((!data.ContainsKey(SITEMAP_PARAM) || data.GetParameterOrDefault<bool>(SITEMAP_PARAM))
                 && (!data.ContainsKey(SEARCH_PARAM) || data.GetParameterOrDefault<bool>(SEARCH_PARAM)))
             {
                 try
                 {
-                    var text = HtmlToPlainText(content, m_Setts.PageContentNode, out string title);
+                    var text = HtmlToPlainText(html.ToString(), m_Setts.PageContentNode, out string title);
 
                     m_SearchIndex.Add(new PageSearchData()
                     {
@@ -110,7 +111,7 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch
                 }
             }
 
-            return Task.FromResult(content);
+            return Task.CompletedTask;
         }
 
         private async IAsyncEnumerable<IFile> OnPostAddPublishFiles(ILocation outLoc)

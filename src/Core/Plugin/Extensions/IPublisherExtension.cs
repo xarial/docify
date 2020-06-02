@@ -16,7 +16,7 @@ namespace Xarial.Docify.Core.Plugin.Extensions
     public interface IPublisherExtension
     {
         Task PostPublish(ILocation loc);
-        Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file);
+        Task PrePublishFile(ILocation outLoc, PrePublishFileArgs args);
         IAsyncEnumerable<IFile> PostAddPublishFiles(ILocation outLoc);
     }
 
@@ -38,19 +38,15 @@ namespace Xarial.Docify.Core.Plugin.Extensions
             }
         }
 
-        public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
+        public Task PrePublishFile(ILocation outLoc, PrePublishFileArgs args)
         {
             if (RequestPrePublishFile != null)
             {
-                return RequestPrePublishFile.Invoke(outLoc, file);
+                return RequestPrePublishFile.Invoke(outLoc, args);
             }
             else
             {
-                return Task.FromResult(new PrePublishResult()
-                {
-                    File = file,
-                    SkipFile = false
-                });
+                return Task.CompletedTask;
             }
         }
 

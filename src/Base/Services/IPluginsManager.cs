@@ -11,8 +11,15 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Services
 {
+    /// <summary>
+    /// Service which loads and manages plugins
+    /// </summary>
     public interface IPluginsManager
     {
+        /// <summary>
+        /// Loads plugins from the input files
+        /// </summary>
+        /// <param name="files">Plugin files</param>
         Task LoadPlugins(IAsyncEnumerable<IFile> files);
     }
 }

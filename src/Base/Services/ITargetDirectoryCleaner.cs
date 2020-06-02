@@ -8,18 +8,19 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Xarial.Docify.Base
+namespace Xarial.Docify.Base.Services
 {
     /// <summary>
-    /// Error with user friendly description
+    /// Service to cleanup the output directory for <see cref="IPublisher"/> service
     /// </summary>
-    /// <remarks>Use this interface in custom <see cref="Exception"/> to indicate that it should be displayed to the user</remarks>
-    public interface IUserMessageException
+    public interface ITargetDirectoryCleaner
     {
         /// <summary>
-        /// User friendly message for the error
+        /// Clear the output directory
         /// </summary>
-        string Message { get; }
+        /// <param name="outDir">Location of the otput directory</param>
+        Task ClearDirectory(ILocation outDir);
     }
 }

@@ -19,6 +19,8 @@ namespace Xarial.Docify.Base
         public const string URL_SEP = "/";
         public const string ID_SEP = "::";
 
+        public const string URL_PROTOCOL_REGEX = "^(http|https):/";
+
         public const string NEGATIVE_FILTER = "|";
         public const string ANY_FILTER = "*";
 
@@ -55,7 +57,8 @@ namespace Xarial.Docify.Base
                 }
             }
 
-            if (string.IsNullOrEmpty(baseUrl))
+            if (string.IsNullOrEmpty(baseUrl) && 
+                (loc.GetRoot() == null || !Regex.IsMatch(loc.GetRoot(), URL_PROTOCOL_REGEX)))
             {
                 url = "/" + url.TrimStart('/');
             }

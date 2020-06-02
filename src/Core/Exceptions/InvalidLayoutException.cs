@@ -9,7 +9,7 @@ using System;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class InvalidLayoutException : Exception
+    public class InvalidLayoutException : UserMessageException
     {
         public InvalidLayoutException(string layoutName, Exception inner)
             : base($"Invalid layout '{layoutName}'", inner)

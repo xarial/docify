@@ -15,6 +15,7 @@ using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Data;
 using System.Linq;
 using Xarial.Docify.Core.Helpers;
+using Xarial.Docify.Core.Exceptions;
 
 namespace Xarial.Docify.Core.Loader
 {

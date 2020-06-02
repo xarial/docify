@@ -52,7 +52,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
         {
             if (!path.IsFile())
             {
-                throw new Exception("Location is not a file");
+                throw new PluginUserMessageException("Location is not a file");
             }
 
             var fileName = path.FileName;

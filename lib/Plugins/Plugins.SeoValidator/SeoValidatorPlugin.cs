@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
+using Xarial.Docify.Lib.Plugins.Common.Exceptions;
 using Xarial.Docify.Lib.Plugins.Common.Helpers;
 
 namespace Xarial.Docify.Lib.Plugins.SeoValidator
@@ -71,7 +72,7 @@ namespace Xarial.Docify.Lib.Plugins.SeoValidator
                         }
                         else
                         {
-                            throw new Exception(error, ex);
+                            throw new PluginUserMessageException(error, ex);
                         }
                     }
                 }

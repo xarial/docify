@@ -12,6 +12,7 @@ namespace Xarial.Docify.Base.Services
 {
     public interface IFileLoader
     {
+        bool Exists(ILocation location);
         IAsyncEnumerable<IFile> LoadFolder(ILocation location, string[] filters);
     }
 }

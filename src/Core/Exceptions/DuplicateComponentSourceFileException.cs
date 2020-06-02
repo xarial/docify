@@ -9,7 +9,7 @@ using System;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class DuplicateComponentSourceFileException : Exception
+    public class DuplicateComponentSourceFileException : UserMessageException
     {
         public DuplicateComponentSourceFileException(string id)
             : base($"Specified file '{id}' component already present in the source files")

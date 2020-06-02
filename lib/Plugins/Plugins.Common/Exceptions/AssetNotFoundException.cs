@@ -10,7 +10,7 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Lib.Plugins.Common.Exceptions
 {
-    public class AssetNotFoundException : Exception
+    public class AssetNotFoundException : PluginUserMessageException
     {
         public AssetNotFoundException(IAssetsFolder dir, string path)
             : base($"Failed to find the asset from path: '{path}' in '{dir.Name}'")

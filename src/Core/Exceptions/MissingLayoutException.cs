@@ -9,7 +9,7 @@ using System;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class MissingLayoutException : Exception
+    public class MissingLayoutException : UserMessageException
     {
         public MissingLayoutException(string layoutName)
             : base($"Layout cannot be found: {layoutName}")

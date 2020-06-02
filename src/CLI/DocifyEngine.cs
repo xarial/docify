@@ -6,6 +6,9 @@
 //*********************************************************************
 
 using Autofac;
+using Autofac.Core;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,15 +16,20 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.CLI.Properties;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
 using Xarial.Docify.Core.Composer;
+using Xarial.Docify.Core.Data;
+using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Loader;
 using Xarial.Docify.Core.Logger;
 using Xarial.Docify.Core.Plugin;
 using Xarial.Docify.Core.Plugin.Extensions;
 using Xarial.Docify.Core.Publisher;
+using Xarial.Docify.Core.Tools;
+using Xarial.XToolkit.Services.UserSettings;
 
 namespace Xarial.Docify.CLI
 {
@@ -38,9 +46,9 @@ namespace Xarial.Docify.CLI
         private readonly string m_SiteUrl;
         private readonly ILocation[] m_SrcDirs;
         private readonly ILocation m_OutDir;
-        private readonly ILocation m_LibLoc;
+        private readonly string[] m_Libs;
 
-        public DocifyEngine(string[] srcDirs, string outDir, string libPath, string siteUrl, string env)
+        public DocifyEngine(string[] srcDirs, string outDir, string[] libs, string siteUrl, string env)
         {
             var builder = new ContainerBuilder();
 
@@ -48,12 +56,7 @@ namespace Xarial.Docify.CLI
             m_SrcDirs = srcDirs.Select(s => Location.FromPath(s)).ToArray();
             m_OutDir = Location.FromPath(outDir);
 
-            if (!Path.IsPathRooted(libPath))
-            {
-                libPath = Path.Combine(Path.GetDirectoryName(typeof(DocifyEngine).Assembly.Location), libPath);
-            }
-
-            m_LibLoc = Location.FromPath(libPath);
+            m_Libs = libs;
 
             RegisterDependencies(builder, env);
 
@@ -85,7 +88,12 @@ namespace Xarial.Docify.CLI
         {
             builder.RegisterType<LibraryLoader>()
                 .As<ILibraryLoader>()
-                .WithParameter(new TypedParameter(typeof(ILocation), m_LibLoc));
+                .WithParameter(new ResolvedParameter(
+                       (pi, ctx) => pi.ParameterType == typeof(ILibraryLoader[]),
+                       (pi, ctx) => ResolveLibraryLoaders(ctx).ToArray()));
+
+            builder.RegisterType<FolderLibraryLoader>();
+            builder.RegisterType<SecureLibraryLoader>();
 
             builder.RegisterType<BaseCompilerConfig>()
                 .UsingConstructor(typeof(IConfiguration));
@@ -161,10 +169,93 @@ namespace Xarial.Docify.CLI
             builder.RegisterType<DocifyApplication>().As<IDocifyApplication>();
         }
 
-        //private void LoadPlugins()
-        //{
-        //    var plugMgr = m_Container.Resolve<IPluginsManager>();
-        //    plugMgr.LoadPlugins();
-        //}
+        private IEnumerable<ILibraryLoader> ResolveLibraryLoaders(IComponentContext ctx)
+        {
+            if (m_Libs?.Any() == true)
+            {
+                foreach (var lib in m_Libs)
+                {
+                    var libData = lib.Split("|");
+
+                    var libPath = libData[0];
+
+                    if (libPath == "*")
+                    {
+                        libPath = Location.Library.DefaultLibraryManifestFilePath.ToPath();
+
+                        ILibraryLoader standardLib;
+
+                        try
+                        {
+                            standardLib = ResolveSecureLibrary(ctx, libPath, Resources.standard_library_public_key);
+                        }
+                        catch (FileNotFoundException ex) 
+                        {
+                            throw new UserMessageException("Standard library is not installed. Use the library --install command to install the library", ex);
+                        }
+
+                        yield return standardLib;
+                    }
+                    else
+                    {
+                        if (!Path.IsPathRooted(libPath))
+                        {
+                            libPath = Path.Combine(Path.GetDirectoryName(typeof(DocifyEngine).Assembly.Location), libPath);
+                        }
+
+                        var libLoc = Location.FromPath(libPath);
+
+                        if (!libLoc.IsFile())
+                        {
+                            if (!Directory.Exists(libPath))
+                            {
+                                throw new UserMessageException($"Specified library folder is not found: {libPath}");
+                            }
+
+                            yield return ctx.Resolve<FolderLibraryLoader>(new TypedParameter(typeof(ILocation), libLoc));
+                        }
+                        else
+                        {
+                            if (libData.Length > 1)
+                            {
+                                var publicKeyXmlFilePath = libData[1];
+
+                                if (!System.IO.File.Exists(publicKeyXmlFilePath))
+                                {
+                                    throw new UserMessageException($"Cannot find the public key XML file at '{publicKeyXmlFilePath}'");
+                                }
+
+                                var publicKeyXml = System.IO.File.ReadAllText(publicKeyXmlFilePath);
+
+                                yield return ResolveSecureLibrary(ctx, libPath, publicKeyXml);
+                            }
+                            else
+                            {
+                                throw new UserMessageException("When specifying path to the library manifest file, the path to public key XML must be specified as well by separating path with pipe | symbol");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private SecureLibraryLoader ResolveSecureLibrary(IComponentContext ctx, string manifestPath, string publicKeyXml)
+        {
+            if (!System.IO.File.Exists(manifestPath))
+            {
+                throw new UserMessageException($"Specified library manifest file is not found: {manifestPath}");
+            }
+
+            var manifest = new UserSettingsService().ReadSettings<SecureLibraryManifest>(
+                manifestPath, new BaseValueSerializer<ILocation>(null, x => Location.FromString(x)));
+
+            ILocation libLoc = Location.FromString(manifestPath);
+            libLoc = libLoc.Copy("", libLoc.Path);
+
+            return ctx.Resolve<SecureLibraryLoader>(
+                   new TypedParameter(typeof(ILocation), libLoc),
+                   new TypedParameter(typeof(SecureLibraryManifest), manifest),
+                   new TypedParameter(typeof(string), publicKeyXml));
+        }
     }
 }

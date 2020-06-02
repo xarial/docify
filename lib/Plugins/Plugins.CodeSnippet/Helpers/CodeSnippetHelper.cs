@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Xarial.Docify.Lib.Plugins.Common.Exceptions;
 
 namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
 {
@@ -244,7 +245,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
 
             if (isRecordingRegion)
             {
-                throw new Exception("Region is not closed");
+                throw new PluginUserMessageException("Region is not closed");
             }
 
             if (!inner)
@@ -256,7 +257,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers
 
             if (missingRegs.Any())
             {
-                throw new Exception($"Missing regions: {string.Join(',', missingRegs)}");
+                throw new PluginUserMessageException($"Missing regions: {string.Join(',', missingRegs)}");
             }
 
             if (snippet.Info == SnippetLocation_e.Full)

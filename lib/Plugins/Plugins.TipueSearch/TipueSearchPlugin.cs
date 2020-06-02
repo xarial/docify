@@ -15,6 +15,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Lib.Plugins.Common.Data;
+using Xarial.Docify.Lib.Plugins.Common.Exceptions;
 using Xarial.Docify.Lib.Plugins.Common.Helpers;
 using Xarial.Docify.Lib.Plugins.TipueSearch.Properties;
 
@@ -105,7 +106,7 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"Failed to index page for search at '{url}'", ex);
+                    throw new PluginUserMessageException($"Failed to index page for search at '{url}'", ex);
                 }
             }
 
@@ -144,7 +145,7 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch
 
                 if (mainNode == null)
                 {
-                    throw new Exception($"Failed to find '{node}'");
+                    throw new PluginUserMessageException($"Failed to find '{node}'");
                 }
             }
 

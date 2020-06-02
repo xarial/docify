@@ -18,8 +18,7 @@ namespace Xarial.Docify.Core.Loader
     public class ProjectLoader : IProjectLoader
     {
         private const string IGNORE_FILE_PARAM_NAME = "ignore";
-        private const string PLUGINS_FOLDER = "_plugins";
-
+        
         private readonly IFileLoader m_FileLoader;
         private readonly ILibraryLoader m_LibraryLoader;
         private readonly IConfiguration m_Config;
@@ -105,7 +104,7 @@ namespace Xarial.Docify.Core.Loader
         private string GetPluginsFolderFilter(ILocation baseLoc)
         {
             return baseLoc.ToId() + LocationExtension.ID_SEP
-                    + PLUGINS_FOLDER + LocationExtension.ID_SEP + LocationExtension.ANY_FILTER;
+                    + Location.Library.PluginsFolderName + LocationExtension.ID_SEP + LocationExtension.ANY_FILTER;
         }
 
         private async IAsyncEnumerable<IFile> LoadPluginFiles(ILocation[] locations, List<string> resFileIds)

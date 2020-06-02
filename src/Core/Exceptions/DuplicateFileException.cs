@@ -9,7 +9,7 @@ using System;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class DuplicateFileException : Exception
+    public class DuplicateFileException : UserMessageException
     {
         public DuplicateFileException(string loc, string relPath)
             : base($"Failed to load '{relPath}' from '{loc}' as this reletive path was already loaded from different location")

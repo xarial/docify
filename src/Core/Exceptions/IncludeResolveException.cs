@@ -9,7 +9,7 @@ using System;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class IncludeResolveException : Exception
+    public class IncludeResolveException : UserMessageException
     {
         public IncludeResolveException(string name, string url, Exception inner)
             : base($"Failed to resolve include '{name}' in '{url}'", inner)

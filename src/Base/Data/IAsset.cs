@@ -7,8 +7,15 @@
 
 namespace Xarial.Docify.Base.Data
 {
+    /// <summary>
+    /// Represents an asset in the site
+    /// </summary>
+    /// <remarks>This is a file which contains data, but not considered as an html page (e.g. JavaScript, Stylesheet, image)</remarks>
     public interface IAsset : IContent, IResource
     {
+        /// <summary>
+        /// Name of the asset file
+        /// </summary>
         string FileName { get; }
     }
 }

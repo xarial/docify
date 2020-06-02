@@ -7,8 +7,14 @@
 
 namespace Xarial.Docify.Base.Data
 {
+    /// <summary>
+    /// Entity representing the file in the environment
+    /// </summary>
     public interface IFile : IContent, IResource
     {
+        /// <summary>
+        /// Location of the file
+        /// </summary>
         ILocation Location { get; }
     }
 }

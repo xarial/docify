@@ -7,8 +7,14 @@
 
 namespace Xarial.Docify.Base.Data
 {
+    /// <summary>
+    /// Entity which represents the content
+    /// </summary>
     public interface IContent
     {
+        /// <summary>
+        /// Data buffer
+        /// </summary>
         byte[] Content { get; }
     }
 }

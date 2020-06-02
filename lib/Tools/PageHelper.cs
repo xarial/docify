@@ -12,11 +12,19 @@ using Xarial.Docify.Base.Context;
 
 namespace Xarial.Docify.Lib.Tools
 {
+    /// <summary>
+    /// Provides helper methods for the page
+    /// </summary>
     public static class PageHelper
     {
         public const string TITLE_ATT = "title-attribute";
         private const string DEFAULT_TITLE_ATT = "title";
 
+        /// <summary>
+        /// Gets all pages from all level
+        /// </summary>
+        /// <param name="page">This page</param>
+        /// <returns>All pages</returns>
         public static IEnumerable<IContextPage> GetAllPages(IContextPage page)
         {
             if (page.SubPages != null)
@@ -33,6 +41,12 @@ namespace Xarial.Docify.Lib.Tools
             }
         }
 
+        /// <summary>
+        /// Extracts the title from this page
+        /// </summary>
+        /// <param name="page">This page</param>
+        /// <param name="data">Page metadata</param>
+        /// <returns>Title</returns>
         public static string GetTitle(IContextPage page, IContextMetadata data)
         {
             var title = page.Data.GetOrDefault<string>(DEFAULT_TITLE_ATT);
@@ -48,6 +62,9 @@ namespace Xarial.Docify.Lib.Tools
         /// <summary>
         /// Returns the caption (short title) of the page
         /// </summary>
+        /// <param name="page">This page</param>
+        /// <param name="data">Page metadata</param>
+        /// <returns>Caption</returns>
         public static string GetCaption(IContextPage page, IContextMetadata data)
         {
             var caption = "";
@@ -70,6 +87,12 @@ namespace Xarial.Docify.Lib.Tools
             return caption;
         }
 
+        /// <summary>
+        /// Finds the language of this page
+        /// </summary>
+        /// <param name="site">Site</param>
+        /// <param name="page">Page to get language for</param>
+        /// <returns>Language</returns>
         public static string GetLanguage(IContextSite site, IContextPage page)
         {
             const string LANG_VAR = "lang";

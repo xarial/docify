@@ -13,6 +13,9 @@ using System.Text.RegularExpressions;
 
 namespace Xarial.Docify.Base
 {
+    /// <summary>
+    /// Extension methods for <see cref="ILocation"/>
+    /// </summary>
     public static class LocationExtension
     {
         public const string PATH_SEP = "\\";
@@ -26,16 +29,33 @@ namespace Xarial.Docify.Base
 
         private const string INDEX_PAGE_NAME = "index.html";
 
+        /// <summary>
+        /// Converts this location to path
+        /// </summary>
+        /// <param name="loc">Location</param>
+        /// <param name="root">Root directory</param>
+        /// <returns>Path</returns>
         public static string ToPath(this ILocation loc, string root = "")
         {
             return FormFullLocation(loc, root, PATH_SEP);
         }
 
+        /// <summary>
+        /// Converts this location to universal id
+        /// </summary>
+        /// <param name="loc">Location</param>
+        /// <returns>Id of the location</returns>
         public static string ToId(this ILocation loc)
         {
             return FormFullLocation(loc, "", ID_SEP);
         }
 
+        /// <summary>
+        /// Converts location to url
+        /// </summary>
+        /// <param name="loc">Location</param>
+        /// <param name="baseUrl">Base url</param>
+        /// <returns>Url</returns>
         public static string ToUrl(this ILocation loc, string baseUrl = "")
         {
             var url = FormFullLocation(loc, baseUrl, URL_SEP);
@@ -66,24 +86,58 @@ namespace Xarial.Docify.Base
             return url;
         }
 
+        /// <summary>
+        /// Checks if location is empty
+        /// </summary>
+        /// <param name="loc">Location</param>
+        /// <returns>True if location is empty, False if not</returns>
         public static bool IsEmpty(this ILocation loc) => !loc.Path.Any() && string.IsNullOrEmpty(loc.FileName);
 
+        /// <summary>
+        /// Checks if this file is a root file
+        /// </summary>
+        /// <param name="loc">Location</param>
+        /// <returns>True if files is root file, False if it is contained in the sub-folder(s)</returns>
         public static bool IsRoot(this ILocation loc) => !loc.Path.Any();
 
+        /// <summary>
+        /// Gets the root name of this location
+        /// </summary>
+        /// <param name="loc">Location</param>
+        /// <returns>Root of the location</returns>
         public static string GetRoot(this ILocation loc) => loc.Path.FirstOrDefault();
 
+        /// <summary>
+        /// Checks if this location is file or folder
+        /// </summary>
+        /// <param name="loc">Location</param>
+        /// <returns>True if location is file, False if folder</returns>
         public static bool IsFile(this ILocation loc) => !string.IsNullOrEmpty(loc.FileName);
 
+        /// <summary>
+        /// Combines location with aditional data
+        /// </summary>
+        /// <param name="loc">Location</param>
+        /// <param name="blocks">Blocks to append to location</param>
+        /// <returns>New combined location</returns>
         public static ILocation Combine(this ILocation loc, params string[] blocks)
         {
             return loc.Copy("", loc.Path.Union(blocks));
         }
 
+        /// <see cref="Combine(ILocation, string[])"/>
+        /// <param name="other">Other location to append to this location</param>
         public static ILocation Combine(this ILocation loc, ILocation other)
         {
             return loc.Copy(other.FileName, loc.Path.Union(other.Path));
         }
 
+        /// <summary>
+        /// Gets the parent folder of this location
+        /// </summary>
+        /// <param name="loc">Location</param>
+        /// <param name="level">Parent level</param>
+        /// <returns>Parent location</returns>
         public static ILocation GetParent(this ILocation loc, int level = 1)
         {
             if (loc.IsFile())
@@ -96,6 +150,13 @@ namespace Xarial.Docify.Base
             }
         }
 
+        /// <summary>
+        /// Checks if this location is within another location
+        /// </summary>
+        /// <param name="loc">Location</param>
+        /// <param name="parent">Location to check agains</param>
+        /// <param name="compType">Comparison type</param>
+        /// <returns>True if location is within the parent location, False if not</returns>
         public static bool IsInLocation(this ILocation loc, ILocation parent,
             StringComparison compType = StringComparison.CurrentCultureIgnoreCase)
         {
@@ -120,6 +181,13 @@ namespace Xarial.Docify.Base
             return false;
         }
 
+        /// <summary>
+        /// Finds the relative location
+        /// </summary>
+        /// <param name="loc">Location</param>
+        /// <param name="relativeTo">Location to get relative to</param>
+        /// <param name="compType">Comparison type</param>
+        /// <returns>Relative location</returns>
         public static ILocation GetRelative(this ILocation loc,
             ILocation relativeTo, StringComparison compType = StringComparison.CurrentCultureIgnoreCase)
         {
@@ -133,6 +201,13 @@ namespace Xarial.Docify.Base
             }
         }
 
+        /// <summary>
+        /// Compares two locations
+        /// </summary>
+        /// <param name="loc">Location</param>
+        /// <param name="other">Other location to compare</param>
+        /// <param name="compType">Comparison type</param>
+        /// <returns>True if locations are the same, False if different</returns>
         public static bool IsSame(this ILocation loc, ILocation other,
             StringComparison compType = StringComparison.CurrentCultureIgnoreCase)
         {
@@ -172,6 +247,12 @@ namespace Xarial.Docify.Base
             return true;
         }
 
+        /// <summary>
+        /// Checks if location matches the specified filters
+        /// </summary>
+        /// <param name="loc">Location</param>
+        /// <param name="filters">Filters to match</param>
+        /// <returns>True if matches, False if not</returns>
         public static bool Matches(this ILocation loc, IEnumerable<string> filters)
         {
             if (filters?.Any() != true)
@@ -216,6 +297,12 @@ namespace Xarial.Docify.Base
             return true;
         }
 
+        /// <summary>
+        /// Reverses the filter
+        /// </summary>
+        /// <param name="filter">Filter to reverse</param>
+        /// <returns>Returns negative filter for positive input and vice-versa</returns>
+        /// <remarks>Use the filters with <see cref="LocationExtension.Matches(ILocation, IEnumerable{string})"/> method</remarks>
         public static string RevertFilter(string filter)
         {
             if (IsNegative(filter))

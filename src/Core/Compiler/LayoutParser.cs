@@ -12,6 +12,7 @@ using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Base;
 using Xarial.Docify.Core.Compiler.Context;
+using Xarial.Docify.Core.Exceptions;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -30,7 +31,7 @@ namespace Xarial.Docify.Core.Compiler
         {
             if (!Regex.IsMatch(content, CONTENT_PLACEHOLDER_REGEX))
             {
-                throw new Exception("Layout doesn't doesn't contain the placeholder: {{ content }}");
+                throw new LayoutMissingContentPlaceholder();
             }
         }
 

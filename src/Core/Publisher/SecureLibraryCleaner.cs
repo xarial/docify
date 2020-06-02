@@ -41,7 +41,7 @@ namespace Xarial.Docify.Core.Publisher
                 {
                     m_Manifest = new UserSettingsService().ReadSettings<SecureLibraryManifest>(
                             textReader, new BaseValueSerializer<ILocation>(null, x => Location.FromString(x)));
-                }                
+                }
             }
         }
 

@@ -55,7 +55,7 @@ namespace Xarial.Docify.Core.Plugin
             }
             else
             {
-                throw new Exception($"Include '{includeName}' already registered with other plugin");
+                throw new UserMessageException($"Include '{includeName}' already registered with other plugin");
             }
         }
     }

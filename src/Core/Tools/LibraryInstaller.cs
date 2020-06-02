@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Data;
+using Xarial.Docify.Core.Exceptions;
 using Xarial.XToolkit.Services.UserSettings;
 using Xarial.XToolkit.Services.UserSettings.Attributes;
 
@@ -49,7 +50,7 @@ namespace Xarial.Docify.Core.Tools
 
                 if (lib == null)
                 {
-                    throw new Exception($"Specified version {libVers} of the library is not available");
+                    throw new UserMessageException($"Specified version {libVers} of the library is not available");
                 }
             }
             else 
@@ -60,7 +61,7 @@ namespace Xarial.Docify.Core.Tools
 
                 if (lib == null) 
                 {
-                    throw new Exception($"Failed to find the version of the library which is supported by {appVers} version of the application");
+                    throw new UserMessageException($"Failed to find the version of the library which is supported by {appVers} version of the application");
                 }
             }
 
@@ -76,7 +77,7 @@ namespace Xarial.Docify.Core.Tools
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed to install library", ex);
+                throw new UserMessageException($"Failed to install library", ex);
             }
         }
     }

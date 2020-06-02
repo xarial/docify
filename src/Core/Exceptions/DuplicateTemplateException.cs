@@ -9,7 +9,7 @@ using System;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class DuplicateTemplateException : Exception
+    public class DuplicateTemplateException : UserMessageException
     {
         public DuplicateTemplateException(string templateName)
             : base($"'{templateName}' has been already registered")

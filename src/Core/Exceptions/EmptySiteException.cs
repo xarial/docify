@@ -9,7 +9,7 @@ using System;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class EmptySiteException : Exception
+    public class EmptySiteException : UserMessageException
     {
         public EmptySiteException() : base("Site contains no pages")
         {

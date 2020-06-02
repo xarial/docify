@@ -9,7 +9,7 @@ using System;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class MissingIncludeException : Exception
+    public class MissingIncludeException : UserMessageException
     {
         public MissingIncludeException(string includeName)
             : base($"Include '{includeName}' cannot be resolved")

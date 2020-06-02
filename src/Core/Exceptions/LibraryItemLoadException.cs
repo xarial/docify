@@ -9,7 +9,7 @@ using System;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class LibraryItemLoadException : Exception
+    public class LibraryItemLoadException : UserMessageException
     {
         public LibraryItemLoadException(string itemName, string loc, Exception inner)
             : base($"Failed to load library item: '{itemName}' from '{loc}'", inner)

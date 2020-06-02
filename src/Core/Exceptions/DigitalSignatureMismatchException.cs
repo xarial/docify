@@ -5,7 +5,7 @@ using Xarial.Docify.Base;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class DigitalSignatureMismatchException : Exception
+    public class DigitalSignatureMismatchException : UserMessageException
     {
         public DigitalSignatureMismatchException(ILocation loc) 
             : base($"Digital signature of the '{loc.ToId()}' doesn't match the file manifest")

@@ -8,6 +8,7 @@
 using NUnit.Framework;
 using System;
 using Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers;
+using Xarial.Docify.Lib.Plugins.Common.Exceptions;
 
 namespace Plugins.Tests
 {
@@ -302,7 +303,7 @@ namespace Plugins.Tests
         [Test]
         public void OpenRegionTest()
         {
-            Assert.Throws<Exception>(() => 
+            Assert.Throws<PluginUserMessageException>(() => 
             {
                 var res = CodeSnippetHelper.Select("'---Reg1\r\nline1\r\n'---\r\n \r\n'--- Reg2\r\nline2\r\n'----\r\n'--- Reg3\r\nline3\r\n'---\r\nfree text", "vb", new CodeSelectorOptions()
                 {

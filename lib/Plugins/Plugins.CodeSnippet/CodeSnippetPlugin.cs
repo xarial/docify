@@ -81,7 +81,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
 
                     if (nextFolder == null)
                     {
-                        throw new Exception($"Failed to find the folder for snippets: '{m_Settings.SnippetsFolder}'");
+                        throw new PluginUserMessageException($"Failed to find the folder for snippets: '{m_Settings.SnippetsFolder}'");
                     }
 
                     m_SnippetsFolder = nextFolder;
@@ -103,14 +103,14 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
             if (!string.IsNullOrEmpty(snipData.FileName)
                 && snipData.Tabs?.Any() == true)
             {
-                throw new Exception("Specify either file name or tabs");
+                throw new PluginUserMessageException("Specify either file name or tabs");
             }
 
             if (snipData.FileName?.EndsWith(".*") == true)
             {
                 if (m_Settings.AutoTabs?.Any() != true)
                 {
-                    throw new Exception($"{nameof(m_Settings.AutoTabs)} setting must be set to use automatic code snippet tabs");
+                    throw new PluginUserMessageException($"{nameof(m_Settings.AutoTabs)} setting must be set to use automatic code snippet tabs");
                 }
 
                 var fileName = Path.GetFileName(snipData.FileName);
@@ -193,7 +193,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
                 {
                     if (m_SnippetsFolder == null)
                     {
-                        throw new Exception("Snippets folder is not set");
+                        throw new PluginUserMessageException("Snippets folder is not set");
                     }
 
                     fileName = fileName.TrimStart(SNIPPETS_FOLDER_PATH);

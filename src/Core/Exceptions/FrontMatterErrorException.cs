@@ -9,7 +9,7 @@ using System;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class FrontMatterErrorException : Exception
+    public class FrontMatterErrorException : UserMessageException
     {
         public FrontMatterErrorException(string msg, Exception inner = null) : base(msg, inner)
         {

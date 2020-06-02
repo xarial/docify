@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class MissingLocationException : FileNotFoundException
+    public class MissingLocationException : UserMessageException
     {
         public MissingLocationException(string loc) : base($"'{loc}' location doesn't exist")
         {

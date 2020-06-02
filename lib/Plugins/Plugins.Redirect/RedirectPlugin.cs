@@ -14,6 +14,7 @@ using Xarial.Docify.Base.Data;
 using System.Linq;
 using Xarial.Docify.Lib.Plugins.Redirect.Properties;
 using Xarial.Docify.Lib.Plugins.Common.Data;
+using Xarial.Docify.Lib.Plugins.Common.Exceptions;
 
 namespace Xarial.Docify.Lib.Plugins.Redirect
 {
@@ -71,7 +72,7 @@ namespace Xarial.Docify.Lib.Plugins.Redirect
                     }
                     else
                     {
-                        throw new Exception($"Cannot create redirect page at '{redirectUrl}' as this page already exists");
+                        throw new PluginUserMessageException($"Cannot create redirect page at '{redirectUrl}' as this page already exists");
                     }
                 }
             }

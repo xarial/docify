@@ -60,7 +60,7 @@ namespace Xarial.Docify.Core.Loader
             }
             else 
             {
-                throw new Exception($"'{itemName}' item is not present in the secure library manifest");
+                throw new UserMessageException($"'{itemName}' item is not present in the secure library manifest");
             }
         }
 

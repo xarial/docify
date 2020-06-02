@@ -22,6 +22,7 @@ using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
 using Xarial.Docify.Core.Composer;
 using Xarial.Docify.Core.Data;
+using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Loader;
 using Xarial.Docify.Core.Logger;
 using Xarial.Docify.Core.Plugin;
@@ -190,7 +191,7 @@ namespace Xarial.Docify.CLI
                         }
                         catch (FileNotFoundException ex) 
                         {
-                            throw new Exception("Standard library is not installed. Use the library --install command to install the library", ex);
+                            throw new UserMessageException("Standard library is not installed. Use the library --install command to install the library", ex);
                         }
 
                         yield return standardLib;
@@ -208,7 +209,7 @@ namespace Xarial.Docify.CLI
                         {
                             if (!Directory.Exists(libPath))
                             {
-                                throw new DirectoryNotFoundException($"Specified library folder is not found: {libPath}");
+                                throw new UserMessageException($"Specified library folder is not found: {libPath}");
                             }
 
                             yield return ctx.Resolve<FolderLibraryLoader>(new TypedParameter(typeof(ILocation), libLoc));
@@ -221,7 +222,7 @@ namespace Xarial.Docify.CLI
 
                                 if (!System.IO.File.Exists(publicKeyXmlFilePath))
                                 {
-                                    throw new FileNotFoundException($"Cannot find the public key XML file at '{publicKeyXmlFilePath}'");
+                                    throw new UserMessageException($"Cannot find the public key XML file at '{publicKeyXmlFilePath}'");
                                 }
 
                                 var publicKeyXml = System.IO.File.ReadAllText(publicKeyXmlFilePath);
@@ -230,7 +231,7 @@ namespace Xarial.Docify.CLI
                             }
                             else
                             {
-                                throw new Exception("When specifying path to the library manifest file, the path to public key XML must be specified as well by separating path with pipe | symbol");
+                                throw new UserMessageException("When specifying path to the library manifest file, the path to public key XML must be specified as well by separating path with pipe | symbol");
                             }
                         }
                     }
@@ -242,7 +243,7 @@ namespace Xarial.Docify.CLI
         {
             if (!System.IO.File.Exists(manifestPath))
             {
-                throw new FileNotFoundException($"Specified library manifest file is not found: {manifestPath}");
+                throw new UserMessageException($"Specified library manifest file is not found: {manifestPath}");
             }
 
             var manifest = new UserSettingsService().ReadSettings<SecureLibraryManifest>(

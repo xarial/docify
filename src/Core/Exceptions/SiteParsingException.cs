@@ -10,7 +10,7 @@ using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class SiteParsingException : Exception
+    public class SiteParsingException : UserMessageException
     {
         public IFile[] Files { get; }
 

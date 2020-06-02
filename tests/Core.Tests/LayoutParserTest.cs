@@ -20,6 +20,7 @@ using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Compiler.Context;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Base;
+using Xarial.Docify.Core.Exceptions;
 
 namespace Core.Tests
 {
@@ -52,7 +53,7 @@ namespace Core.Tests
             Assert.DoesNotThrow(() => m_Parser.ValidateLayout("ABC {{content}} aaa"));
             Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{ content}} AAA\r\n{{ content }}"));
             Assert.DoesNotThrow(() => m_Parser.ValidateLayout("{{content }}"));
-            Assert.Throws<Exception>(() => m_Parser.ValidateLayout("{content} Some Text"));
+            Assert.Throws<LayoutMissingContentPlaceholder>(() => m_Parser.ValidateLayout("{content} Some Text"));
         }
 
         [Test]

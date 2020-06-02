@@ -10,11 +10,13 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.CLI.Options;
 using Xarial.Docify.CLI.Properties;
 using Xarial.Docify.Core;
+using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Loader;
 using Xarial.Docify.Core.Plugin.Extensions;
 using Xarial.Docify.Core.Publisher;
@@ -25,7 +27,7 @@ namespace Xarial.Docify.CLI
 {
     internal class Program
     {
-        private const string STANDARD_LIB_URL = "http://localhost:8081/version.json";
+        private const string STANDARD_LIB_URL = "https://docify.net/library.json";
 
         private static async Task Main(string[] args)
         {
@@ -54,31 +56,75 @@ namespace Xarial.Docify.CLI
 
             if (!isError)
             {
-                DocifyEngine engine = null;
+                try
+                {
+                    DocifyEngine engine = null;
 
-                if (buildOpts != null)
-                {
-                    engine = new DocifyEngine(buildOpts.SourceDirectories.ToArray(),
-                        buildOpts.OutputDirectory, buildOpts.Library?.ToArray(), buildOpts.SiteUrl, buildOpts.Environment);
-                }
-                else if (serveOpts != null)
-                {
-                    throw new NotSupportedException("This option is not supported");
-                }
-                else if (genManOpts != null)
-                {
-                    await GenerateLibraryManifest(genManOpts);
-                }
-                else if (libOpts != null) 
-                {
-                    await InstallLibrary(libOpts);
-                }
+                    if (buildOpts != null)
+                    {
+                        engine = new DocifyEngine(buildOpts.SourceDirectories.ToArray(),
+                            buildOpts.OutputDirectory, buildOpts.Library?.ToArray(), buildOpts.SiteUrl, buildOpts.Environment);
+                    }
+                    else if (serveOpts != null)
+                    {
+                        throw new NotSupportedException("This option is not supported");
+                    }
+                    else if (genManOpts != null)
+                    {
+                        await GenerateLibraryManifest(genManOpts);
+                    }
+                    else if (libOpts != null)
+                    {
+                        await InstallLibrary(libOpts);
+                    }
 
-                if (buildOpts != null)
+                    if (buildOpts != null)
+                    {
+                        await engine.Build();
+                    }
+                }
+                catch (Exception ex) 
                 {
-                    await engine.Build();
+                    string fullLog;
+                    var err = ParseError(ex, out fullLog);
+                    System.Diagnostics.Trace.WriteLine(fullLog, "Xarial.Docify");
+
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine(err);
+                    Console.ResetColor();
                 }
             }
+        }
+
+        private static string ParseError(Exception ex, out string fullLog) 
+        {
+            var res = new StringBuilder();
+            var fullLogBuilder = new StringBuilder();
+
+            void ProcessException(Exception ex) 
+            {
+                fullLogBuilder.AppendLine(ex.Message);
+                fullLogBuilder.AppendLine(ex.StackTrace);
+
+                if (ex is IUserMessageException) 
+                {
+                    res.AppendLine(ex.Message);
+                }
+
+                if (ex.InnerException != null) 
+                {
+                    ProcessException(ex.InnerException);
+                }
+            }
+
+            if (res.Length == 0) 
+            {
+                res.Append("Generic error. Check trace log for more details");
+            }
+
+            fullLog = fullLogBuilder.ToString();
+
+            return res.ToString();
         }
 
         private static async Task GenerateLibraryManifest(GenerateLibraryManifestOptions genManOpts)
@@ -103,27 +149,41 @@ namespace Xarial.Docify.CLI
 
         private static async Task InstallLibrary(LibraryOptions opts) 
         {
+            var libInstaller = new LibraryInstaller();
+
+            var libData = await new HttpClient().GetStringAsync(STANDARD_LIB_URL);
+            var libColl = new UserSettingsService().ReadSettings<LibraryCollection>(new StringReader(libData));
+
+            var lib = libInstaller.FindLibrary(libColl, typeof(DocifyEngine).Assembly.GetName().Version, opts.Version);
+
             if (opts.CheckForUpdates)
             {
-                //TODO: check for updates
+                var manifestFilePath = Location.Library.DefaultLibraryManifestFilePath.ToPath();
+
+                if (System.IO.File.Exists(manifestFilePath))
+                {
+                    var manifest = new UserSettingsService().ReadSettings<SecureLibraryManifest>(
+                                manifestFilePath, new BaseValueSerializer<ILocation>(null, x => Location.FromString(x)));
+
+                    if (manifest.Version >= lib.Version)
+                    {
+                        Console.WriteLine($"Currently installed library '{manifest.Version}' is up-to-date");
+                        return;
+                    }
+                }
+
+                Console.WriteLine($"New version '{lib.Version}' is available");
             }
             else if (opts.Install)
             {
                 var destLoc = Location.Library.DefaultLibraryManifestFilePath;
                 destLoc = destLoc.Copy("", destLoc.Path);
 
-                var libInstaller = new LibraryInstaller();
-                
-                var libData = await new HttpClient().GetStringAsync(STANDARD_LIB_URL);
-                var libColl = new UserSettingsService().ReadSettings<LibraryCollection>(new StringReader(libData));
-
-                var lib = libInstaller.FindLibrary(libColl, typeof(DocifyEngine).Assembly.GetName().Version, opts.Version);
-                
                 await libInstaller.InstallLibrary(Location.FromUrl(lib.DownloadUrl), destLoc, 
                     new WebZipFileLoader(lib.Signature, Resources.standard_library_public_key),
                     new LocalFileSystemPublisher(new PublisherExtension(), 
                     new SecureLibraryCleaner(Location.Library.DefaultLibraryManifestFilePath.ToPath(), 
-                    Resources.standard_library_public_key)));
+                        Resources.standard_library_public_key)));
             }
         }
     }

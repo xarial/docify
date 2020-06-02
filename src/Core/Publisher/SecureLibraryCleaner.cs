@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
+using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
 using Xarial.XToolkit.Services.UserSettings;

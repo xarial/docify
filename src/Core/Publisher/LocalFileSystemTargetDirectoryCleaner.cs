@@ -8,6 +8,7 @@
 using System.IO.Abstractions;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
+using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Core.Publisher
 {

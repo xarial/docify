@@ -23,6 +23,7 @@ using Xarial.Docify.Core.Plugin.Extensions;
 using Moq;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Core.Exceptions;
+using Xarial.Docify.Base.Services;
 
 namespace Core.Tests
 {

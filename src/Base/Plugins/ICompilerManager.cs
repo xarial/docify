@@ -12,8 +12,14 @@ using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Base.Plugins
 {
+    /// <summary>
+    /// Arguments of <see cref="ICompilerManager.PostCompileFile"/> event
+    /// </summary>
     public class PostCompileFileArgs 
     {
+        /// <summary>
+        /// Post compiled file
+        /// </summary>
         public IFile File { get; set; }
     }
 
@@ -41,29 +47,26 @@ namespace Xarial.Docify.Base.Plugins
     /// <summary>
     /// Delegate for <see cref="ICompilerManager.RenderUrl"/> event
     /// </summary>
-    /// <param name="html">urrent html for the url. Overwrite the content to provide new rendered representation</param>
+    /// <param name="html">Current html for the url. Overwrite the content to provide new rendered representation</param>
     public delegate void RenderUrlDelegate(StringBuilder html);
 
     /// <summary>
     /// Delegate for <see cref="ICompilerManager.WritePageContent"/> event
     /// </summary>
-    /// <param name="content"></param>
-    /// <param name="data"></param>
-    /// <param name="url"></param>
-    /// <returns></returns>
+    /// <param name="content">Content of the page. Replace or modify of the content is allowed</param>
+    /// <param name="data">Metadata of this page</param>
+    /// <param name="url">Url of page being published</param>
     public delegate Task WritePageContentDelegate(StringBuilder content, IMetadata data, string url);
 
     /// <summary>
     /// Delegate for <see cref="ICompilerManager.PostCompileFile"/> event
     /// </summary>
-    /// <param name="file"></param>
-    /// <returns></returns>
+    /// <param name="args">Arguments for file pre-compilation</param>
     public delegate Task PostCompileFileDelegate(PostCompileFileArgs args);
 
     /// <summary>
     /// Delegate for <see cref="ICompilerManager.PostCompile"/> event
     /// </summary>
-    /// <returns></returns>
     public delegate Task PostCompileDelegate();
 
     /// <summary>

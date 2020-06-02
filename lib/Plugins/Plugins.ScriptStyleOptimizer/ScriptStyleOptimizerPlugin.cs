@@ -21,7 +21,6 @@ using Yahoo.Yui.Compressor;
 
 namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
 {
-    [Plugin("script-style-optimizer")]
     public class ScriptStyleOptimizerPlugin : IPlugin<ScriptStyleOptimizerPluginSettings>
     {
         private const string CSS_LINK_TEMPLATE = "<link rel=\"stylesheet\" type=\"text/css\" href=\"{0}\" />\r\n";

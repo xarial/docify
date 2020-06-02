@@ -22,7 +22,6 @@ using Xarial.Docify.Lib.Plugins.TipueSearch.Properties;
 
 namespace Xarial.Docify.Lib.Plugins.TipueSearch
 {
-    [Plugin("tipue-search")]
     public class TipueSearchPlugin : IPlugin<TipueSearchPluginSettings>
     {
         private const string SITEMAP_PARAM = "sitemap";

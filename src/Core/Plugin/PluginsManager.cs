@@ -18,11 +18,48 @@ using Xarial.Docify.Base.Services;
 using System.Composition.Convention;
 using System.Threading.Tasks;
 using Xarial.XToolkit.Reflection;
+using System.Diagnostics.CodeAnalysis;
+using Xarial.Docify.Core.Exceptions;
 
 namespace Xarial.Docify.Core.Plugin
 {
+    public class PluginInfo : IPluginInfo
+    {
+        public string Name { get; }
+        public IAsyncEnumerable<IFile> Files { get; }
+
+        public PluginInfo(string name, IAsyncEnumerable<IFile> files) 
+        {
+            Name = name;
+            Files = files;
+        }
+    }
+
     public class PluginsManager : IPluginsManager
     {
+        private class AssemblyComparer : IEqualityComparer<Assembly>
+        {
+            public bool Equals([AllowNull] Assembly x, [AllowNull] Assembly y)
+            {
+                if (object.ReferenceEquals(x, y)) 
+                {
+                    return true;
+                }
+
+                if (x == null || y == null) 
+                {
+                    return false;
+                }
+
+                return x.GetName() == y.GetName();
+            }
+
+            public int GetHashCode([DisallowNull] Assembly obj)
+            {
+                return 0;
+            }
+        }
+
         private const string PLUGIN_SETTINGS_TOKEN = "^";
 
         private IEnumerable<IPluginBase> m_Plugins;
@@ -40,7 +77,7 @@ namespace Xarial.Docify.Core.Plugin
             m_IsLoaded = false;
         }
 
-        public async Task LoadPlugins(IAsyncEnumerable<IFile> files)
+        public async Task LoadPlugins(IAsyncEnumerable<IPluginInfo> pluginInfos)
         {
             if (!m_IsLoaded)
             {
@@ -48,44 +85,70 @@ namespace Xarial.Docify.Core.Plugin
 
                 var cb = new ConventionBuilder();
 
+                var pluginAssemblies = new Dictionary<Assembly, string>(new AssemblyComparer());
+                var loadedPlugins = new List<string>();
+
                 cb.ForTypesMatching(t =>
                 {
                     if (typeof(IPluginBase).IsAssignableFrom(t))
                     {
-                        var id = GetPluginId(t);
-
-                        return m_Conf.Plugins.Contains(id, StringComparer.InvariantCultureIgnoreCase);
+                        if (pluginAssemblies.TryGetValue(t.Assembly, out string id))
+                        {
+                            if (!loadedPlugins.Contains(id, StringComparer.CurrentCultureIgnoreCase))
+                            {
+                                loadedPlugins.Add(id);
+                                return true;
+                            }
+                            else
+                            {
+                                throw new UserMessageException($"Plugin '{id}' contains more than one plugin");
+                            }
+                        }
                     }
 
                     return false;
                 }).Export<IPluginBase>();
 
-                var pluginAssemblies = new List<Assembly>();
-
-                await foreach (var pluginFile in files)
+                await foreach (var pluginInfo in pluginInfos)
                 {
-                    var ext = Path.GetExtension(pluginFile.Location.FileName);
-
-                    if (new string[] { ".dll", ".exe" }.Contains(ext, StringComparer.CurrentCultureIgnoreCase))
+                    await foreach (var pluginFile in pluginInfo.Files)
                     {
-                        using (var assmStream = new MemoryStream(pluginFile.Content))
+                        var ext = Path.GetExtension(pluginFile.Location.FileName);
+
+                        if (string.Equals(ext, ".dll", StringComparison.CurrentCultureIgnoreCase))
                         {
-                            assmStream.Seek(0, SeekOrigin.Begin);
-                            pluginAssemblies.Add(AssemblyLoadContext.Default.LoadFromStream(assmStream));
+                            using (var assmStream = new MemoryStream(pluginFile.Content))
+                            {
+                                assmStream.Seek(0, SeekOrigin.Begin);
+                                var assm = AssemblyLoadContext.Default.LoadFromStream(assmStream);
+
+                                if (!pluginAssemblies.ContainsKey(assm))
+                                {
+                                    pluginAssemblies.Add(assm, pluginInfo.Name);
+                                }
+                            }
                         }
                     }
                 }
 
                 var configuration = new ContainerConfiguration()
-                    .WithAssemblies(pluginAssemblies)
+                    .WithAssemblies(pluginAssemblies.Keys)
                     .WithDefaultConventions(cb);
 
                 using (var host = configuration.CreateContainer())
                 {
                     var plugins = host.GetExports<IPluginBase>();
                     m_Plugins = plugins.OrderBy(p => m_Conf.Plugins.FindIndex(
-                        x => string.Equals(x, GetPluginId(p.GetType()),
+                        x => string.Equals(x, pluginAssemblies[p.GetType().Assembly],
                         StringComparison.CurrentCultureIgnoreCase)));
+                }
+
+                var notLoadedPlugins = pluginAssemblies.Values.Distinct(
+                    StringComparer.CurrentCultureIgnoreCase).Except(loadedPlugins);
+
+                if (notLoadedPlugins.Any()) 
+                {
+                    throw new UserMessageException($"{string.Join(", ", notLoadedPlugins)} plugins were not loaded. Make sure that there is public class which implements {typeof(IPlugin).FullName} or {typeof(IPlugin<>).FullName} interface");
                 }
 
                 if (m_Plugins == null)
@@ -93,7 +156,7 @@ namespace Xarial.Docify.Core.Plugin
                     m_Plugins = Enumerable.Empty<IPluginBase>();
                 }
 
-                InitPlugins();
+                InitPlugins(pluginAssemblies);
             }
             else
             {
@@ -101,7 +164,7 @@ namespace Xarial.Docify.Core.Plugin
             }
         }
 
-        private void InitPlugins()
+        private void InitPlugins(Dictionary<Assembly, string> pluginAssemblies)
         {
             foreach (var plugin in m_Plugins)
             {
@@ -115,7 +178,7 @@ namespace Xarial.Docify.Core.Plugin
                 {
                     var settsType = pluginDeclrType.GetGenericArguments().ElementAt(0);
 
-                    var pluginId = GetPluginId(pluginSpecType);
+                    var pluginId = pluginAssemblies[pluginSpecType.Assembly];
 
                     IDictionary<string, object> settsData;
 
@@ -138,18 +201,6 @@ namespace Xarial.Docify.Core.Plugin
                     throw new NotSupportedException($"'{plugin.GetType().FullName}' is not supported");
                 }
             }
-        }
-
-        private string GetPluginId(Type pluginType)
-        {
-            var id = pluginType.GetCustomAttribute<PluginAttribute>()?.Id;
-
-            if (string.IsNullOrEmpty(id))
-            {
-                id = pluginType.FullName;
-            }
-
-            return id;
         }
 
         private bool IsAssignableToGenericType(Type givenType, Type genericType, out Type specGenericType)

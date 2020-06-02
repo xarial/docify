@@ -19,6 +19,7 @@ using Tests.Common.Mocks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
+using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Helpers;
@@ -27,7 +28,19 @@ using YamlDotNet.Serialization;
 
 namespace Core.Tests
 {
-    public class PluginMock<TSetts> : IPlugin<TSetts>
+    public class PluginInfoMock : IPluginInfo
+    {
+        public string Name { get; }
+        public IAsyncEnumerable<IFile> Files { get; }
+
+        public PluginInfoMock(string name, params IFile[] files) 
+        {
+            Name = name;
+            Files = files.ToAsyncEnumerable();
+        }
+    }
+
+    public abstract class PluginMock<TSetts> : IPlugin<TSetts>
         where TSetts : new()
     {
         public IDocifyApplication App { get; private set; }
@@ -40,7 +53,7 @@ namespace Core.Tests
         }
     }
 
-    public class PluginMock3 : IPlugin
+    public abstract class PluginMock3 : IPlugin
     {
         public IDocifyApplication App { get; private set; }
 
@@ -57,7 +70,7 @@ namespace Core.Tests
         public string[] Prp3 { get; set; }
     }
 
-    public class PluginMock1 : IPlugin
+    public abstract class PluginMock1 : IPlugin
     {
         public IDocifyApplication App { get; private set; }
 
@@ -67,7 +80,7 @@ namespace Core.Tests
         }
     }
 
-    public class PluginMock2 : IPlugin
+    public abstract class PluginMock2 : IPlugin
     {
         public IDocifyApplication App { get; private set; }
 
@@ -82,40 +95,35 @@ namespace Core.Tests
         [Test]
         public async Task InitTest() 
         {
-            var assmBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()), 
+            var assmBuilder1 = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()), 
                 AssemblyBuilderAccess.RunAndCollect);
-            var moduleBuilder = assmBuilder.DefineDynamicModule(Guid.NewGuid().ToString());
+            var moduleBuilder1 = assmBuilder1.DefineDynamicModule(Guid.NewGuid().ToString());
             
-            var typeBuilder1 = moduleBuilder.DefineType("Plugin1", TypeAttributes.Public);
+            var typeBuilder1 = moduleBuilder1.DefineType("Plugin1", TypeAttributes.Public);
             typeBuilder1.AddInterfaceImplementation(typeof(IPlugin));
             typeBuilder1.SetParent(typeof(PluginMock1));
-            typeBuilder1.CreateType();
-
-            var typeBuilder2 = moduleBuilder.DefineType("Plugin2", TypeAttributes.Public);
-            typeBuilder2.AddInterfaceImplementation(typeof(IPlugin));
-            typeBuilder2.SetParent(typeof(PluginMock2));
-            var p2 = typeBuilder2.CreateType();
-
-            var assm = moduleBuilder.Assembly;
-
-            var assmBuffer = new Lokad.ILPack.AssemblyGenerator().GenerateAssemblyBytes(assm);
+            var p1 = typeBuilder1.CreateType();
             
-            var mgr = new PluginsManager(new Configuration()
+            var assm1 = moduleBuilder1.Assembly;
+            
+            var assmBuffer1 = new Lokad.ILPack.AssemblyGenerator().GenerateAssemblyBytes(assm1);
+            
+            var mgr = new PluginsManager(new Configuration() 
             {
-                Plugins = new string[] { "plugin2" }.ToList()
+                Plugins = new List<string>() 
             }, new Mock<IDocifyApplication>().Object);
 
-            await mgr.LoadPlugins(new IFile[] 
+            await mgr.LoadPlugins(new PluginInfoMock[] 
             {
-                new FileMock(Location.FromPath("mockplugins.dll"), assmBuffer)
+                new PluginInfoMock("plg1", new FileMock(Location.FromPath("Plugin1Mock.dll"), assmBuffer1)),
             }.ToAsyncEnumerable());
 
             var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPluginBase>;
 
             Assert.AreEqual(1, res.Count());
             Assert.IsInstanceOf(typeof(IPlugin), res.First());
-            Assert.AreEqual(p2.FullName, res.First().GetType().FullName);
-            Assert.IsNotNull((res.First() as PluginMock2).App);
+            Assert.AreEqual(p1.FullName, res.First().GetType().FullName);
+            Assert.IsNotNull((res.First() as PluginMock1).App);
         }
 
         [Test]
@@ -140,11 +148,11 @@ namespace Core.Tests
                 Plugins = new string[] { "plugin1" }.ToList()
             }, new Mock<IDocifyApplication>().Object);
 
-            await mgr.LoadPlugins(new IFile[]
+            await mgr.LoadPlugins(new PluginInfoMock[]
             {
-                new FileMock(Location.FromPath("mockplugins.dll"), assmBuffer)
+                new PluginInfoMock("plugin1", new FileMock(Location.FromPath("mockplugins.dll"), assmBuffer))
             }.ToAsyncEnumerable());
-            
+                        
             var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPluginBase>;
             var plg = res.OfType<PluginMock<MockSettings1>>().FirstOrDefault();
 
@@ -165,11 +173,8 @@ namespace Core.Tests
             var moduleBuilder = assmBuilder.DefineDynamicModule(Guid.NewGuid().ToString());
 
             var typeBuilder = moduleBuilder.DefineType("Plugin1", TypeAttributes.Public);
-            typeBuilder.SetCustomAttribute(new CustomAttributeBuilder(typeof(PluginAttribute).GetConstructor(
-                new Type[] { typeof(string) }), new object[] { "plg1" }));
-
+            typeBuilder.AddInterfaceImplementation(typeof(IPlugin<MockSettings1>));
             typeBuilder.SetParent(typeof(PluginMock<MockSettings1>));
-
             typeBuilder.CreateType();
 
             var assm = moduleBuilder.Assembly;
@@ -181,11 +186,11 @@ namespace Core.Tests
 
             var mgr = new PluginsManager(conf, new Mock<IDocifyApplication>().Object);
 
-            await mgr.LoadPlugins(new IFile[]
+            await mgr.LoadPlugins(new PluginInfoMock[]
             {
-                new FileMock(Location.FromPath("mockplugins.dll"), assmBuffer)
+                new PluginInfoMock("plg1", new FileMock(Location.FromPath("mockplugins.dll"), assmBuffer))
             }.ToAsyncEnumerable());
-            
+                        
             var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPluginBase>;
             var plg = res.OfType<PluginMock<MockSettings1>>().FirstOrDefault();
 

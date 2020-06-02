@@ -19,7 +19,6 @@ using Xarial.Docify.Lib.Plugins.Common.Helpers;
 
 namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
 {
-    [Plugin("code-syntax-highlighter")]
     public class CodeSyntaxHighlighterPlugin : IPlugin<CodeSyntaxHighlighterSettings>
     {
         private CodeSyntaxHighlighterSettings m_Settings;

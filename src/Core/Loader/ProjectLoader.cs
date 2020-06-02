@@ -12,6 +12,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Exceptions;
+using Xarial.Docify.Core.Plugin;
 
 namespace Xarial.Docify.Core.Loader
 {
@@ -102,7 +103,7 @@ namespace Xarial.Docify.Core.Loader
             }
         }
         
-        private async IAsyncEnumerable<IFile> LoadPluginFiles(ILocation[] locations, List<string> resFileIds)
+        private async IAsyncEnumerable<IPluginInfo> LoadPluginFiles(ILocation[] locations, List<string> resFileIds)
         {
             foreach (var loc in locations)
             {
@@ -112,7 +113,8 @@ namespace Xarial.Docify.Core.Loader
                 {
                     await foreach (var srcFile in m_FileLoader.LoadFolder(pluginsLoc, null))
                     {
-                        yield return srcFile;
+                        //TODO: implement grouping by id
+                        //yield return srcFile;
                     }
                 }
             }
@@ -121,11 +123,8 @@ namespace Xarial.Docify.Core.Loader
             {
                 foreach (var pluginId in m_Config.Plugins)
                 {
-                    await foreach (var srcFile in ProcessLibraryItems(
-                        m_LibraryLoader.LoadPluginFiles(pluginId, null), resFileIds, true))
-                    {
-                        yield return srcFile;
-                    }
+                    yield return new PluginInfo(pluginId, ProcessLibraryItems(
+                        m_LibraryLoader.LoadPluginFiles(pluginId, null), resFileIds, true));
                 }
             }
         }

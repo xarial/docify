@@ -22,7 +22,6 @@ using Xarial.Docify.Lib.Plugins.Common.Data;
 
 namespace Xarial.Docify.Lib.Plugins.ImageOptimizer
 {
-    [Plugin("image-optimizer")]
     public class ImageOptimizerPlugin : IPlugin<ImageOptimizerSettings>
     {
         private const string IMAGE_TAG_NAME = "image";

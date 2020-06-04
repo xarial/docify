@@ -89,7 +89,7 @@ namespace Xarial.Docify.Core.Plugin
                             }
                             else
                             {
-                                throw new UserMessageException($"Plugin '{id}' contains more than one plugin");
+                                throw new MultiplePluginsPerNameException(id);
                             }
                         }
                     }
@@ -107,7 +107,7 @@ namespace Xarial.Docify.Core.Plugin
                     }
                     else 
                     {
-                        throw new UserMessageException($"Duplicate '{pluginInfo.Name}' plugin");
+                        throw new DuplicatePluginException(pluginInfo.Name);
                     }
 
                     await foreach (var pluginFile in pluginInfo.Files)
@@ -147,7 +147,7 @@ namespace Xarial.Docify.Core.Plugin
 
                 if (notLoadedPlugins.Any()) 
                 {
-                    throw new UserMessageException($"{string.Join(", ", notLoadedPlugins)} plugins were not loaded. Make sure that there is public class which implements {typeof(IPlugin).FullName} or {typeof(IPlugin<>).FullName} interface");
+                    throw new MissingPluginImplementationException(notLoadedPlugins);
                 }
 
                 if (m_Plugins == null)

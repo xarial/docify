@@ -22,6 +22,7 @@ using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Data;
+using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Helpers;
 using Xarial.Docify.Core.Plugin;
 using YamlDotNet.Serialization;
@@ -203,21 +204,88 @@ namespace Core.Tests
         }
 
         [Test]
-        public void AddinIdDuplicateTest() 
+        public void PluginIdDuplicateTest() 
         {
-            //TODO: implement when multiple plugin name duplicates in the PluginInfo
+            var assmBuilder1 = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()),
+                AssemblyBuilderAccess.RunAndCollect);
+            var moduleBuilder1 = assmBuilder1.DefineDynamicModule(Guid.NewGuid().ToString());
+
+            var typeBuilder1 = moduleBuilder1.DefineType("Plugin1", TypeAttributes.Public);
+            typeBuilder1.AddInterfaceImplementation(typeof(IPlugin));
+            typeBuilder1.SetParent(typeof(PluginMock1));
+            var p1 = typeBuilder1.CreateType();
+
+            var assm1 = moduleBuilder1.Assembly;
+
+            var assmBuffer1 = new Lokad.ILPack.AssemblyGenerator().GenerateAssemblyBytes(assm1);
+
+            var mgr = new PluginsManager(new Configuration()
+            {
+                Plugins = new List<string>()
+            }, new Mock<IDocifyApplication>().Object);
+
+            Assert.ThrowsAsync<DuplicatePluginException>(() => mgr.LoadPlugins(new PluginInfoMock[]
+            {
+                new PluginInfoMock("plg1", new FileMock(Location.FromPath("Plugin1Mock.dll"), assmBuffer1)),
+                new PluginInfoMock("plg1", new FileMock(Location.FromPath("Plugin2Mock.dll"), assmBuffer1)),
+            }.ToAsyncEnumerable()));
         }
 
         [Test]
-        public void NoAddInFoundTest()
+        public void NoPluginFoundTest()
         {
-            //TODO: implement when no addins found in the addin dlls in the folder
+            var assmBuilder1 = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()),
+                AssemblyBuilderAccess.RunAndCollect);
+            var moduleBuilder1 = assmBuilder1.DefineDynamicModule(Guid.NewGuid().ToString());
+
+            var typeBuilder1 = moduleBuilder1.DefineType("Plugin1", TypeAttributes.Public);
+            var p1 = typeBuilder1.CreateType();
+
+            var assm1 = moduleBuilder1.Assembly;
+
+            var assmBuffer1 = new Lokad.ILPack.AssemblyGenerator().GenerateAssemblyBytes(assm1);
+
+            var mgr = new PluginsManager(new Configuration()
+            {
+                Plugins = new List<string>()
+            }, new Mock<IDocifyApplication>().Object);
+
+            Assert.ThrowsAsync<MissingPluginImplementationException>(() => mgr.LoadPlugins(new PluginInfoMock[]
+            {
+                new PluginInfoMock("plg1", new FileMock(Location.FromPath("Plugin1Mock.dll"), assmBuffer1))
+            }.ToAsyncEnumerable()));
         }
 
         [Test]
-        public void MultipleInstancesAddInTest()
+        public void MultipleInstancesPluginTest()
         {
-            //TODO: implement when multiple addins found in the single add-in name
+            var assmBuilder1 = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()),
+                AssemblyBuilderAccess.RunAndCollect);
+            var moduleBuilder1 = assmBuilder1.DefineDynamicModule(Guid.NewGuid().ToString());
+
+            var typeBuilder1 = moduleBuilder1.DefineType("Plugin1", TypeAttributes.Public);
+            typeBuilder1.AddInterfaceImplementation(typeof(IPlugin));
+            typeBuilder1.SetParent(typeof(PluginMock1));
+            typeBuilder1.CreateType();
+
+            var typeBuilder2 = moduleBuilder1.DefineType("Plugin2", TypeAttributes.Public);
+            typeBuilder2.AddInterfaceImplementation(typeof(IPlugin));
+            typeBuilder2.SetParent(typeof(PluginMock2));
+            typeBuilder2.CreateType();
+
+            var assm1 = moduleBuilder1.Assembly;
+
+            var assmBuffer1 = new Lokad.ILPack.AssemblyGenerator().GenerateAssemblyBytes(assm1);
+
+            var mgr = new PluginsManager(new Configuration()
+            {
+                Plugins = new List<string>()
+            }, new Mock<IDocifyApplication>().Object);
+
+            Assert.ThrowsAsync<MultiplePluginsPerNameException>(() => mgr.LoadPlugins(new PluginInfoMock[]
+            {
+                new PluginInfoMock("plg1", new FileMock(Location.FromPath("Plugin1Mock.dll"), assmBuffer1))
+            }.ToAsyncEnumerable()));
         }
     }
 }

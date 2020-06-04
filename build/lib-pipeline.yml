@@ -87,5 +87,6 @@ stages:
           includeRootFolder: false
           archiveFile: '$(Build.ArtifactStagingDirectory)/library/library.zip' 
       
-        - publish: '$(Build.ArtifactStagingDirectory)/library'
-          artifact: 'library'
+      #- ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+      - publish: '$(Build.ArtifactStagingDirectory)/library'
+        artifact: 'library'

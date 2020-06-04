@@ -62,7 +62,7 @@ stages:
         displayName: 'Copy Components Library'
         inputs:
           SourceFolder: '$(System.DefaultWorkingDirectory)'
-          Contents: Components\Lib\**\*
+          Contents: lib\Components\Lib\**\*
           TargetFolder: '$(System.DefaultWorkingDirectory)/_library/_components'
 
       - task: CopyFiles@2
@@ -70,7 +70,7 @@ stages:
         displayName: 'Copy Themes Library'
         inputs:
           SourceFolder: '$(System.DefaultWorkingDirectory)'
-          Contents: Themes\Lib\**\*
+          Contents: lib\Themes\Lib\**\*
           TargetFolder: '$(System.DefaultWorkingDirectory)/_library/_themes'
 
       - task: CopyFiles@2
@@ -78,7 +78,7 @@ stages:
         displayName: 'Copy Plugins Library'
         inputs:
           SourceFolder: '$(System.DefaultWorkingDirectory)'
-          Contents: Plugins\bin\$(BuildConfiguration)\**\**\*
+          Contents: lib\Plugins\bin\$(BuildConfiguration)\**\**\*
           TargetFolder: '_library/_plugins'
 
       - task: ArchiveFiles@2

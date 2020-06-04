@@ -64,7 +64,7 @@ stages:
         displayName: 'Copy Components Library'
         inputs:
           SourceFolder: '$(System.DefaultWorkingDirectory)\lib\Components\Lib'
-          Contents: '**\*
+          Contents: '**\*'
           TargetFolder: '$(System.DefaultWorkingDirectory)/_library/_components'
 
       - task: CopyFiles@2

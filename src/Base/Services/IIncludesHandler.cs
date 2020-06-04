@@ -1,22 +1,27 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Services
 {
+    /// <summary>
+    /// Service manages the resolution of includes in the static content
+    /// </summary>
     public interface IIncludesHandler
     {
-        Task<string> ReplaceAll(string rawContent, ISite site, IPage page, string url);
-        Task ParseParameters(string includeRawContent, out string name, out IMetadata param);
-        Task<string> Render(string name, IMetadata param, ISite site, IPage page, string url);
+        /// <summary>
+        /// Resolves all registered includes
+        /// </summary>
+        /// <param name="rawContent">Raw content to resolve includes in</param>
+        /// <param name="site">Site of the job</param>
+        /// <param name="page">Owner page for the content</param>
+        /// <param name="url">Url of the owner page</param>
+        /// <returns>Resolved content</returns>
+        Task<string> ResolveAll(string rawContent, ISite site, IPage page, string url);
     }
 }

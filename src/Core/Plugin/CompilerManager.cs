@@ -1,11 +1,10 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
@@ -27,14 +26,21 @@ namespace Xarial.Docify.Core.Plugin
         public event PostCompileDelegate PostCompile;
 
         public ICompiler Instance { get; }
-        public IContentTransformer ContentTransformer { get; }
+
+        public IDynamicContentTransformer DynamicContentTransformer { get; }
+        public IStaticContentTransformer StaticContentTransformer { get; }
 
         private readonly CompilerExtension m_Ext;
 
-        public CompilerManager(ICompiler compiler, IContentTransformer contTransf, CompilerExtension ext) 
+        public CompilerManager(ICompiler compiler,
+            IStaticContentTransformer staticContTransf,
+            IDynamicContentTransformer dynContTransf,
+            CompilerExtension ext)
         {
             Instance = compiler;
-            ContentTransformer = contTransf;
+            StaticContentTransformer = staticContTransf;
+            DynamicContentTransformer = dynContTransf;
+
             m_Ext = ext;
             m_Ext.RequestPreCompile += OnRequestPreCompile;
             m_Ext.RequestRenderCodeBlock += OnRequestRenderCodeBlock;
@@ -45,17 +51,15 @@ namespace Xarial.Docify.Core.Plugin
             m_Ext.RequestPostCompileFile += OnRequestPostCompileFile;
         }
 
-        private async Task<IFile> OnRequestPostCompileFile(IFile file)
+        private async Task OnRequestPostCompileFile(PostCompileFileArgs args)
         {
             if (PostCompileFile != null)
             {
                 foreach (PostCompileFileDelegate del in PostCompileFile.GetInvocationList())
                 {
-                    file = await del.Invoke(file);
+                    await del.Invoke(args);
                 }
             }
-
-            return file;
         }
 
         private async Task OnRequestPostCompile()
@@ -71,28 +75,26 @@ namespace Xarial.Docify.Core.Plugin
 
         private async Task OnRequestPreCompile(ISite site)
         {
-            if (PreCompile != null) 
+            if (PreCompile != null)
             {
-                foreach (PreCompileDelegate del in PreCompile.GetInvocationList()) 
+                foreach (PreCompileDelegate del in PreCompile.GetInvocationList())
                 {
                     await del.Invoke(site);
                 }
             }
         }
 
-        private async Task<string> OnRequestWritePageContent(string content, IMetadata data, string url)
+        private async Task OnRequestWritePageContent(StringBuilder html, IMetadata data, string url)
         {
-            var res = content;
+            var res = html;
 
-            if (WritePageContent != null) 
+            if (WritePageContent != null)
             {
-                foreach (WritePageContentDelegate del in WritePageContent.GetInvocationList()) 
+                foreach (WritePageContentDelegate del in WritePageContent.GetInvocationList())
                 {
-                    res = await del.Invoke(res, data, url);
+                    await del.Invoke(res, data, url);
                 }
             }
-
-            return res;
         }
 
         private void OnRequestRenderUrl(StringBuilder html)

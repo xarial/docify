@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Xarial.Docify.Lib.Tools</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Base.Context\Base.Context.csproj" />
     <ProjectReference Include="..\..\src\Base.Extensions\Base.Extensions.csproj" />
     <ProjectReference Include="..\..\src\Base\Base.csproj" />
   </ItemGroup>

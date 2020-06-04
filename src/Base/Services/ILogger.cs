@@ -1,21 +1,33 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
-
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Xarial.Docify.Base.Services
 {
+    /// <summary>
+    /// Service logs messages to user interface
+    /// </summary>
     public interface ILogger
     {
-        void Log(string msg);
+        /// <summary>
+        /// Logs warning message
+        /// </summary>
+        /// <param name="msg">Message</param>
         void LogWarning(string msg);
+
+        /// <summary>
+        /// Logs error message
+        /// </summary>
+        /// <param name="msg">Message</param>
         void LogError(string msg);
+
+        /// <summary>
+        /// Logs information message
+        /// </summary>
+        /// <param name="msg">Message</param>
         void LogInformation(string msg);
     }
 }

@@ -1,20 +1,18 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class MissingLocationException : Exception
+    public class MissingLocationException : UserMessageException
     {
         public MissingLocationException(string loc) : base($"'{loc}' location doesn't exist")
-        { 
+        {
         }
     }
 }

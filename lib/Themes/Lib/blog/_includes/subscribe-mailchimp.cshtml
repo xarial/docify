@@ -3,7 +3,7 @@ layout: master
 action-url: http://docify.net/logo.svg
 ---
 @using RazorLight
-@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
+@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>
 @{ 
     var url = Model.Data.Get<string>("action-url");
 }

@@ -1,25 +1,25 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Lib.Tools.Exceptions;
 
 namespace Xarial.Docify.Lib.Tools
 {
+    /// <summary>
+    /// Helper classes for navigation menu composition
+    /// </summary>
     public static class NavigationMenuHelper
-    {   
+    {
         private const string ROOT_PAGE_ATT = "root-page";
 
         public class MenuPage : IContextPage
@@ -79,10 +79,17 @@ namespace Xarial.Docify.Lib.Tools
             }
         }
 
-        public static IEnumerable<IContextPage> BuildPredefinedMenu(string menuOptName, IContextSite site, IContextMetadata data) 
+        /// <summary>
+        /// Build the menu based on predefined parameter
+        /// </summary>
+        /// <param name="menuOptName">Name of the menu parameter</param>
+        /// <param name="site">Site</param>
+        /// <param name="data">Metadata or configuration</param>
+        /// <returns>Predefined menu</returns>
+        public static IEnumerable<IContextPage> BuildPredefinedMenu(string menuOptName, IContextSite site, IContextMetadata data)
         {
             List<object> menu;
-            
+
             if (data.TryGet(menuOptName, out menu) && menu != null)
             {
                 var allPages = PageHelper.GetAllPages(site.MainPage);
@@ -96,7 +103,14 @@ namespace Xarial.Docify.Lib.Tools
             }
         }
 
-        public static MenuPage BuildPage(IContextPage srcPage, IContextMetadata data, string title) 
+        /// <summary>
+        /// Creates new menu page
+        /// </summary>
+        /// <param name="srcPage">Source page</param>
+        /// <param name="data">Page data</param>
+        /// <param name="title">Page title</param>
+        /// <returns>Menu page</returns>
+        public static MenuPage BuildPage(IContextPage srcPage, IContextMetadata data, string title)
         {
             var page = CreateMenuPage(null, data, title);
             page.Url = srcPage.Url;
@@ -104,7 +118,13 @@ namespace Xarial.Docify.Lib.Tools
             return page;
         }
 
-        public static IContextPage GetRootPage(IIncludeContextModel model) 
+        /// <summary>
+        /// Finds the root page from this data
+        /// </summary>
+        /// <param name="model">Context model</param>
+        /// <returns>Root page</returns>
+        /// <remarks>Menu's root page can be defined with root-page attribute specifying the url of the root page</remarks>
+        public static IContextPage GetRootPage(IContextModel model)
         {
             var rootPageUrl = model.Data.GetOrDefault<string>(ROOT_PAGE_ATT);
 
@@ -122,7 +142,7 @@ namespace Xarial.Docify.Lib.Tools
                     throw new RootPageNotFoundException(rootPageUrl);
                 }
             }
-            else 
+            else
             {
                 return model.Site.MainPage;
             }

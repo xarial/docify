@@ -1,13 +1,11 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
@@ -18,7 +16,7 @@ namespace Xarial.Docify.Core.Plugin.Extensions
     public interface IPublisherExtension
     {
         Task PostPublish(ILocation loc);
-        Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file);
+        Task PrePublishFile(ILocation outLoc, PrePublishFileArgs args);
         IAsyncEnumerable<IFile> PostAddPublishFiles(ILocation outLoc);
     }
 
@@ -30,17 +28,44 @@ namespace Xarial.Docify.Core.Plugin.Extensions
 
         public Task PostPublish(ILocation loc)
         {
-            return RequestPostPublish.Invoke(loc);
+            if (RequestPostPublish != null)
+            {
+                return RequestPostPublish.Invoke(loc);
+            }
+            else
+            {
+                return Task.CompletedTask;
+            }
         }
 
-        public Task<PrePublishResult> PrePublishFile(ILocation outLoc, IFile file)
+        public Task PrePublishFile(ILocation outLoc, PrePublishFileArgs args)
         {
-            return RequestPrePublishFile.Invoke(outLoc, file);
+            if (RequestPrePublishFile != null)
+            {
+                return RequestPrePublishFile.Invoke(outLoc, args);
+            }
+            else
+            {
+                return Task.CompletedTask;
+            }
         }
 
         public IAsyncEnumerable<IFile> PostAddPublishFiles(ILocation outLoc)
         {
-            return RequestPostAddPublishFiles.Invoke(outLoc);
+            if (RequestPostAddPublishFiles != null)
+            {
+                return RequestPostAddPublishFiles.Invoke(outLoc);
+            }
+            else
+            {
+                return Empty<IFile>();
+            }
+        }
+
+        private async IAsyncEnumerable<T> Empty<T>()
+        {
+            await Task.CompletedTask;
+            yield break;
         }
     }
 }

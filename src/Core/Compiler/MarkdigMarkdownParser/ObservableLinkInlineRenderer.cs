@@ -1,18 +1,14 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using Markdig.Renderers;
 using Markdig.Syntax.Inlines;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Xarial.Docify.Base.Plugins;
-using Xarial.Docify.Core.Plugin;
 using Markdig.Renderers.Html.Inlines;
 using Xarial.Docify.Core.Plugin.Extensions;
 
@@ -21,7 +17,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
     public class ObservableLinkInlineRenderer : LinkInlineRenderer
     {
         private readonly ICompilerExtension m_Ext;
-        
+
         public ObservableLinkInlineRenderer(ICompilerExtension ext)
         {
             m_Ext = ext;
@@ -35,12 +31,12 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
             {
                 base.Write(new HtmlRenderer(strWriter), link);
             }
-            
+
             if (!link.IsImage)
             {
                 m_Ext.RenderUrl(linkOut);
             }
-            else 
+            else
             {
                 m_Ext.RenderImage(linkOut);
             }

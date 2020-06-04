@@ -1,35 +1,26 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using System.Linq;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Collections;
-using System.Text.RegularExpressions;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Base.Data;
-using Xarial.Docify.Core.Compiler.Context;
-using Xarial.Docify.Base.Plugins;
-using Xarial.Docify.Core.Plugin;
-using Xarial.Docify.Core.Helpers;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Plugin.Extensions;
+using System.Text;
+using Xarial.Docify.Base.Plugins;
 
 namespace Xarial.Docify.Core.Compiler
 {
     public class BaseCompiler : ICompiler
     {
         private readonly ILogger m_Logger;
-        private readonly IContentTransformer m_ContentTransformer;
+        private readonly IStaticContentTransformer m_ContentTransformer;
         private readonly BaseCompilerConfig m_Config;
         private readonly ILayoutParser m_LayoutParser;
         private readonly IIncludesHandler m_IncludesHandler;
@@ -40,7 +31,7 @@ namespace Xarial.Docify.Core.Compiler
         public BaseCompiler(BaseCompilerConfig config,
             ILogger logger, ILayoutParser layoutParser,
             IIncludesHandler includesHandler,
-            IContentTransformer contentTransformer, ICompilerExtension ext) 
+            IStaticContentTransformer contentTransformer, ICompilerExtension ext)
         {
             m_Config = config;
             m_Logger = logger;
@@ -57,13 +48,20 @@ namespace Xarial.Docify.Core.Compiler
 
             await foreach (var file in CompileAll(site.MainPage, site, Location.Empty))
             {
-                yield return await m_Ext.PostCompileFile(file);
+                var args = new PostCompileFileArgs()
+                {
+                    File = file
+                };
+
+                await m_Ext.PostCompileFile(args);
+
+                yield return args.File;
             }
 
             await m_Ext.PostCompile();
         }
 
-        private async IAsyncEnumerable<IFile> CompileAll(IPage page, ISite site, ILocation baseLoc) 
+        private async IAsyncEnumerable<IFile> CompileAll(IPage page, ISite site, ILocation baseLoc)
         {
             const string PAGE_FILE_NAME = "index.html";
 
@@ -84,7 +82,7 @@ namespace Xarial.Docify.Core.Compiler
             {
                 pageLoc = thisLoc;
             }
-            else 
+            else
             {
                 pageLoc = baseLoc.Combine(new Location(page.Name));
             }
@@ -96,9 +94,9 @@ namespace Xarial.Docify.Core.Compiler
                 yield return asset;
             }
 
-            foreach (var child in page.SubPages) 
+            foreach (var child in page.SubPages)
             {
-                await foreach (var subPage in CompileAll(child, site, thisLoc)) 
+                await foreach (var subPage in CompileAll(child, site, thisLoc))
                 {
                     yield return subPage;
                 }
@@ -110,8 +108,8 @@ namespace Xarial.Docify.Core.Compiler
             foreach (var asset in folder.Assets)
             {
                 var thisLoc = baseLoc.Combine(new Location(asset.FileName));
-                
-                if (PathMatcher.Matches(m_Config.CompilableAssetsFilter, thisLoc.ToId()))
+
+                if (thisLoc.Matches(m_Config.CompilableAssetsFilter))
                 {
                     yield return await CompileAsset(asset, site, page, thisLoc);
                 }
@@ -119,36 +117,39 @@ namespace Xarial.Docify.Core.Compiler
                 {
                     yield return new File(thisLoc, asset.Content, asset.Id);
                 }
-                
+
             }
 
-            foreach (var subFolder in folder.Folders) 
+            foreach (var subFolder in folder.Folders)
             {
                 var folderLoc = baseLoc.Combine(new Location("", subFolder.Name));
-                await foreach (var subFolderAsset in CompileAssets(subFolder, page, site, folderLoc)) 
+                await foreach (var subFolderAsset in CompileAssets(subFolder, page, site, folderLoc))
                 {
                     yield return subFolderAsset;
                 }
             }
         }
-        
+
         private async Task<IFile> CompilePage(IPage page, ISite site, ILocation loc)
         {
             var url = loc.ToUrl();
-            var model = new ContextModel(site, page, url);
 
-            var content = await m_ContentTransformer.Transform(page.RawContent, page.Id, model);
-            
+            var content = await m_ContentTransformer.Transform(page.RawContent);
+
             var layout = page.Layout;
 
             if (layout != null)
             {
-                content = await m_LayoutParser.InsertContent(layout, content, model);
+                content = await m_LayoutParser.InsertContent(layout, content, site, page, url);
             }
 
-            content = await m_IncludesHandler.ReplaceAll(content, site, page, url);
+            content = await m_IncludesHandler.ResolveAll(content, site, page, url);
 
-            content = await m_Ext.WritePageContent(content, page.Data, url);
+            var contentStrBuilder = new StringBuilder(content);
+            
+            await m_Ext.WritePageContent(contentStrBuilder, page.Data, url);
+
+            content = contentStrBuilder.ToString();
 
             return new File(loc, ContentExtension.ToByteArray(content), page.Id);
         }
@@ -158,7 +159,7 @@ namespace Xarial.Docify.Core.Compiler
             var url = loc.ToUrl();
 
             var rawContent = asset.AsTextContent();
-            var content = await m_IncludesHandler.ReplaceAll(rawContent, site, page, url);
+            var content = await m_IncludesHandler.ResolveAll(rawContent, site, page, url);
 
             return new File(loc, ContentExtension.ToByteArray(content), asset.Id);
         }

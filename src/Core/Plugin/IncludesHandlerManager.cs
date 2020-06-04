@@ -1,8 +1,8 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using System;
@@ -20,11 +20,11 @@ namespace Xarial.Docify.Core.Plugin
     public class IncludesHandlerManager : IIncludesHandlerManager
     {
         public IIncludesHandler Instance { get; }
-                
+
         private readonly Dictionary<string, ResolveCustomIncludeDelegate> m_CustomIncludesHandlers;
         private readonly IncludesHandlerExtension m_Ext;
 
-        public IncludesHandlerManager(IIncludesHandler instance, IncludesHandlerExtension ext) 
+        public IncludesHandlerManager(IIncludesHandler instance, IncludesHandlerExtension ext)
         {
             Instance = instance;
             m_Ext = ext;
@@ -41,7 +41,7 @@ namespace Xarial.Docify.Core.Plugin
             {
                 return await handler.Invoke(metadata, page);
             }
-            else 
+            else
             {
                 throw new MissingIncludeException(includeName);
             }
@@ -55,7 +55,7 @@ namespace Xarial.Docify.Core.Plugin
             }
             else
             {
-                throw new Exception($"Include '{includeName}' already registered with other plugin");
+                throw new UserMessageException($"Include '{includeName}' already registered with other plugin");
             }
         }
     }

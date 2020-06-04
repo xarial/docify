@@ -8,7 +8,7 @@ title-attribute: title
 @using System.Collections.Generic
 @using Xarial.Docify.Lib.Tools
 @using Xarial.Docify.Base.Context
-@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
+@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>
 @{
     var img = Model.Site.MainPage.Data.GetOrDefault<string>("image-png");
 

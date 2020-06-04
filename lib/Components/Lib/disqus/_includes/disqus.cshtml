@@ -3,7 +3,7 @@ short-name:
 count: true
 ---
 @using RazorLight
-@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
+@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>
 @{
     var shortName = Model.Data.Get<string>("short-name");
     var src = $"https://{shortName}.disqus.com/embed.js";

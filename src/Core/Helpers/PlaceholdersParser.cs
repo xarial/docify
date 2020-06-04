@@ -1,12 +1,11 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -23,7 +22,7 @@ namespace Xarial.Docify.Core.Helpers
         private readonly string m_StartTag;
         private readonly string m_EndTag;
 
-        internal PlaceholdersParser(string startTag, string endTag) 
+        internal PlaceholdersParser(string startTag, string endTag)
         {
             m_RegexPattern = string.Format(REGEX_TEMPLATE, Regex.Escape(startTag), Regex.Escape(endTag));
 

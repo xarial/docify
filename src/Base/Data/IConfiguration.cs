@@ -1,24 +1,38 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
-using System;
 using System.Collections.Generic;
 
 namespace Xarial.Docify.Base.Data
 {
+    /// <summary>
+    /// Represents the configuration of the site, containing instruction for build, publish, library items, etc.
+    /// </summary>
     public interface IConfiguration : IMetadata
     {
-        Environment_e Environment { get; set; }
-        string WorkingFolder { get; set; }
-        ILocation ComponentsFolder { get; set; }
+        /// <summary>
+        /// Current environment
+        /// </summary>
+        string Environment { get; set; }
+
+        /// <summary>
+        /// List of library components used in this site
+        /// </summary>
         List<string> Components { get; set; }
-        ILocation PluginsFolder { get; set; }
+
+        /// <summary>
+        /// List of library plugins used in this site
+        /// </summary>
         List<string> Plugins { get; set; }
-        ILocation ThemesFolder { get; set; }
+
+        /// <summary>
+        /// Themese hierarchy used for this site
+        /// </summary>
+        /// <remarks>Site can have a single theme, but theme itself can refer the theme, thus producing hierarchy</remarks>
         List<string> ThemesHierarchy { get; }
     }
 }

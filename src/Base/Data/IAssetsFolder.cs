@@ -1,20 +1,32 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Xarial.Docify.Base.Data
 {
+    /// <summary>
+    /// Represents a collection of <see cref="IAsset"/>
+    /// </summary>
     public interface IAssetsFolder
     {
+        /// <summary>
+        /// Name of the folder
+        /// </summary>
         string Name { get; }
+
+        /// <summary>
+        /// Top level assets in this folder
+        /// </summary>
         List<IAsset> Assets { get; }
+
+        /// <summary>
+        /// Sub folders
+        /// </summary>
         List<IAssetsFolder> Folders { get; }
     }
 }

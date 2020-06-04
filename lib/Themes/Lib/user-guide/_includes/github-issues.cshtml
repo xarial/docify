@@ -3,7 +3,7 @@ project:
 repo:
 ---
 @using RazorLight
-@inherits TemplatePage<Xarial.Docify.Base.Context.IIncludeContextModel>
+@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>
 @{
     var repo = Model.Data.Get<string>("repo");
     var project = Model.Data.Get<string>("project");

@@ -1,20 +1,18 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Xarial.Docify.Core.Exceptions
 {
-    public class MissingLayoutException : Exception
+    public class MissingLayoutException : UserMessageException
     {
         public MissingLayoutException(string layoutName)
-            : base($"Layout cannot be found: {layoutName}") 
+            : base($"Layout cannot be found: {layoutName}")
         {
         }
     }

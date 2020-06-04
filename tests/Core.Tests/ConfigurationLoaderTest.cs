@@ -58,6 +58,37 @@ namespace Core.Tests
         }
 
         [Test]
+        public async Task Load_EmptyConfig()
+        {
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) => new IFile[] { new FileMock("_config.yml", "") }.ToAsyncEnumerable());
+
+            var confLoader = new ConfigurationLoader(
+                fileLoaderMock.Object, new Mock<ILibraryLoader>().Object, "Test");
+
+            var conf = await confLoader.Load(new ILocation[] { Location.FromPath("C:\\site") });
+
+            Assert.AreEqual(0, conf.Count);
+        }
+
+        [Test]
+        public async Task Load_NoEnvironment()
+        {
+            var fileLoaderMock = new Mock<IFileLoader>();
+            fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation l, string[] f) => new IFile[] { new FileMock("_config.yml", "a: b") }.ToAsyncEnumerable());
+
+            var confLoader = new ConfigurationLoader(
+                fileLoaderMock.Object, new Mock<ILibraryLoader>().Object, null);
+
+            var conf = await confLoader.Load(new ILocation[] { Location.FromPath("C:\\site") });
+
+            Assert.AreEqual(1, conf.Count);
+            Assert.AreEqual("b", conf["a"]);
+        }
+
+        [Test]
         public async Task Load_PluginNames()
         {
             var fileLoaderMock = new Mock<IFileLoader>();

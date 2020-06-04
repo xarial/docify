@@ -47,7 +47,7 @@ namespace Tests.Common
         }
 
         public T GetData<T>(string paramStr)
-            where T : Metadata
+            where T : Metadata, new()
         {
             var yamlDeserializer = new MetadataSerializer();
 

@@ -61,8 +61,8 @@ stages:
         condition: ne(variables['Build.Reason'], 'PullRequest')
         displayName: 'Copy Components Library'
         inputs:
-          SourceFolder: '$(System.DefaultWorkingDirectory)\lib\Components\Lib'
-          Contents: \**\*
+          SourceFolder: '$(System.DefaultWorkingDirectory)\lib\Components'
+          Contents: Lib\**\*
           TargetFolder: '$(System.DefaultWorkingDirectory)/_library/_components'
 
       - task: CopyFiles@2
@@ -70,7 +70,7 @@ stages:
         displayName: 'Copy Themes Library'
         inputs:
           SourceFolder: '$(System.DefaultWorkingDirectory)\lib\Themes\Lib'
-          Contents: \**\*
+          Contents: '**\*'
           TargetFolder: '$(System.DefaultWorkingDirectory)/_library/_themes'
 
       - task: CopyFiles@2
@@ -78,7 +78,7 @@ stages:
         displayName: 'Copy Plugins Library'
         inputs:
           SourceFolder: '$(System.DefaultWorkingDirectory)lib\Plugins\bin\$(BuildConfiguration)\**'
-          Contents: \**\*
+          Contents: '**\*''
           TargetFolder: '_library/_plugins'
 
       - task: ArchiveFiles@2

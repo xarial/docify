@@ -90,5 +90,5 @@ stages:
           archiveFile: '$(Build.ArtifactStagingDirectory)/library/library.zip' 
       
       - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-      - publish: '$(Build.ArtifactStagingDirectory)/library'
-        artifact: 'library'
+        - publish: '$(Build.ArtifactStagingDirectory)/library'
+          artifact: 'library'

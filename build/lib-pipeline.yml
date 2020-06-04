@@ -45,26 +45,26 @@ stages:
           solution: 'lib\**\*.csproj'
           configuration: '$(BuildConfiguration)'
 
-      # - task: VSBuild@1
-      #   displayName: 'Build test projects'
-      #   inputs:
-      #       solution: 'tests\lib\*.Tests\*.csproj'
-      #       configuration: '$(BuildConfiguration)'
+      - task: VSBuild@1
+        displayName: 'Build test projects'
+        inputs:
+            solution: 'tests\lib\*.Tests\*.csproj'
+            configuration: '$(BuildConfiguration)'
             
-      # - task: VSTest@2
-      #   displayName: 'Unit test'
-      #   inputs:
-      #     testAssemblyVer2: |
-      #       tests\lib\**\*.Tests.dll
-      #       !**\obj\**
-      #     configuration: '$(BuildConfiguration)'
+      - task: VSTest@2
+        displayName: 'Unit test'
+        inputs:
+          testAssemblyVer2: |
+            tests\lib\**\*.Tests.dll
+            !**\obj\**
+          configuration: '$(BuildConfiguration)'
 
       - task: CopyFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')
         displayName: 'Copy Components Library'
         inputs:
-          SourceFolder: '$(System.DefaultWorkingDirectory)\lib\Components'
-          Contents: Lib\**\*
+          SourceFolder: '$(System.DefaultWorkingDirectory)\lib\Components\Lib'
+          Contents: '**\*
           TargetFolder: '$(System.DefaultWorkingDirectory)/_library/_components'
 
       - task: CopyFiles@2
@@ -89,6 +89,6 @@ stages:
           includeRootFolder: false
           archiveFile: '$(Build.ArtifactStagingDirectory)/library/library.zip' 
       
-      #- ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+      - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
       - publish: '$(Build.ArtifactStagingDirectory)/library'
         artifact: 'library'

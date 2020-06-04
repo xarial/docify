@@ -40,7 +40,7 @@ stages:
       - task: VSBuild@1
         displayName: 'Build library'
         inputs:
-          solution: 'lib\*.csproj'
+          solution: 'lib\**\*.csproj'
           configuration: '$(BuildConfiguration)'
 
       - task: VSBuild@1

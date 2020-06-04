@@ -78,7 +78,7 @@ stages:
         displayName: 'Copy Plugins Library'
         inputs:
           SourceFolder: '$(System.DefaultWorkingDirectory)lib\Plugins\bin\$(BuildConfiguration)\**'
-          Contents: '**\*''
+          Contents: '**\*'
           TargetFolder: '_library/_plugins'
 
       - task: ArchiveFiles@2

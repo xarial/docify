@@ -116,7 +116,7 @@ stages:
   jobs:
   - deployment:
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: 'windows-latest'
     environment: production
     strategy: 
         runOnce:

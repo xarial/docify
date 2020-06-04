@@ -43,42 +43,42 @@ stages:
           solution: 'lib\**\*.csproj'
           configuration: '$(BuildConfiguration)'
 
-      - task: VSBuild@1
-        displayName: 'Build test projects'
-        inputs:
-            solution: 'tests\lib\*.Tests\*.csproj'
-            configuration: '$(BuildConfiguration)'
+      # - task: VSBuild@1
+      #   displayName: 'Build test projects'
+      #   inputs:
+      #       solution: 'tests\lib\*.Tests\*.csproj'
+      #       configuration: '$(BuildConfiguration)'
             
-      - task: VSTest@2
-        displayName: 'Unit test'
-        inputs:
-          testAssemblyVer2: |
-            tests\lib\**\*.Tests.dll
-            !**\obj\**
-          configuration: '$(BuildConfiguration)'
+      # - task: VSTest@2
+      #   displayName: 'Unit test'
+      #   inputs:
+      #     testAssemblyVer2: |
+      #       tests\lib\**\*.Tests.dll
+      #       !**\obj\**
+      #     configuration: '$(BuildConfiguration)'
 
       - task: CopyFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')
         displayName: 'Copy Components Library'
         inputs:
-          SourceFolder: '$(System.DefaultWorkingDirectory)'
-          Contents: lib\Components\Lib\**\*
+          SourceFolder: '$(System.DefaultWorkingDirectory)\lib\Components\Lib'
+          Contents: \**\*
           TargetFolder: '$(System.DefaultWorkingDirectory)/_library/_components'
 
       - task: CopyFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')
         displayName: 'Copy Themes Library'
         inputs:
-          SourceFolder: '$(System.DefaultWorkingDirectory)'
-          Contents: lib\Themes\Lib\**\*
+          SourceFolder: '$(System.DefaultWorkingDirectory)\lib\Themes\Lib'
+          Contents: \**\*
           TargetFolder: '$(System.DefaultWorkingDirectory)/_library/_themes'
 
       - task: CopyFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')
         displayName: 'Copy Plugins Library'
         inputs:
-          SourceFolder: '$(System.DefaultWorkingDirectory)'
-          Contents: lib\Plugins\bin\$(BuildConfiguration)\**\**\*
+          SourceFolder: '$(System.DefaultWorkingDirectory)lib\Plugins\bin\$(BuildConfiguration)\**'
+          Contents: \**\*
           TargetFolder: '_library/_plugins'
 
       - task: ArchiveFiles@2

@@ -15,7 +15,7 @@ $releaseInfo = Invoke-RestMethod @params
 
 if($version -eq $releaseInfo.version)
 {
-    $versionsInfo = Invoke-RestMethod 'http://localhost:8081/version.json'
+    $versionsInfo = Invoke-RestMethod 'https://docify.net/library.json'
 
     $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2([string]$certPath, [string]$pwd)
     

@@ -3,6 +3,9 @@ trigger:
     include:
     - master
     - dev
+  paths:
+    include:
+    - src/*
 
 name: '$(Date:yyyyMMdd).$(Rev:r)[$(BuildID)]'
 
@@ -149,6 +152,18 @@ stages:
             - download: current
               artifact: packages
 
+            - task: DownloadSecureFile@1
+              name: Certificate
+              displayName: 'Download code signing certificate'
+              inputs:
+                secureFile: xarial-code-signing.pfx
+
+            - task: NuGetCommand@2
+              displayName: 'Sign NuGet Package'
+              inputs:
+                command: 'custom'
+                arguments: sign "$(Pipeline.Workspace)/packages/release/*.nupkg" -CertificatePath "$(Certificate.secureFilePath)" -CertificatePassword "$(CODE_SIGN_CERT_PWD)" -Timestamper http://timestamp.comodoca.com
+                
             - task: NuGetCommand@2
               displayName: 'Push NuGet Package'
               inputs:

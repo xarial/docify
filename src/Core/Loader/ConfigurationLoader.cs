@@ -44,8 +44,11 @@ namespace Xarial.Docify.Core.Loader
             m_Environment = env;
             m_LibraryLoader = libraryLoader;
 
-            m_EnvConfFileName = Path.GetFileNameWithoutExtension(CONF_FILE_NAME) + "." + m_Environment.ToString()
-                    + Path.GetExtension(CONF_FILE_NAME);
+            if (!string.IsNullOrEmpty(m_Environment))
+            {
+                m_EnvConfFileName = Path.GetFileNameWithoutExtension(CONF_FILE_NAME) + "." + m_Environment.ToString()
+                        + Path.GetExtension(CONF_FILE_NAME);
+            }
         }
 
         public async Task<IConfiguration> Load(ILocation[] locations)
@@ -73,7 +76,7 @@ namespace Xarial.Docify.Core.Loader
                     IConfiguration themeEnvConf = new Configuration();
 
                     await foreach (var themeConfFile in m_LibraryLoader.LoadThemeFiles(theme,
-                        new string[] { CONF_FILE_NAME, m_EnvConfFileName }))
+                        GetConfigurationFileFilters()))
                     {
                         if (string.Equals(themeConfFile.Location.FileName, CONF_FILE_NAME, StringComparison.CurrentCultureIgnoreCase))
                         {
@@ -109,10 +112,7 @@ namespace Xarial.Docify.Core.Loader
         {
             var res = (Conf: (IConfiguration)new Configuration(), EnvConf: (IConfiguration)new Configuration());
 
-            await foreach (var file in m_FileLoader.LoadFolder(loc, new string[]
-            {
-                CONF_FILE_NAME, m_EnvConfFileName
-            }))
+            await foreach (var file in m_FileLoader.LoadFolder(loc, GetConfigurationFileFilters()))
             {
                 if (string.Equals(file.Location.FileName, CONF_FILE_NAME, StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -135,6 +135,24 @@ namespace Xarial.Docify.Core.Loader
         {
             var confStr = file.AsTextContent();
             return new Configuration(m_ConfigSerializer.Deserialize<Dictionary<string, object>>(confStr));
+        }
+
+        private string[] GetConfigurationFileFilters()
+        {
+            if (!string.IsNullOrEmpty(m_EnvConfFileName))
+            {
+                return new string[]
+                {
+                    CONF_FILE_NAME, m_EnvConfFileName
+                };
+            }
+            else
+            {
+                return new string[]
+                {
+                    CONF_FILE_NAME
+                };
+            }
         }
     }
 }

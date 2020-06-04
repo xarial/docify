@@ -12,6 +12,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Exceptions;
+using Xarial.Docify.Core.Plugin;
 
 namespace Xarial.Docify.Core.Loader
 {
@@ -46,8 +47,6 @@ namespace Xarial.Docify.Core.Loader
 
             foreach (var loc in locations)
             {
-                var pluginFilter = GetPluginsFolderFilter(loc);
-
                 var filter = new List<string>();
 
                 if (m_Filter != null)
@@ -55,7 +54,10 @@ namespace Xarial.Docify.Core.Loader
                     filter.AddRange(m_Filter);
                 }
 
-                filter.Add(LocationExtension.NEGATIVE_FILTER + pluginFilter);
+                var pluginExcludeFilter = LocationExtension.NEGATIVE_FILTER
+                    + loc.Combine(Location.Library.PluginsFolderName, LocationExtension.ANY_FILTER).ToId();
+
+                filter.Add(pluginExcludeFilter);
 
                 await foreach (var srcFile in m_FileLoader.LoadFolder(loc, filter.ToArray()))
                 {
@@ -100,44 +102,28 @@ namespace Xarial.Docify.Core.Loader
                 }
             }
         }
-
-        private string GetPluginsFolderFilter(ILocation baseLoc)
-        {
-            return baseLoc.ToId() + LocationExtension.ID_SEP
-                    + Location.Library.PluginsFolderName + LocationExtension.ID_SEP + LocationExtension.ANY_FILTER;
-        }
-
-        private async IAsyncEnumerable<IFile> LoadPluginFiles(ILocation[] locations, List<string> resFileIds)
+        
+        private async IAsyncEnumerable<IPluginInfo> LoadPluginFiles(ILocation[] locations, List<string> resFileIds)
         {
             foreach (var loc in locations)
             {
-                var pluginFilter = GetPluginsFolderFilter(loc);
+                var pluginsLoc = loc.Combine(Location.Library.PluginsFolderName);
 
-                await foreach (var srcFile in m_FileLoader.LoadFolder(loc, new string[] { pluginFilter }))
+                if (m_FileLoader.Exists(pluginsLoc))
                 {
-                    var id = srcFile.Location.ToId();
-
-                    if (!resFileIds.Contains(id))
+                    await foreach (var pluginLoc in m_FileLoader.EnumSubFolders(pluginsLoc))
                     {
-                        resFileIds.Add(id);
-                        yield return srcFile;
-                    }
-                    else
-                    {
-                        throw new DuplicateFileException(id, loc.ToId());
+                        yield return new PluginInfo(pluginLoc.Path.Last(), m_FileLoader.LoadFolder(pluginLoc, null));
                     }
                 }
             }
 
             if (m_Config.Plugins?.Any() == true)
             {
-                foreach (var pluginId in m_Config.Plugins)
+                foreach (var pluginName in m_Config.Plugins)
                 {
-                    await foreach (var srcFile in ProcessLibraryItems(
-                        m_LibraryLoader.LoadPluginFiles(pluginId, null), resFileIds, true))
-                    {
-                        yield return srcFile;
-                    }
+                    yield return new PluginInfo(pluginName, ProcessLibraryItems(
+                        m_LibraryLoader.LoadPluginFiles(pluginName, null), resFileIds, true));
                 }
             }
         }

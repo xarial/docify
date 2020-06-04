@@ -19,7 +19,6 @@ using Xarial.Docify.Lib.Plugins.ResponsiveImage.Properties;
 
 namespace Xarial.Docify.Lib.Plugins.ResponsiveImage
 {
-    [Plugin("responsive-image")]
     public class ResponsiveImagePlugin : IPlugin
     {
         private const string CSS_FILE_PATH = "/assets/styles/responsive-image.css";

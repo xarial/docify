@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <PluginId>code-syntax-highlighter</PluginId>
+    <PluginName>code-syntax-highlighter</PluginName>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter</RootNamespace>
+	<VersionPrefix>0.1.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>

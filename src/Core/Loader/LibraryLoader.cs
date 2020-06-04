@@ -25,8 +25,8 @@ namespace Xarial.Docify.Core.Loader
         public bool ContainsComponent(string compName) 
             => m_Loaders.Any(l => l.ContainsComponent(compName));
 
-        public bool ContainsPlugin(string pluginId)
-            => m_Loaders.Any(l => l.ContainsPlugin(pluginId));
+        public bool ContainsPlugin(string pluginName)
+            => m_Loaders.Any(l => l.ContainsPlugin(pluginName));
 
         public bool ContainsTheme(string themeName)
             => m_Loaders.Any(l => l.ContainsTheme(themeName));
@@ -45,17 +45,17 @@ namespace Xarial.Docify.Core.Loader
             }
         }
 
-        public IAsyncEnumerable<IFile> LoadPluginFiles(string pluginId, string[] filters)
+        public IAsyncEnumerable<IFile> LoadPluginFiles(string pluginName, string[] filters)
         {
-            var loader = m_Loaders.FirstOrDefault(l => l.ContainsPlugin(pluginId));
+            var loader = m_Loaders.FirstOrDefault(l => l.ContainsPlugin(pluginName));
 
             if (loader != null)
             {
-                return loader.LoadPluginFiles(pluginId, filters);
+                return loader.LoadPluginFiles(pluginName, filters);
             }
             else
             {
-                throw new LibraryItemLoadException(pluginId, "", null);
+                throw new LibraryItemLoadException(pluginName, "", null);
             }
         }
 

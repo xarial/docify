@@ -5,6 +5,7 @@
     <AssemblyName>Plugins.Common</AssemblyName>
     <RootNamespace>Xarial.Docify.Lib.Plugins.Common</RootNamespace>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	<VersionPrefix>0.1.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>

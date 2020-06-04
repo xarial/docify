@@ -22,7 +22,6 @@ using Xarial.Docify.Lib.Plugins.Common.Helpers;
 
 namespace Xarial.Docify.Lib.Plugins.CodeSnippet
 {
-    [Plugin("code-snippet")]
     public class CodeSnippetPlugin : IPlugin<CodeSnippetSettings>
     {
         private CodeSnippetSettings m_Settings;

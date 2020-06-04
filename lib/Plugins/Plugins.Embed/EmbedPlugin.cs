@@ -13,7 +13,6 @@ using Xarial.Docify.Lib.Plugins.Common.Helpers;
 
 namespace Xarial.Docify.Lib.Plugins.Embed
 {
-    [Plugin("embed")]
     public class EmbedPlugin : IPlugin
     {
         private IDocifyApplication m_App;

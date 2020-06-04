@@ -18,7 +18,6 @@ using Xarial.Docify.Lib.Plugins.Common.Exceptions;
 
 namespace Xarial.Docify.Lib.Plugins.Redirect
 {
-    [Plugin("redirect")]
     public class RedirectPlugin : IPlugin<RedirectPluginSettings>
     {
         private IDocifyApplication m_App;

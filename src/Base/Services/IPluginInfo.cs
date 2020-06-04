@@ -6,19 +6,23 @@
 //*********************************************************************
 
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Base.Services
 {
     /// <summary>
-    /// Service which loads and manages plugins
+    /// Plugin information
     /// </summary>
-    public interface IPluginsManager
+    public interface IPluginInfo
     {
         /// <summary>
-        /// Loads plugins from the input files
+        /// Plugin name
         /// </summary>
-        /// <param name="files">Plugin files</param>
-        Task LoadPlugins(IAsyncEnumerable<IPluginInfo> pluginInfos);
+        string Name { get; }
+
+        /// <summary>
+        /// Plugin files
+        /// </summary>
+        IAsyncEnumerable<IFile> Files { get; }
     }
 }

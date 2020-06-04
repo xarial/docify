@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <PluginId>redirect</PluginId>
+    <PluginName>redirect</PluginName>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Xarial.Docify.Lib.Plugins.Redirect</RootNamespace>
+	<VersionPrefix>0.1.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>

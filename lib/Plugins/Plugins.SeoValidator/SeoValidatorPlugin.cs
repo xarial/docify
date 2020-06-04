@@ -18,7 +18,6 @@ using Xarial.Docify.Lib.Plugins.Common.Helpers;
 
 namespace Xarial.Docify.Lib.Plugins.SeoValidator
 {
-    [Plugin("seo-validator")]
     public class SeoValidatorPlugin : IPlugin<SeoValidatorPluginSettings>
     {
         private IDocifyApplication m_App;

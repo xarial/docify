@@ -84,6 +84,7 @@ stages:
           TargetFolder: '_library/_plugins'
 
       - task: ArchiveFiles@2
+        condition: ne(variables['Build.Reason'], 'PullRequest')
         inputs:
           rootFolderOrFile: '_library' 
           includeRootFolder: false

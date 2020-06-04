@@ -79,7 +79,7 @@ stages:
         condition: ne(variables['Build.Reason'], 'PullRequest')
         displayName: 'Copy Plugins Library'
         inputs:
-          SourceFolder: '$(System.DefaultWorkingDirectory)lib\Plugins\bin\$(BuildConfiguration)\$(framework)'
+          SourceFolder: '$(System.DefaultWorkingDirectory)\lib\Plugins\bin\$(BuildConfiguration)\**'
           Contents: '**\*'
           TargetFolder: '_library/_plugins'
 

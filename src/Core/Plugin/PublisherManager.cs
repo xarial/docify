@@ -1,8 +1,8 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ namespace Xarial.Docify.Core.Plugin
         public event PostAddPublishFilesDelegate PostAddPublishFiles;
         private readonly PublisherExtension m_Ext;
 
-        public PublisherManager(IPublisher inst, PublisherExtension ext) 
+        public PublisherManager(IPublisher inst, PublisherExtension ext)
         {
             Instance = inst;
             m_Ext = ext;
@@ -34,32 +34,31 @@ namespace Xarial.Docify.Core.Plugin
             m_Ext.RequestPostPublish += OnRequestPostPublish;
         }
 
-        private async Task<PrePublishResult> OnRequestPrePublishFile(ILocation outLoc, IFile file)
+        private async Task OnRequestPrePublishFile(ILocation outLoc, PrePublishFileArgs args)
         {
-            var curRes = new PrePublishResult()
+            if (PrePublishFile != null)
             {
-                File = file,
-                SkipFile = false
-            };
-
-            if (PrePublishFile != null) 
-            {
-                foreach (PrePublishFileDelegate del in PrePublishFile.GetInvocationList()) 
+                foreach (PrePublishFileDelegate del in PrePublishFile.GetInvocationList())
                 {
-                    var thisRes = await del.Invoke(outLoc, curRes.File);
-                    curRes.File = thisRes.File;
-                    curRes.SkipFile |= thisRes.SkipFile;
+                    var thisArg = new PrePublishFileArgs()
+                    {
+                        File = args.File,
+                        SkipFile = false
+                    };
+                    
+                    await del.Invoke(outLoc, thisArg);
+
+                    args.File = thisArg.File;
+                    args.SkipFile |= thisArg.SkipFile;
                 }
             }
-
-            return curRes;
         }
 
         private async Task OnRequestPostPublish(ILocation loc)
         {
-            if (PostPublish != null) 
+            if (PostPublish != null)
             {
-                foreach (PostPublishDelegate del in PostPublish.GetInvocationList()) 
+                foreach (PostPublishDelegate del in PostPublish.GetInvocationList())
                 {
                     await del.Invoke(loc);
                 }

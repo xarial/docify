@@ -1,8 +1,8 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using System;
@@ -13,42 +13,46 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
-using Xarial.Docify.Core.Data;
-using Xarial.Docify.Core.Plugin;
+using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Publisher
 {
     public class LocalFileSystemPublisher : IPublisher
     {
-        private readonly LocalFileSystemPublisherConfig m_Config;
         private readonly System.IO.Abstractions.IFileSystem m_FileSystem;
 
         private readonly IPublisherExtension m_Ext;
-
-        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config,
-            IPublisherExtension ext) 
-            : this(config, new System.IO.Abstractions.FileSystem(), ext)
+        private readonly ITargetDirectoryCleaner m_TargetCleaner;
+        
+        public LocalFileSystemPublisher(IPublisherExtension ext)
+            : this(new System.IO.Abstractions.FileSystem(), ext, 
+                  new LocalFileSystemTargetDirectoryCleaner(new System.IO.Abstractions.FileSystem(), true))
         {
         }
 
-        public LocalFileSystemPublisher(LocalFileSystemPublisherConfig config, 
-            System.IO.Abstractions.IFileSystem fileSystem, IPublisherExtension ext)
+        public LocalFileSystemPublisher(IPublisherExtension ext,
+            ITargetDirectoryCleaner targetCleaner)
+            : this(new System.IO.Abstractions.FileSystem(), ext, targetCleaner)
         {
-            m_Config = config;
+        }
+
+        public LocalFileSystemPublisher(
+            System.IO.Abstractions.IFileSystem fileSystem, IPublisherExtension ext,
+            ITargetDirectoryCleaner targetCleaner)
+        {
             m_FileSystem = fileSystem;
             m_Ext = ext;
+
+            m_TargetCleaner = targetCleaner;
         }
 
         public async Task Write(ILocation loc, IAsyncEnumerable<IFile> files)
         {
             var outDir = loc.ToPath();
 
-            if (m_FileSystem.Directory.Exists(outDir))
-            {
-                m_FileSystem.Directory.Delete(outDir, true);
-            }
-
+            await m_TargetCleaner.ClearDirectory(loc);
+            
             await foreach (var file in files)
             {
                 var outFilePath = file.Location.ToPath();
@@ -60,13 +64,17 @@ namespace Xarial.Docify.Core.Publisher
 
                 var outLoc = Location.FromPath(outFilePath);
 
-                IFile outFile = new Data.File(outLoc, file.Content, file.Id);
-
-                var res = await m_Ext.PrePublishFile(loc, outFile);
-
-                if (!res.SkipFile)
+                var args = new PrePublishFileArgs()
                 {
-                    await WriteFile(res.File);
+                    File = new Data.File(outLoc, file.Content, file.Id),
+                    SkipFile = false
+                };
+
+                await m_Ext.PrePublishFile(loc, args);
+
+                if (!args.SkipFile)
+                {
+                    await WriteFile(args.File);
                 }
             }
 
@@ -87,7 +95,7 @@ namespace Xarial.Docify.Core.Publisher
         {
             var outFilePath = file.Location.ToPath();
 
-            if (!Path.IsPathRooted(outFilePath)) 
+            if (!Path.IsPathRooted(outFilePath))
             {
                 throw new Exception($"Path of file to publish {outFilePath} must be rooted");
             }
@@ -97,6 +105,11 @@ namespace Xarial.Docify.Core.Publisher
             if (!m_FileSystem.Directory.Exists(dir))
             {
                 m_FileSystem.Directory.CreateDirectory(dir);
+            }
+
+            if (m_FileSystem.File.Exists(outFilePath))
+            {
+                throw new FilePublishOverwriteForbiddenException(outFilePath);
             }
 
             await m_FileSystem.File.WriteAllBytesAsync(outFilePath, file.Content);

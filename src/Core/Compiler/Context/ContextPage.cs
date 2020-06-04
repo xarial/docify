@@ -1,14 +1,11 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Context;
@@ -27,7 +24,7 @@ namespace Xarial.Docify.Core.Compiler.Context
         //public string Name { get; }
         //public string RawContent { get; }
 
-        public IContextMetadata Data 
+        public IContextMetadata Data
         {
             get
             {
@@ -35,7 +32,7 @@ namespace Xarial.Docify.Core.Compiler.Context
 
                 ISheet frame = BasePage;
 
-                while (frame != null) 
+                while (frame != null)
                 {
                     thisParam = thisParam.Merge(frame.Data);
                     frame = frame.Layout;
@@ -56,7 +53,7 @@ namespace Xarial.Docify.Core.Compiler.Context
 
         public ContextPage(ISite site, IPage page, string url)
         {
-            if (string.IsNullOrEmpty(url)) 
+            if (string.IsNullOrEmpty(url))
             {
                 url = "/";
             }
@@ -68,8 +65,6 @@ namespace Xarial.Docify.Core.Compiler.Context
             var partUrl = Url.TrimStart('/');
 
             FullUrl = site.BaseUrl + (string.IsNullOrEmpty(partUrl) ? "" : "/" + partUrl);
-            //Name = page.Name;
-            //RawContent = page.RawContent;
         }
 
         private string GetChildPageUrl(IPage page) => Url.TrimEnd('/') + "/" + page.Name + "/";

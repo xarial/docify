@@ -1,4 +1,11 @@
-﻿using System;
+﻿//*********************************************************************
+//Docify
+//Copyright(C) 2020 Xarial Pty Limited
+//Product URL: https://docify.net
+//License: https://docify.net/license/
+//*********************************************************************
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -66,7 +73,7 @@ namespace Tests.Common
 
         public async Task<string> CompileMainPageNormalize(Site site)
         {
-            var compiler = new DocifyEngine(new string[] { "" }, "", "", Environment_e.Test).Resove<ICompiler>();
+            var compiler = new DocifyEngineMock().Resove<ICompiler>();
 
             var files = await compiler.Compile(site).ToListAsync();
 

@@ -1,8 +1,8 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using NUnit.Framework;
@@ -202,7 +202,7 @@ namespace Core.Tests
             Assert.AreEqual("a2", a2.AsTextContent());
         }
 
-        //TODO: thsi is throwing error - investigate
+        //TODO: this is throwing error - investigate
         //[Test]
         //public async Task ComposeSite_NonDefaultPageAsset()
         //{

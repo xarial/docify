@@ -1,18 +1,24 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Xarial.Docify.Base.Data
 {
+    /// <summary>
+    /// Represents metadata collection
+    /// </summary>
     public interface IMetadata : IDictionary<string, object>
     {
+        /// <summary>
+        /// Creates an instance of this metdata from the soure data
+        /// </summary>
+        /// <param name="data">Base data</param>
+        /// <returns>Instance of this metdata</returns>
         IMetadata Copy(IDictionary<string, object> data);
     }
 }

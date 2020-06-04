@@ -1,8 +1,8 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using System;
@@ -32,7 +32,7 @@ namespace Xarial.Docify.Core.Composer
         private readonly StringComparer m_Comparer;
         private readonly StringComparison m_Comparison;
 
-        public BaseSiteComposer(ILayoutParser parser, IConfiguration config, IComposerExtension ext) 
+        public BaseSiteComposer(ILayoutParser parser, IConfiguration config, IComposerExtension ext)
         {
             m_LayoutParser = parser;
             m_Config = config;
@@ -40,7 +40,7 @@ namespace Xarial.Docify.Core.Composer
             m_Comparison = StringComparison.CurrentCultureIgnoreCase;
         }
 
-        private bool IsPage(IFile srcFile) 
+        private bool IsPage(IFile srcFile)
         {
             var ext = Path.GetExtension(srcFile.Location.FileName);
 
@@ -55,7 +55,7 @@ namespace Xarial.Docify.Core.Composer
         }
 
         private void ParseTextFile(IFile src, out string rawContent,
-            out IMetadata data, out string layoutName) 
+            out IMetadata data, out string layoutName)
         {
             FrontMatterParser.Parse(src.AsTextContent(), out rawContent, out data);
 
@@ -68,13 +68,13 @@ namespace Xarial.Docify.Core.Composer
                     .Equals("index", StringComparison.CurrentCultureIgnoreCase);
         }
 
-        private Page CreatePage(IFile src, 
+        private Page CreatePage(IFile src,
             IReadOnlyDictionary<string, Template> layoutsMap, string name)
         {
             string rawContent = null;
             IMetadata pageData = null;
             Template layout = null;
-            
+
             string layoutName;
             ParseTextFile(src, out rawContent, out pageData, out layoutName);
 
@@ -93,20 +93,20 @@ namespace Xarial.Docify.Core.Composer
         {
             var filesList = new List<IFile>();
 
-            await foreach(var file in files)
+            await foreach (var file in files)
             {
                 filesList.Add(file);
             }
 
             if (filesList.Any())
             {
-                GroupSourceFiles(filesList, 
-                    out IEnumerable<IFile> srcPages, 
+                GroupSourceFiles(filesList,
+                    out IEnumerable<IFile> srcPages,
                     out IEnumerable<IFile> srcLayouts,
-                    out IEnumerable<IFile> srcIncludes, 
+                    out IEnumerable<IFile> srcIncludes,
                     out IEnumerable<IFile> srcAssets);
 
-                if (!srcPages.Any()) 
+                if (!srcPages.Any())
                 {
                     throw new EmptySiteException();
                 }
@@ -122,17 +122,17 @@ namespace Xarial.Docify.Core.Composer
 
                 return site;
             }
-            else 
+            else
             {
                 throw new EmptySiteException();
             }
         }
 
         private void GroupSourceFiles(IReadOnlyList<IFile> files,
-            out IEnumerable<IFile> pages, 
+            out IEnumerable<IFile> pages,
             out IEnumerable<IFile> layouts,
             out IEnumerable<IFile> includes,
-            out IEnumerable<IFile> assets) 
+            out IEnumerable<IFile> assets)
         {
             if (files.Any(f => f == null))
             {
@@ -159,14 +159,14 @@ namespace Xarial.Docify.Core.Composer
 
             assets = procFiles;
         }
-        
-        private Dictionary<string, Template> ParseLayouts(IEnumerable<IFile> layoutFiles) 
+
+        private Dictionary<string, Template> ParseLayouts(IEnumerable<IFile> layoutFiles)
         {
             var layouts = new Dictionary<string, Template>(m_Comparer);
 
             var layoutSrcList = layoutFiles.ToList();
 
-            while (layoutSrcList.Any()) 
+            while (layoutSrcList.Any())
             {
                 var layoutName = GetTemplateName(layoutSrcList.First().Location);
                 CreateLayout(layouts, layoutSrcList, layoutName);
@@ -175,7 +175,7 @@ namespace Xarial.Docify.Core.Composer
             return layouts;
         }
 
-        private List<Template> ParseIncludes(IEnumerable<IFile> includeFiles) 
+        private List<Template> ParseIncludes(IEnumerable<IFile> includeFiles)
         {
             var usedIncludes = new List<string>();
 
@@ -191,7 +191,7 @@ namespace Xarial.Docify.Core.Composer
 
                 var name = GetTemplateName(s.Location);
 
-                if (usedIncludes.Contains(name, m_Comparer)) 
+                if (usedIncludes.Contains(name, m_Comparer))
                 {
                     throw new DuplicateTemplateException(name);
                 }
@@ -202,30 +202,30 @@ namespace Xarial.Docify.Core.Composer
             }).ToList();
         }
 
-        private List<Data.File> ParseAssets(IEnumerable<IFile> assets) 
+        private List<Data.File> ParseAssets(IEnumerable<IFile> assets)
         {
             return assets.Select(a => new Data.File(a.Location, a.Content, a.Id)).ToList();
         }
 
-        private string GetTemplateName(ILocation loc) 
+        private string GetTemplateName(ILocation loc)
         {
             var path = loc.Path.Skip(1).ToList();
             path.Add(Path.GetFileNameWithoutExtension(loc.FileName));
-            
+
             return string.Join(LocationExtension.ID_SEP, path.ToArray());
         }
 
-        private Template CreateLayout(Dictionary<string, Template> layouts, 
-            List<IFile> layoutsSrcList, string layoutName) 
+        private Template CreateLayout(Dictionary<string, Template> layouts,
+            List<IFile> layoutsSrcList, string layoutName)
         {
             //TODO: detect circular dependencies
 
             var layoutFile = layoutsSrcList.Find(
-                l => string.Equals(GetTemplateName(l.Location), 
-                layoutName, 
+                l => string.Equals(GetTemplateName(l.Location),
+                layoutName,
                 m_Comparison));
 
-            if (layoutFile == null) 
+            if (layoutFile == null)
             {
                 throw new MissingLayoutException(layoutName);
             }
@@ -235,9 +235,13 @@ namespace Xarial.Docify.Core.Composer
             string baseLayoutName;
             ParseTextFile(layoutFile, out rawContent, out data, out baseLayoutName);
 
-            if (!m_LayoutParser.ContainsPlaceholder(rawContent)) 
+            try
             {
-                throw new LayoutMissingContentPlaceholderException(layoutName);
+                m_LayoutParser.ValidateLayout(rawContent);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidLayoutException(layoutName, ex);
             }
 
             Template baseLayout = null;
@@ -252,7 +256,7 @@ namespace Xarial.Docify.Core.Composer
 
             var layout = new Template(layoutName, rawContent, layoutFile.Id, data, baseLayout);
 
-            if (layouts.ContainsKey(layoutName)) 
+            if (layouts.ContainsKey(layoutName))
             {
                 throw new DuplicateTemplateException(layoutName);
             }
@@ -286,18 +290,18 @@ namespace Xarial.Docify.Core.Composer
 
             var unprocessed = refPages.Union(refAssets);
 
-            if (unprocessed.Any()) 
+            if (unprocessed.Any())
             {
                 //this should never happen, but keeping this as an exception in case algorithm is incorrect
                 throw new SiteParsingException(unprocessed.ToArray());
             }
-            
+
             return mainPage;
         }
 
-        private void ProcessChildren(IPage parent, 
+        private void ProcessChildren(IPage parent,
             List<IFile> pages, List<IFile> assets,
-            IReadOnlyDictionary<string, Template> layouts, Location curLoc) 
+            IReadOnlyDictionary<string, Template> layouts, Location curLoc)
         {
             var subPages = pages.Where(p => p.Location.IsInLocation(curLoc, m_Comparison))
                 .ToArray();
@@ -382,8 +386,8 @@ namespace Xarial.Docify.Core.Composer
             folder.Assets.AddRange(children.Select(a =>
             {
                 var fileName = a.Location.FileName;
-                
-                if (string.IsNullOrEmpty(fileName)) 
+
+                if (string.IsNullOrEmpty(fileName))
                 {
                     //file with no extension
                     fileName = a.Location.GetRoot();
@@ -395,10 +399,10 @@ namespace Xarial.Docify.Core.Composer
             children.ForEach(a => assets.Remove(a));
             children.ForEach(a => pageAssets.Remove(a));
 
-            if (pageAssets.Any()) 
+            if (pageAssets.Any())
             {
                 foreach (var subFolderName in pageAssets.Select(
-                    a => a.Location.GetRelative(curLoc).GetRoot()).Distinct(m_Comparer)) 
+                    a => a.Location.GetRelative(curLoc).GetRoot()).Distinct(m_Comparer))
                 {
                     var subFolder = new AssetsFolder(subFolderName);
                     folder.Folders.Add(subFolder);

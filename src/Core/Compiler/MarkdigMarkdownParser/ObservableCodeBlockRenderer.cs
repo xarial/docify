@@ -1,19 +1,13 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using Markdig.Renderers;
 using Markdig.Syntax;
-using Markdig.Syntax.Inlines;
-using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Linq;
-using Xarial.Docify.Base.Plugins;
-using Xarial.Docify.Core.Plugin;
 using Markdig.Renderers.Html;
 using System.IO;
 using Xarial.Docify.Core.Plugin.Extensions;
@@ -24,7 +18,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
     {
         private readonly ICompilerExtension m_Ext;
 
-        public ObservableCodeBlockRenderer(ICompilerExtension ext) 
+        public ObservableCodeBlockRenderer(ICompilerExtension ext)
         {
             m_Ext = ext;
         }
@@ -40,11 +34,11 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
                 var args = fencedCodeBlock.Arguments;
 
                 var codeOut = new StringBuilder();
-                using (var strWriter = new StringWriter(codeOut)) 
+                using (var strWriter = new StringWriter(codeOut))
                 {
                     base.Write(new HtmlRenderer(strWriter), obj);
                 }
-                
+
                 m_Ext.RenderCodeBlock(code, lang, args, codeOut);
 
                 renderer.Write(codeOut.ToString());

@@ -1,105 +1,108 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using Autofac;
-using Autofac.Builder;
 using Autofac.Core;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.CLI.Properties;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Compiler;
 using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
 using Xarial.Docify.Core.Composer;
 using Xarial.Docify.Core.Data;
+using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Loader;
 using Xarial.Docify.Core.Logger;
 using Xarial.Docify.Core.Plugin;
 using Xarial.Docify.Core.Plugin.Extensions;
 using Xarial.Docify.Core.Publisher;
-using Xarial.Docify.Lib.Tools;
+using Xarial.Docify.Core.Tools;
+using Xarial.XToolkit.Services.UserSettings;
 
 namespace Xarial.Docify.CLI
 {
-    public interface IDocifyEngine 
+    public interface IDocifyEngine
     {
         T Resove<T>();
         Task Build();
     }
-    
+
     public class DocifyEngine : IDocifyEngine
     {
         private readonly IContainer m_Container;
 
         private readonly string m_SiteUrl;
         private readonly ILocation[] m_SrcDirs;
-        private readonly string m_OutDir;
+        private readonly ILocation m_OutDir;
+        private readonly string[] m_Libs;
 
-        public DocifyEngine(string[] srcDirs, string outDir, string siteUrl, Environment_e env)
+        public DocifyEngine(string[] srcDirs, string outDir, string[] libs, string siteUrl, string env)
         {
             var builder = new ContainerBuilder();
+
             m_SiteUrl = siteUrl;
             m_SrcDirs = srcDirs.Select(s => Location.FromPath(s)).ToArray();
-            m_OutDir = outDir;
+            m_OutDir = Location.FromPath(outDir);
+
+            m_Libs = libs;
 
             RegisterDependencies(builder, env);
 
             m_Container = builder.Build();
-
-            LoadPlugins();
-
-            MarkdownHelper.MarkdownTransformer = m_Container.Resolve<MarkdigMarkdownContentTransformer>();
         }
 
         public async Task Build()
         {
-            var loader = Resove<ILoader>();
+            var loader = Resove<IProjectLoader>();
             var composer = Resove<IComposer>();
             var compiler = Resove<ICompiler>();
             var publisher = Resove<IPublisher>();
 
             var srcFiles = loader.Load(m_SrcDirs);
 
-            var compsLoader = Resove<IComponentsLoader>();
-            srcFiles = compsLoader.Load(srcFiles);
-
             var site = await composer.ComposeSite(srcFiles, m_SiteUrl);
 
-            var writables = compiler.Compile(site);
-            
-            await publisher.Write(Location.FromPath(m_OutDir), writables);
+            var outFiles = compiler.Compile(site);
+
+            await publisher.Write(m_OutDir, outFiles);
         }
 
-        public T Resove<T>() 
+        public T Resove<T>()
         {
             return m_Container.Resolve<T>();
         }
 
-        protected virtual void RegisterDependencies(ContainerBuilder builder, Environment_e env) 
+        protected virtual void RegisterDependencies(ContainerBuilder builder, string env)
         {
-            builder.RegisterType<LocalFileSystemLoaderConfig>()
-                .UsingConstructor(typeof(IConfiguration));
+            builder.RegisterType<LibraryLoader>()
+                .As<ILibraryLoader>()
+                .WithParameter(new ResolvedParameter(
+                       (pi, ctx) => pi.ParameterType == typeof(ILibraryLoader[]),
+                       (pi, ctx) => ResolveLibraryLoaders(ctx).ToArray()));
+
+            builder.RegisterType<FolderLibraryLoader>();
+            builder.RegisterType<SecureLibraryLoader>();
 
             builder.RegisterType<BaseCompilerConfig>()
                 .UsingConstructor(typeof(IConfiguration));
 
-            builder.RegisterType<LocalFileSystemPublisherConfig>();
-
             builder.RegisterType<LocalFileSystemPublisher>()
                 .As<IPublisher>();
 
-            builder.RegisterType<LocalFileSystemLoader>()
-                .As<ILoader>();
+            builder.RegisterType<LocalFileSystemFileLoader>()
+                .As<IFileLoader>();
 
             builder.RegisterType<LayoutParser>()
                 .As<ILayoutParser>();
@@ -108,34 +111,32 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<ConsoleLogger>().As<ILogger>();
 
-            builder.RegisterType<LocalFileSystemComponentsLoader>().As<IComponentsLoader>();
+            builder.RegisterType<ProjectLoader>().As<IProjectLoader>();
 
-            builder.RegisterType<RazorLightContentTransformer>();
-
-            builder.RegisterType<MarkdigMarkdownContentTransformer>();
-
-            builder.RegisterType<IncludesHandler>().As<IIncludesHandler>().WithParameter(
-                new ResolvedParameter(
-                    (pi, ctx) => pi.ParameterType == typeof(IContentTransformer),
-                    (pi, ctx) => ctx.Resolve<RazorLightContentTransformer>()))
+            //NOTE: need this to be single instance to maximize performance and reuse precompiled templates
+            builder.RegisterType<RazorLightContentTransformer>()
+                .As<IDynamicContentTransformer>()
                 .SingleInstance();
 
-            builder.RegisterType<MarkdigRazorLightTransformer>().As<IContentTransformer>()
-                .SingleInstance();
+            builder.RegisterType<MarkdigMarkdownContentTransformer>()
+                .As<IStaticContentTransformer>();
 
-            builder.RegisterType<LocalFileSystemConfigurationLoader>().As<IConfigurationLoader>()
-                .WithParameter(new TypedParameter(typeof(Environment_e), env));
+            builder.RegisterType<IncludesHandler>().As<IIncludesHandler>();
+
+            builder.RegisterType<ConfigurationLoader>().As<IConfigurationLoader>()
+                .WithParameter(new TypedParameter(typeof(string), env));
 
             builder.RegisterType<BaseCompiler>().As<ICompiler>();
 
-            builder.Register(c => c.Resolve<IConfigurationLoader>().Load(m_SrcDirs).Result);
+            builder.Register(c => c.Resolve<IConfigurationLoader>().Load(m_SrcDirs).Result)
+                .SingleInstance();
 
-            builder.RegisterType<LocalFileSystemPluginsManager>().As<IPluginsManager>();
+            builder.RegisterType<PluginsManager>().As<IPluginsManager>();
 
-            RegisterApiExtensions(builder);
+            RegisterExtensions(builder);
         }
 
-        protected virtual void RegisterApiExtensions(ContainerBuilder builder) 
+        protected virtual void RegisterExtensions(ContainerBuilder builder)
         {
             builder.RegisterType<IncludesHandlerExtension>()
                 .SingleInstance()
@@ -168,10 +169,93 @@ namespace Xarial.Docify.CLI
             builder.RegisterType<DocifyApplication>().As<IDocifyApplication>();
         }
 
-        private void LoadPlugins()
+        private IEnumerable<ILibraryLoader> ResolveLibraryLoaders(IComponentContext ctx)
         {
-            var plugMgr = m_Container.Resolve<IPluginsManager>();
-            plugMgr.LoadPlugins();
+            if (m_Libs?.Any() == true)
+            {
+                foreach (var lib in m_Libs)
+                {
+                    var libData = lib.Split("|");
+
+                    var libPath = libData[0];
+
+                    if (libPath == "*")
+                    {
+                        libPath = Location.Library.DefaultLibraryManifestFilePath.ToPath();
+
+                        ILibraryLoader standardLib;
+
+                        try
+                        {
+                            standardLib = ResolveSecureLibrary(ctx, libPath, Resources.standard_library_public_key);
+                        }
+                        catch (FileNotFoundException ex) 
+                        {
+                            throw new UserMessageException("Standard library is not installed. Use the library --install command to install the library", ex);
+                        }
+
+                        yield return standardLib;
+                    }
+                    else
+                    {
+                        if (!Path.IsPathRooted(libPath))
+                        {
+                            libPath = Path.Combine(Path.GetDirectoryName(typeof(DocifyEngine).Assembly.Location), libPath);
+                        }
+
+                        var libLoc = Location.FromPath(libPath);
+
+                        if (!libLoc.IsFile())
+                        {
+                            if (!Directory.Exists(libPath))
+                            {
+                                throw new UserMessageException($"Specified library folder is not found: {libPath}");
+                            }
+
+                            yield return ctx.Resolve<FolderLibraryLoader>(new TypedParameter(typeof(ILocation), libLoc));
+                        }
+                        else
+                        {
+                            if (libData.Length > 1)
+                            {
+                                var publicKeyXmlFilePath = libData[1];
+
+                                if (!System.IO.File.Exists(publicKeyXmlFilePath))
+                                {
+                                    throw new UserMessageException($"Cannot find the public key XML file at '{publicKeyXmlFilePath}'");
+                                }
+
+                                var publicKeyXml = System.IO.File.ReadAllText(publicKeyXmlFilePath);
+
+                                yield return ResolveSecureLibrary(ctx, libPath, publicKeyXml);
+                            }
+                            else
+                            {
+                                throw new UserMessageException("When specifying path to the library manifest file, the path to public key XML must be specified as well by separating path with pipe | symbol");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private SecureLibraryLoader ResolveSecureLibrary(IComponentContext ctx, string manifestPath, string publicKeyXml)
+        {
+            if (!System.IO.File.Exists(manifestPath))
+            {
+                throw new UserMessageException($"Specified library manifest file is not found: {manifestPath}");
+            }
+
+            var manifest = new UserSettingsService().ReadSettings<SecureLibraryManifest>(
+                manifestPath, new BaseValueSerializer<ILocation>(null, x => Location.FromString(x)));
+
+            ILocation libLoc = Location.FromString(manifestPath);
+            libLoc = libLoc.Copy("", libLoc.Path);
+
+            return ctx.Resolve<SecureLibraryLoader>(
+                   new TypedParameter(typeof(ILocation), libLoc),
+                   new TypedParameter(typeof(SecureLibraryManifest), manifest),
+                   new TypedParameter(typeof(string), publicKeyXml));
         }
     }
 }

@@ -1,20 +1,24 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Xarial.Docify.Base.Plugins;
 
 namespace Xarial.Docify.Base.Services
 {
+    /// <summary>
+    /// Service which loads and manages plugins
+    /// </summary>
     public interface IPluginsManager
     {
-        Task LoadPlugins();
+        /// <summary>
+        /// Loads plugins from the input files
+        /// </summary>
+        /// <param name="files">Plugin files</param>
+        Task LoadPlugins(IAsyncEnumerable<IPluginInfo> pluginInfos);
     }
 }

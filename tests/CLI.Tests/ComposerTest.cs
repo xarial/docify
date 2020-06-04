@@ -1,4 +1,11 @@
-﻿using NUnit.Framework;
+﻿//*********************************************************************
+//Docify
+//Copyright(C) 2020 Xarial Pty Limited
+//Product URL: https://docify.net
+//License: https://docify.net/license/
+//*********************************************************************
+
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +27,7 @@ namespace CLI.Tests
         [SetUp]
         public void Setup()
         {
-            m_Composer = new DocifyEngineMock(@"D:\src", @"D:\out", "www.xarial.com", Environment_e.Test).Resove<IComposer>();
+            m_Composer = new DocifyEngineMock().Resove<IComposer>();
         }
 
         [Test]

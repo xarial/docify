@@ -1,17 +1,14 @@
 ﻿//*********************************************************************
-//docify
+//Docify
 //Copyright(C) 2020 Xarial Pty Limited
-//Product URL: https://www.docify.net
-//License: https://github.com/xarial/docify/blob/master/LICENSE
+//Product URL: https://docify.net
+//License: https://docify.net/license/
 //*********************************************************************
 
 using Markdig;
 using Markdig.Extensions.GenericAttributes;
 using Markdig.Renderers;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
 {
@@ -20,7 +17,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
         private readonly string m_StartTag;
         private readonly string m_EndTag;
 
-        public ProtectedTagsExtension(string startTag, string endTag) 
+        public ProtectedTagsExtension(string startTag, string endTag)
         {
             m_StartTag = startTag;
             m_EndTag = endTag;
@@ -43,7 +40,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
             {
                 htmlRenderer.ObjectRenderers.AddIfNotAlready<ProtectedTagsRenderer>();
             }
-            else 
+            else
             {
                 throw new NotSupportedException("Renderer is not upported");
             }

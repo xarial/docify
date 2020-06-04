@@ -1,0 +1,95 @@
+trigger:
+  branches:
+    include:
+    - master
+    - dev
+  paths:
+    include:
+    - lib/*
+
+name: '$(Date:yyyyMMdd).$(Rev:r)[$(BuildID)]'
+
+stages:
+
+- stage: 'Build'
+  variables:
+  - group: build-vars
+  - name: buildConfiguration
+    value: Release
+  - name: framework
+    value: netcoreapp3.1
+
+  jobs:
+  - job:
+    pool:
+      name: 'Azure Pipelines'
+      vmImage: windows-latest
+      demands:
+        - msbuild
+        - visualstudio
+
+    steps:
+      - task: UseDotNet@2
+        inputs:
+          packageType: 'sdk'
+        
+      - task: DotNetCoreCLI@2
+        displayName: 'NuGet restore'
+        inputs:
+          command: restore
+          projects: '**\*.sln'
+
+      - task: VSBuild@1
+        displayName: 'Build library'
+        inputs:
+          solution: 'lib\**\*.csproj'
+          configuration: '$(BuildConfiguration)'
+
+      - task: VSBuild@1
+        displayName: 'Build test projects'
+        inputs:
+            solution: 'tests\lib\*.Tests\*.csproj'
+            configuration: '$(BuildConfiguration)'
+            
+      - task: VSTest@2
+        displayName: 'Unit test'
+        inputs:
+          testAssemblyVer2: |
+            tests\lib\**\*.Tests.dll
+            !**\obj\**
+          configuration: '$(BuildConfiguration)'
+
+      - task: CopyFiles@2
+        condition: ne(variables['Build.Reason'], 'PullRequest')
+        displayName: 'Copy Components Library'
+        inputs:
+          SourceFolder: '$(System.DefaultWorkingDirectory)\lib\Components\Lib'
+          Contents: '**\*'
+          TargetFolder: '$(System.DefaultWorkingDirectory)/_library/_components'
+
+      - task: CopyFiles@2
+        condition: ne(variables['Build.Reason'], 'PullRequest')
+        displayName: 'Copy Themes Library'
+        inputs:
+          SourceFolder: '$(System.DefaultWorkingDirectory)\lib\Themes\Lib'
+          Contents: '**\*'
+          TargetFolder: '$(System.DefaultWorkingDirectory)/_library/_themes'
+
+      - task: CopyFiles@2
+        condition: ne(variables['Build.Reason'], 'PullRequest')
+        displayName: 'Copy Plugins Library'
+        inputs:
+          SourceFolder: '$(System.DefaultWorkingDirectory)\lib\Plugins\bin\$(BuildConfiguration)\$(framework)'
+          Contents: '**\*'
+          TargetFolder: '_library/_plugins'
+
+      - task: ArchiveFiles@2
+        condition: ne(variables['Build.Reason'], 'PullRequest')
+        inputs:
+          rootFolderOrFile: '_library' 
+          includeRootFolder: false
+          archiveFile: '$(Build.ArtifactStagingDirectory)/library/library.zip' 
+      
+      - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+        - publish: '$(Build.ArtifactStagingDirectory)/library'
+          artifact: 'library'

@@ -110,6 +110,8 @@ stages:
 - stage: 'PublishProductionNuGetPackage'
   variables:
   - group: build-vars
+  - name: packagePath
+    value:
   displayName: 'Publish Production NuGet Package to nuget.org'
   dependsOn: 'Build'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest'))
@@ -133,11 +135,16 @@ stages:
               inputs:
                 secureFile: xarial-code-signing.pfx
 
+            - script: |
+              $packagePath = (Get-ChildItem -Path "$(Pipeline.Workspace)/packages/release" -Filter "*.nupkg").FullName
+              echo $packagePath
+              echo '##vso[task.setvariable variable=packagePath]$packagePath'
+
             - task: NuGetCommand@2
               displayName: 'Sign NuGet Package'
               inputs:
                 command: 'custom'
-                arguments: sign "$(Pipeline.Workspace)/packages/release/*.nupkg" -CertificatePath "$(Certificate.secureFilePath)" -CertificatePassword "$(CODE_SIGN_CERT_PWD)" -Timestamper http://timestamp.comodoca.com
+                arguments: sign "$(PackagePath)" -CertificatePath "$(Certificate.secureFilePath)" -CertificatePassword "$(CODE_SIGN_CERT_PWD)" -Timestamper http://timestamp.comodoca.com
                 
             - task: NuGetCommand@2
               displayName: 'Push NuGet Package'

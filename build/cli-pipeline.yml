@@ -107,38 +107,11 @@ stages:
                 nuGetFeedType: 'internal'
                 publishVstsFeed: 'xarial'
 
-- stage: 'PublishPreReleaseNuGetPackage'
-  displayName: 'Publish Pre-Release NuGet Package to xarial nuget feed'
-  dependsOn: 'Build'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest'))
-  jobs:
-  - deployment:
-    pool:
-      vmImage: 'windows-latest'
-    environment: preview
-    strategy: 
-        runOnce:
-          deploy:
-            steps:
-            - checkout: none
-
-            - download: current
-              artifact: packages
-
-            - task: NuGetCommand@2
-              displayName: 'Push NuGet Package'
-              inputs:
-                command: 'push'
-                packagesToPush: '$(Pipeline.Workspace)/packages/release/*.nupkg'
-                allowPackageConflicts: true
-                nuGetFeedType: 'internal'
-                publishVstsFeed: 'xarial'
-
 - stage: 'PublishProductionNuGetPackage'
   variables:
   - group: build-vars
   displayName: 'Publish Production NuGet Package to nuget.org'
-  dependsOn: 'PublishPreReleaseNuGetPackage'
+  dependsOn: 'Build'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest'))
   jobs:
   - deployment:

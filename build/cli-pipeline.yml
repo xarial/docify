@@ -114,7 +114,7 @@ stages:
   jobs:
   - deployment:
     pool:
-      vmImage: 'windows-latest'
+      vmImage: 'ubuntu-latest'
     environment: preview
     strategy: 
         runOnce:
@@ -125,14 +125,13 @@ stages:
             - download: current
               artifact: packages
 
-            - task: NuGetCommand@2
-              displayName: 'Push NuGet Package'
-              inputs:
-                command: 'push'
-                packagesToPush: '$(Pipeline.Workspace)/packages/release/*.nupkg'
-                allowPackageConflicts: true
-                nuGetFeedType: 'internal'
-                publishVstsFeed: 'xarial'
+            # - task: NuGetCommand@2
+            #   displayName: 'Push NuGet Package'
+            #   inputs:
+            #     command: 'push'
+            #     packagesToPush: '$(Pipeline.Workspace)/packages/release/*.nupkg'
+            #     nuGetFeedType: 'internal'
+            #     publishVstsFeed: 'xarial'
 
 - stage: 'PublishProductionNuGetPackage'
   variables:

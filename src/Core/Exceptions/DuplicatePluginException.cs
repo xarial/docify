@@ -6,8 +6,8 @@ namespace Xarial.Docify.Core.Exceptions
 {
     public class DuplicatePluginException : UserMessageException
     {
-        public DuplicatePluginException(string pluginId) 
-            : base($"Plugin '{pluginId}' contains more than one plugin") 
+        public DuplicatePluginException(string pluginName) 
+            : base($"Plugin '{pluginName}' contains more than one plugin") 
         {
         }
     }

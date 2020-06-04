@@ -28,8 +28,8 @@ namespace Xarial.Docify.Core.Loader
         public IAsyncEnumerable<IFile> LoadComponentFiles(string componentName, string[] filters)
             => LoadLibraryItem(componentName, Location.Library.ComponentsFolderName, filters);
 
-        public IAsyncEnumerable<IFile> LoadPluginFiles(string pluginId, string[] filters)
-            => LoadLibraryItem(pluginId, Location.Library.PluginsFolderName, filters);
+        public IAsyncEnumerable<IFile> LoadPluginFiles(string pluginName, string[] filters)
+            => LoadLibraryItem(pluginName, Location.Library.PluginsFolderName, filters);
 
         public IAsyncEnumerable<IFile> LoadThemeFiles(string themeName, string[] filters)
             => LoadLibraryItem(themeName, Location.Library.ThemesFolderName, filters);
@@ -40,8 +40,8 @@ namespace Xarial.Docify.Core.Loader
         public bool ContainsComponent(string compName)
             => ContainsLibraryItem(Location.Library.ComponentsFolderName, compName);
 
-        public bool ContainsPlugin(string pluginId)
-            => ContainsLibraryItem(Location.Library.PluginsFolderName, pluginId);
+        public bool ContainsPlugin(string pluginName)
+            => ContainsLibraryItem(Location.Library.PluginsFolderName, pluginName);
 
         private IAsyncEnumerable<IFile> LoadLibraryItem(string itemName, string subFolder, string[] filters)
         {

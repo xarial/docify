@@ -120,10 +120,10 @@ namespace Xarial.Docify.Core.Loader
 
             if (m_Config.Plugins?.Any() == true)
             {
-                foreach (var pluginId in m_Config.Plugins)
+                foreach (var pluginName in m_Config.Plugins)
                 {
-                    yield return new PluginInfo(pluginId, ProcessLibraryItems(
-                        m_LibraryLoader.LoadPluginFiles(pluginId, null), resFileIds, true));
+                    yield return new PluginInfo(pluginName, ProcessLibraryItems(
+                        m_LibraryLoader.LoadPluginFiles(pluginName, null), resFileIds, true));
                 }
             }
         }

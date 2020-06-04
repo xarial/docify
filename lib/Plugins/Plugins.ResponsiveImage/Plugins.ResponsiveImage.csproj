@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <PluginId>responsive-image</PluginId>
+    <PluginName>responsive-image</PluginName>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Xarial.Docify.Lib.Plugins.ResponsiveImage</RootNamespace>
+	<VersionPrefix>0.1.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>

@@ -32,9 +32,9 @@ namespace Xarial.Docify.Base.Services
         /// <summary>
         /// Checks if the specified plugin available in the library
         /// </summary>
-        /// <param name="pluginId">Id of the plugin</param>
+        /// <param name="pluginName">Name of the plugin</param>
         /// <returns>True if plugin is available, False if not</returns>
-        bool ContainsPlugin(string pluginId);
+        bool ContainsPlugin(string pluginName);
 
         /// <summary>
         /// Loads the files of the theme
@@ -55,9 +55,9 @@ namespace Xarial.Docify.Base.Services
         /// <summary>
         /// Loads the files of the plugin
         /// </summary>
-        /// <param name="pluginId">ID of the plugin</param>
+        /// <param name="pluginName">Name of the plugin</param>
         /// <param name="filters">File filters</param>
         /// <returns>Files from the plugin</returns>
-        IAsyncEnumerable<IFile> LoadPluginFiles(string pluginId, string[] filters);
+        IAsyncEnumerable<IFile> LoadPluginFiles(string pluginName, string[] filters);
     }
 }

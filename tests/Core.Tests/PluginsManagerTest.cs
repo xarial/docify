@@ -204,7 +204,7 @@ namespace Core.Tests
         }
 
         [Test]
-        public void PluginIdDuplicateTest() 
+        public void PluginNameDuplicateTest() 
         {
             var assmBuilder1 = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Guid.NewGuid().ToString()),
                 AssemblyBuilderAccess.RunAndCollect);

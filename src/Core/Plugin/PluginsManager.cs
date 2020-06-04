@@ -177,13 +177,13 @@ namespace Xarial.Docify.Core.Plugin
                 {
                     var settsType = pluginDeclrType.GetGenericArguments().ElementAt(0);
 
-                    var pluginId = pluginAssemblies[pluginSpecType.Assembly];
+                    var pluginName = pluginAssemblies[pluginSpecType.Assembly];
 
                     IDictionary<string, object> settsData;
 
                     object setts = null;
 
-                    if (MetadataExtension.TryGetParameter(m_Conf, PLUGIN_SETTINGS_TOKEN + pluginId, out settsData))
+                    if (MetadataExtension.TryGetParameter(m_Conf, PLUGIN_SETTINGS_TOKEN + pluginName, out settsData))
                     {
                         setts = MetadataExtension.ToObject(settsData, settsType);
                     }

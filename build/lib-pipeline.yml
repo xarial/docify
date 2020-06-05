@@ -84,10 +84,27 @@ stages:
           TargetFolder: '_library/_plugins'
 
       - task: DownloadSecureFile@1
-          name: Certificate
-          displayName: 'Download code signing certificate'
-          inputs:
-            secureFile: xarial-code-signing.pfx
+        name: Certificate
+        displayName: 'Download code signing certificate'
+        inputs:
+          secureFile: xarial-code-signing.pfx
+
+      #- task: PowerShell@2
+      #  inputs:
+      #    filePath: 'build/scripts/create-library-version-info.ps1'
+      #    arguments: '0.1.0 2 3 4'
+
+      - task: DotNetCoreCLI@2
+        displayName: 'Install docify'
+        inputs:
+          command: 'custom'
+          custom: 'install tool -g docify'
+      
+      - task: DotNetCoreCLI@2
+        displayName: 'Generate library manifest'
+        inputs:
+          command: 'custom'
+          custom: 'docify genman --lib _library --version 0.1.0 --cert "$(Certificate.secureFilePath)" -pwd "$(CODE_SIGN_CERT_PWD)"'
 
       - task: ArchiveFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')

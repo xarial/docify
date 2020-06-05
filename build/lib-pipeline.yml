@@ -98,13 +98,16 @@ stages:
         displayName: 'Install docify'
         inputs:
           command: 'custom'
-          custom: 'tool install -g docify'
+          custom: 'tool'
+          includeNuGetOrg: true
+          arguments: 'install -g docify'
       
       - task: DotNetCoreCLI@2
         displayName: 'Generate library manifest'
         inputs:
           command: 'custom'
-          custom: 'docify genman --lib _library --version 0.1.0 --cert "$(Certificate.secureFilePath)" -pwd "$(CODE_SIGN_CERT_PWD)"'
+          custom: 'docify'
+          arguments: 'genman --lib _library --version 0.1.0 --cert "$(Certificate.secureFilePath)" -pwd "$(CODE_SIGN_CERT_PWD)"'
 
       - task: ArchiveFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')

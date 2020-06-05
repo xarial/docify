@@ -12,7 +12,7 @@ using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Base.Plugins
 {
-    public struct PrePublishFileArgs
+    public class PrePublishFileArgs
     {
         public IFile File { get; set; }
         public bool SkipFile { get; set; }

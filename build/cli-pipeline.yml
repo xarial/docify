@@ -7,6 +7,15 @@ trigger:
     include:
     - src/*
 
+pr:
+  branches:
+    include:
+    - master
+    - dev
+  paths:
+    include:
+    - src/*
+
 name: '$(Date:yyyyMMdd).$(Rev:r)[$(BuildID)]'
 
 stages:

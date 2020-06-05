@@ -6,6 +6,7 @@
 //*********************************************************************
 
 using CommandLine;
+using CommandLine.Text;
 using System.Collections.Generic;
 
 namespace Xarial.Docify.CLI.Options
@@ -27,5 +28,42 @@ namespace Xarial.Docify.CLI.Options
 
         [Option('l', "lib", Required = false, HelpText = "Path to libraries. For standard library specify *. For the folder based libraries specify the path to directory. For secure library specify the path to library manifest file and the public key XML file separated by pipe symbol |")]
         public IEnumerable<string> Library { get; set; }
+
+        [Usage]
+        public static IEnumerable<Example> UsageExamples
+        {
+            get
+            {
+                return new List<Example>() 
+                {
+                    new Example("Compile the site source to the static files", 
+                        new BuildOptions
+                        {
+                            SourceDirectories = new string[] { "C:\\my_site_src" },
+                            SiteUrl = "https://www.example.com",
+                            OutputDirectory = "C:\\my_site_compile"
+                        }),
+
+                    new Example("Compile the site from two sources using items from standard library in the Production environment",
+                        new BuildOptions
+                        {
+                            SourceDirectories = new string[] { "C:\\my_site_src\\content", "C:\\my_site_src\\frame" },
+                            SiteUrl = "https://www.example.com",
+                            Library = new string[] { "*" },
+                            Environment = "Production",
+                            OutputDirectory = "C:\\my_site_compile"
+                        }),
+
+                    new Example("Compile the site using the local library signed with manifest",
+                        new BuildOptions
+                        {
+                            SourceDirectories = new string[] { "C:\\my_site_src"  },
+                            SiteUrl = "https://www.example.com",
+                            Library = new string[] { "C:\\my_lib\\library.manifest|C:\\public_key.xml" },
+                            OutputDirectory = "C:\\my_site_compile"
+                        })
+                };
+            }
+        }
     }
 }

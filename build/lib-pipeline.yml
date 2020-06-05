@@ -199,7 +199,7 @@ stages:
           - task: PowerShell@2
             inputs:
               filePath: '$(Pipeline.Workspace)/library/create-library-version-info.ps1'
-              arguments: '$(LibVersion) "$(Build.ArtifactStagingDirectory)/library-info/library.json" "$(Pipeline.Workspace)/library/library.zip" "$(Certificate.secureFilePath)" "$(CODE_SIGN_CERT_PWD)"'
+              arguments: '$(LibVersion) "$(Build.ArtifactStagingDirectory)/library.json" "$(Pipeline.Workspace)/library/library.zip" "$(Certificate.secureFilePath)" "$(CODE_SIGN_CERT_PWD)"'
           
-          - publish: '$(Build.ArtifactStagingDirectory)/library-info'
+          - publish: '$(Build.ArtifactStagingDirectory)/library.json'
             artifact: 'library-info'

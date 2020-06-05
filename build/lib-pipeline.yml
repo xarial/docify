@@ -137,6 +137,14 @@ stages:
           SourceFolder: '$(System.DefaultWorkingDirectory)\build\scripts'
           Contents: 'read-library-version.ps1'
           TargetFolder: '$(Build.ArtifactStagingDirectory)/library'
+
+      - task: CopyFiles@2
+        condition: ne(variables['Build.Reason'], 'PullRequest')
+        displayName: 'Copy Create Library Version Info Script'
+        inputs:
+          SourceFolder: '$(System.DefaultWorkingDirectory)\build\scripts'
+          Contents: 'create-library-version-info.ps1'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)/library'
       
       - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
         - publish: '$(Build.ArtifactStagingDirectory)/library'
@@ -190,7 +198,7 @@ stages:
 
           - task: PowerShell@2
             inputs:
-              filePath: 'build/scripts/create-library-version-info.ps1'
+              filePath: '$(Pipeline.Workspace)/library/create-library-version-info.ps1'
               arguments: '$(LibVersion) "$(Build.ArtifactStagingDirectory)/library-info/library.json" "$(Pipeline.Workspace)/library/library.zip" "$(Certificate.secureFilePath)" "$(CODE_SIGN_CERT_PWD)"'
           
           - publish: '$(Build.ArtifactStagingDirectory)/library-info'

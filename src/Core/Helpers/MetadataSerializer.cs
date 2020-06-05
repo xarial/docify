@@ -38,8 +38,16 @@ namespace Xarial.Docify.Core.Helpers
         }
 
         public T Deserialize<T>(string data)
+            where T : new()
         {
-            return m_YamlSerializer.Deserialize<T>(data);
+            if (!string.IsNullOrEmpty(data))
+            {
+                return m_YamlSerializer.Deserialize<T>(data);
+            }
+            else 
+            {
+                return new T();
+            }
         }
     }
 }

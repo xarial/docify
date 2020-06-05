@@ -18,6 +18,8 @@ stages:
     value: Release
   - name: framework
     value: netcoreapp3.1
+  - name: libVersion #filled in read-version script
+    value: 0.0.0.0
 
   jobs:
   - job:
@@ -83,16 +85,16 @@ stages:
           Contents: '**\*'
           TargetFolder: '_library/_plugins'
 
+      - task: PowerShell@2
+        inputs:
+          filePath: 'build/scripts/read-library-version.ps1'
+          arguments: '$(System.DefaultWorkingDirectory)\lib\version.txt'
+
       - task: DownloadSecureFile@1
         name: Certificate
         displayName: 'Download code signing certificate'
         inputs:
           secureFile: xarial-code-signing.pfx
-
-      #- task: PowerShell@2
-      #  inputs:
-      #    filePath: 'build/scripts/create-library-version-info.ps1'
-      #    arguments: '0.1.0 2 3 4'
 
       - task: DotNetCoreCLI@2
         displayName: 'Install docify'
@@ -105,7 +107,7 @@ stages:
       - task: CmdLine@2
         displayName: 'Generating secure library manifest'
         inputs:
-          script: 'docify genman --lib "$(System.DefaultWorkingDirectory)\_library" --version 0.1.0 --cert "$(Certificate.secureFilePath)" --pwd "$(CODE_SIGN_CERT_PWD)"'
+          script: 'docify genman --lib "$(System.DefaultWorkingDirectory)\_library" --version $(LibVersion) --cert "$(Certificate.secureFilePath)" --pwd "$(CODE_SIGN_CERT_PWD)"'
       
       - task: ArchiveFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')
@@ -113,7 +115,68 @@ stages:
           rootFolderOrFile: '_library' 
           includeRootFolder: false
           archiveFile: '$(Build.ArtifactStagingDirectory)/library/library.zip' 
+
+      - task: CopyFiles@2
+        condition: ne(variables['Build.Reason'], 'PullRequest')
+        displayName: 'Copy Library Version'
+        inputs:
+          SourceFolder: '$(System.DefaultWorkingDirectory)\lib'
+          Contents: 'version.txt'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)/library'
       
       - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
         - publish: '$(Build.ArtifactStagingDirectory)/library'
           artifact: 'library'
+
+- stage: 'ProductionDeploy'
+  displayName: 'Production Deploy'
+  variables:
+  - group: build-vars
+  - name: libVersion #filled in read-version script
+    value: 0.0.0.0
+  dependsOn: 'Build'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest'))
+  jobs:
+  - deployment:
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: production
+    strategy: 
+      runOnce:
+        deploy:
+          steps:
+          - checkout: none
+
+          - download: current
+            artifact: 'library'
+
+          - task: PowerShell@2
+              inputs:
+                filePath: 'build/scripts/read-library-version.ps1'
+                arguments: '$(Pipeline.Workspace)/library/version.txt'
+
+          - task: AppCenterDistribute@3
+            inputs:
+              serverEndpoint: app-center-library
+              appSlug: 'xarial/Docify'
+              appFile: '$(Pipeline.Workspace)/library/library.zip'
+              buildVersion: '$(libVersion)'
+              releaseNotesOption: 'input'
+              releaseNotesInput: '-'
+              isMandatory: true
+              destinationType: 'groups'
+              distributionGroupId: $(APP_CENTER_GRP_LIB_PROD)
+
+          - task: DownloadSecureFile@1
+            name: Certificate
+            displayName: 'Download code signing certificate'
+            inputs:
+              secureFile: xarial-code-signing.pfx
+
+          - task: PowerShell@2
+              inputs:
+                filePath: 'build/scripts/create-library-version-info.ps1'
+                arguments: '$(LibVersion) "$(Build.ArtifactStagingDirectory)/library-info/library.json" "$(Pipeline.Workspace)/library/library.zip" "$(Certificate.secureFilePath)" "$(CODE_SIGN_CERT_PWD)"'
+          
+          - publish: '$(Build.ArtifactStagingDirectory)/library-info'
+              artifact: 'library-info'

@@ -103,9 +103,9 @@ stages:
           arguments: 'install -g docify'
           
       - task: CmdLine@2
+        displayName: 'Generating secure library manifest'
         inputs:
-          script: 'docify genman --lib "$(System.DefaultWorkingDirectory)\_library" --version 0.1.0 --cert "$(Certificate.secureFilePath)" -pwd "$(CODE_SIGN_CERT_PWD)"'
-          failOnStderr: true
+          script: 'docify genman --lib "$(System.DefaultWorkingDirectory)\_library" --version 0.1.0 --cert "$(Certificate.secureFilePath)" --pwd "$(CODE_SIGN_CERT_PWD)"'
       
       - task: ArchiveFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')

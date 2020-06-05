@@ -6,6 +6,7 @@
 //*********************************************************************
 
 using CommandLine;
+using CommandLine.Text;
 using System;
 using System.IO;
 using System.Linq;
@@ -40,8 +41,6 @@ namespace Xarial.Docify.CLI
                 p.IgnoreUnknownArguments = false;
             });
 
-            bool isError = false;
-
             BuildOptions buildOpts = null;
             ServeOptions serveOpts = null;
             GenerateLibraryManifestOptions genManOpts = null;
@@ -52,49 +51,41 @@ namespace Xarial.Docify.CLI
                 .WithParsed<ServeOptions>(o => serveOpts = o)
                 .WithParsed<GenerateLibraryManifestOptions>(o => genManOpts = o)
                 .WithParsed<LibraryOptions>(o => libOpts = o)
-                .WithNotParsed(e => isError = true);
+                .WithNotParsed(e => Environment.Exit(1));
 
-            if (!isError)
+            try
             {
-                try
+                if (buildOpts != null)
                 {
-                    DocifyEngine engine = null;
+                    var engine = new DocifyEngine(buildOpts.SourceDirectories.ToArray(),
+                        buildOpts.OutputDirectory, buildOpts.Library?.ToArray(), buildOpts.SiteUrl, buildOpts.Environment);
 
-                    if (buildOpts != null)
-                    {
-                        engine = new DocifyEngine(buildOpts.SourceDirectories.ToArray(),
-                            buildOpts.OutputDirectory, buildOpts.Library?.ToArray(), buildOpts.SiteUrl, buildOpts.Environment);
-                    }
-                    else if (serveOpts != null)
-                    {
-                        throw new NotSupportedException("This option is not supported");
-                    }
-                    else if (genManOpts != null)
-                    {
-                        await GenerateLibraryManifest(genManOpts);
-                    }
-                    else if (libOpts != null)
-                    {
-                        await InstallLibrary(libOpts);
-                    }
-
-                    if (buildOpts != null)
-                    {
-                        await engine.Build();
-                    }
+                    await engine.Build();
                 }
-                catch (Exception ex) 
+                else if (serveOpts != null)
                 {
-                    string fullLog;
-                    var err = ParseError(ex, out fullLog);
-                    System.Diagnostics.Trace.WriteLine(fullLog, "Xarial.Docify");
-
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.WriteLine(err);
-                    Console.ResetColor();
-
-                    Environment.Exit(1);
+                    throw new NotSupportedException("This option is not supported");
                 }
+                else if (genManOpts != null)
+                {
+                    await GenerateLibraryManifest(genManOpts);
+                }
+                else if (libOpts != null)
+                {
+                    await InstallLibrary(libOpts);
+                }
+            }
+            catch (Exception ex)
+            {
+                string fullLog;
+                var err = ParseError(ex, out fullLog);
+                System.Diagnostics.Trace.WriteLine(fullLog, "Xarial.Docify");
+
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine(err);
+                Console.ResetColor();
+
+                Environment.Exit(1);
             }
         }
 
@@ -138,7 +129,7 @@ namespace Xarial.Docify.CLI
             string publicKeyXml;
 
             var maninfest = await manGen.CreateManifest(Location.FromPath(genManOpts.LibraryPath),
-                new Version(genManOpts.Version),
+                genManOpts.Version,
                 genManOpts.CertificatePath, genManOpts.CertificatePassword, out publicKeyXml);
 
             new UserSettingsService().StoreSettings(maninfest,

@@ -86,17 +86,21 @@ stages:
           TargetFolder: '_library/_plugins'
 
       - task: PowerShell@2
+        condition: ne(variables['Build.Reason'], 'PullRequest')
+        displayName: Read Library Version
         inputs:
           filePath: 'build/scripts/read-library-version.ps1'
           arguments: '$(System.DefaultWorkingDirectory)\lib\version.txt'
 
       - task: DownloadSecureFile@1
+        condition: ne(variables['Build.Reason'], 'PullRequest')
         name: Certificate
         displayName: 'Download code signing certificate'
         inputs:
           secureFile: xarial-code-signing.pfx
 
       - task: DotNetCoreCLI@2
+        condition: ne(variables['Build.Reason'], 'PullRequest')
         displayName: 'Install docify'
         inputs:
           command: 'custom'
@@ -105,12 +109,14 @@ stages:
           arguments: 'install -g docify'
           
       - task: CmdLine@2
+        condition: ne(variables['Build.Reason'], 'PullRequest')
         displayName: 'Generating secure library manifest'
         inputs:
           script: 'docify genman --lib "$(System.DefaultWorkingDirectory)\_library" --version $(LibVersion) --cert "$(Certificate.secureFilePath)" --pwd "$(CODE_SIGN_CERT_PWD)"'
       
       - task: ArchiveFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')
+        displayName: Archiving Library
         inputs:
           rootFolderOrFile: '_library' 
           includeRootFolder: false
@@ -122,6 +128,14 @@ stages:
         inputs:
           SourceFolder: '$(System.DefaultWorkingDirectory)\lib'
           Contents: 'version.txt'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)/library'
+
+      - task: CopyFiles@2
+        condition: ne(variables['Build.Reason'], 'PullRequest')
+        displayName: 'Copy Get Library Version Script'
+        inputs:
+          SourceFolder: '$(System.DefaultWorkingDirectory)\build\scripts'
+          Contents: 'read-library-version.ps1'
           TargetFolder: '$(Build.ArtifactStagingDirectory)/library'
       
       - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
@@ -151,8 +165,9 @@ stages:
             artifact: 'library'
 
           - task: PowerShell@2
+            displayName: Read Library Version
             inputs:
-              filePath: 'build/scripts/read-library-version.ps1'
+              filePath: '$(Pipeline.Workspace)/library/read-library-version.ps1'
               arguments: '$(Pipeline.Workspace)/library/version.txt'
 
           - task: AppCenterDistribute@3

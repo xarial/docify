@@ -98,7 +98,7 @@ stages:
         displayName: 'Install docify'
         inputs:
           command: 'custom'
-          custom: 'install tool -g docify'
+          custom: 'tool install -g docify'
       
       - task: DotNetCoreCLI@2
         displayName: 'Generate library manifest'

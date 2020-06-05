@@ -6,6 +6,7 @@
 //*********************************************************************
 
 using CommandLine;
+using CommandLine.Text;
 using System;
 using System.IO;
 using System.Linq;
@@ -128,7 +129,7 @@ namespace Xarial.Docify.CLI
             string publicKeyXml;
 
             var maninfest = await manGen.CreateManifest(Location.FromPath(genManOpts.LibraryPath),
-                new Version(genManOpts.Version),
+                genManOpts.Version,
                 genManOpts.CertificatePath, genManOpts.CertificatePassword, out publicKeyXml);
 
             new UserSettingsService().StoreSettings(maninfest,

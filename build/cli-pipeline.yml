@@ -51,7 +51,7 @@ stages:
       - task: VSBuild@1
         displayName: 'Build test projects'
         inputs:
-            solution: 'tests\*.Tests\*.csproj'
+            solution: 'tests\**\*.Tests\*.csproj'
             configuration: '$(BuildConfiguration)'
             
       - task: VSTest@2

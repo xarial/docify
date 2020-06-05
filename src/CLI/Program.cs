@@ -92,6 +92,8 @@ namespace Xarial.Docify.CLI
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     Console.WriteLine(err);
                     Console.ResetColor();
+
+                    Environment.Exit(1);
                 }
             }
         }

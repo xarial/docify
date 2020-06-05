@@ -1,7 +1,7 @@
 param([String]$version, [String]$outFilePath, [String]$libFilePath, [String]$certPath, [String]$pwd)
 
 $params = @{
-    Uri = 'https://api.appcenter.ms/v0.1/apps/xarial/docify/distribution_groups/production/releases/latest'
+    Uri = 'https://api.appcenter.ms/v0.1/apps/xarial/docify/distribution_groups/library/releases/latest'
     ContentType = 'application/json'
 }
 $newVersion = @{

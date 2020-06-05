@@ -45,19 +45,19 @@ stages:
           solution: 'lib\**\*.csproj'
           configuration: '$(BuildConfiguration)'
 
-      - task: VSBuild@1
-        displayName: 'Build test projects'
-        inputs:
-            solution: 'tests\lib\*.Tests\*.csproj'
-            configuration: '$(BuildConfiguration)'
+      # - task: VSBuild@1
+      #   displayName: 'Build test projects'
+      #   inputs:
+      #       solution: 'tests\lib\*.Tests\*.csproj'
+      #       configuration: '$(BuildConfiguration)'
             
-      - task: VSTest@2
-        displayName: 'Unit test'
-        inputs:
-          testAssemblyVer2: |
-            tests\lib\**\*.Tests.dll
-            !**\obj\**
-          configuration: '$(BuildConfiguration)'
+      # - task: VSTest@2
+      #   displayName: 'Unit test'
+      #   inputs:
+      #     testAssemblyVer2: |
+      #       tests\lib\**\*.Tests.dll
+      #       !**\obj\**
+      #     configuration: '$(BuildConfiguration)'
 
       - task: CopyFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')
@@ -82,6 +82,12 @@ stages:
           SourceFolder: '$(System.DefaultWorkingDirectory)\lib\Plugins\bin\$(BuildConfiguration)\$(framework)'
           Contents: '**\*'
           TargetFolder: '_library/_plugins'
+
+      - task: DownloadSecureFile@1
+          name: Certificate
+          displayName: 'Download code signing certificate'
+          inputs:
+            secureFile: xarial-code-signing.pfx
 
       - task: ArchiveFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')

@@ -80,7 +80,7 @@ namespace Xarial.Docify.Core.Loader
                 foreach (var compName in m_Config.Components)
                 {
                     await foreach (var srcFile in ProcessLibraryItems(
-                            m_LibraryLoader.LoadComponentFiles(compName, null), resFileIds, false))
+                            m_LibraryLoader.LoadComponentFiles(compName, m_Filter), resFileIds, false))
                     {
                         yield return srcFile;
                     }
@@ -94,7 +94,7 @@ namespace Xarial.Docify.Core.Loader
                     foreach (var themeName in m_Config.ThemesHierarchy)
                     {
                         await foreach (var srcFile in ProcessLibraryItems(
-                            m_LibraryLoader.LoadThemeFiles(themeName, null), resFileIds, true))
+                            m_LibraryLoader.LoadThemeFiles(themeName, m_Filter), resFileIds, true))
                         {
                             yield return srcFile;
                         }

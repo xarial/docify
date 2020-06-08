@@ -136,6 +136,21 @@ namespace Components.Tests
         }
 
         [Test]
+        public async Task FilterPageTest()
+        {
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% toc { filter: [ '/Page1/*' ] } %}\r\n</div>", INCLUDE_PATH);
+            var p1 = new PageMock("Page1", "", ComponentsTest.Instance.GetData<Metadata>("title: p1"));
+            p1.SubPages.Add(new PageMock("SubPage1", "", ComponentsTest.Instance.GetData<Metadata>("title: sp1")));
+            p1.SubPages.Add(new PageMock("SubPage2", "", ComponentsTest.Instance.GetData<Metadata>("title: sp2")));
+            site.MainPage.SubPages.Add(p1);
+            site.MainPage.SubPages.Add(new PageMock("Page2", "", ComponentsTest.Instance.GetData<Metadata>("title: p2")));
+
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
+
+            Assert.AreEqual(Resources.toc9, res);
+        }
+
+        [Test]
         public async Task ExcludePageTest()
         {
             var site = ComponentsTest.Instance.NewSite("<div>\r\n{% toc %}\r\n</div>", INCLUDE_PATH);

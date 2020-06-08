@@ -3,6 +3,7 @@ home-menu: true
 menu:
 root-page:
 upper-case: false
+filter:
 ---
 @using RazorLight
 @using System
@@ -39,7 +40,7 @@ upper-case: false
             caption = caption.ToUpper();
         }
 
-        if(page.SubPages.Any())
+        if (page.SubPages.Any())
         {
             caption += "▾";
         }
@@ -49,6 +50,8 @@ upper-case: false
 
     string RenderMenu(IEnumerable<IContextPage> pages, out bool hasActive)
     {
+        pages = NavigationMenuHelper.FilterChildrenPages(pages, Model.Data.Get<string[]>("filter"));
+
         var html = new System.Text.StringBuilder();
 
         hasActive = false;

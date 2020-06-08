@@ -154,6 +154,9 @@
   <data name="nav5" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\nav5.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="nav6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\nav6.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="seo1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\seo1.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
@@ -216,5 +219,8 @@
   </data>
   <data name="toc8" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\toc8.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="toc9" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\toc9.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

@@ -22,19 +22,19 @@ namespace CLI.Tests
         {
             var engine = new DocifyEngineMock();
 
-            Assert.DoesNotThrow(() => engine.Resove<ICompiler>(), "ICompiler");
-            Assert.DoesNotThrow(() => engine.Resove<IFileLoader>(), "IFileLoader");
-            Assert.DoesNotThrow(() => engine.Resove<IComposer>(), "IComposer");
-            Assert.DoesNotThrow(() => engine.Resove<IConfigurationLoader>(), "IConfigurationLoader");
-            Assert.DoesNotThrow(() => engine.Resove<IStaticContentTransformer>(), "IStaticContentTransformer");
-            Assert.DoesNotThrow(() => engine.Resove<IDynamicContentTransformer>(), "IDynamicContentTransformer");
-            Assert.DoesNotThrow(() => engine.Resove<IIncludesHandler>(), "IIncludesHandler");
-            Assert.DoesNotThrow(() => engine.Resove<ILayoutParser>(), "ILayoutParser");
-            Assert.DoesNotThrow(() => engine.Resove<ILibraryLoader>(), "ILibraryLoader");
-            Assert.DoesNotThrow(() => engine.Resove<IProjectLoader>(), "IProjectLoader");
-            Assert.DoesNotThrow(() => engine.Resove<ILogger>(), "ILogger");
-            Assert.DoesNotThrow(() => engine.Resove<IPluginsManager>(), "IPluginsManager");
-            Assert.DoesNotThrow(() => engine.Resove<IPublisher>(), "IPublisher");
+            Assert.DoesNotThrow(() => engine.Resolve<ICompiler>(), "ICompiler");
+            Assert.DoesNotThrow(() => engine.Resolve<IFileLoader>(), "IFileLoader");
+            Assert.DoesNotThrow(() => engine.Resolve<IComposer>(), "IComposer");
+            Assert.DoesNotThrow(() => engine.Resolve<IConfigurationLoader>(), "IConfigurationLoader");
+            Assert.DoesNotThrow(() => engine.Resolve<IStaticContentTransformer>(), "IStaticContentTransformer");
+            Assert.DoesNotThrow(() => engine.Resolve<IDynamicContentTransformer>(), "IDynamicContentTransformer");
+            Assert.DoesNotThrow(() => engine.Resolve<IIncludesHandler>(), "IIncludesHandler");
+            Assert.DoesNotThrow(() => engine.Resolve<ILayoutParser>(), "ILayoutParser");
+            Assert.DoesNotThrow(() => engine.Resolve<ILibraryLoader>(), "ILibraryLoader");
+            Assert.DoesNotThrow(() => engine.Resolve<IProjectLoader>(), "IProjectLoader");
+            Assert.DoesNotThrow(() => engine.Resolve<ILogger>(), "ILogger");
+            Assert.DoesNotThrow(() => engine.Resolve<IPluginsManager>(), "IPluginsManager");
+            Assert.DoesNotThrow(() => engine.Resolve<IPublisher>(), "IPublisher");
         }
     }
 }

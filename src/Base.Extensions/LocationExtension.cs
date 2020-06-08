@@ -321,19 +321,24 @@ namespace Xarial.Docify.Base
         {
             var fullLoc = new StringBuilder();
 
+            var hasContent = false;
+
             if (!string.IsNullOrEmpty(basePart))
             {
                 fullLoc.Append(basePart);
+                hasContent = true;
             }
 
             foreach (var block in loc.Path)
             {
-                if (fullLoc.Length > 0)
+                if (hasContent)
                 {
                     fullLoc.Append(sep);
                 }
 
                 fullLoc.Append(block);
+
+                hasContent = true;
             }
 
             if (!string.IsNullOrEmpty(loc.FileName))

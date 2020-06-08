@@ -73,7 +73,7 @@ namespace Tests.Common
 
         public async Task<string> CompileMainPageNormalize(Site site)
         {
-            var compiler = new DocifyEngineMock().Resove<ICompiler>();
+            var compiler = new DocifyEngineMock().Resolve<ICompiler>();
 
             var files = await compiler.Compile(site).ToListAsync();
 

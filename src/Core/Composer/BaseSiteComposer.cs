@@ -27,6 +27,7 @@ namespace Xarial.Docify.Core.Composer
         private const string LAYOUT_VAR_NAME = "layout";
 
         private const string INHERIT_PAGE_LAYOUT = "$";
+        private const string DEFAULT_LAYOUT_PARAM_NAME = "default-layout";
 
         private readonly ILayoutParser m_LayoutParser;
         private readonly IConfiguration m_Config;
@@ -34,12 +35,16 @@ namespace Xarial.Docify.Core.Composer
         private readonly StringComparer m_Comparer;
         private readonly StringComparison m_Comparison;
 
+        private readonly string m_DefaultLayoutName;
+
         public BaseSiteComposer(ILayoutParser parser, IConfiguration config, IComposerExtension ext)
         {
             m_LayoutParser = parser;
             m_Config = config;
             m_Comparer = StringComparer.CurrentCultureIgnoreCase;
             m_Comparison = StringComparison.CurrentCultureIgnoreCase;
+
+            m_DefaultLayoutName = m_Config?.GetParameterOrDefault<string>(DEFAULT_LAYOUT_PARAM_NAME);
         }
 
         private bool IsPage(IFile srcFile)
@@ -79,6 +84,11 @@ namespace Xarial.Docify.Core.Composer
 
             string layoutName;
             ParseTextFile(src, out rawContent, out pageData, out layoutName);
+
+            if (string.IsNullOrEmpty(layoutName)) 
+            {
+                layoutName = m_DefaultLayoutName;
+            }
 
             if (!string.IsNullOrEmpty(layoutName))
             {

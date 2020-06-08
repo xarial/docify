@@ -1,6 +1,6 @@
 <Project>
   <Import Project="common.assemblyinfo.props" />
   <PropertyGroup>
-    <VersionPrefix>0.2.3</VersionPrefix>
+    <VersionPrefix>0.3.0</VersionPrefix>
   </PropertyGroup>
 </Project>

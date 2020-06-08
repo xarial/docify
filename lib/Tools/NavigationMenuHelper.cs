@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Xarial.Docify.Base;
 using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Lib.Tools.Exceptions;
@@ -22,7 +23,7 @@ namespace Xarial.Docify.Lib.Tools
     {
         private const string ROOT_PAGE_ATT = "root-page";
 
-        public class MenuPage : IContextPage
+        private class MenuPage : IContextPage
         {
             public string Url { get; set; }
             public string FullUrl { get; set; }
@@ -45,7 +46,7 @@ namespace Xarial.Docify.Lib.Tools
             }
         }
 
-        public class MenuPageMetadata : ReadOnlyDictionary<string, object>, IContextMetadata
+        private class MenuPageMetadata : ReadOnlyDictionary<string, object>, IContextMetadata
         {
             public MenuPageMetadata(IDictionary<string, object> data) : base(data)
             {
@@ -79,6 +80,39 @@ namespace Xarial.Docify.Lib.Tools
             }
         }
 
+        private class UrlLocation : ILocation
+        {
+            public IReadOnlyList<string> Path { get; }
+
+            public string FileName { get; }
+
+            public UrlLocation(string url)
+            {
+                var parts = (IEnumerable<string>)url.Split(LocationExtension.URL_SEP);
+
+                var fileName = "";
+
+                if (!string.IsNullOrEmpty(System.IO.Path.GetExtension(parts.Last())))
+                {
+                    parts = parts.Take(parts.Count() - 1);
+                    fileName = parts.Last();
+                }
+
+                FileName = fileName;
+                Path = new List<string>(parts);
+            }
+
+            private UrlLocation(string fileName, IEnumerable<string> path) 
+            {
+                FileName = fileName;
+                Path = new List<string>(path);
+            }
+
+            public ILocation Copy(string fileName, IEnumerable<string> path)
+            {
+                return new UrlLocation(fileName, path);
+            }
+        }
         /// <summary>
         /// Build the menu based on predefined parameter
         /// </summary>
@@ -110,7 +144,7 @@ namespace Xarial.Docify.Lib.Tools
         /// <param name="data">Page data</param>
         /// <param name="title">Page title</param>
         /// <returns>Menu page</returns>
-        public static MenuPage BuildPage(IContextPage srcPage, IContextMetadata data, string title)
+        public static IContextPage BuildPage(IContextPage srcPage, IContextMetadata data, string title)
         {
             var page = CreateMenuPage(null, data, title);
             page.Url = srcPage.Url;
@@ -146,6 +180,11 @@ namespace Xarial.Docify.Lib.Tools
             {
                 return model.Site.MainPage;
             }
+        }
+
+        public static IEnumerable<IContextPage> FilterChildrenPages(IEnumerable<IContextPage> pages, string[] filters)
+        {
+            return pages.Where(p => p is MenuPage || new UrlLocation(p.Url).Matches(filters));
         }
 
         private static MenuPage CreateMenuPage(IEnumerable<IContextPage> allPages, IContextMetadata data, string url)

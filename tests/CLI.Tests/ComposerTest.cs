@@ -27,7 +27,7 @@ namespace CLI.Tests
         [SetUp]
         public void Setup()
         {
-            m_Composer = new DocifyEngineMock().Resove<IComposer>();
+            m_Composer = new DocifyEngineMock().Resolve<IComposer>();
         }
 
         [Test]

@@ -35,7 +35,7 @@ namespace Xarial.Docify.CLI
 {
     public interface IDocifyEngine
     {
-        T Resove<T>();
+        T Resolve<T>();
         Task Build();
     }
 
@@ -65,10 +65,10 @@ namespace Xarial.Docify.CLI
 
         public async Task Build()
         {
-            var loader = Resove<IProjectLoader>();
-            var composer = Resove<IComposer>();
-            var compiler = Resove<ICompiler>();
-            var publisher = Resove<IPublisher>();
+            var loader = Resolve<IProjectLoader>();
+            var composer = Resolve<IComposer>();
+            var compiler = Resolve<ICompiler>();
+            var publisher = Resolve<IPublisher>();
 
             var srcFiles = loader.Load(m_SrcDirs);
 
@@ -79,7 +79,7 @@ namespace Xarial.Docify.CLI
             await publisher.Write(m_OutDir, outFiles);
         }
 
-        public T Resove<T>()
+        public T Resolve<T>()
         {
             return m_Container.Resolve<T>();
         }

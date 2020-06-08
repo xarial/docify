@@ -108,7 +108,7 @@ namespace Components.Tests.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;channel&gt;
-        ///&lt;title&gt;index.html&lt;/title&gt;
+        ///&lt;title&gt;&lt;/title&gt;
         ///&lt;description&gt;&lt;/description&gt;
         ///&lt;link&gt;www.example.com&lt;/link&gt;
         ///&lt;lastBuildDate&gt;-&lt;/lastBuildDate&gt;
@@ -116,14 +116,14 @@ namespace Components.Tests.Properties {
         ///&lt;item&gt;
         ///&lt;title&gt;p1&lt;/title&gt;
         ///&lt;description&gt;desc1&lt;/description&gt;
-        ///&lt;link&gt;www.example.com/Page1.html&lt;/link&gt;
-        ///&lt;guid isPermaLink=&quot;true&quot;&gt;www.example.com/Page1.html&lt;/guid&gt;
+        ///&lt;link&gt;www.example.com/Page1/&lt;/link&gt;
+        ///&lt;guid isPermaLink=&quot;true&quot;&gt;www.example.com/Page1/&lt;/guid&gt;
         ///&lt;/item&gt;
         ///&lt;item&gt;
         ///&lt;title&gt;sp1&lt;/title&gt;
         ///&lt;description&gt;&lt;/description&gt;
-        ///&lt;link&gt;www.example.com/SubPage1.html&lt;/link&gt;
-        ///&lt;guid isPermaLink=&quot;true&quot; [rest of string was truncated]&quot;;.
+        ///&lt;link&gt;www.example.com/Page1/SubPage1/&lt;/link&gt;
+        ///&lt;guid isPermaLink=&quot;true&quot;&gt;www.example.com [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string feed1 {
             get {
@@ -133,12 +133,12 @@ namespace Components.Tests.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;channel&gt;
-        ///&lt;title&gt;index.html&lt;/title&gt;
+        ///&lt;title&gt;&lt;/title&gt;
         ///&lt;description&gt;&lt;/description&gt;
         ///&lt;link&gt;www.example.com&lt;/link&gt;
         ///&lt;image&gt;
         ///&lt;url&gt;www.example.com/img1.png&lt;/url&gt;
-        ///&lt;title&gt;index.html&lt;/title&gt;
+        ///&lt;title&gt;&lt;/title&gt;
         ///&lt;link&gt;www.example.com&lt;/link&gt;
         ///&lt;/image&gt;
         ///&lt;lastBuildDate&gt;-&lt;/lastBuildDate&gt;
@@ -153,7 +153,7 @@ namespace Components.Tests.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;channel&gt;
-        ///&lt;title&gt;index.html&lt;/title&gt;
+        ///&lt;title&gt;&lt;/title&gt;
         ///&lt;description&gt;&lt;/description&gt;
         ///&lt;link&gt;www.example.com&lt;/link&gt;
         ///&lt;lastBuildDate&gt;-&lt;/lastBuildDate&gt;
@@ -161,8 +161,8 @@ namespace Components.Tests.Properties {
         ///&lt;item&gt;
         ///&lt;title&gt;p1&lt;/title&gt;
         ///&lt;description&gt;&lt;/description&gt;
-        ///&lt;link&gt;www.example.com/Page1.html&lt;/link&gt;
-        ///&lt;guid isPermaLink=&quot;true&quot;&gt;www.example.com/Page1.html&lt;/guid&gt;
+        ///&lt;link&gt;www.example.com/Page1/&lt;/link&gt;
+        ///&lt;guid isPermaLink=&quot;true&quot;&gt;www.example.com/Page1/&lt;/guid&gt;
         ///&lt;category&gt;cat1&lt;/category&gt;
         ///&lt;category&gt;cat2&lt;/category&gt;
         ///&lt;/item&gt;
@@ -176,7 +176,7 @@ namespace Components.Tests.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;channel&gt;
-        ///&lt;title&gt;index.html&lt;/title&gt;
+        ///&lt;title&gt;&lt;/title&gt;
         ///&lt;description&gt;&lt;/description&gt;
         ///&lt;link&gt;www.example.com&lt;/link&gt;
         ///&lt;lastBuildDate&gt;-&lt;/lastBuildDate&gt;
@@ -212,19 +212,19 @@ namespace Components.Tests.Properties {
         ///&lt;div class=&quot;bar2&quot;&gt;&lt;/div&gt;
         ///&lt;div class=&quot;bar3&quot;&gt;&lt;/div&gt;
         ///&lt;/a&gt;
-        ///&lt;li class=&quot;menu-item&quot;&gt;
-        ///&lt;a href=&quot;&quot;&gt;Page1&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a&gt;Page1▾&lt;/a&gt;
         ///&lt;ul class=&quot;sub-menu-item-container&quot;&gt;
-        ///&lt;li class=&quot;menu-item&quot;&gt;
-        ///&lt;a href=&quot;/p2.html&quot;&gt;p2&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/p2/&quot;&gt;p2&lt;/a&gt;
         ///&lt;/li&gt;
-        ///&lt;li class=&quot;menu-item&quot;&gt;
-        ///&lt;a href=&quot;&quot;&gt;SubPage2&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a&gt;SubPage2&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;/ul&gt;
         ///&lt;/li&gt;
-        ///&lt;li class=&quot;menu-item&quot;&gt;
-        ///&lt;a href=&quot;&quot;&gt;Page2&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a&gt;Page2&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;/ul&gt;
         ///&lt;/div&gt;.
@@ -243,22 +243,19 @@ namespace Components.Tests.Properties {
         ///&lt;div class=&quot;bar2&quot;&gt;&lt;/div&gt;
         ///&lt;div class=&quot;bar3&quot;&gt;&lt;/div&gt;
         ///&lt;/a&gt;
-        ///&lt;li class=&quot;menu-item&quot;&gt;
-        ///&lt;a href=&quot;/Page1.html&quot;&gt;p1&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/Page1/&quot;&gt;p1▾&lt;/a&gt;
         ///&lt;ul class=&quot;sub-menu-item-container&quot;&gt;
-        ///&lt;li class=&quot;menu-item&quot;&gt;
-        ///&lt;a href=&quot;/SubPage1.html&quot;&gt;sp1&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/Page1/SubPage1/&quot;&gt;sp1&lt;/a&gt;
         ///&lt;/li&gt;
-        ///&lt;li class=&quot;menu-item&quot;&gt;
-        ///&lt;a href=&quot;/SubPage2.html&quot;&gt;sp2&lt;/a&gt;
-        ///&lt;/li&gt;
-        ///&lt;/ul&gt;
-        ///&lt;/li&gt;
-        ///&lt;li class=&quot;menu-item&quot;&gt;
-        ///&lt;a href=&quot;/Page2.html&quot;&gt;p2&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/Page1/SubPage2/&quot;&gt;sp2&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;/ul&gt;
-        ///&lt;/div&gt;.
+        ///&lt;/li&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/P [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string nav2 {
             get {
@@ -277,8 +274,8 @@ namespace Components.Tests.Properties {
         ///&lt;li class=&quot;menu-item active&quot;&gt;
         ///&lt;a href=&quot;/&quot;&gt;Home&lt;/a&gt;
         ///&lt;/li&gt;
-        ///&lt;li class=&quot;menu-item&quot;&gt;
-        ///&lt;a href=&quot;/Page1.html&quot;&gt;p1&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/Page1/&quot;&gt;p1&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;/ul&gt;
         ///&lt;/div&gt;.
@@ -297,8 +294,8 @@ namespace Components.Tests.Properties {
         ///&lt;div class=&quot;bar2&quot;&gt;&lt;/div&gt;
         ///&lt;div class=&quot;bar3&quot;&gt;&lt;/div&gt;
         ///&lt;/a&gt;
-        ///&lt;li class=&quot;menu-item&quot;&gt;
-        ///&lt;a href=&quot;/Page1.html&quot;&gt;x1&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/Page1/&quot;&gt;x1&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;/ul&gt;
         ///&lt;/div&gt;.
@@ -317,11 +314,11 @@ namespace Components.Tests.Properties {
         ///&lt;div class=&quot;bar2&quot;&gt;&lt;/div&gt;
         ///&lt;div class=&quot;bar3&quot;&gt;&lt;/div&gt;
         ///&lt;/a&gt;
-        ///&lt;li class=&quot;menu-item&quot;&gt;
-        ///&lt;a href=&quot;/SubPage1.html&quot;&gt;sp1&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/Page1/SubPage1/&quot;&gt;sp1&lt;/a&gt;
         ///&lt;/li&gt;
-        ///&lt;li class=&quot;menu-item&quot;&gt;
-        ///&lt;a href=&quot;/SubPage2.html&quot;&gt;sp2&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/Page1/SubPage2/&quot;&gt;sp2&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;/ul&gt;
         ///&lt;/div&gt;.
@@ -329,6 +326,35 @@ namespace Components.Tests.Properties {
         internal static string nav5 {
             get {
                 return ResourceManager.GetString("nav5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;ul class=&quot;menu sub-menu-item-container&quot; id=&quot;top-menu&quot;&gt;
+        ///&lt;a class=&quot;menu-icon&quot; onclick=&quot;OpenMenu(this)&quot;&gt;
+        ///&lt;div class=&quot;bar1&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar2&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar3&quot;&gt;&lt;/div&gt;
+        ///&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item active&quot;&gt;
+        ///&lt;a href=&quot;/&quot;&gt;Home&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/Page1/&quot;&gt;p1▾&lt;/a&gt;
+        ///&lt;ul class=&quot;sub-menu-item-container&quot;&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/Page1/SubPage2/&quot;&gt;sp2&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/li&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/Page2/&quot;&gt;p2&lt;/a&gt;
+        ///&lt;/l [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string nav6 {
+            get {
+                return ResourceManager.GetString("nav6", resourceCulture);
             }
         }
         
@@ -394,7 +420,7 @@ namespace Components.Tests.Properties {
         ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
         ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com&quot; /&gt;
         ///&lt;script type=&quot;application/ld+json&quot;&gt;
-        ///{&quot;url&quot;:&quot;www.example.com&quot;,&quot;description&quot;:&quot;d1&quot;,&quot;headline&quot;:&quot;sd1&quot;,&quot;image&quot;:null,&quot;@type&quot;:&quot;WebPage&quot;,&quot;@context&quot;:&quot;http://schema.org&quot;}
+        ///{&quot;url&quot;:&quot;www.example.com&quot;,&quot;description&quot;:&quot;d1&quot;,&quot;headline&quot;:&quot;d1&quot;,&quot;image&quot;:null,&quot;@type&quot;:&quot;WebPage&quot;,&quot;@context&quot;:&quot;http://schema.org&quot;}
         ///&lt;/script&gt;.
         /// </summary>
         internal static string seo4 {
@@ -427,15 +453,15 @@ namespace Components.Tests.Properties {
         ///   Looks up a localized string similar to &lt;p&gt;&lt;title&gt;p1&lt;/title&gt;
         ///&lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
         ///&lt;meta name=&quot;description&quot; /&gt;
-        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com/Page1.html&quot; /&gt;
+        ///&lt;link rel=&quot;canonical&quot; href=&quot;www.example.com/Page1/&quot; /&gt;
         ///    &lt;meta property=&quot;og:title&quot; content=&quot;p1&quot; /&gt;
         ///    &lt;meta property=&quot;og:locale&quot; /&gt;
         ///    &lt;meta property=&quot;og:description&quot; /&gt;
-        ///    &lt;meta property=&quot;og:url&quot; content=&quot;www.example.com/Page1.html&quot; /&gt;
+        ///    &lt;meta property=&quot;og:url&quot; content=&quot;www.example.com/Page1/&quot; /&gt;
         ///    &lt;meta property=&quot;og:site_name&quot; /&gt;
-        ///    &lt;meta property=&quot;og:image&quot; content=&quot;www.example.com/Page1.html/img2.png&quot; /&gt;
+        ///    &lt;meta property=&quot;og:image&quot; content=&quot;www.example.com/Page1/img2.png&quot; /&gt;
         ///    &lt;meta name=&quot;twitter:card&quot; /&gt;
-        ///    &lt;meta name [rest of string was truncated]&quot;;.
+        ///    &lt;meta name=&quot;twitter:sit [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string seo6 {
             get {
@@ -450,10 +476,10 @@ namespace Components.Tests.Properties {
         ///&lt;loc&gt;www.example.com&lt;/loc&gt;
         ///&lt;/url&gt;
         ///&lt;url&gt;
-        ///&lt;loc&gt;www.example.com/Page1.html&lt;/loc&gt;
+        ///&lt;loc&gt;www.example.com/Page1/&lt;/loc&gt;
         ///&lt;/url&gt;
         ///&lt;url&gt;
-        ///&lt;loc&gt;www.example.com/Page2.html&lt;/loc&gt;
+        ///&lt;loc&gt;www.example.com/Page2/&lt;/loc&gt;
         ///&lt;/url&gt;
         ///&lt;/urlset&gt;.
         /// </summary>
@@ -468,11 +494,11 @@ namespace Components.Tests.Properties {
         ///&lt;div class=&quot;social-share-list&quot;&gt;
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;https://www.linkedin.com/shareArticle?mini=true&amp;url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on LinkedIn&quot;&gt;
-        ///&lt;svg alt=&quot;Share on LinkedIn&quot; class=&quot;social-share-link&quot; fill=&quot;black&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
+        ///&lt;svg alt=&quot;Share on LinkedIn&quot; class=&quot;social-share-link&quot; fill=&quot;#0077B5&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
         ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#linkedin&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
-        ///&lt;a href=&quot;https://www.facebook.com/sharer/sh [rest of string was truncated]&quot;;.
+        ///&lt;a href=&quot;https://www.facebook.com/sharer/ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string social_share1 {
             get {
@@ -485,7 +511,7 @@ namespace Components.Tests.Properties {
         ///&lt;div class=&quot;social-share-list&quot;&gt;
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;https://www.linkedin.com/shareArticle?mini=true&amp;url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on LinkedIn&quot;&gt;
-        ///&lt;svg alt=&quot;Share on LinkedIn&quot; class=&quot;social-share-link&quot; fill=&quot;black&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
+        ///&lt;svg alt=&quot;Share on LinkedIn&quot; class=&quot;social-share-link&quot; fill=&quot;#0077B5&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
         ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#linkedin&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
@@ -503,7 +529,7 @@ namespace Components.Tests.Properties {
         ///&lt;div class=&quot;social-share-list&quot;&gt;
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;https://www.facebook.com/sharer/sharer.php?u=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on Facebook&quot; target=&quot;_blank&quot;&gt;
-        ///&lt;svg alt=&quot;Share on Facebook&quot; class=&quot;social-share-link&quot; fill=&quot;black&quot;&gt;
+        ///&lt;svg alt=&quot;Share on Facebook&quot; class=&quot;social-share-link&quot; fill=&quot;#1877F2&quot;&gt;
         ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#facebook&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
@@ -521,7 +547,7 @@ namespace Components.Tests.Properties {
         ///&lt;div class=&quot;social-share-list&quot;&gt;
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;https://www.pinterest.com/pin/create/button/?url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on Pinterest&quot; target=&quot;_blank&quot;&gt;
-        ///&lt;svg alt=&quot;Share on Pinterest&quot; class=&quot;social-share-link&quot; fill=&quot;black&quot;&gt;
+        ///&lt;svg alt=&quot;Share on Pinterest&quot; class=&quot;social-share-link&quot; fill=&quot;#BD081C&quot;&gt;
         ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#pinterest&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
@@ -539,7 +565,7 @@ namespace Components.Tests.Properties {
         ///&lt;div class=&quot;social-share-list&quot;&gt;
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;http://www.reddit.com/submit?url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on Reddit&quot; target=&quot;_blank&quot;&gt;
-        ///&lt;svg alt=&quot;Share on Reddit&quot; class=&quot;social-share-link&quot; fill=&quot;black&quot;&gt;
+        ///&lt;svg alt=&quot;Share on Reddit&quot; class=&quot;social-share-link&quot; fill=&quot;#FF4500&quot;&gt;
         ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#reddit&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
@@ -584,7 +610,8 @@ namespace Components.Tests.Properties {
         ///&lt;li&gt;
         ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
         ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
-        ///&lt;a href=&quot;/p2.html&quot; class=&quot;toc-entry&quot;&gt;p2&lt;/a&gt; [rest of string was truncated]&quot;;.
+        ///&lt;a href=&quot;/p2/&quot; class=&quot;toc-entry&quot;&gt;p2&lt;/a&gt;
+        ///&lt;/ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string toc1 {
             get {
@@ -600,16 +627,16 @@ namespace Components.Tests.Properties {
         ///&lt;div class=&quot;tree-toc-node pointer&quot; onclick=&quot;javascript:toggle(n1Span, n1);&quot;&gt;
         ///&lt;span class=&quot;expbutton&quot; id=&quot;n1Span&quot;&gt;&amp;#9656;&lt;/span&gt;
         ///&lt;span class=&quot;section&quot;&gt;&lt;/span&gt;
-        ///&lt;a href=&quot;/Page1.html&quot; class=&quot;toc-entry&quot;&gt;p1&lt;/a&gt;
+        ///&lt;a href=&quot;/Page1/&quot; class=&quot;toc-entry&quot;&gt;p1&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;ul id=&quot;n1&quot; class=&quot;toc-container collapse &quot;&gt;
         ///&lt;li&gt;
         ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
         ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
-        ///&lt;a href=&quot;/SubPage1.html&quot; class=&quot;toc-entry&quot;&gt;sp1&lt;/a&gt;
+        ///&lt;a href=&quot;/Page1/SubPage1/&quot; class=&quot;toc-entry&quot;&gt;sp1&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;li&gt;
-        ///&lt;div class=&quot;tree-toc- [rest of string was truncated]&quot;;.
+        ///&lt;div class=&quot;tree-toc-no [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string toc2 {
             get {
@@ -625,7 +652,7 @@ namespace Components.Tests.Properties {
         ///&lt;li&gt;
         ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
         ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
-        ///&lt;a href=&quot;/Page1.html&quot; class=&quot;toc-entry&quot;&gt;p1&lt;/a&gt;
+        ///&lt;a href=&quot;/Page1/&quot; class=&quot;toc-entry&quot;&gt;p1&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;/ul&gt;
         ///&lt;/div&gt;
@@ -644,7 +671,7 @@ namespace Components.Tests.Properties {
         ///&lt;li&gt;
         ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
         ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
-        ///&lt;a href=&quot;/Page1.html&quot; class=&quot;toc-entry&quot;&gt;x1&lt;/a&gt;
+        ///&lt;a href=&quot;/Page1/&quot; class=&quot;toc-entry&quot;&gt;x1&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;/ul&gt;
         ///&lt;/div&gt;
@@ -663,12 +690,12 @@ namespace Components.Tests.Properties {
         ///&lt;li&gt;
         ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
         ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
-        ///&lt;a href=&quot;/SubPage1.html&quot; class=&quot;toc-entry&quot;&gt;sp1&lt;/a&gt;
+        ///&lt;a href=&quot;/Page1/SubPage1/&quot; class=&quot;toc-entry&quot;&gt;sp1&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;li&gt;
         ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
         ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
-        ///&lt;a href=&quot;/SubPage2.html&quot; class=&quot;toc-entry&quot;&gt;sp2&lt;/a&gt;
+        ///&lt;a href=&quot;/Page1/SubPage2/&quot; class=&quot;toc-entry&quot;&gt;sp2&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;/ul&gt;
         ///&lt;/div&gt;
@@ -703,12 +730,12 @@ namespace Components.Tests.Properties {
         ///&lt;li&gt;
         ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
         ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
-        ///&lt;a href=&quot;/SubPage2.html&quot; class=&quot;toc-entry&quot;&gt;sp2&lt;/a&gt;
+        ///&lt;a href=&quot;/SubPage2/&quot; class=&quot;toc-entry&quot;&gt;sp2&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;li&gt;
         ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
         ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
-        ///&lt;a href=&quot;/SubPage1.html&quot; class=&quot;toc-entry&quot;&gt;sp1&lt;/a&gt;
+        ///&lt;a href=&quot;/SubPage1/&quot; class=&quot;toc-entry&quot;&gt;sp1&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;/ul&gt;
         ///&lt;/div&gt;
@@ -728,7 +755,7 @@ namespace Components.Tests.Properties {
         ///&lt;li&gt;
         ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
         ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
-        ///&lt;a href=&quot;/SubPage2.html&quot; class=&quot;toc-entry&quot;&gt;sp2&lt;/a&gt;
+        ///&lt;a href=&quot;/SubPage2/&quot; class=&quot;toc-entry&quot;&gt;sp2&lt;/a&gt;
         ///&lt;/li&gt;
         ///&lt;/ul&gt;
         ///&lt;/div&gt;
@@ -737,6 +764,15 @@ namespace Components.Tests.Properties {
         internal static string toc8 {
             get {
                 return ResourceManager.GetString("toc8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string toc9 {
+            get {
+                return ResourceManager.GetString("toc9", resourceCulture);
             }
         }
     }

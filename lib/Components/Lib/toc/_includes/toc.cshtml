@@ -4,6 +4,7 @@ home-menu: true
 menu:
 home-menu-title: Welcome
 root-page:
+filter:
 ---
 @using RazorLight
 @using System
@@ -50,6 +51,8 @@ root-page:
 
     string RenderToc(IEnumerable<IContextPage> pages, out bool hasActive, string parentId = "")
     {
+        pages = NavigationMenuHelper.FilterChildrenPages(pages, Model.Data.Get<string[]>("filter"));
+
         var html = new System.Text.StringBuilder();
 
         hasActive = false;

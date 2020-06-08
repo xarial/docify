@@ -30,7 +30,7 @@ namespace Core.Tests
             Assert.AreEqual("index.md", r1.ToId());
             Assert.AreEqual("page1::index.md", r2.ToId());
             Assert.AreEqual("page2::index.md", r3.ToId());
-            Assert.AreEqual("page3::subpage3::index.md", r4.ToId());
+            Assert.AreEqual("::page3::subpage3::index.md", r4.ToId());
         }
 
         [Test]

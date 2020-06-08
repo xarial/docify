@@ -187,7 +187,26 @@ namespace Xarial.Docify.Base.Data
                     var castMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.Cast),
                         BindingFlags.Static | BindingFlags.Public).MakeGenericMethod(new Type[] { itemType });
 
-                    val = (T)castMethod.Invoke(null, new object[] { dynVal });
+                    var valEnumer = (IEnumerable)castMethod.Invoke(null, new object[] { dynVal });
+
+                    if (typeof(T) == itemType.MakeArrayType())
+                    {
+                        var toArrayMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToArray),
+                            BindingFlags.Static | BindingFlags.Public).MakeGenericMethod(new Type[] { itemType });
+
+                        val = (T)toArrayMethod.Invoke(null, new object[] { valEnumer });
+                    }
+                    else if (typeof(T) == typeof(List<>).MakeGenericType(itemType))
+                    {
+                        var toListMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList),
+                            BindingFlags.Static | BindingFlags.Public).MakeGenericMethod(new Type[] { itemType });
+
+                        val = (T)toListMethod.Invoke(null, new object[] { valEnumer });
+                    }
+                    else
+                    {
+                        val = (T)valEnumer;
+                    }
                 }
                 else if (dynVal is IConvertible)
                 {

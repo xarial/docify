@@ -13,7 +13,6 @@
 
 ## CLI
 [![NuGet version (Docify)](https://img.shields.io/nuget/v/Docify.svg?style=flat-square)](https://www.nuget.org/packages/Docify/)
-
 [![Build status](https://dev.azure.com/xarial/docify/_apis/build/status/cli)](https://dev.azure.com/xarial/docify/_build/latest?definitionId=21)
 
 CLI can be accessed from the command line and published as global .NET Core Tool

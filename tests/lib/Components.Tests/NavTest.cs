@@ -96,6 +96,21 @@ namespace Components.Tests
         }
 
         [Test]
+        public async Task FilterPageTest()
+        {
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% nav { filter: [ '|*/SubPage1/' ] } %}\r\n</div>", INCLUDE_PATH);
+            var p1 = new PageMock("Page1", "", ComponentsTest.Instance.GetData<Metadata>("title: p1"));
+            p1.SubPages.Add(new PageMock("SubPage1", "", ComponentsTest.Instance.GetData<Metadata>("title: sp1")));
+            p1.SubPages.Add(new PageMock("SubPage2", "", ComponentsTest.Instance.GetData<Metadata>("title: sp2")));
+            site.MainPage.SubPages.Add(p1);
+            site.MainPage.SubPages.Add(new PageMock("Page2", "", ComponentsTest.Instance.GetData<Metadata>("title: p2")));
+
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
+
+            Assert.AreEqual(Resources.nav6, res);
+        }
+
+        [Test]
         public async Task RootPageInvalidTest()
         {
             var site = ComponentsTest.Instance.NewSite("<div>\r\n{% nav { home-menu: false, root-page: /page1.html } %}\r\n</div>", INCLUDE_PATH);

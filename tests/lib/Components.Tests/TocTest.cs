@@ -173,5 +173,11 @@ namespace Components.Tests
 
             Assert.AreEqual(Resources.toc8, res);
         }
+
+        [Test]
+        public async Task CapitalizeTitleTest()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

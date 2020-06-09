@@ -181,5 +181,11 @@ namespace Core.Tests
             Assert.AreEqual("T2 index.html T1 index.html CT_Page1 index.html_CT T1 T2", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
             Assert.AreEqual("T2 page2.html T1 page2.html CT_Page2 page2.html_CT T1 T2", files.First(f => f.Location.ToId() == "page2::index.html").AsTextContent());
         }
+
+        [Test]
+        public async Task Compile_ExcludePhantomPage() 
+        {
+            throw new NotImplementedException();
+        }
     }
 }

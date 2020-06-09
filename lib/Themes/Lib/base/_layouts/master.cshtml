@@ -1,4 +1,7 @@
-﻿@using RazorLight
+﻿---
+image: /assets/images/docify-icon.svg
+---
+@using RazorLight
 @using System.Collections.Generic
 @using Xarial.Docify.Lib.Tools
 @using System.Linq
@@ -39,7 +42,7 @@
     {% cookie-consent %}
 </head>
 <body>
-{{ content }}
+    {{ content }}
 </body>
 {% layout::foot %}
 </html>

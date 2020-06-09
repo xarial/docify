@@ -28,6 +28,7 @@ namespace Xarial.Docify.Core.Composer
 
         private const string INHERIT_PAGE_LAYOUT = "$";
         private const string DEFAULT_LAYOUT_PARAM_NAME = "default-layout";
+        private const string CONTENT_PAGES_PATH_PARAM_NAME = "content-pages-path";
 
         private readonly ILayoutParser m_LayoutParser;
         private readonly IConfiguration m_Config;
@@ -160,24 +161,53 @@ namespace Xarial.Docify.Core.Composer
                 throw new NullReferenceException("Null reference source file is detected");
             }
 
-            IEnumerable<IFile> procFiles = files;
+            ILocation contentLoc = null;
+            var contentPath = m_Config?.GetParameterOrDefault<string>(CONTENT_PAGES_PATH_PARAM_NAME);
+            if (!string.IsNullOrEmpty(contentPath))
+            {
+                contentLoc = Location.FromString(contentPath);
+            }
 
-            layouts = procFiles
-                .Where(f => string.Equals(f.Location.GetRoot(), LAYOUTS_FOLDER,
-                m_Comparison));
+            var procFiles = new List<IFile>();
 
-            procFiles = procFiles.Except(layouts);
+            if (contentLoc != null)
+            {
+                foreach (var file in files) 
+                {
+                    if (file.Location.IsInLocation(contentLoc))
+                    {
+                        procFiles.Add(new Data.File(file.Location.GetRelative(contentLoc), file.Content, file.Id));
+                    }
+                    else
+                    {
+                        procFiles.Add(file);
+                    }
+                }
+            }
+            else 
+            {
+                procFiles = files.ToList();
+            }
 
-            includes = procFiles
-                .Where(f => string.Equals(f.Location.GetRoot(), INCLUDES_FOLDER,
-                m_Comparison));
+            List<IFile> ExtractFiles(Predicate<IFile> condition) 
+            {
+                var res = new List<IFile>();
 
-            procFiles = procFiles.Except(includes);
+                for (int i = procFiles.Count - 1; i >= 0; i--)
+                {
+                    if (condition.Invoke(procFiles[i]))
+                    {
+                        res.Add(procFiles[i]);
+                        procFiles.RemoveAt(i);
+                    }
+                }
 
-            pages = procFiles.Where(e => IsPage(e));
+                return res;
+            }
 
-            procFiles = procFiles.Except(pages);
-
+            layouts = ExtractFiles(f => string.Equals(f.Location.GetRoot(), LAYOUTS_FOLDER, m_Comparison));
+            includes = ExtractFiles(f => string.Equals(f.Location.GetRoot(), INCLUDES_FOLDER, m_Comparison));
+            pages = ExtractFiles(f => IsPage(f));
             assets = procFiles;
         }
 

@@ -14,7 +14,7 @@ namespace Xarial.Docify.Core.Data
     public class PhantomPage : Page
     {
         public PhantomPage(string name)
-            : base(name, "", new Metadata(), Guid.NewGuid().ToString(), null)
+            : base(name, "", new Metadata() { { "seo", false }, { "sitemap", false } }, Guid.NewGuid().ToString(), null)
         {
         }
     }

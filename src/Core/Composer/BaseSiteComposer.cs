@@ -26,11 +26,16 @@ namespace Xarial.Docify.Core.Composer
         private const string INCLUDES_FOLDER = "_includes";
         private const string LAYOUT_VAR_NAME = "layout";
 
+        private const string INHERIT_PAGE_LAYOUT = "$";
+        private const string DEFAULT_LAYOUT_PARAM_NAME = "default-layout";
+
         private readonly ILayoutParser m_LayoutParser;
         private readonly IConfiguration m_Config;
 
         private readonly StringComparer m_Comparer;
         private readonly StringComparison m_Comparison;
+
+        private readonly string m_DefaultLayoutName;
 
         public BaseSiteComposer(ILayoutParser parser, IConfiguration config, IComposerExtension ext)
         {
@@ -38,6 +43,8 @@ namespace Xarial.Docify.Core.Composer
             m_Config = config;
             m_Comparer = StringComparer.CurrentCultureIgnoreCase;
             m_Comparison = StringComparison.CurrentCultureIgnoreCase;
+
+            m_DefaultLayoutName = m_Config?.GetParameterOrDefault<string>(DEFAULT_LAYOUT_PARAM_NAME);
         }
 
         private bool IsPage(IFile srcFile)
@@ -69,18 +76,32 @@ namespace Xarial.Docify.Core.Composer
         }
 
         private Page CreatePage(IFile src,
-            IReadOnlyDictionary<string, Template> layoutsMap, string name)
+            IReadOnlyDictionary<string, ITemplate> layoutsMap, string name, ITemplate defaultLayout)
         {
             string rawContent = null;
             IMetadata pageData = null;
-            Template layout = null;
+            ITemplate layout = null;
 
             string layoutName;
             ParseTextFile(src, out rawContent, out pageData, out layoutName);
 
+            if (string.IsNullOrEmpty(layoutName)) 
+            {
+                layoutName = m_DefaultLayoutName;
+            }
+
             if (!string.IsNullOrEmpty(layoutName))
             {
-                if (!layoutsMap.TryGetValue(layoutName, out layout))
+                if (layoutName == INHERIT_PAGE_LAYOUT) 
+                {
+                    layout = defaultLayout;
+
+                    if (defaultLayout == null) 
+                    {
+                        throw new MissingInheritLayoutException(src.Location.ToId(), INHERIT_PAGE_LAYOUT);
+                    }
+                }
+                else if (!layoutsMap.TryGetValue(layoutName, out layout))
                 {
                     throw new MissingLayoutException(layoutName);
                 }
@@ -160,9 +181,9 @@ namespace Xarial.Docify.Core.Composer
             assets = procFiles;
         }
 
-        private Dictionary<string, Template> ParseLayouts(IEnumerable<IFile> layoutFiles)
+        private Dictionary<string, ITemplate> ParseLayouts(IEnumerable<IFile> layoutFiles)
         {
-            var layouts = new Dictionary<string, Template>(m_Comparer);
+            var layouts = new Dictionary<string, ITemplate>(m_Comparer);
 
             var layoutSrcList = layoutFiles.ToList();
 
@@ -215,7 +236,7 @@ namespace Xarial.Docify.Core.Composer
             return string.Join(LocationExtension.ID_SEP, path.ToArray());
         }
 
-        private Template CreateLayout(Dictionary<string, Template> layouts,
+        private Template CreateLayout(Dictionary<string, ITemplate> layouts,
             List<IFile> layoutsSrcList, string layoutName)
         {
             //TODO: detect circular dependencies
@@ -244,7 +265,7 @@ namespace Xarial.Docify.Core.Composer
                 throw new InvalidLayoutException(layoutName, ex);
             }
 
-            Template baseLayout = null;
+            ITemplate baseLayout = null;
 
             if (!string.IsNullOrEmpty(baseLayoutName))
             {
@@ -268,7 +289,7 @@ namespace Xarial.Docify.Core.Composer
         }
 
         private Page ParsePages(IEnumerable<IFile> srcPages,
-            IReadOnlyDictionary<string, Template> layouts,
+            IReadOnlyDictionary<string, ITemplate> layouts,
             IReadOnlyList<IFile> assets)
         {
             var mainSrcPage = srcPages.FirstOrDefault(
@@ -281,7 +302,7 @@ namespace Xarial.Docify.Core.Composer
 
             srcPages = srcPages.Except(new IFile[] { mainSrcPage });
 
-            var mainPage = CreatePage(mainSrcPage, layouts, "");
+            var mainPage = CreatePage(mainSrcPage, layouts, "", null);
 
             var refAssets = new List<IFile>(assets);
             var refPages = new List<IFile>(srcPages);
@@ -301,7 +322,7 @@ namespace Xarial.Docify.Core.Composer
 
         private void ProcessChildren(IPage parent,
             List<IFile> pages, List<IFile> assets,
-            IReadOnlyDictionary<string, Template> layouts, Location curLoc)
+            IReadOnlyDictionary<string, ITemplate> layouts, Location curLoc)
         {
             var subPages = pages.Where(p => p.Location.IsInLocation(curLoc, m_Comparison))
                 .ToArray();
@@ -326,7 +347,8 @@ namespace Xarial.Docify.Core.Composer
             {
                 parent.SubPages.Add(page);
 
-                ProcessChildren(page, pages, assets, layouts, new Location(curLoc.Path.Union(new string[] { page.Name })));
+                ProcessChildren(page, pages, assets, layouts, 
+                    new Location(curLoc.Path.Union(new string[] { page.Name })));
             }
 
             if (!children.Any() && subPages.Any())
@@ -358,7 +380,7 @@ namespace Xarial.Docify.Core.Composer
 
                     usedNames.Add(pageName);
 
-                    var page = CreatePage(child, layouts, pageName);
+                    var page = CreatePage(child, layouts, pageName, parent.Layout);
 
                     if (IsDefaultPageLocation(child.Location))
                     {

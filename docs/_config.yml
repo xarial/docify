@@ -1,0 +1,25 @@
+theme: user-guide
+components:
+  - $
+  - nav
+  - social-links
+plugins:
+  - $
+  - script-style-optimizer
+default-layout: article
+content-pages-path: _content
+^code-syntax-highlighter:
+  embed-style: false
+^tipue-search:
+  page-content-node: //article
+  search-page-layout: default
+$toc:
+  home-menu-title: Welcome
+  title-attribute: caption
+$nav:
+  upper-case: true
+  title-attribute: caption
+  menu:
+    - /
+    - /standard-library/
+        

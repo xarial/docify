@@ -75,7 +75,8 @@ namespace Components.Tests.Properties {
         ///(d.head || d.body).appendChild(s);
         ///})();
         ///&lt;/script&gt;
-        ///&lt;noscript&gt;Please enable JavaScript to view the &lt;a href=&quot;https://disqus.com/?ref_noscript&quot;&gt;comments powered by Disqus.&lt;/a&gt;&lt;/noscript&gt;        /// [rest of string was truncated]&quot;;.
+        ///&lt;noscript&gt;Please enable JavaScript to view the &lt;a href=&quot;https://disqus.com/?ref_noscript&quot;&gt;comments powered by Disqus.&lt;/a&gt;&lt;/noscript&gt;
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string disqus1 {
             get {
@@ -98,7 +99,8 @@ namespace Components.Tests.Properties {
         ///(d.head || d.body).appendChild(s);
         ///})();
         ///&lt;/script&gt;
-        ///&lt;noscript&gt;Please enable JavaScript to view the &lt;a href=&quot;https://disqus.com/?ref_noscript&quot;&gt;comments powered by Disqus.&lt;/a&gt;&lt;/noscript&gt;        /// [rest of string was truncated]&quot;;.
+        ///&lt;noscript&gt;Please enable JavaScript to view the &lt;a href=&quot;https://disqus.com/?ref_noscript&quot;&gt;comments powered by Disqus.&lt;/a&gt;&lt;/noscript&gt;
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string disqus2 {
             get {
@@ -495,7 +497,7 @@ namespace Components.Tests.Properties {
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;https://www.linkedin.com/shareArticle?mini=true&amp;url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on LinkedIn&quot;&gt;
         ///&lt;svg alt=&quot;Share on LinkedIn&quot; class=&quot;social-share-link&quot; fill=&quot;#0077B5&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
-        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#linkedin&quot; /&gt;
+        ///&lt;use xlink:href=&quot;/_assets/images/social-share.svg#linkedin&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
         ///&lt;a href=&quot;https://www.facebook.com/sharer/ [rest of string was truncated]&quot;;.
@@ -512,7 +514,7 @@ namespace Components.Tests.Properties {
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;https://www.linkedin.com/shareArticle?mini=true&amp;url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on LinkedIn&quot;&gt;
         ///&lt;svg alt=&quot;Share on LinkedIn&quot; class=&quot;social-share-link&quot; fill=&quot;#0077B5&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
-        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#linkedin&quot; /&gt;
+        ///&lt;use xlink:href=&quot;/_assets/images/social-share.svg#linkedin&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
         ///&lt;/div&gt;
@@ -530,7 +532,7 @@ namespace Components.Tests.Properties {
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;https://www.facebook.com/sharer/sharer.php?u=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on Facebook&quot; target=&quot;_blank&quot;&gt;
         ///&lt;svg alt=&quot;Share on Facebook&quot; class=&quot;social-share-link&quot; fill=&quot;#1877F2&quot;&gt;
-        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#facebook&quot; /&gt;
+        ///&lt;use xlink:href=&quot;/_assets/images/social-share.svg#facebook&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
         ///&lt;/div&gt;
@@ -548,7 +550,7 @@ namespace Components.Tests.Properties {
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;https://www.pinterest.com/pin/create/button/?url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on Pinterest&quot; target=&quot;_blank&quot;&gt;
         ///&lt;svg alt=&quot;Share on Pinterest&quot; class=&quot;social-share-link&quot; fill=&quot;#BD081C&quot;&gt;
-        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#pinterest&quot; /&gt;
+        ///&lt;use xlink:href=&quot;/_assets/images/social-share.svg#pinterest&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
         ///&lt;/div&gt;
@@ -566,7 +568,7 @@ namespace Components.Tests.Properties {
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;http://www.reddit.com/submit?url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on Reddit&quot; target=&quot;_blank&quot;&gt;
         ///&lt;svg alt=&quot;Share on Reddit&quot; class=&quot;social-share-link&quot; fill=&quot;#FF4500&quot;&gt;
-        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#reddit&quot; /&gt;
+        ///&lt;use xlink:href=&quot;/_assets/images/social-share.svg#reddit&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
         ///&lt;/div&gt;
@@ -584,7 +586,7 @@ namespace Components.Tests.Properties {
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;https://www.linkedin.com/shareArticle?mini=true&amp;url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on LinkedIn&quot;&gt;
         ///&lt;svg alt=&quot;Share on LinkedIn&quot; class=&quot;social-share-link&quot; fill=&quot;green&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
-        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#linkedin&quot; /&gt;
+        ///&lt;use xlink:href=&quot;/_assets/images/social-share.svg#linkedin&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
         ///&lt;a href=&quot;https://www.facebook.com/sharer/sh [rest of string was truncated]&quot;;.

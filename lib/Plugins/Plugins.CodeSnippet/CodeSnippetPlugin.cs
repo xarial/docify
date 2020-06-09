@@ -26,8 +26,8 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
     {
         private CodeSnippetSettings m_Settings;
 
-        private const string CSS_FILE_PATH = "/assets/styles/code-snippet.css";
-        private const string JS_FILE_PATH = "/assets/scripts/code-snippet.js";
+        private const string CSS_FILE_PATH = "/_assets/styles/code-snippet.css";
+        private const string JS_FILE_PATH = "/_assets/scripts/code-snippet.js";
         private const char SNIPPETS_FOLDER_PATH = '~';
 
         private IAssetsFolder m_SnippetsFolder;

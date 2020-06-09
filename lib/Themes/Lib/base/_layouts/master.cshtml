@@ -1,5 +1,5 @@
 ﻿---
-image: /assets/images/docify-icon.svg
+image: /_assets/images/docify-icon.svg
 ---
 @using RazorLight
 @using System.Collections.Generic
@@ -14,9 +14,9 @@ image: /assets/images/docify-icon.svg
     <link rel="shortcut icon" type="image/x-icon" href="@string.Format("{0}/{1}", Model.Site.BaseUrl, "favicon.ico")">
     <link rel="alternate" type="application/rss+xml" title="@PageHelper.GetTitle(Model.Site.MainPage, null) - Feed" href="@Model.Site.BaseUrl/feed.xml">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <link rel="stylesheet" type="text/css" href="/assets/styles/social-share.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/styles/youtube.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/styles/base.css" />
+    <link rel="stylesheet" type="text/css" href="/_assets/styles/social-share.css" />
+    <link rel="stylesheet" type="text/css" href="/_assets/styles/youtube.css" />
+    <link rel="stylesheet" type="text/css" href="/_assets/styles/base.css" />
     @{
         var styles = Model.Page.Data.GetOrDefault<IEnumerable<object>>("styles");
         if (styles?.Any() == true)

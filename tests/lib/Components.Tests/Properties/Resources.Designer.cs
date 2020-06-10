@@ -75,8 +75,7 @@ namespace Components.Tests.Properties {
         ///(d.head || d.body).appendChild(s);
         ///})();
         ///&lt;/script&gt;
-        ///&lt;noscript&gt;Please enable JavaScript to view the &lt;a href=&quot;https://disqus.com/?ref_noscript&quot;&gt;comments powered by Disqus.&lt;/a&gt;&lt;/noscript&gt;
-        /// [rest of string was truncated]&quot;;.
+        ///&lt;noscript&gt;Please enable JavaScript to view the &lt;a href=&quot;https://disqus.com/?ref_noscript&quot;&gt;comments powered by Disqus.&lt;/a&gt;&lt;/noscript&gt;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string disqus1 {
             get {
@@ -99,8 +98,7 @@ namespace Components.Tests.Properties {
         ///(d.head || d.body).appendChild(s);
         ///})();
         ///&lt;/script&gt;
-        ///&lt;noscript&gt;Please enable JavaScript to view the &lt;a href=&quot;https://disqus.com/?ref_noscript&quot;&gt;comments powered by Disqus.&lt;/a&gt;&lt;/noscript&gt;
-        /// [rest of string was truncated]&quot;;.
+        ///&lt;noscript&gt;Please enable JavaScript to view the &lt;a href=&quot;https://disqus.com/?ref_noscript&quot;&gt;comments powered by Disqus.&lt;/a&gt;&lt;/noscript&gt;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string disqus2 {
             get {
@@ -361,6 +359,35 @@ namespace Components.Tests.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;ul class=&quot;menu sub-menu-item-container&quot; id=&quot;top-menu&quot;&gt;
+        ///&lt;a class=&quot;menu-icon&quot; onclick=&quot;OpenMenu(this)&quot;&gt;
+        ///&lt;div class=&quot;bar1&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar2&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar3&quot;&gt;&lt;/div&gt;
+        ///&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/url/&quot;&gt;p1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a&gt;Page1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/p2/&quot;&gt;p2&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/p2/&quot;&gt;p2-mod&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string nav7 {
+            get {
+                return ResourceManager.GetString("nav7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;title&gt;p1&lt;/title&gt;
         ///&lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
         ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
@@ -500,7 +527,7 @@ namespace Components.Tests.Properties {
         ///&lt;use xlink:href=&quot;/_assets/images/social-share.svg#linkedin&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
-        ///&lt;a href=&quot;https://www.facebook.com/sharer/ [rest of string was truncated]&quot;;.
+        ///&lt;a href=&quot;https://www.facebook.com/sharer [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string social_share1 {
             get {
@@ -589,7 +616,7 @@ namespace Components.Tests.Properties {
         ///&lt;use xlink:href=&quot;/_assets/images/social-share.svg#linkedin&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
-        ///&lt;a href=&quot;https://www.facebook.com/sharer/sh [rest of string was truncated]&quot;;.
+        ///&lt;a href=&quot;https://www.facebook.com/sharer/s [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string social_share6 {
             get {
@@ -618,6 +645,32 @@ namespace Components.Tests.Properties {
         internal static string toc1 {
             get {
                 return ResourceManager.GetString("toc1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div id=&quot;toc&quot;&gt;
+        ///&lt;a href=&quot;/&quot; class=&quot;toc-entry  active&quot;&gt;Welcome&lt;/a&gt;
+        ///&lt;ul style=&quot;margin: 0px&quot; class=&quot;toc-container collapse in&quot;&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/Page1/&quot; class=&quot;toc-entry&quot;&gt;First Page&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/Page2/&quot; class=&quot;toc-entry&quot;&gt;Page2&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/Page3/&quot; class=&quot;toc-entry&quot;&gt;Thir [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string toc10 {
+            get {
+                return ResourceManager.GetString("toc10", resourceCulture);
             }
         }
         
@@ -770,7 +823,21 @@ namespace Components.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div id=&quot;toc&quot;&gt;
+        ///&lt;a href=&quot;/&quot; class=&quot;toc-entry  active&quot;&gt;Welcome&lt;/a&gt;
+        ///&lt;ul style=&quot;margin: 0px&quot; class=&quot;toc-container collapse in&quot;&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; onclick=&quot;javascript:toggle(n1Span, n1);&quot;&gt;
+        ///&lt;span class=&quot;expbutton&quot; id=&quot;n1Span&quot;&gt;&amp;#9656;&lt;/span&gt;
+        ///&lt;span class=&quot;section&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/Page1/&quot; class=&quot;toc-entry&quot;&gt;p1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;ul id=&quot;n1&quot; class=&quot;toc-container collapse &quot;&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/Page1/SubPage1/&quot; class=&quot;toc-e [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string toc9 {
             get {

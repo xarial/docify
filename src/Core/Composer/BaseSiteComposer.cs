@@ -403,7 +403,7 @@ namespace Xarial.Docify.Core.Composer
                 }
             }
 
-            if (!(parent is PhantomPage))
+            if (!(parent is IPhantomPage))
             {
                 LoadAssets(parent, assets, curLoc);
             }

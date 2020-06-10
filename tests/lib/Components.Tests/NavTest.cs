@@ -131,7 +131,15 @@ namespace Components.Tests
         [Test]
         public async Task CustomTitleAndUrlTest()
         {
-            throw new NotImplementedException();
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% nav %}\r\n</div>", INCLUDE_PATH,
+                ComponentsTest.Instance.GetData<Metadata>("title: p1"),
+                ComponentsTest.Instance.GetData<Configuration>("$nav:\r\n  menu:\r\n    - '[p1](/url/)'\r\n    - Page1\r\n    - /p2/\r\n    - '[p2-mod](/p2/)'"));
+
+            site.MainPage.SubPages.Add(new PageMock("p2", "", ComponentsTest.Instance.GetData<Metadata>("title: p2")));
+
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
+
+            Assert.AreEqual(Resources.nav7, res);
         }
     }
 }

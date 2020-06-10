@@ -124,14 +124,14 @@ namespace Core.Tests
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.IsNotInstanceOf<PhantomPage>(site.MainPage);
+            Assert.IsNotInstanceOf<IPhantomPage>(site.MainPage);
             Assert.AreEqual("page1", site.MainPage.SubPages[0].Name);
-            Assert.IsInstanceOf<PhantomPage>(site.MainPage.SubPages[0]);
+            Assert.IsInstanceOf<IPhantomPage>(site.MainPage.SubPages[0]);
             Assert.IsTrue(string.IsNullOrEmpty(site.MainPage.SubPages[0].RawContent));
             Assert.AreEqual(1, site.MainPage.SubPages[0].SubPages.Count);
             Assert.AreEqual("page2", site.MainPage.SubPages[0].SubPages[0].Name);
             Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
-            Assert.IsNotInstanceOf<PhantomPage>(site.MainPage.SubPages[0].SubPages[0]);
+            Assert.IsNotInstanceOf<IPhantomPage>(site.MainPage.SubPages[0].SubPages[0]);
         }
 
         [Test]

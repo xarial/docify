@@ -5,7 +5,7 @@ menu:
 home-menu-title: Welcome
 root-page:
 filter:
-capitalize-title: false
+title-case: false
 ---
 @using RazorLight
 @using System
@@ -20,7 +20,7 @@ capitalize-title: false
     const string PAGE_DISABLED_ATT = "disabled";
     const string PAGE_TOC_ATT = "toc";
     const string PAGE_ORDER_ATT = "order";
-    const string CAPITALIZE_TITLE_ATT = "capitalize-title";
+    const string CAPITALIZE_TITLE_ATT = "title-case";
 
     var menu = NavigationMenuHelper.BuildPredefinedMenu(MENU_OPT, Model.Site, Model.Data)?.ToList();
 

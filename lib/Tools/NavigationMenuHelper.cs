@@ -196,8 +196,8 @@ namespace Xarial.Docify.Lib.Tools
 
                 if (match.Success)
                 {
-                    url = match.Groups[1].Value;
-                    title = match.Groups[2].Value;
+                    title = match.Groups[1].Value;
+                    url = match.Groups[2].Value;
                 }
 
                 var page = allPages?.FirstOrDefault(p => string.Equals(p.Url,

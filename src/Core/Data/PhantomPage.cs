@@ -7,13 +7,14 @@
 
 using System;
 using System.Diagnostics;
+using Xarial.Docify.Base;
 
 namespace Xarial.Docify.Core.Data
 {
     [DebuggerDisplay("~{" + nameof(Name) + "}")]
-    public class PhantomPage : Page
+    internal class PhantomPage : Page, IPhantomPage
     {
-        public PhantomPage(string name)
+        internal PhantomPage(string name)
             : base(name, "", new Metadata() { { "seo", false }, { "sitemap", false } }, Guid.NewGuid().ToString(), null)
         {
         }

@@ -1,0 +1,17 @@
+.header-icon {
+    grid-area: icon;
+}
+
+.header-menu {
+    grid-area: menu;
+}
+
+.header {
+    display: grid;
+    grid-template-areas: 'icon menu';
+    grid-template-columns: auto 1fr;
+    grid-gap: 2px;
+    padding: 2px;
+    justify-content: left;
+    align-items: center;
+}

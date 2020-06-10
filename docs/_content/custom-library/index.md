@@ -1,7 +1,7 @@
 ---
-caption: Library
-title: Managing library in Docify
+caption: Custom Library
+title: Managing custom library in Docify
 description: Creating reusable library components, plugins and themes in Docify
 image: 
-order: 2
+order: 8
 ---

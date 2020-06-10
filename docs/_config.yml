@@ -6,13 +6,16 @@ components:
 plugins:
   - $
   - script-style-optimizer
+  - files-promoter
 default-layout: article
-content-pages-path: _content
 ^code-syntax-highlighter:
   embed-style: false
 ^tipue-search:
   page-content-node: //article
   search-page-layout: default
+^files-promoter:
+  folders:
+    - '_content'
 $toc:
   home-menu-title: Welcome
   title-attribute: caption
@@ -20,6 +23,6 @@ $nav:
   upper-case: true
   title-attribute: caption
   menu:
-    - /
-    - /standard-library/
+    - '[User Guide](/)'
+    - '[Library](/standard-library/)'
         

@@ -17,6 +17,59 @@ using Xarial.Docify.Lib.Tools.Exceptions;
 
 namespace Xarial.Docify.Lib.Tools
 {
+    public class MenuPage : IContextPage
+    {
+        public string Url { get; set; }
+        public string FullUrl { get; set; }
+        public IContextMetadata Data { get; }
+        public IReadOnlyList<IContextPage> SubPages => SubPagesList;
+        public List<MenuPage> SubPagesList { get; }
+        public Dictionary<string, object> DataDictionary { get; }
+        public IReadOnlyList<IContextAsset> Assets => throw new NotSupportedException();
+        public string[] Scope { get; set; }
+
+        public MenuPage()
+        {
+            SubPagesList = new List<MenuPage>();
+            DataDictionary = new Dictionary<string, object>();
+            Data = new NavigationMenuHelper.MenuPageMetadata(DataDictionary);
+        }
+    }
+
+    public class UrlLocation : ILocation
+    {
+        public IReadOnlyList<string> Path { get; }
+
+        public string FileName { get; }
+
+        public UrlLocation(string url)
+        {
+            var parts = (IEnumerable<string>)url.Split(LocationExtension.URL_SEP);
+
+            var fileName = "";
+
+            if (!string.IsNullOrEmpty(System.IO.Path.GetExtension(parts.Last())))
+            {
+                parts = parts.Take(parts.Count() - 1);
+                fileName = parts.Last();
+            }
+
+            FileName = fileName;
+            Path = new List<string>(parts);
+        }
+
+        private UrlLocation(string fileName, IEnumerable<string> path)
+        {
+            FileName = fileName;
+            Path = new List<string>(path);
+        }
+
+        public ILocation Copy(string fileName, IEnumerable<string> path)
+        {
+            return new UrlLocation(fileName, path);
+        }
+    }
+
     /// <summary>
     /// Helper classes for navigation menu composition
     /// </summary>
@@ -24,25 +77,7 @@ namespace Xarial.Docify.Lib.Tools
     {
         private const string ROOT_PAGE_ATT = "root-page";
 
-        private class MenuPage : IContextPage
-        {
-            public string Url { get; set; }
-            public string FullUrl { get; set; }
-            public IContextMetadata Data { get; }
-            public IReadOnlyList<IContextPage> SubPages => SubPagesList;
-            public List<MenuPage> SubPagesList { get; }
-            public Dictionary<string, object> DataDictionary { get; }
-            public IReadOnlyList<IContextAsset> Assets => throw new NotSupportedException();
-
-            public MenuPage() 
-            {
-                SubPagesList = new List<MenuPage>();
-                DataDictionary = new Dictionary<string, object>();
-                Data = new MenuPageMetadata(DataDictionary);
-            }
-        }
-
-        private class MenuPageMetadata : ReadOnlyDictionary<string, object>, IContextMetadata
+        internal class MenuPageMetadata : ReadOnlyDictionary<string, object>, IContextMetadata
         {
             public MenuPageMetadata(IDictionary<string, object> data) : base(data)
             {
@@ -76,39 +111,6 @@ namespace Xarial.Docify.Lib.Tools
             }
         }
 
-        private class UrlLocation : ILocation
-        {
-            public IReadOnlyList<string> Path { get; }
-
-            public string FileName { get; }
-
-            public UrlLocation(string url)
-            {
-                var parts = (IEnumerable<string>)url.Split(LocationExtension.URL_SEP);
-
-                var fileName = "";
-
-                if (!string.IsNullOrEmpty(System.IO.Path.GetExtension(parts.Last())))
-                {
-                    parts = parts.Take(parts.Count() - 1);
-                    fileName = parts.Last();
-                }
-
-                FileName = fileName;
-                Path = new List<string>(parts);
-            }
-
-            private UrlLocation(string fileName, IEnumerable<string> path) 
-            {
-                FileName = fileName;
-                Path = new List<string>(path);
-            }
-
-            public ILocation Copy(string fileName, IEnumerable<string> path)
-            {
-                return new UrlLocation(fileName, path);
-            }
-        }
         /// <summary>
         /// Build the menu based on predefined parameter
         /// </summary>
@@ -187,12 +189,13 @@ namespace Xarial.Docify.Lib.Tools
         {
             MenuPage CreateMenuPage(string val)
             {
-                const string URL_PATTERN = @"\[(.*)\]\((.*)\)";
+                const string URL_PATTERN = @"\[(.*)\]\((.*)\)(?:{(.+)})?";
 
                 var match = Regex.Match(val, URL_PATTERN);
 
                 string url = "";
                 string title = "";
+                string[] scope = null;
 
                 var overwriteTitle = match.Success;
 
@@ -200,6 +203,14 @@ namespace Xarial.Docify.Lib.Tools
                 {
                     title = match.Groups[1].Value;
                     url = match.Groups[2].Value;
+                    
+                    var scopeAtt = match.Groups[3].Value;
+                    
+                    if (!string.IsNullOrEmpty(scopeAtt)) 
+                    {
+                        scope = scopeAtt.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(f => f.Trim()).ToArray();
+                    }
                 }
                 
                 var page = allPages?.FirstOrDefault(p => string.Equals(p.Url,
@@ -219,7 +230,8 @@ namespace Xarial.Docify.Lib.Tools
                 
                 var menuPage = new MenuPage()
                 {
-                    Url = url
+                    Url = url,
+                    Scope = scope
                 };
 
                 menuPage.DataDictionary["title"] = val;

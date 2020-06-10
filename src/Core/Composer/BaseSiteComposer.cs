@@ -64,9 +64,16 @@ namespace Xarial.Docify.Core.Composer
         private void ParseTextFile(IFile src, out string rawContent,
             out IMetadata data, out string layoutName)
         {
-            FrontMatterParser.Parse(src.AsTextContent(), out rawContent, out data);
+            try
+            {
+                FrontMatterParser.Parse(src.AsTextContent(), out rawContent, out data);
 
-            layoutName = data.GetRemoveParameterOrDefault<string>(LAYOUT_VAR_NAME);
+                layoutName = data.GetRemoveParameterOrDefault<string>(LAYOUT_VAR_NAME);
+            }
+            catch (Exception ex)
+            {
+                throw new UserMessageException($"Failed to deserialize the metadata from the '{src.Location.ToPath()}'", ex);
+            }
         }
 
         private bool IsDefaultPageLocation(ILocation location)

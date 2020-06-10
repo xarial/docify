@@ -104,7 +104,14 @@ namespace Xarial.Docify.Core.Compiler
 
                 var yamlDeserializer = new MetadataSerializer();
 
-                param = yamlDeserializer.Deserialize<Metadata>(paramStr);
+                try
+                {
+                    param = yamlDeserializer.Deserialize<Metadata>(paramStr);
+                }
+                catch (Exception ex)
+                {
+                    throw new UserMessageException($"Failed to deserialize the metadata from the include '{name}'", ex);
+                }
             }
             else
             {

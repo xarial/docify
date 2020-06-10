@@ -20,6 +20,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tests.Common.Mocks;
 using Xarial.Docify.Core.Plugin.Extensions;
+using Tests.Common;
 
 namespace Core.Tests
 {
@@ -103,7 +104,7 @@ namespace Core.Tests
         }
 
         [Test]
-        public void ComposeSite_NotClosedFrontMatter()
+        public async Task ComposeSite_NotClosedFrontMatter()
         {
             var src = new FileMock[]
             {
@@ -111,7 +112,7 @@ namespace Core.Tests
                 "---\r\nText Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
-            Assert.ThrowsAsync<FrontMatterErrorException>(() => m_Composer.ComposeSite(src, ""));
+            await AssertException.ThrowsInnerAsync<FrontMatterErrorException>(() => m_Composer.ComposeSite(src, ""));
         }
     }
 }

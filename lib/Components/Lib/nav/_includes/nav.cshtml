@@ -68,6 +68,16 @@ filter:
             if (!string.IsNullOrEmpty(pageUrl) && !string.IsNullOrEmpty(menuPageUrl))
             {
                 isActive = pageUrl.StartsWith(menuPageUrl, StringComparison.CurrentCultureIgnoreCase);
+
+                if (menuPage is Xarial.Docify.Lib.Tools.MenuPage)
+                {
+                    var filter = (menuPage as Xarial.Docify.Lib.Tools.MenuPage).Scope;
+                    if (filter != null && !string.IsNullOrEmpty(menuPage.Url))
+                    {
+                        var urlLoc = new UrlLocation(pageUrl);
+                        isActive &= Xarial.Docify.Base.LocationExtension.Matches(urlLoc, filter);
+                    }
+                }
             };
 
             isActive |= hasActiveSubMenu;

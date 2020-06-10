@@ -17,6 +17,7 @@ using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Lib.Plugins.CodeSnippet.Helpers;
 using Xarial.Docify.Lib.Plugins.CodeSnippet.Properties;
+using Xarial.Docify.Lib.Plugins.Common.Data;
 using Xarial.Docify.Lib.Plugins.Common.Exceptions;
 using Xarial.Docify.Lib.Plugins.Common.Helpers;
 
@@ -61,7 +62,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
             {
                 m_SnippetsFolder = site.MainPage;
 
-                var parts = m_Settings.SnippetsFolder.Split(AssetsHelper.PathSeparators,
+                var parts = m_Settings.SnippetsFolder.Split(PluginLocation.PathSeparators,
                     StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var part in parts)
@@ -116,7 +117,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
                 var dir = snipData.FileName.Substring(0, snipData.FileName.Length - fileName.Length);
                 var snipsFolder = AssetsHelper.FindAssetsFolder(
                     m_Site, page,
-                    AssetsHelper.LocationFromPath(dir));
+                    PluginLocation.FromPath(dir));
 
                 snipData.Tabs = new Dictionary<string, string>();
 

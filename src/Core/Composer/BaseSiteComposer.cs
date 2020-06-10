@@ -28,7 +28,6 @@ namespace Xarial.Docify.Core.Composer
 
         private const string INHERIT_PAGE_LAYOUT = "$";
         private const string DEFAULT_LAYOUT_PARAM_NAME = "default-layout";
-        private const string CONTENT_PAGES_PATH_PARAM_NAME = "content-pages-path";
 
         private readonly ILayoutParser m_LayoutParser;
         private readonly IConfiguration m_Config;
@@ -166,37 +165,23 @@ namespace Xarial.Docify.Core.Composer
             var includesList = new List<IFile>();
             var assetsList = new List<IFile>();
 
-            ILocation contentLoc = null;
-            var contentPath = m_Config?.GetParameterOrDefault<string>(CONTENT_PAGES_PATH_PARAM_NAME);
-            if (!string.IsNullOrEmpty(contentPath))
-            {
-                contentLoc = Location.FromString(contentPath);
-            }
-
             foreach (var file in files)
             {
-                var curFile = file;
-
-                if (contentLoc != null && file.Location.IsInLocation(contentLoc))
+                if (string.Equals(file.Location.GetRoot(), LAYOUTS_FOLDER, m_Comparison))
                 {
-                    curFile = new Data.File(file.Location.GetRelative(contentLoc), file.Content, file.Id);
+                    layoutsList.Add(file);
                 }
-
-                if (string.Equals(curFile.Location.GetRoot(), LAYOUTS_FOLDER, m_Comparison))
+                else if (string.Equals(file.Location.GetRoot(), INCLUDES_FOLDER, m_Comparison))
                 {
-                    layoutsList.Add(curFile);
+                    includesList.Add(file);
                 }
-                else if (string.Equals(curFile.Location.GetRoot(), INCLUDES_FOLDER, m_Comparison))
+                else if (IsPage(file))
                 {
-                    includesList.Add(curFile);
-                }
-                else if (IsPage(curFile))
-                {
-                    pagesList.Add(curFile);
+                    pagesList.Add(file);
                 }
                 else
                 {
-                    assetsList.Add(curFile);
+                    assetsList.Add(file);
                 }
             }
 

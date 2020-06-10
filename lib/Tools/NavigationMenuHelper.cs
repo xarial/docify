@@ -194,18 +194,27 @@ namespace Xarial.Docify.Lib.Tools
                 string url = "";
                 string title = "";
 
-                if (match.Success)
+                var overwriteTitle = match.Success;
+
+                if (overwriteTitle)
                 {
                     title = match.Groups[1].Value;
                     url = match.Groups[2].Value;
                 }
-
+                
                 var page = allPages?.FirstOrDefault(p => string.Equals(p.Url,
                     !string.IsNullOrEmpty(url) ? url : val, StringComparison.CurrentCultureIgnoreCase));
 
                 if (page != null)
                 {
                     url = page.Url;
+                }
+                else 
+                {
+                    if (!overwriteTitle) 
+                    {
+                        title = val;
+                    }
                 }
                 
                 var menuPage = new MenuPage()
@@ -225,9 +234,10 @@ namespace Xarial.Docify.Lib.Tools
                     }
                 }
                 
-                if (!string.IsNullOrEmpty(title)) 
+                if (overwriteTitle) 
                 {
                     menuPage.DataDictionary["title"] = title;
+                    menuPage.DataDictionary["caption"] = title;
                 }
 
                 return menuPage;

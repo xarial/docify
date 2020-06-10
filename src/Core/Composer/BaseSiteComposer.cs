@@ -285,6 +285,11 @@ namespace Xarial.Docify.Core.Composer
                 }
             }
 
+            if (baseLayout != null)
+            {
+                data = data.Merge(baseLayout.Data);
+            }
+
             var layout = new Template(layoutName, rawContent, layoutFile.Id, data, baseLayout);
 
             if (layouts.ContainsKey(layoutName))
@@ -317,7 +322,7 @@ namespace Xarial.Docify.Core.Composer
             var refAssets = new List<IFile>(assets);
             var refPages = new List<IFile>(srcPages);
 
-            ProcessChildren(mainPage, refPages, refAssets, layouts, Location.Empty);
+            ProcessChildren(mainPage, refPages, refAssets, layouts, Location.Empty, mainPage.Layout);
 
             var unprocessed = refPages.Union(refAssets);
 
@@ -332,7 +337,7 @@ namespace Xarial.Docify.Core.Composer
 
         private void ProcessChildren(IPage parent,
             List<IFile> pages, List<IFile> assets,
-            IReadOnlyDictionary<string, ITemplate> layouts, Location curLoc)
+            IReadOnlyDictionary<string, ITemplate> layouts, Location curLoc, ITemplate curLayout)
         {
             var subPages = pages.Where(p => p.Location.IsInLocation(curLoc, m_Comparison))
                 .ToArray();
@@ -357,8 +362,8 @@ namespace Xarial.Docify.Core.Composer
             {
                 parent.SubPages.Add(page);
 
-                ProcessChildren(page, pages, assets, layouts, 
-                    new Location(curLoc.Path.Union(new string[] { page.Name })));
+                ProcessChildren(page, pages, assets, layouts,
+                    new Location(curLoc.Path.Union(new string[] { page.Name })), page.Layout ?? curLayout);
             }
 
             if (!children.Any() && subPages.Any())
@@ -390,7 +395,7 @@ namespace Xarial.Docify.Core.Composer
 
                     usedNames.Add(pageName);
 
-                    var page = CreatePage(child, layouts, pageName, parent.Layout);
+                    var page = CreatePage(child, layouts, pageName, curLayout);
 
                     if (IsDefaultPageLocation(child.Location))
                     {

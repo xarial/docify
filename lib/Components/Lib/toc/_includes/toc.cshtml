@@ -21,6 +21,8 @@ title-case: false
     const string PAGE_TOC_ATT = "toc";
     const string PAGE_ORDER_ATT = "order";
     const string CAPITALIZE_TITLE_ATT = "title-case";
+    const string FILTER_ATT = "filter";
+    const string HOME_MENU_TITLE_ATT = "home-menu-title";
 
     var menu = NavigationMenuHelper.BuildPredefinedMenu(MENU_OPT, Model.Site, Model.Data)?.ToList();
 
@@ -37,7 +39,7 @@ title-case: false
         homePage = NavigationMenuHelper.BuildPage(rootPage, "Home");
     }
 
-    var homeMenuTitle = Model.Data.Get<string>("home-menu-title");
+    var homeMenuTitle = Model.Data.Get<string>(HOME_MENU_TITLE_ATT);
 
     int idCounter = 0;
 
@@ -53,7 +55,7 @@ title-case: false
 
     string RenderToc(IEnumerable<IContextPage> pages, out bool hasActive, string parentId = "")
     {
-        pages = NavigationMenuHelper.FilterChildrenPages(pages, Model.Data.Get<string[]>("filter"));
+        pages = NavigationMenuHelper.FilterChildrenPages(pages, Model.Data.Get<string[]>(FILTER_ATT));
 
         var html = new System.Text.StringBuilder();
 

@@ -25,6 +25,8 @@ namespace Xarial.Docify.Core.Compiler
         public const string START_TAG = "{%";
         public const string END_TAG = "%}";
 
+        private const string INCLUDE_PARAM_TOKEN = "$";
+
         private const string NAME_PARAMS_SPLIT_SYMBOL = " ";
 
         private readonly IDynamicContentTransformer m_Transformer;
@@ -68,7 +70,7 @@ namespace Xarial.Docify.Core.Compiler
         {
             Dictionary<string, object> GetData(IMetadata data, string name)
             {
-                var extrData = data.GetParameterOrDefault<Dictionary<string, object>>("$" + name);
+                var extrData = data.GetParameterOrDefault<Dictionary<string, object>>(INCLUDE_PARAM_TOKEN + name);
 
                 if (extrData != null)
                 {

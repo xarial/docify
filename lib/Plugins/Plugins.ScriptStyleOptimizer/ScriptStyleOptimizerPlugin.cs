@@ -145,7 +145,7 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
 
             foreach (var bundle in m_BundlesContent)
             {
-                var parts = bundle.Key.Split(AssetsHelper.PathSeparators,
+                var parts = bundle.Key.Split(PluginLocation.PathSeparators,
                     StringSplitOptions.RemoveEmptyEntries);
 
                 var dir = parts.Take(parts.Length - 1);

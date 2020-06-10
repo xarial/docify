@@ -160,25 +160,35 @@ namespace Xarial.Docify.Core.Composer
                 throw new NullReferenceException("Null reference source file is detected");
             }
 
-            IEnumerable<IFile> procFiles = files;
+            var pagesList = new List<IFile>();
+            var layoutsList = new List<IFile>();
+            var includesList = new List<IFile>();
+            var assetsList = new List<IFile>();
 
-            layouts = procFiles
-                .Where(f => string.Equals(f.Location.GetRoot(), LAYOUTS_FOLDER,
-                m_Comparison));
+            foreach (var file in files)
+            {
+                if (string.Equals(file.Location.GetRoot(), LAYOUTS_FOLDER, m_Comparison))
+                {
+                    layoutsList.Add(file);
+                }
+                else if (string.Equals(file.Location.GetRoot(), INCLUDES_FOLDER, m_Comparison))
+                {
+                    includesList.Add(file);
+                }
+                else if (IsPage(file))
+                {
+                    pagesList.Add(file);
+                }
+                else
+                {
+                    assetsList.Add(file);
+                }
+            }
 
-            procFiles = procFiles.Except(layouts);
-
-            includes = procFiles
-                .Where(f => string.Equals(f.Location.GetRoot(), INCLUDES_FOLDER,
-                m_Comparison));
-
-            procFiles = procFiles.Except(includes);
-
-            pages = procFiles.Where(e => IsPage(e));
-
-            procFiles = procFiles.Except(pages);
-
-            assets = procFiles;
+            layouts = layoutsList;
+            includes = includesList;
+            pages = pagesList;
+            assets = assetsList;
         }
 
         private Dictionary<string, ITemplate> ParseLayouts(IEnumerable<IFile> layoutFiles)
@@ -393,7 +403,7 @@ namespace Xarial.Docify.Core.Composer
                 }
             }
 
-            if (!(parent is PhantomPage))
+            if (!(parent is IPhantomPage))
             {
                 LoadAssets(parent, assets, curLoc);
             }

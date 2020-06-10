@@ -17,17 +17,20 @@ namespace Xarial.Docify.Core.Plugin
         public ICompilerManager Compiler { get; }
         public IComposerManager Composer { get; }
         public IPublisherManager Publisher { get; }
+        public ILoaderManager Loader { get; }
 
         public DocifyApplication(IIncludesHandlerManager includes,
             ICompilerManager compiler,
             IComposerManager composer,
             IPublisherManager publisher,
+            ILoaderManager loader,
             ILogger logger)
         {
             Includes = includes;
             Compiler = compiler;
             Composer = composer;
             Publisher = publisher;
+            Loader = loader;
             Logger = logger;
         }
     }

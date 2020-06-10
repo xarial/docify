@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Context;
 using Xarial.Docify.Base.Data;
@@ -30,19 +31,14 @@ namespace Xarial.Docify.Lib.Tools
             public IContextMetadata Data { get; }
             public IReadOnlyList<IContextPage> SubPages => SubPagesList;
             public List<MenuPage> SubPagesList { get; }
-
+            public Dictionary<string, object> DataDictionary { get; }
             public IReadOnlyList<IContextAsset> Assets => throw new NotSupportedException();
 
-            public MenuPage(IContextPage page) : this(page.Data)
-            {
-                FullUrl = page.FullUrl;
-                Url = page.Url;
-            }
-
-            public MenuPage(IContextMetadata data)
+            public MenuPage() 
             {
                 SubPagesList = new List<MenuPage>();
-                Data = data;
+                DataDictionary = new Dictionary<string, object>();
+                Data = new MenuPageMetadata(DataDictionary);
             }
         }
 
@@ -141,12 +137,12 @@ namespace Xarial.Docify.Lib.Tools
         /// Creates new menu page
         /// </summary>
         /// <param name="srcPage">Source page</param>
-        /// <param name="data">Page data</param>
         /// <param name="title">Page title</param>
         /// <returns>Menu page</returns>
-        public static IContextPage BuildPage(IContextPage srcPage, IContextMetadata data, string title)
+        public static IContextPage BuildPage(IContextPage srcPage, string title)
         {
-            var page = CreateMenuPage(null, data, title);
+            var page = new MenuPage();
+            page.DataDictionary["title"] = title;
             page.Url = srcPage.Url;
             page.FullUrl = srcPage.FullUrl;
             return page;
@@ -187,36 +183,67 @@ namespace Xarial.Docify.Lib.Tools
             return pages.Where(p => p is MenuPage || new UrlLocation(p.Url).Matches(filters));
         }
 
-        private static MenuPage CreateMenuPage(IEnumerable<IContextPage> allPages, IContextMetadata data, string url)
-        {
-            var page = allPages?.FirstOrDefault(p => string.Equals(p.Url,
-                url, StringComparison.CurrentCultureIgnoreCase));
-
-            if (page != null)
-            {
-                return new MenuPage(page);
-            }
-            else
-            {
-                return new MenuPage(new MenuPageMetadata(
-                    new Dictionary<string, object>()
-                    { { "title" , url } }));
-            }
-        }
-
         private static void ParsePages(List<object> menuList, List<MenuPage> menuPagesList, IEnumerable<IContextPage> allPages, IContextMetadata data)
         {
+            MenuPage CreateMenuPage(string val)
+            {
+                const string URL_PATTERN = @"\[(.*)\]\((.*)\)";
+
+                var match = Regex.Match(val, URL_PATTERN);
+
+                string url = "";
+                string title = "";
+
+                if (match.Success)
+                {
+                    url = match.Groups[1].Value;
+                    title = match.Groups[2].Value;
+                }
+
+                var page = allPages?.FirstOrDefault(p => string.Equals(p.Url,
+                    !string.IsNullOrEmpty(url) ? url : val, StringComparison.CurrentCultureIgnoreCase));
+
+                if (page != null)
+                {
+                    url = page.Url;
+                }
+                
+                var menuPage = new MenuPage()
+                {
+                    Url = url
+                };
+
+                menuPage.DataDictionary["title"] = val;
+
+                if (page != null)
+                {
+                    menuPage.FullUrl = page.FullUrl;
+
+                    foreach (var att in page.Data)
+                    {
+                        menuPage.DataDictionary[att.Key] = att.Value;
+                    }
+                }
+                
+                if (!string.IsNullOrEmpty(title)) 
+                {
+                    menuPage.DataDictionary["title"] = title;
+                }
+
+                return menuPage;
+            }
+            
             foreach (var menuItem in menuList)
             {
                 if (menuItem is string)
                 {
-                    menuPagesList.Add(CreateMenuPage(allPages, data, (string)menuItem));
+                    menuPagesList.Add(CreateMenuPage((string)menuItem));
                 }
                 else if (menuItem is Dictionary<string, object>)
                 {
                     foreach (var parentMenuItem in menuItem as Dictionary<string, object>)
                     {
-                        var menuPage = CreateMenuPage(allPages, data, (string)parentMenuItem.Key);
+                        var menuPage = CreateMenuPage(parentMenuItem.Key);
                         menuPagesList.Add(menuPage);
                         ParsePages(parentMenuItem.Value as List<object>, menuPage.SubPagesList, allPages, data);
                     }

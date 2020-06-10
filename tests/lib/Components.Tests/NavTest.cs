@@ -127,5 +127,11 @@ namespace Components.Tests
 
             Assert.IsInstanceOf<RootPageNotFoundException>(innerEx);
         }
+
+        [Test]
+        public async Task CustomTitleAndUrlTest()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

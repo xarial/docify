@@ -161,6 +161,11 @@ namespace Xarial.Docify.Core.Composer
                 throw new NullReferenceException("Null reference source file is detected");
             }
 
+            var pagesList = new List<IFile>();
+            var layoutsList = new List<IFile>();
+            var includesList = new List<IFile>();
+            var assetsList = new List<IFile>();
+
             ILocation contentLoc = null;
             var contentPath = m_Config?.GetParameterOrDefault<string>(CONTENT_PAGES_PATH_PARAM_NAME);
             if (!string.IsNullOrEmpty(contentPath))
@@ -168,47 +173,37 @@ namespace Xarial.Docify.Core.Composer
                 contentLoc = Location.FromString(contentPath);
             }
 
-            var procFiles = new List<IFile>();
-
-            if (contentLoc != null)
+            foreach (var file in files)
             {
-                foreach (var file in files) 
+                var curFile = file;
+
+                if (contentLoc != null && file.Location.IsInLocation(contentLoc))
                 {
-                    if (file.Location.IsInLocation(contentLoc))
-                    {
-                        procFiles.Add(new Data.File(file.Location.GetRelative(contentLoc), file.Content, file.Id));
-                    }
-                    else
-                    {
-                        procFiles.Add(file);
-                    }
-                }
-            }
-            else 
-            {
-                procFiles = files.ToList();
-            }
-
-            List<IFile> ExtractFiles(Predicate<IFile> condition) 
-            {
-                var res = new List<IFile>();
-
-                for (int i = procFiles.Count - 1; i >= 0; i--)
-                {
-                    if (condition.Invoke(procFiles[i]))
-                    {
-                        res.Add(procFiles[i]);
-                        procFiles.RemoveAt(i);
-                    }
+                    curFile = new Data.File(file.Location.GetRelative(contentLoc), file.Content, file.Id);
                 }
 
-                return res;
+                if (string.Equals(curFile.Location.GetRoot(), LAYOUTS_FOLDER, m_Comparison))
+                {
+                    layoutsList.Add(curFile);
+                }
+                else if (string.Equals(curFile.Location.GetRoot(), INCLUDES_FOLDER, m_Comparison))
+                {
+                    includesList.Add(curFile);
+                }
+                else if (IsPage(curFile))
+                {
+                    pagesList.Add(curFile);
+                }
+                else
+                {
+                    assetsList.Add(curFile);
+                }
             }
 
-            layouts = ExtractFiles(f => string.Equals(f.Location.GetRoot(), LAYOUTS_FOLDER, m_Comparison));
-            includes = ExtractFiles(f => string.Equals(f.Location.GetRoot(), INCLUDES_FOLDER, m_Comparison));
-            pages = ExtractFiles(f => IsPage(f));
-            assets = procFiles;
+            layouts = layoutsList;
+            includes = includesList;
+            pages = pagesList;
+            assets = assetsList;
         }
 
         private Dictionary<string, ITemplate> ParseLayouts(IEnumerable<IFile> layoutFiles)

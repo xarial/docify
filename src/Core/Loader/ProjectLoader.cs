@@ -10,9 +10,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
 using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Plugin;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Xarial.Docify.Core.Loader
 {
@@ -27,14 +29,17 @@ namespace Xarial.Docify.Core.Loader
         private readonly IPluginsManager m_PluginsManager;
 
         private readonly string[] m_Filter;
+        private readonly ILoaderExtension m_Ext;
 
         public ProjectLoader(IFileLoader fileLoader,
-            ILibraryLoader libraryLoader, IPluginsManager pluginsMgr, IConfiguration conf)
+            ILibraryLoader libraryLoader, IPluginsManager pluginsMgr, IConfiguration conf, ILoaderExtension ext)
         {
             m_FileLoader = fileLoader;
             m_LibraryLoader = libraryLoader;
             m_Config = conf;
             m_PluginsManager = pluginsMgr;
+
+            m_Ext = ext;
 
             m_Filter = GetFilesFilter();
         }
@@ -61,16 +66,27 @@ namespace Xarial.Docify.Core.Loader
 
                 await foreach (var srcFile in m_FileLoader.LoadFolder(loc, filter.ToArray()))
                 {
-                    var id = srcFile.Location.ToId();
+                    var args = new PreLoadFileArgs()
+                    {
+                        File = srcFile,
+                        SkipFile = false
+                    };
 
-                    if (!resFileIds.Contains(id))
+                    await m_Ext.PreLoadFile(args);
+
+                    if (!args.SkipFile)
                     {
-                        resFileIds.Add(id);
-                        yield return srcFile;
-                    }
-                    else
-                    {
-                        throw new DuplicateFileException(id, loc.ToId());
+                        var id = args.File.Location.ToId();
+
+                        if (!resFileIds.Contains(id))
+                        {
+                            resFileIds.Add(id);
+                            yield return args.File;
+                        }
+                        else
+                        {
+                            throw new DuplicateFileException(id, loc.ToId());
+                        }
                     }
                 }
             }

@@ -34,7 +34,7 @@ capitalize-title: false
 
     if (Model.Data.GetOrDefault<bool>(HOME_MENU_OPT))
     {
-        homePage = NavigationMenuHelper.BuildPage(rootPage, Model.Data, "Home");
+        homePage = NavigationMenuHelper.BuildPage(rootPage, "Home");
     }
 
     var homeMenuTitle = Model.Data.Get<string>("home-menu-title");
@@ -82,22 +82,22 @@ capitalize-title: false
             {
                 var entryId = "";
 
-                if (menuPage.SubPages.Any())
+                if (hasChildren)
                 {
                     entryId = $"n{++idCounter}";
                 }
 
                 html.AppendLine("<li>");
 
-                var onClick = menuPage.SubPages.Any() ? $"onclick=\"javascript:toggle({entryId}Span, {entryId});\"" : "";
+                var onClick = hasChildren ? $"onclick=\"javascript:toggle({entryId}Span, {entryId});\"" : "";
                 html.AppendLine($"<div class=\"tree-toc-node pointer\" {onClick}>");
 
-                if (menuPage.SubPages.Any())
+                if (hasChildren)
                 {
                     html.AppendLine($"<span class=\"expbutton\" id=\"{entryId}Span\">&#9656;</span>");
                 }
 
-                var pageType = menuPage.SubPages.Any() ? "section" : "article";
+                var pageType = hasChildren ? "section" : "article";
                 html.AppendLine($"<span class=\"{pageType}\"></span>");
                 var title = PageHelper.GetCaption(menuPage, Model.Data);
 

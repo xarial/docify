@@ -1,0 +1,28 @@
+theme: user-guide
+components:
+  - $
+  - nav
+  - social-links
+plugins:
+  - $
+  - script-style-optimizer
+  - files-promoter
+default-layout: article
+^code-syntax-highlighter:
+  embed-style: false
+^tipue-search:
+  page-content-node: //article
+  search-page-layout: default
+^files-promoter:
+  folders:
+    - '_content'
+$toc:
+  home-menu-title: Welcome
+  title-attribute: caption
+$nav:
+  upper-case: true
+  title-attribute: caption
+  menu:
+    - '[User Guide](/)'
+    - '[Library](/standard-library/)'
+        

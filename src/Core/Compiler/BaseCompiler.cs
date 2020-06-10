@@ -87,7 +87,10 @@ namespace Xarial.Docify.Core.Compiler
                 pageLoc = baseLoc.Combine(new Location(page.Name));
             }
 
-            yield return await CompilePage(page, site, pageLoc);
+            if (!(page is IPhantomPage))
+            {
+                yield return await CompilePage(page, site, pageLoc);
+            }
 
             await foreach (var asset in CompileAssets(page, page, site, thisLoc))
             {

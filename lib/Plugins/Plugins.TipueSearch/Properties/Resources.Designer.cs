@@ -61,13 +61,13 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;link href=&quot;/assets/tipuesearch/normalize.min.css&quot;&gt;
-        ///&lt;script src=&quot;/assets/tipuesearch/jquery.min.js&quot;&gt;&lt;/script&gt;
+        ///   Looks up a localized string similar to &lt;link href=&quot;/_assets/tipuesearch/normalize.min.css&quot;&gt;
+        ///&lt;script src=&quot;/_assets/tipuesearch/jquery.min.js&quot;&gt;&lt;/script&gt;
         ///
         ///&lt;script src=&quot;search-content.js&quot;&gt;&lt;/script&gt;
-        ///&lt;link rel=&quot;stylesheet&quot; href=&quot;/assets/styles/tipue-search.css&quot;&gt;
-        ///&lt;script src=&quot;/assets/tipuesearch/tipuesearch_set.js&quot;&gt;&lt;/script&gt;
-        ///&lt;script src=&quot;/assets/tipuesearch/tipuesearch.min.js&quot;&gt;&lt;/script&gt;
+        ///&lt;link rel=&quot;stylesheet&quot; href=&quot;/_assets/styles/tipue-search.css&quot;&gt;
+        ///&lt;script src=&quot;/_assets/tipuesearch/tipuesearch_set.js&quot;&gt;&lt;/script&gt;
+        ///&lt;script src=&quot;/_assets/tipuesearch/tipuesearch.min.js&quot;&gt;&lt;/script&gt;
         ///
         ///&lt;div id=&quot;tipue_search_content&quot;&gt;&lt;/div&gt;
         ///&lt;script&gt;
@@ -95,7 +95,7 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;form action=&quot;/search/&quot;&gt;
         ///    &lt;div class=&quot;tipue_search_group&quot;&gt;
-        ///        &lt;input type=&quot;image&quot; src=&quot;/assets/images/search.svg&quot; class=&quot;tipue_search_button&quot; width=&quot;25px&quot; border=&quot;0&quot; alt=&quot;Submit&quot; /&gt;
+        ///        &lt;input type=&quot;image&quot; src=&quot;/_assets/images/search.svg&quot; class=&quot;tipue_search_button&quot; width=&quot;25px&quot; border=&quot;0&quot; alt=&quot;Submit&quot; /&gt;
         ///        &lt;div style=&quot;overflow: hidden;padding-right: .5em;&quot;&gt;
         ///            &lt;input type=&quot;text&quot; name=&quot;q&quot; id=&quot;tipue_search_input&quot; placeholder=&quot;Search&quot; pattern=&quot;.{3,}&quot; title=&quot;At least 3 characters&quot; required&gt;
         ///        &lt;/div&gt;

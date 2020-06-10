@@ -27,7 +27,7 @@ filter:
 
         if (Model.Data.GetOrDefault<bool>(HOME_MENU_OPT))
         {
-            menu.Insert(0, NavigationMenuHelper.BuildPage(rootPage, Model.Data, "Home"));
+            menu.Insert(0, NavigationMenuHelper.BuildPage(rootPage, "Home"));
         }
     }
 

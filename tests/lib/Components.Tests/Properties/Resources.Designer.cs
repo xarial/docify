@@ -359,6 +359,35 @@ namespace Components.Tests.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;ul class=&quot;menu sub-menu-item-container&quot; id=&quot;top-menu&quot;&gt;
+        ///&lt;a class=&quot;menu-icon&quot; onclick=&quot;OpenMenu(this)&quot;&gt;
+        ///&lt;div class=&quot;bar1&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar2&quot;&gt;&lt;/div&gt;
+        ///&lt;div class=&quot;bar3&quot;&gt;&lt;/div&gt;
+        ///&lt;/a&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/url/&quot;&gt;p1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a&gt;Page1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/p2/&quot;&gt;p2&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li class=&quot;menu-item not-active&quot;&gt;
+        ///&lt;a href=&quot;/p2/&quot;&gt;p2-mod&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string nav7 {
+            get {
+                return ResourceManager.GetString("nav7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;title&gt;p1&lt;/title&gt;
         ///&lt;meta name=&quot;generator&quot; content=&quot;Docify&quot; /&gt;
         ///&lt;meta name=&quot;description&quot; content=&quot;d1&quot; /&gt;
@@ -495,10 +524,10 @@ namespace Components.Tests.Properties {
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;https://www.linkedin.com/shareArticle?mini=true&amp;url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on LinkedIn&quot;&gt;
         ///&lt;svg alt=&quot;Share on LinkedIn&quot; class=&quot;social-share-link&quot; fill=&quot;#0077B5&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
-        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#linkedin&quot; /&gt;
+        ///&lt;use xlink:href=&quot;/_assets/images/social-share.svg#linkedin&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
-        ///&lt;a href=&quot;https://www.facebook.com/sharer/ [rest of string was truncated]&quot;;.
+        ///&lt;a href=&quot;https://www.facebook.com/sharer [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string social_share1 {
             get {
@@ -512,7 +541,7 @@ namespace Components.Tests.Properties {
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;https://www.linkedin.com/shareArticle?mini=true&amp;url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on LinkedIn&quot;&gt;
         ///&lt;svg alt=&quot;Share on LinkedIn&quot; class=&quot;social-share-link&quot; fill=&quot;#0077B5&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
-        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#linkedin&quot; /&gt;
+        ///&lt;use xlink:href=&quot;/_assets/images/social-share.svg#linkedin&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
         ///&lt;/div&gt;
@@ -530,7 +559,7 @@ namespace Components.Tests.Properties {
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;https://www.facebook.com/sharer/sharer.php?u=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on Facebook&quot; target=&quot;_blank&quot;&gt;
         ///&lt;svg alt=&quot;Share on Facebook&quot; class=&quot;social-share-link&quot; fill=&quot;#1877F2&quot;&gt;
-        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#facebook&quot; /&gt;
+        ///&lt;use xlink:href=&quot;/_assets/images/social-share.svg#facebook&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
         ///&lt;/div&gt;
@@ -548,7 +577,7 @@ namespace Components.Tests.Properties {
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;https://www.pinterest.com/pin/create/button/?url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on Pinterest&quot; target=&quot;_blank&quot;&gt;
         ///&lt;svg alt=&quot;Share on Pinterest&quot; class=&quot;social-share-link&quot; fill=&quot;#BD081C&quot;&gt;
-        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#pinterest&quot; /&gt;
+        ///&lt;use xlink:href=&quot;/_assets/images/social-share.svg#pinterest&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
         ///&lt;/div&gt;
@@ -566,7 +595,7 @@ namespace Components.Tests.Properties {
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;http://www.reddit.com/submit?url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on Reddit&quot; target=&quot;_blank&quot;&gt;
         ///&lt;svg alt=&quot;Share on Reddit&quot; class=&quot;social-share-link&quot; fill=&quot;#FF4500&quot;&gt;
-        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#reddit&quot; /&gt;
+        ///&lt;use xlink:href=&quot;/_assets/images/social-share.svg#reddit&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
         ///&lt;/div&gt;
@@ -584,10 +613,10 @@ namespace Components.Tests.Properties {
         ///&lt;i&gt;Share&lt;/i&gt;
         ///&lt;a href=&quot;https://www.linkedin.com/shareArticle?mini=true&amp;url=www.example.com&quot; onclick=&quot;window.open(this.href, &apos;pop-up&apos;, &apos;left=20,top=20,width=900,height=500,toolbar=1,resizable=0&apos;); return false;&quot; title=&quot;Share on LinkedIn&quot;&gt;
         ///&lt;svg alt=&quot;Share on LinkedIn&quot; class=&quot;social-share-link&quot; fill=&quot;green&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
-        ///&lt;use xlink:href=&quot;/assets/images/social-share.svg#linkedin&quot; /&gt;
+        ///&lt;use xlink:href=&quot;/_assets/images/social-share.svg#linkedin&quot; /&gt;
         ///&lt;/svg&gt;
         ///&lt;/a&gt;
-        ///&lt;a href=&quot;https://www.facebook.com/sharer/sh [rest of string was truncated]&quot;;.
+        ///&lt;a href=&quot;https://www.facebook.com/sharer/s [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string social_share6 {
             get {
@@ -616,6 +645,32 @@ namespace Components.Tests.Properties {
         internal static string toc1 {
             get {
                 return ResourceManager.GetString("toc1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div id=&quot;toc&quot;&gt;
+        ///&lt;a href=&quot;/&quot; class=&quot;toc-entry  active&quot;&gt;Welcome&lt;/a&gt;
+        ///&lt;ul style=&quot;margin: 0px&quot; class=&quot;toc-container collapse in&quot;&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/Page1/&quot; class=&quot;toc-entry&quot;&gt;First Page&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/Page2/&quot; class=&quot;toc-entry&quot;&gt;Page2&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/Page3/&quot; class=&quot;toc-entry&quot;&gt;Thir [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string toc10 {
+            get {
+                return ResourceManager.GetString("toc10", resourceCulture);
             }
         }
         
@@ -768,7 +823,21 @@ namespace Components.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///&lt;div id=&quot;toc&quot;&gt;
+        ///&lt;a href=&quot;/&quot; class=&quot;toc-entry  active&quot;&gt;Welcome&lt;/a&gt;
+        ///&lt;ul style=&quot;margin: 0px&quot; class=&quot;toc-container collapse in&quot;&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; onclick=&quot;javascript:toggle(n1Span, n1);&quot;&gt;
+        ///&lt;span class=&quot;expbutton&quot; id=&quot;n1Span&quot;&gt;&amp;#9656;&lt;/span&gt;
+        ///&lt;span class=&quot;section&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/Page1/&quot; class=&quot;toc-entry&quot;&gt;p1&lt;/a&gt;
+        ///&lt;/li&gt;
+        ///&lt;ul id=&quot;n1&quot; class=&quot;toc-container collapse &quot;&gt;
+        ///&lt;li&gt;
+        ///&lt;div class=&quot;tree-toc-node pointer&quot; &gt;
+        ///&lt;span class=&quot;article&quot;&gt;&lt;/span&gt;
+        ///&lt;a href=&quot;/Page1/SubPage1/&quot; class=&quot;toc-e [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string toc9 {
             get {

@@ -20,6 +20,7 @@ using Xarial.Docify.Base.Data;
 using System.Linq;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Exceptions;
+using Xarial.Docify.Core.Plugin.Extensions;
 
 namespace Core.Tests
 {
@@ -48,7 +49,8 @@ namespace Core.Tests
             var loader = new ProjectLoader(fileLoaderMock.Object,
                 new Mock<ILibraryLoader>().Object,
                 new Mock<IPluginsManager>().Object,
-                new Configuration());
+                new Configuration(), 
+                new Mock<ILoaderExtension>().Object);
             
             var res = await loader.Load(new ILocation[] 
             {
@@ -76,7 +78,8 @@ namespace Core.Tests
             var loader = new ProjectLoader(fileLoaderMock.Object,
                 new Mock<ILibraryLoader>().Object,
                 new Mock<IPluginsManager>().Object,
-                new Configuration());
+                new Configuration(),
+                new Mock<ILoaderExtension>().Object);
 
             Exception ex = null;
 
@@ -117,7 +120,8 @@ namespace Core.Tests
             var loader = new ProjectLoader(new Mock<IFileLoader>().Object,
                 libLoaderMock.Object,
                 new Mock<IPluginsManager>().Object,
-                new Configuration() { Components = new string[] { "A" }.ToList() });
+                new Configuration() { Components = new string[] { "A" }.ToList() },
+                new Mock<ILoaderExtension>().Object);
 
             var res = await loader.Load(new ILocation[0]).ToListAsync();
 
@@ -163,7 +167,7 @@ namespace Core.Tests
             conf.ThemesHierarchy.Add("A");
 
             var loader = new ProjectLoader(fileLoaderMock.Object,
-                libLoaderMock.Object, new Mock<IPluginsManager>().Object, conf);
+                libLoaderMock.Object, new Mock<IPluginsManager>().Object, conf, new Mock<ILoaderExtension>().Object);
             
             var res = await loader.Load(new ILocation[] { Location.FromPath("") }).ToListAsync();
 
@@ -223,7 +227,7 @@ namespace Core.Tests
             conf.ThemesHierarchy.Add("B");
 
             var loader = new ProjectLoader(fileLoaderMock.Object,
-                libLoader.Object, new Mock<IPluginsManager>().Object, conf);
+                libLoader.Object, new Mock<IPluginsManager>().Object, conf, new Mock<ILoaderExtension>().Object);
 
             var res = await loader.Load(new ILocation[] { Location.FromPath("") }).ToListAsync();
             
@@ -266,7 +270,7 @@ namespace Core.Tests
             };
 
             var loader = new ProjectLoader(fileLoaderMock.Object,
-                libLoader.Object, new Mock<IPluginsManager>().Object, conf);
+                libLoader.Object, new Mock<IPluginsManager>().Object, conf, new Mock<ILoaderExtension>().Object);
 
             Assert.Throws<DuplicateComponentSourceFileException>(
                 () => loader.Load(new ILocation[] { Location.FromPath("") }).ToEnumerable().ToList());

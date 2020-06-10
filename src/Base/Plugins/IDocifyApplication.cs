@@ -38,5 +38,10 @@ namespace Xarial.Docify.Base.Plugins
         /// Publisher service API
         /// </summary>
         IPublisherManager Publisher { get; }
+
+        /// <summary>
+        /// Loader service API
+        /// </summary>
+        ILoaderManager Loader { get; }
     }
 }

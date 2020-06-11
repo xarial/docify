@@ -166,6 +166,13 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<PublisherManager>().As<IPublisherManager>();
 
+            builder.RegisterType<LoaderExtension>()
+                .SingleInstance()
+                .AsSelf()
+                .As<ILoaderExtension>();
+
+            builder.RegisterType<LoaderManager>().As<ILoaderManager>();
+
             builder.RegisterType<DocifyApplication>().As<IDocifyApplication>();
         }
 

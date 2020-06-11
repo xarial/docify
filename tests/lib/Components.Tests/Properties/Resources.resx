@@ -157,6 +157,9 @@
   <data name="nav6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\nav6.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="nav7" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\nav7.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="seo1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\seo1.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
@@ -198,6 +201,9 @@
   </data>
   <data name="toc1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\toc1.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="toc10" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\toc10.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="toc2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\toc2.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>

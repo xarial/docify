@@ -124,14 +124,14 @@ namespace Core.Tests
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.IsNotInstanceOf<PhantomPage>(site.MainPage);
+            Assert.IsNotInstanceOf<IPhantomPage>(site.MainPage);
             Assert.AreEqual("page1", site.MainPage.SubPages[0].Name);
-            Assert.IsInstanceOf<PhantomPage>(site.MainPage.SubPages[0]);
+            Assert.IsInstanceOf<IPhantomPage>(site.MainPage.SubPages[0]);
             Assert.IsTrue(string.IsNullOrEmpty(site.MainPage.SubPages[0].RawContent));
             Assert.AreEqual(1, site.MainPage.SubPages[0].SubPages.Count);
             Assert.AreEqual("page2", site.MainPage.SubPages[0].SubPages[0].Name);
             Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
-            Assert.IsNotInstanceOf<PhantomPage>(site.MainPage.SubPages[0].SubPages[0]);
+            Assert.IsNotInstanceOf<IPhantomPage>(site.MainPage.SubPages[0].SubPages[0]);
         }
 
         [Test]
@@ -181,15 +181,19 @@ namespace Core.Tests
 
             var site = await m_Composer.ComposeSite(src, "");
 
+            var p1 = site.MainPage.SubPages.First(p => p.Name.Equals("page1", StringComparison.CurrentCultureIgnoreCase));
+            var p2 = p1?.SubPages.First(p => p.Name.Equals("page2", StringComparison.CurrentCultureIgnoreCase));
+            var p3 = p1?.SubPages.First(p => p.Name.Equals("page3", StringComparison.CurrentCultureIgnoreCase));
+
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            StringAssert.AreEqualIgnoringCase("page1", site.MainPage.SubPages[0].Name);
-            Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
-            Assert.AreEqual(2, site.MainPage.SubPages[0].SubPages.Count);
-            StringAssert.AreEqualIgnoringCase("page2", site.MainPage.SubPages[0].SubPages[0].Name);
-            Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
-            StringAssert.AreEqualIgnoringCase("page3", site.MainPage.SubPages[0].SubPages[1].Name);
-            Assert.AreEqual("p3", site.MainPage.SubPages[0].SubPages[1].RawContent);
+            Assert.IsNotNull(p1);
+            Assert.AreEqual("p1", p1.RawContent);
+            Assert.AreEqual(2, p1.SubPages.Count);
+            Assert.IsNotNull(p2);
+            Assert.AreEqual("p2", p2.RawContent);
+            Assert.IsNotNull(p3);
+            Assert.AreEqual("p3", p3.RawContent);
         }
 
         [Test]
@@ -228,15 +232,19 @@ namespace Core.Tests
 
             var site = await m_Composer.ComposeSite(src, "");
 
+            var p1 = site.MainPage.SubPages.First(p => p.Name.Equals("page1", StringComparison.CurrentCultureIgnoreCase));
+            var p2 = p1?.SubPages.First(p => p.Name.Equals("page2", StringComparison.CurrentCultureIgnoreCase));
+            var p3 = p1?.SubPages.First(p => p.Name.Equals("page3", StringComparison.CurrentCultureIgnoreCase));
+
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
-            Assert.AreEqual("page1", site.MainPage.SubPages[0].Name);
-            Assert.AreEqual("p1", site.MainPage.SubPages[0].RawContent);
-            Assert.AreEqual(2, site.MainPage.SubPages[0].SubPages.Count);
-            Assert.AreEqual("page2", site.MainPage.SubPages[0].SubPages[0].Name);
-            Assert.AreEqual("p2", site.MainPage.SubPages[0].SubPages[0].RawContent);
-            Assert.AreEqual("page3", site.MainPage.SubPages[0].SubPages[1].Name);
-            Assert.AreEqual("p3", site.MainPage.SubPages[0].SubPages[1].RawContent);
+            Assert.IsNotNull(p1);
+            Assert.AreEqual("p1", p1.RawContent);
+            Assert.AreEqual(2, p1.SubPages.Count);
+            Assert.IsNotNull(p2);
+            Assert.AreEqual("p2", p2.RawContent);
+            Assert.IsNotNull(p3);
+            Assert.AreEqual("p3", p3.RawContent);
         }
 
         [Test]

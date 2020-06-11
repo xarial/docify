@@ -25,6 +25,7 @@ using Xarial.Docify.Core.Compiler.Context;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Plugin.Extensions;
+using Tests.Common;
 
 namespace Core.Tests
 {
@@ -255,18 +256,7 @@ namespace Core.Tests
             var s = new Site("", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
 
-            MissingIncludeException e = null;
-
-            try
-            {
-                await m_Handler.ResolveAll("{% i2 %}", s, p1, "/page1/");
-            }
-            catch (IncludeResolveException ex)
-            {
-                e = ex.InnerException as MissingIncludeException;
-            }
-
-            Assert.IsNotNull(e);
+            await AssertException.ThrowsInnerAsync<MissingIncludeException>(() => m_Handler.ResolveAll("{% i2 %}", s, p1, "/page1/"));
         }
 
         [Test]

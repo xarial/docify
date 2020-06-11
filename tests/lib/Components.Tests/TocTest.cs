@@ -173,5 +173,18 @@ namespace Components.Tests
 
             Assert.AreEqual(Resources.toc8, res);
         }
+
+        [Test]
+        public async Task TitleCaseTest()
+        {
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% toc { title-case: true } %}\r\n</div>", INCLUDE_PATH);
+            site.MainPage.SubPages.Add(new PageMock("Page1", "", ComponentsTest.Instance.GetData<Metadata>("title: first page")));
+            site.MainPage.SubPages.Add(new PageMock("Page2", "", ComponentsTest.Instance.GetData<Metadata>("title: page2")));
+            site.MainPage.SubPages.Add(new PageMock("Page3", "", ComponentsTest.Instance.GetData<Metadata>("title: Third page")));
+
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
+
+            Assert.AreEqual(Resources.toc10, res);
+        }
     }
 }

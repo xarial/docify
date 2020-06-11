@@ -151,23 +151,28 @@ namespace Xarial.Docify.CLI
 
             var lib = libInstaller.FindLibrary(libColl, typeof(DocifyEngine).Assembly.GetName().Version, opts.Version);
 
+            Version curLibVers = null;
+
+            var manifestFilePath = Location.Library.DefaultLibraryManifestFilePath.ToPath();
+
+            if (System.IO.File.Exists(manifestFilePath))
+            {
+                var manifest = new UserSettingsService().ReadSettings<SecureLibraryManifest>(
+                            manifestFilePath, new BaseValueSerializer<ILocation>(null, x => Location.FromString(x)));
+
+                curLibVers = manifest.Version;
+            }
+
             if (opts.CheckForUpdates)
             {
-                var manifestFilePath = Location.Library.DefaultLibraryManifestFilePath.ToPath();
-
-                if (System.IO.File.Exists(manifestFilePath))
+                if (curLibVers != null && curLibVers >= lib.Version)
                 {
-                    var manifest = new UserSettingsService().ReadSettings<SecureLibraryManifest>(
-                                manifestFilePath, new BaseValueSerializer<ILocation>(null, x => Location.FromString(x)));
-
-                    if (manifest.Version >= lib.Version)
-                    {
-                        Console.WriteLine($"Currently installed library '{manifest.Version}' is up-to-date");
-                        return;
-                    }
+                    Console.WriteLine($"Currently installed library '{curLibVers}' is up-to-date");
                 }
-
-                Console.WriteLine($"New version '{lib.Version}' is available");
+                else
+                {
+                    Console.WriteLine($"New version '{lib.Version}' is available");
+                }
             }
             else if (opts.Install)
             {
@@ -179,6 +184,15 @@ namespace Xarial.Docify.CLI
                     new LocalFileSystemPublisher(new PublisherExtension(), 
                     new SecureLibraryCleaner(Location.Library.DefaultLibraryManifestFilePath.ToPath(), 
                         Resources.standard_library_public_key)));
+
+                if (curLibVers != null && curLibVers == lib.Version)
+                {
+                    Console.WriteLine($"Reinstalled '{lib.Version}' version of the library");
+                }
+                else 
+                {
+                    Console.WriteLine($"Library was updated to version '{lib.Version}'");
+                }
             }
         }
     }

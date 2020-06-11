@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tests.Common;
 using Tests.Common.Mocks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
@@ -115,17 +116,21 @@ namespace Components.Tests
         {
             var site = ComponentsTest.Instance.NewSite("<div>\r\n{% nav { home-menu: false, root-page: /page1.html } %}\r\n</div>", INCLUDE_PATH);
 
-            Exception innerEx = null;
-            try
-            {
-                await ComponentsTest.Instance.CompileMainPageNormalize(site);
-            }
-            catch (Exception ex)
-            {
-                innerEx = ex.InnerException;
-            }
+            await AssertException.ThrowsInnerAsync<RootPageNotFoundException>(() => ComponentsTest.Instance.CompileMainPageNormalize(site));
+        }
 
-            Assert.IsInstanceOf<RootPageNotFoundException>(innerEx);
+        [Test]
+        public async Task CustomTitleAndUrlTest()
+        {
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% nav %}\r\n</div>", INCLUDE_PATH,
+                ComponentsTest.Instance.GetData<Metadata>("title: p1"),
+                ComponentsTest.Instance.GetData<Configuration>("$nav:\r\n  menu:\r\n    - '[p1](/url/)'\r\n    - Page1\r\n    - /p2/\r\n    - '[p2-mod](/p2/)'"));
+
+            site.MainPage.SubPages.Add(new PageMock("p2", "", ComponentsTest.Instance.GetData<Metadata>("title: p2")));
+
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
+
+            Assert.AreEqual(Resources.nav7, res);
         }
     }
 }

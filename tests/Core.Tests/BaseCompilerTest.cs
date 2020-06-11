@@ -181,5 +181,32 @@ namespace Core.Tests
             Assert.AreEqual("T2 index.html T1 index.html CT_Page1 index.html_CT T1 T2", files.First(f => f.Location.ToId() == "index.html").AsTextContent());
             Assert.AreEqual("T2 page2.html T1 page2.html CT_Page2 page2.html_CT T1 T2", files.First(f => f.Location.ToId() == "page2::index.html").AsTextContent());
         }
+
+        [Test]
+        public async Task Compile_ExcludePhantomPage() 
+        {
+            var p1 = new PageMock("page1", "p1");
+            var p2 = new PhantomPageMock("page2");
+            var p3 = new PageMock("page3", "p3");
+            var p4 = new PhantomPageMock("page4");
+            var p5 = new PageMock("page5", "p5");
+            var p6 = new PageMock("page6", "p6");
+            
+            p1.SubPages.Add(p2);
+            p1.SubPages.Add(p5);
+            p2.SubPages.Add(p3);
+            p2.SubPages.Add(p4);
+            p4.SubPages.Add(p6);
+
+            var site = new Site("", p1, null);
+
+            var files = await m_Compiler.Compile(site).ToListAsync();
+
+            Assert.AreEqual(4, files.Count);
+            Assert.IsNotNull(files.FirstOrDefault(f => f.Location.ToId() == "index.html"));
+            Assert.IsNotNull(files.FirstOrDefault(f => f.Location.ToId() == "page5::index.html"));
+            Assert.IsNotNull(files.FirstOrDefault(f => f.Location.ToId() == "page2::page3::index.html"));
+            Assert.IsNotNull(files.FirstOrDefault(f => f.Location.ToId() == "page2::page4::page6::index.html"));
+        }
     }
 }

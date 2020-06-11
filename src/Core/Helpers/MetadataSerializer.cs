@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using Xarial.Docify.Core.Exceptions;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
@@ -40,13 +41,20 @@ namespace Xarial.Docify.Core.Helpers
         public T Deserialize<T>(string data)
             where T : new()
         {
-            if (!string.IsNullOrEmpty(data))
+            try
             {
-                return m_YamlSerializer.Deserialize<T>(data);
+                if (!string.IsNullOrEmpty(data))
+                {
+                    return m_YamlSerializer.Deserialize<T>(data);
+                }
+                else
+                {
+                    return new T();
+                }
             }
-            else 
+            catch (YamlDotNet.Core.SemanticErrorException ex) 
             {
-                return new T();
+                throw new MetadataDeserializationException(ex.Message, ex);
             }
         }
     }

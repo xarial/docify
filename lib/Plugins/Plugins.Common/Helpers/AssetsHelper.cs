@@ -19,34 +19,8 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
 {
     public static class AssetsHelper
     {
-        public static string[] PathSeparators { get; } = new string[] { "\\", "/", "::" };
-
-        public static ILocation LocationFromPath(string path)
-        {
-            var isRel = !PathSeparators.Any(s => path.StartsWith(s));
-            var parts = path.Split(PathSeparators, StringSplitOptions.RemoveEmptyEntries);
-
-            var offset = 0;
-            var fileName = "";
-
-            if (parts.Any() && Path.HasExtension(parts.Last()))
-            {
-                offset = 1;
-                fileName = parts.Last();
-            }
-
-            var dir = parts.Take(parts.Length - offset);
-
-            if (!isRel)
-            {
-                dir = new string[] { "" }.Union(dir);
-            }
-
-            return new PluginLocation(fileName, dir);
-        }
-
         public static IAsset FindAsset(ISite site, IAssetsFolder page, string path)
-            => FindAsset(site, page, LocationFromPath(path));
+            => FindAsset(site, page, PluginLocation.FromPath(path));
 
         public static IAsset FindAsset(ISite site, IAssetsFolder page, ILocation path)
         {
@@ -112,7 +86,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
 
         public static void AddAsset(byte[] content, IPage page, string path)
         {
-            var parts = path.Split(PathSeparators, StringSplitOptions.RemoveEmptyEntries);
+            var parts = path.Split(PluginLocation.PathSeparators, StringSplitOptions.RemoveEmptyEntries);
 
             IAssetsFolder curFolder = page;
 

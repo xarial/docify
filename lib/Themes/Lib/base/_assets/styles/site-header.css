@@ -1,0 +1,29 @@
+﻿.header-icon {
+    grid-area: icon;
+}
+
+.header-title {
+    grid-area: title;
+}
+
+.header-description {
+    grid-area: description;
+}
+
+.header {
+    display: grid;
+    grid-template-areas: 'icon title description';
+    grid-template-columns: max-content max-content auto;
+    grid-gap: 10px;
+    padding: 10px;
+    justify-content: left;
+    background-color: rgb(233, 233, 233);
+    align-items: center;
+}
+
+@media screen and (max-width: 700px) {
+    .header {
+        grid-template-areas: 'icon title' 'description description';
+        grid-template-columns: min-content auto;
+    }
+}

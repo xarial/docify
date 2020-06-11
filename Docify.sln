@@ -76,6 +76,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins.TipueSearch", "lib\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{0EA4474E-2478-48E1-9E91-B72BD7A2DB1E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.FilesPromoter", "lib\Plugins\Plugins.FilesPromoter\Plugins.FilesPromoter.csproj", "{8B42274B-4580-4048-85BC-7527AF157B37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -182,6 +184,10 @@ Global
 		{50C8811C-2D78-4AC3-A977-6BF69DA51234}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50C8811C-2D78-4AC3-A977-6BF69DA51234}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50C8811C-2D78-4AC3-A977-6BF69DA51234}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B42274B-4580-4048-85BC-7527AF157B37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B42274B-4580-4048-85BC-7527AF157B37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B42274B-4580-4048-85BC-7527AF157B37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B42274B-4580-4048-85BC-7527AF157B37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -209,6 +215,7 @@ Global
 		{D6D527E0-DF2D-4A75-BA27-EFCB7E326F42} = {9656C9D9-2CFD-4EF8-A176-59F4DD028C66}
 		{50C8811C-2D78-4AC3-A977-6BF69DA51234} = {9656C9D9-2CFD-4EF8-A176-59F4DD028C66}
 		{0EA4474E-2478-48E1-9E91-B72BD7A2DB1E} = {8FBE598C-2AA2-456A-ADDA-DFC71BECF0C8}
+		{8B42274B-4580-4048-85BC-7527AF157B37} = {9656C9D9-2CFD-4EF8-A176-59F4DD028C66}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {680FB5AB-C7E7-4A10-9F1D-3B7D812E842C}

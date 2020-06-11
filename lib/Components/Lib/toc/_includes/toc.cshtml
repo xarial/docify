@@ -5,6 +5,7 @@ menu:
 home-menu-title: Welcome
 root-page:
 filter:
+title-case: false
 ---
 @using RazorLight
 @using System
@@ -19,6 +20,9 @@ filter:
     const string PAGE_DISABLED_ATT = "disabled";
     const string PAGE_TOC_ATT = "toc";
     const string PAGE_ORDER_ATT = "order";
+    const string CAPITALIZE_TITLE_ATT = "title-case";
+    const string FILTER_ATT = "filter";
+    const string HOME_MENU_TITLE_ATT = "home-menu-title";
 
     var menu = NavigationMenuHelper.BuildPredefinedMenu(MENU_OPT, Model.Site, Model.Data)?.ToList();
 
@@ -32,10 +36,10 @@ filter:
 
     if (Model.Data.GetOrDefault<bool>(HOME_MENU_OPT))
     {
-        homePage = NavigationMenuHelper.BuildPage(rootPage, Model.Data, "Home");
+        homePage = NavigationMenuHelper.BuildPage(rootPage, "Home");
     }
 
-    var homeMenuTitle = Model.Data.Get<string>("home-menu-title");
+    var homeMenuTitle = Model.Data.Get<string>(HOME_MENU_TITLE_ATT);
 
     int idCounter = 0;
 
@@ -51,7 +55,7 @@ filter:
 
     string RenderToc(IEnumerable<IContextPage> pages, out bool hasActive, string parentId = "")
     {
-        pages = NavigationMenuHelper.FilterChildrenPages(pages, Model.Data.Get<string[]>("filter"));
+        pages = NavigationMenuHelper.FilterChildrenPages(pages, Model.Data.Get<string[]>(FILTER_ATT));
 
         var html = new System.Text.StringBuilder();
 
@@ -72,36 +76,46 @@ filter:
 
         foreach (var menuPage in orderedPages)
         {
-            var forceIncludeToc = menuPage.Data.ContainsKey(PAGE_TOC_ATT) && menuPage.Data.Get<bool>(PAGE_TOC_ATT);
-            var includeToc = !menuPage.Data.ContainsKey(PAGE_TOC_ATT) || menuPage.Data.Get<bool>(PAGE_TOC_ATT);
-            var includeSitemap = !menuPage.Data.ContainsKey("sitemap") || menuPage.Data.Get<bool>("sitemap");
+            var addToToc = AddToToc(menuPage);
 
-            if (forceIncludeToc || (includeToc && includeSitemap))
+            var hasChildren = PageHelper.GetAllPages(menuPage).Any(p => AddToToc(p));
+
+            if (AddToToc(menuPage) || hasChildren)
             {
                 var entryId = "";
 
-                if (menuPage.SubPages.Any())
+                if (hasChildren)
                 {
                     entryId = $"n{++idCounter}";
                 }
 
                 html.AppendLine("<li>");
 
-                var onClick = menuPage.SubPages.Any() ? $"onclick=\"javascript:toggle({entryId}Span, {entryId});\"" : "";
+                var onClick = hasChildren ? $"onclick=\"javascript:toggle({entryId}Span, {entryId});\"" : "";
                 html.AppendLine($"<div class=\"tree-toc-node pointer\" {onClick}>");
 
-                if (menuPage.SubPages.Any())
+                if (hasChildren)
                 {
                     html.AppendLine($"<span class=\"expbutton\" id=\"{entryId}Span\">&#9656;</span>");
                 }
 
-                var pageType = menuPage.SubPages.Any() ? "section" : "article";
+                var pageType = hasChildren ? "section" : "article";
                 html.AppendLine($"<span class=\"{pageType}\"></span>");
                 var title = PageHelper.GetCaption(menuPage, Model.Data);
 
+                if (Model.Data.Get<bool>(CAPITALIZE_TITLE_ATT)) 
+                {
+                    title = System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(title);
+                }
+
                 if (!menuPage.Data.GetOrDefault<bool>(PAGE_DISABLED_ATT))
                 {
-                    html.AppendLine($"<a href=\"{menuPage.Url}\" class=\"toc-entry{GetActiveAttribute(menuPage)}\">{title}</a>");
+                    var href = "";
+                    if (addToToc)
+                    {
+                        href = $"href=\"{menuPage.Url}\"";
+                    }
+                    html.AppendLine($"<a {href} class=\"toc-entry{GetActiveAttribute(menuPage)}\">{title}</a>");
                 }
                 else
                 {
@@ -116,7 +130,7 @@ filter:
                     hasActive = true;
                 }
 
-                if (menuPage.SubPages.Any())
+                if (hasChildren)
                 {
                     var hasChildActive = false;
 
@@ -136,6 +150,15 @@ filter:
         }
 
         return html.ToString();
+    }
+
+    bool AddToToc(IContextPage page)
+    {
+        var forceIncludeToc = page.Data.ContainsKey(PAGE_TOC_ATT) && page.Data.Get<bool>(PAGE_TOC_ATT);
+        var includeToc = !page.Data.ContainsKey(PAGE_TOC_ATT) || page.Data.Get<bool>(PAGE_TOC_ATT);
+        var includeSitemap = !page.Data.ContainsKey("sitemap") || page.Data.Get<bool>("sitemap");
+
+        return forceIncludeToc || (includeToc && includeSitemap);
     }
 }
 <div id="toc">

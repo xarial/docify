@@ -60,7 +60,7 @@ a:visited {
 .foot {
     display: grid;
     grid-template-areas: 'product legal social';
-    grid-template-columns: auto 1fr 200px;
+    grid-template-columns: auto 1fr auto;
     grid-gap: 10px;
     align-items: center;
     justify-items: center;

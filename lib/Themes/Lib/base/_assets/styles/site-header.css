@@ -17,6 +17,7 @@
     grid-gap: 10px;
     padding: 10px;
     justify-content: left;
+    background-color: rgb(233, 233, 233);
     align-items: center;
 }
 

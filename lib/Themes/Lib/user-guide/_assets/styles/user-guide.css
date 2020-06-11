@@ -13,7 +13,7 @@
 
 .layout {
     display: grid;
-    grid-template-areas: 'none1 header' 'toc main';
+    grid-template-areas: 'header header' 'toc main';
     grid-template-columns: 250px auto;
     grid-gap: 10px;
     padding: 10px 200px 10px 200px;
@@ -35,7 +35,7 @@
 }
 
 #tipue_search_input {
-    width: 100%;
+    width: 99%;
     margin: 2px;
 }
 

@@ -1,9 +1,11 @@
 ---
 caption: Docify
-title: Docify User Guide
-description: Explanation of concepts and usage scenario of Docify static site generator
-image: 
+title: Docify Static Site Generator | User Guide
+description: Explanation of concepts and usage scenario of Docify static site generator for generating blogs, user guides, technical documentations, etc.
+image: docify-logo.svg
 ---
+![Docify Logo](docify-logo.svg){ width=400 }
+
 Docify is an open-source cross-platform content oriented static site generator hosted on [GitHub](https://github.com/xarial/docify) developed in [C# .NET Core](https://docs.microsoft.com/en-us/dotnet/core/).
 
 Structure of layouts and includes inspired by an awesome [Jekyll Static Site Generator](https://jekyllrb.com/) however using different engines and technologies so the sites are not compatible.

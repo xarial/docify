@@ -1,0 +1,74 @@
+﻿html {
+    font-family: "Lucida Console", Monaco, monospace;
+}
+
+p {
+    line-height: 150%;
+}
+
+.toc-entry {
+    text-decoration: none;
+}
+
+.toc-entry:hover {
+    text-decoration: underline;
+}
+
+a {
+    color: rgb(61, 133, 167);
+}
+
+a:visited {
+    color: rgb(164, 200, 240);
+}
+
+.menu-item a {
+    color: rgb(44, 44, 44);
+    text-decoration: none;
+}
+
+.toc-entry {
+    color: rgb(3, 94, 168);
+    text-decoration: none;
+}
+
+.toc-entry:visited {
+    color: rgb(3, 94, 168);
+}
+
+.toc-entry:not([href]) {
+    color: rgb(44, 44, 44);
+}
+
+.toc-entry:not([href]):hover {
+    text-decoration: none;
+    cursor: default;
+}
+
+.foot-product {
+    grid-area: product;
+}
+
+.foot-legal {
+    grid-area: legal;
+}
+
+.foot-social {
+    grid-area: social;
+}
+
+.foot {
+    display: grid;
+    grid-template-areas: 'product legal social';
+    grid-template-columns: auto 1fr auto;
+    grid-gap: 10px;
+    align-items: center;
+    justify-items: center;
+}
+
+@media screen and (max-width: 800px) {
+    .foot {
+        grid-template-areas: 'product' 'social' 'legal';
+        grid-template-columns: auto;
+    }
+}

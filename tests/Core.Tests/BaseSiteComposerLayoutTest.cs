@@ -115,7 +115,7 @@ namespace Core.Tests
             var src = new FileMock[]
             {
                 new FileMock(Location.FromPath(@"_layouts\\l1.md"), "---\r\nprp1: B\r\nprp2: C\r\n---\r\nLayout _C_"),
-                new FileMock(Location.FromPath(@"index.md"),
+                new FileMock(Location.FromPath("index.md"),
                     "---\r\nprp1: A\r\nlayout: l1\r\n---\r\nText Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
@@ -124,6 +124,28 @@ namespace Core.Tests
             Assert.AreEqual(2, site.MainPage.Data.Count);
             Assert.AreEqual("A", site.MainPage.Data["prp1"]);
             Assert.AreEqual("C", site.MainPage.Data["prp2"]);
+        }
+
+        [Test]
+        public async Task ComposeSite_LayoutInheritedMetadataTest()
+        {
+            var composer = new BaseSiteComposer(new Mock<ILayoutParser>().Object, null, new Mock<IComposerExtension>().Object);
+
+            var src = new FileMock[]
+            {
+                new FileMock(Location.FromPath(@"_layouts\\l1.md"), "---\r\nprp1: A\r\nprp2: B\r\n---\r\n"),
+                new FileMock(Location.FromPath(@"_layouts\\l2.md"), "---\r\nlayout: l1\r\nprp1: A1\r\nprp3: C\r\n---\r\n"),
+                new FileMock(Location.FromPath("index.md"), ""),
+            }.ToAsyncEnumerable();
+
+            var site = await composer.ComposeSite(src, "");
+
+            var layout = site.Layouts.First(l => l.Name == "l2");
+
+            Assert.AreEqual(3, layout.Data.Count);
+            Assert.AreEqual("A1", layout.Data["prp1"]);
+            Assert.AreEqual("B", layout.Data["prp2"]);
+            Assert.AreEqual("C", layout.Data["prp3"]);
         }
 
         [Test]
@@ -192,6 +214,23 @@ namespace Core.Tests
             var site = await composer.ComposeSite(src, "");
 
             Assert.AreEqual("l1", site.MainPage.SubPages.First(p => p.Name == "page1").Layout.Name);
+        }
+
+        [Test]
+        public async Task ComposeSite_InheritLayoutPhantomPage()
+        {
+            var composer = new BaseSiteComposer(new Mock<ILayoutParser>().Object, null, new Mock<IComposerExtension>().Object);
+
+            var src = new FileMock[]
+            {
+                new FileMock(Location.FromPath(@"_layouts\\l1.md"), "Layout _C_"),
+                new FileMock(Location.FromPath(@"index.md"), "---\r\nlayout: l1\r\n---"),
+                new FileMock(Location.FromPath(@"page1\\page2\\index.md"), "---\r\nlayout: $\r\n---"),
+            }.ToAsyncEnumerable();
+
+            var site = await composer.ComposeSite(src, "");
+
+            Assert.AreEqual("l1", site.MainPage.SubPages.First(p => p.Name == "page1").SubPages.First(p => p.Name == "page2").Layout.Name);
         }
 
         [Test]

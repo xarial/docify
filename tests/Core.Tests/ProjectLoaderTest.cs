@@ -21,6 +21,7 @@ using System.Linq;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Plugin.Extensions;
+using Tests.Common;
 
 namespace Core.Tests
 {
@@ -81,18 +82,10 @@ namespace Core.Tests
                 new Configuration(),
                 new Mock<ILoaderExtension>().Object);
 
-            Exception ex = null;
-
-            try
+            await AssertException.ThrowsOfTypeAsync<DuplicateFileException>(async () =>
             {
                 await loader.Load(new ILocation[] { Location.FromPath("C:\\site"), Location.FromPath("C:\\site1") }).ToListAsync();
-            }
-            catch (Exception e)
-            {
-                ex = e;
-            }
-
-            Assert.IsInstanceOf<DuplicateFileException>(ex);
+            });
         }
 
         [Test]

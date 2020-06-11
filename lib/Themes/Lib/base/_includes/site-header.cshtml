@@ -20,40 +20,9 @@ show_title: true
         title = "";
     }
 }
-<style>
-    .header-icon {
-        grid-area: icon;
-    }
 
-    .header-title {
-        grid-area: title;
-    }
-
-    .header-description {
-        grid-area: description;
-    }
-
-    .header {
-        display: grid;
-        grid-template-areas: 'icon title description';
-        grid-template-columns: max-content max-content auto;
-        grid-gap: 10px;
-        padding: 10px;
-        justify-content: left;
-        align-items: center;
-    }
-    
-    @@media screen and (max-width: 700px) {
-    .header
-    {
-        grid-template-areas: 'icon title' 'description description';
-        grid-template-columns: min-content auto;
-    }
-}
-</style>
 <div class="header">
     <div class="header-icon"><a href="/"><img src="@logo" width="@iconWidth" alt="@title"/></a></div>
     <div class="header-title">@title</div>
     <div class="header-description">@description</div>
 </div>
-<hr>

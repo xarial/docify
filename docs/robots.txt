@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /terms-of-use/
+Disallow: /privacy-policy/
+Disallow: /cookies-policy/
+Disallow: /search/
+Disallow: /license/
+Allow: /
+Sitemap: https://docify.xarial.com/sitemap.xml

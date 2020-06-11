@@ -44,3 +44,31 @@ a:visited {
     text-decoration: none;
     cursor: default;
 }
+
+.foot-product {
+    grid-area: product;
+}
+
+.foot-legal {
+    grid-area: legal;
+}
+
+.foot-social {
+    grid-area: social;
+}
+
+.foot {
+    display: grid;
+    grid-template-areas: 'product legal social';
+    grid-template-columns: auto 1fr 200px;
+    grid-gap: 10px;
+    align-items: center;
+    justify-items: center;
+}
+
+@media screen and (max-width: 800px) {
+    .foot {
+        grid-template-areas: 'product' 'social' 'legal';
+        grid-template-columns: auto;
+    }
+}

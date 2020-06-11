@@ -4,6 +4,8 @@
 
 .header-title {
     grid-area: title;
+    font-weight: bold;
+    font-size: larger;
 }
 
 .header-description {

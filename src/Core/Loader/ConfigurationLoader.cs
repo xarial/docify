@@ -133,8 +133,15 @@ namespace Xarial.Docify.Core.Loader
 
         private IConfiguration ConfigurationFromFile(IFile file)
         {
-            var confStr = file.AsTextContent();
-            return new Configuration(m_ConfigSerializer.Deserialize<Dictionary<string, object>>(confStr));
+            try
+            {
+                var confStr = file.AsTextContent();
+                return new Configuration(m_ConfigSerializer.Deserialize<Dictionary<string, object>>(confStr));
+            }
+            catch (Exception ex)
+            {
+                throw new UserMessageException($"Failed to deserialize the configuration file '{file.Location.ToId()}'", ex);
+            }
         }
 
         private string[] GetConfigurationFileFilters()

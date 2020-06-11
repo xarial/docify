@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tests.Common;
 using Tests.Common.Mocks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
@@ -115,17 +116,7 @@ namespace Components.Tests
         {
             var site = ComponentsTest.Instance.NewSite("<div>\r\n{% nav { home-menu: false, root-page: /page1.html } %}\r\n</div>", INCLUDE_PATH);
 
-            Exception innerEx = null;
-            try
-            {
-                await ComponentsTest.Instance.CompileMainPageNormalize(site);
-            }
-            catch (Exception ex)
-            {
-                innerEx = ex.InnerException;
-            }
-
-            Assert.IsInstanceOf<RootPageNotFoundException>(innerEx);
+            await AssertException.ThrowsInnerAsync<RootPageNotFoundException>(() => ComponentsTest.Instance.CompileMainPageNormalize(site));
         }
 
         [Test]

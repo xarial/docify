@@ -6,6 +6,7 @@
   - social-share
   - youtube
   - cookie-consent
+  - social-links
 plugins:
   - image-optimizer
   - responsive-image

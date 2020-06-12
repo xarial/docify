@@ -61,6 +61,7 @@ stages:
   - deployment:
     pool:
       vmImage: 'windows-latest'
+    environment: docs
     strategy: 
       runOnce:
         deploy:

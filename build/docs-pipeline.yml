@@ -82,3 +82,9 @@ stages:
               script: |
                 git clone git@github.com:xarial/docify-xarial-site.git .
                 git checkout -b dev
+                git clean --f --d
+                git rm * -r -f
+                cp -a $(Pipeline.Workspace)/site/. .
+                git add .
+                git commit -a -m "Pubishing Site"
+                git push origin dev

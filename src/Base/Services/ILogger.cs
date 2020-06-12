@@ -16,18 +16,19 @@ namespace Xarial.Docify.Base.Services
         /// Logs warning message
         /// </summary>
         /// <param name="msg">Message</param>
-        void LogWarning(string msg);
+        /// <param name="verbose">True to indicate this message is verbose and it will be output based on the user settings</param>
+        void LogWarning(string msg, bool verbose = false);
 
         /// <summary>
         /// Logs error message
         /// </summary>
-        /// <param name="msg">Message</param>
-        void LogError(string msg);
+        /// <inheritdoc cref="LogWarning(string, bool)"/>
+        void LogError(string msg, bool verbose = false);
 
         /// <summary>
         /// Logs information message
         /// </summary>
-        /// <param name="msg">Message</param>
-        void LogInformation(string msg);
+        /// <inheritdoc cref="LogWarning(string, bool)"/>
+        void LogInformation(string msg, bool verbose = false);
     }
 }

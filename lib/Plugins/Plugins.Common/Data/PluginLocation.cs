@@ -34,7 +34,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Data
 
             if (!isRel)
             {
-                dir = new string[] { "" }.Union(dir);
+                dir = new string[] { "" }.Concat(dir);
             }
 
             return new PluginLocation(fileName, dir);

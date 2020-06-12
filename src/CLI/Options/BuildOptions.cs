@@ -12,7 +12,7 @@ using System.Collections.Generic;
 namespace Xarial.Docify.CLI.Options
 {
     [Verb("build", HelpText = "Builds the static site from source")]
-    public class BuildOptions
+    public class BuildOptions : BaseOptions
     {
         [Option('s', "src", Required = true, HelpText = "Source directories")]
         public IEnumerable<string> SourceDirectories { get; set; }

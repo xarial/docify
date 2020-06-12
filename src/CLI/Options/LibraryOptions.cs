@@ -13,7 +13,7 @@ using System.Collections.Generic;
 namespace Xarial.Docify.CLI.Options
 {
     [Verb("library", HelpText = "Manages library")]
-    public class LibraryOptions
+    public class LibraryOptions : BaseOptions
     {
         [Option('i', "install", Required = false, HelpText = "Installs standard library")]
         public bool Install { get; set; }

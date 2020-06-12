@@ -14,7 +14,7 @@ using System.Text;
 namespace Xarial.Docify.CLI.Options
 {
     [Verb("genman", HelpText = "Generate secure library manifest")]
-    public class GenerateLibraryManifestOptions
+    public class GenerateLibraryManifestOptions : BaseOptions
     {
         [Option('l', "lib", Required = true, HelpText = "Path to the library")]
         public string LibraryPath { get; set; }

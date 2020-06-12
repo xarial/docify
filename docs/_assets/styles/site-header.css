@@ -11,7 +11,8 @@
     grid-template-areas: 'icon menu';
     grid-template-columns: auto 1fr;
     grid-gap: 2px;
-    padding: 2px;
+    padding: 5px;
     justify-content: left;
+    background-color: rgb(233, 233, 233);
     align-items: center;
 }

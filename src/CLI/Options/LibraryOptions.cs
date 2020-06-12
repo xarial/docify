@@ -21,7 +21,7 @@ namespace Xarial.Docify.CLI.Options
         [Option('u', "check-updates", Required = false, HelpText = "Checks if library updates available")]
         public bool CheckForUpdates { get; set; }
 
-        [Option("libversion", Required = false, HelpText = "Version of the library to install. Latest is installed if not specified")]
+        [Option('v', "version", Required = false, HelpText = "Version of the library to install. Latest is installed if not specified")]
         public Version Version { get; set; }
 
         [Usage]

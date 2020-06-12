@@ -21,7 +21,7 @@ namespace Tests.Common.Mocks
         public IFileSystem FileSystem { get; private set; }
 
         public DocifyEngineMock()
-            : base(new string[] { "D:\\src" }, "D:\\out", null, "www.xarial.com", "Test")
+            : base(new string[] { "D:\\src" }, "D:\\out", null, "www.xarial.com", "Test", false)
         {
         }
 

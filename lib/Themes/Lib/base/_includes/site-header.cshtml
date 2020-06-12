@@ -22,7 +22,12 @@ show_title: true
 }
 
 <div class="header">
-    <div class="header-icon"><a href="/"><img src="@logo" width="@iconWidth" alt="@title"/></a></div>
+    <div class="header-icon">
+        @if (!string.IsNullOrEmpty(logo))
+        {
+            <a href="/"><img src="@logo" width="@iconWidth" alt="@title" /></a>
+        }
+    </div>
     <div class="header-title">@title</div>
     <div class="header-description">@description</div>
 </div>

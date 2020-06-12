@@ -24,25 +24,27 @@ namespace Xarial.Docify.Core.Publisher
 
         private readonly IPublisherExtension m_Ext;
         private readonly ITargetDirectoryCleaner m_TargetCleaner;
-        
-        public LocalFileSystemPublisher(IPublisherExtension ext)
-            : this(new System.IO.Abstractions.FileSystem(), ext, 
+        private readonly ILogger m_Logger;
+
+        public LocalFileSystemPublisher(IPublisherExtension ext, ILogger logger)
+            : this(new System.IO.Abstractions.FileSystem(), ext, logger, 
                   new LocalFileSystemTargetDirectoryCleaner(new System.IO.Abstractions.FileSystem(), true))
         {
         }
 
-        public LocalFileSystemPublisher(IPublisherExtension ext,
+        public LocalFileSystemPublisher(IPublisherExtension ext, ILogger logger, 
             ITargetDirectoryCleaner targetCleaner)
-            : this(new System.IO.Abstractions.FileSystem(), ext, targetCleaner)
+            : this(new System.IO.Abstractions.FileSystem(), ext, logger, targetCleaner)
         {
         }
 
         public LocalFileSystemPublisher(
-            System.IO.Abstractions.IFileSystem fileSystem, IPublisherExtension ext,
+            System.IO.Abstractions.IFileSystem fileSystem, IPublisherExtension ext, ILogger logger,
             ITargetDirectoryCleaner targetCleaner)
         {
             m_FileSystem = fileSystem;
             m_Ext = ext;
+            m_Logger = logger;
 
             m_TargetCleaner = targetCleaner;
         }
@@ -111,6 +113,8 @@ namespace Xarial.Docify.Core.Publisher
             {
                 throw new FilePublishOverwriteForbiddenException(outFilePath);
             }
+
+            m_Logger.LogInformation($"Publishing '{outFilePath}'", true);
 
             await m_FileSystem.File.WriteAllBytesAsync(outFilePath, file.Content);
         }

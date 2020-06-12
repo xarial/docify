@@ -18,6 +18,7 @@ using Xarial.Docify.Base;
 using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Data;
+using Moq;
 
 namespace Core.Tests
 {
@@ -36,7 +37,7 @@ namespace Core.Tests
                     { @"C:\site\img\img1.png", new MockFileData(new byte[] { 1, 2, 3 }) },
                     { @"C:\site\test1.xlsx", null },
                 }
-                ));
+                ), new Mock<Xarial.Docify.Base.Services.ILogger>().Object);
 
             var res = await loader.LoadFolder(Location.FromPath("C:\\site"), null).ToListAsync();
 
@@ -65,7 +66,7 @@ namespace Core.Tests
                     { @"C:\site\img1\img1.png", null },
                     { @"C:\site\test1.xlsx", null },
                 }
-                ));
+                ), new Mock<Xarial.Docify.Base.Services.ILogger>().Object);
 
             var res = await loader.LoadFolder(Location.FromPath("C:\\site"),
                 new string[]
@@ -89,7 +90,7 @@ namespace Core.Tests
                 {
                     { @"C:\page2.md", null },
                     { @"C:\site\folder\page2.md", null }
-                }));
+                }), new Mock<Xarial.Docify.Base.Services.ILogger>().Object);
 
             Assert.Throws<MissingLocationException>(() => loader.LoadFolder(Location.FromPath("C:\\site1"), null).ToEnumerable().ToList());
         }

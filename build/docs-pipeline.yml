@@ -70,3 +70,16 @@ stages:
 
           - download: current
             artifact: 'site'
+
+          - task: InstallSSHKey@0
+            inputs:
+              knownHostsEntry: 'github.com'
+              sshPassphrase: '$(DOCIFY_XARIAL_SITE_GIT_SSH_PASSPHRASE)'
+              sshKeySecureFile: 'docify-xarial-site-ssh-private-key.txt'
+
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: |
+                git clone git@github.com:xarial/docify-xarial-site.git .
+                git checkout -b dev

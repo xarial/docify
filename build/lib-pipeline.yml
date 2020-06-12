@@ -121,7 +121,7 @@ stages:
         condition: ne(variables['Build.Reason'], 'PullRequest')
         displayName: 'Generating secure library manifest'
         inputs:
-          script: 'docify genman --lib "$(System.DefaultWorkingDirectory)\_library" --version $(LibVersion) --cert "$(Certificate.secureFilePath)" --pwd "$(CODE_SIGN_CERT_PWD)"'
+          script: 'docify genman --lib "$(System.DefaultWorkingDirectory)\_library" --version $(LibVersion) --cert "$(Certificate.secureFilePath)" --pwd "$(CODE_SIGN_CERT_PWD)" --verbose'
       
       - task: ArchiveFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')

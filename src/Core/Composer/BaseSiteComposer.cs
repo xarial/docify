@@ -331,7 +331,7 @@ namespace Xarial.Docify.Core.Composer
 
             ProcessChildren(mainPage, refPages, refAssets, layouts, Location.Empty, mainPage.Layout);
 
-            var unprocessed = refPages.Union(refAssets);
+            var unprocessed = refPages.Concat(refAssets);
 
             if (unprocessed.Any())
             {
@@ -370,7 +370,7 @@ namespace Xarial.Docify.Core.Composer
                 parent.SubPages.Add(page);
 
                 ProcessChildren(page, pages, assets, layouts,
-                    new Location(curLoc.Path.Union(new string[] { page.Name })), page.Layout ?? curLayout);
+                    new Location(curLoc.Path.Concat(new string[] { page.Name })), page.Layout ?? curLayout);
             }
 
             if (!children.Any() && subPages.Any())

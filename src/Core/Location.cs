@@ -83,7 +83,7 @@ namespace Xarial.Docify.Core
 
             if (!string.IsNullOrEmpty(protocol)) 
             {
-                parts = new string[] { protocol }.Union(parts).ToArray();
+                parts = new string[] { protocol }.Concat(parts).ToArray();
             }
 
             var fileName = "";

@@ -122,14 +122,14 @@ namespace Xarial.Docify.Base
         /// <returns>New combined location</returns>
         public static ILocation Combine(this ILocation loc, params string[] blocks)
         {
-            return loc.Copy("", loc.Path.Union(blocks));
+            return loc.Copy("", loc.Path.Concat(blocks));
         }
 
         /// <see cref="Combine(ILocation, string[])"/>
         /// <param name="other">Other location to append to this location</param>
         public static ILocation Combine(this ILocation loc, ILocation other)
         {
-            return loc.Copy(other.FileName, loc.Path.Union(other.Path));
+            return loc.Copy(other.FileName, loc.Path.Concat(other.Path));
         }
 
         /// <summary>

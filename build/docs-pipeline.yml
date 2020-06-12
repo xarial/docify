@@ -74,7 +74,6 @@ stages:
           - task: InstallSSHKey@0
             inputs:
               knownHostsEntry: 'github.com'
-              sshPassphrase: '$(DOCIFY_XARIAL_SITE_GIT_SSH_PASSPHRASE)'
               sshKeySecureFile: 'docify-xarial-site-ssh-private-key.txt'
 
           - task: Bash@3

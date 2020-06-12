@@ -96,5 +96,7 @@ stages:
               targetType: 'inline'
               script: |
                 git add .
+                git config user.email "dev@xarial.com"
+                git config user.name "Azure Pipeline"
                 git commit -a -m "Pubishing Site"
                 git push origin dev

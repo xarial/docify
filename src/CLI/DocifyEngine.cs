@@ -47,8 +47,9 @@ namespace Xarial.Docify.CLI
         private readonly ILocation[] m_SrcDirs;
         private readonly ILocation m_OutDir;
         private readonly string[] m_Libs;
+        private readonly bool m_Verbose;
 
-        public DocifyEngine(string[] srcDirs, string outDir, string[] libs, string siteUrl, string env)
+        public DocifyEngine(string[] srcDirs, string outDir, string[] libs, string siteUrl, string env, bool verbose)
         {
             var builder = new ContainerBuilder();
 
@@ -57,6 +58,8 @@ namespace Xarial.Docify.CLI
             m_OutDir = Location.FromPath(outDir);
 
             m_Libs = libs;
+
+            m_Verbose = verbose;
 
             RegisterDependencies(builder, env);
 
@@ -109,7 +112,8 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<BaseSiteComposer>().As<IComposer>();
 
-            builder.RegisterType<ConsoleLogger>().As<ILogger>();
+            builder.RegisterType<ConsoleLogger>().As<ILogger>()
+                .WithParameter(new TypedParameter(typeof(bool), m_Verbose));
 
             builder.RegisterType<ProjectLoader>().As<IProjectLoader>();
 

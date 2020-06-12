@@ -13,7 +13,7 @@ using System.Collections.Generic;
 namespace Xarial.Docify.CLI.Options
 {
     [Verb("library", HelpText = "Manages library")]
-    public class LibraryOptions
+    public class LibraryOptions : BaseOptions
     {
         [Option('i', "install", Required = false, HelpText = "Installs standard library")]
         public bool Install { get; set; }
@@ -21,7 +21,7 @@ namespace Xarial.Docify.CLI.Options
         [Option('u', "check-updates", Required = false, HelpText = "Checks if library updates available")]
         public bool CheckForUpdates { get; set; }
 
-        [Option('v', "version", Required = false, HelpText = "Version of the library to install. Latest is installed if not specified")]
+        [Option("libversion", Required = false, HelpText = "Version of the library to install. Latest is installed if not specified")]
         public Version Version { get; set; }
 
         [Usage]

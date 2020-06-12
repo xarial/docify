@@ -1,0 +1,71 @@
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - docs/*
+
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - docs/*
+
+name: '$(Date:yyyyMMdd).$(Rev:r)[$(BuildID)]'
+
+stages:
+
+- stage: 'Build'
+  jobs:
+  - job:
+    pool:
+      name: 'Azure Pipelines'
+      vmImage: windows-latest
+
+    steps:
+      - task: UseDotNet@2
+        inputs:
+          packageType: 'sdk'
+
+      - task: DotNetCoreCLI@2
+        displayName: 'Install docify'
+        inputs:
+          command: 'custom'
+          custom: 'tool'
+          includeNuGetOrg: true
+          arguments: 'install -g docify'
+          
+      - task: CmdLine@2
+        displayName: 'Install Docify standard library'
+        inputs:
+          script: 'docify library --install'
+
+      - task: CmdLine@2
+        displayName: 'Build site'
+        inputs:
+          script: 'docify build --src "$(System.DefaultWorkingDirectory)\docs" --out "$(Build.ArtifactStagingDirectory)/site" --l * --env production --url https://docify.xarial.com'
+      
+      - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+        - publish: '$(Build.ArtifactStagingDirectory)/site'
+          artifact: 'site'
+
+- stage: 'Deploy'
+  variables:
+  - group: build-vars
+  dependsOn: 'Build'
+  condition: ne(variables['Build.Reason'], 'PullRequest')
+  jobs:
+  - deployment:
+    pool:
+      vmImage: 'windows-latest'
+    strategy: 
+      runOnce:
+        deploy:
+          steps:
+          - checkout: none
+
+          - download: current
+            artifact: 'site'

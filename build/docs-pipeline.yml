@@ -1,0 +1,102 @@
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - docs/*
+
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - docs/*
+
+name: '$(Date:yyyyMMdd).$(Rev:r)[$(BuildID)]'
+
+stages:
+
+- stage: 'Build'
+  jobs:
+  - job:
+    pool:
+      name: 'Azure Pipelines'
+      vmImage: windows-latest
+
+    steps:
+      - task: UseDotNet@2
+        inputs:
+          packageType: 'sdk'
+
+      - task: DotNetCoreCLI@2
+        displayName: 'Install docify'
+        inputs:
+          command: 'custom'
+          custom: 'tool'
+          includeNuGetOrg: true
+          arguments: 'install -g docify'
+          
+      - task: CmdLine@2
+        displayName: 'Install Docify standard library'
+        inputs:
+          script: 'docify library --install --verbose'
+
+      - task: CmdLine@2
+        displayName: 'Build site'
+        inputs:
+          script: 'docify build --src "$(System.DefaultWorkingDirectory)\docs" --out "$(Build.ArtifactStagingDirectory)\site" --l * --env production --url https://docify.xarial.com --verbose'
+      
+      - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+        - publish: '$(Build.ArtifactStagingDirectory)/site'
+          artifact: 'site'
+
+- stage: 'Deploy'
+  variables:
+  - group: build-vars
+  dependsOn: 'Build'
+  condition: ne(variables['Build.Reason'], 'PullRequest')
+  jobs:
+  - deployment:
+    pool:
+      vmImage: 'windows-latest'
+    environment: docs
+    strategy: 
+      runOnce:
+        deploy:
+          steps:
+          - checkout: none
+
+          - download: current
+            artifact: 'site'
+
+          - task: InstallSSHKey@0
+            inputs:
+              knownHostsEntry: 'github.com'
+              sshKeySecureFile: 'docify-xarial-site-ssh-private-key.txt'
+
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: |
+                git clone git@github.com:xarial/docify-xarial-site.git .
+                git checkout -b dev
+                git clean --f --d
+                git rm * -r -f
+
+          - task: CopyFiles@2
+            inputs:
+              SourceFolder: '$(Pipeline.Workspace)/site/'
+              Contents: '**'
+              TargetFolder: '$(System.DefaultWorkingDirectory)'
+
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: |
+                git add .
+                git config user.email "dev@xarial.com"
+                git config user.name "Azure Pipeline"
+                git commit -a -m "Pubishing Site"
+                git push origin dev

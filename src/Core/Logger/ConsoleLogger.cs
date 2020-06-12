@@ -12,16 +12,25 @@ namespace Xarial.Docify.Core.Logger
 {
     public class ConsoleLogger : ILogger
     {
-        private void Log(string msg) => WriteLine(msg);
-        public void LogError(string msg) => WriteLine(msg, ConsoleColor.Red);
-        public void LogInformation(string msg) => WriteLine(msg, ConsoleColor.Green);
-        public void LogWarning(string msg) => WriteLine(msg, ConsoleColor.Yellow);
+        private readonly bool m_Verbose;
 
-        private void WriteLine(string msg, ConsoleColor color = ConsoleColor.White)
+        public ConsoleLogger(bool verbose) 
         {
-            Console.ForegroundColor = color;
-            Console.WriteLine(msg);
-            Console.ResetColor();
+            m_Verbose = verbose;
+        }
+
+        public void LogError(string msg, bool verbose = false) => WriteLine(msg, verbose, ConsoleColor.Red);
+        public void LogInformation(string msg, bool verbose = false) => WriteLine(msg, verbose, ConsoleColor.Green);
+        public void LogWarning(string msg, bool verbose = false) => WriteLine(msg, verbose, ConsoleColor.Yellow);
+
+        private void WriteLine(string msg, bool verbose, ConsoleColor color)
+        {
+            if (m_Verbose || !verbose)
+            {
+                Console.ForegroundColor = color;
+                Console.WriteLine(msg);
+                Console.ResetColor();
+            }
         }
     }
 }

@@ -10,7 +10,7 @@ using CommandLine;
 namespace Xarial.Docify.CLI.Options
 {
     [Verb("serve", HelpText = "Serves the static site from source")]
-    public class ServeOptions : BuildOptions
+    public class ServeOptions : BaseOptions
     {
     }
 }

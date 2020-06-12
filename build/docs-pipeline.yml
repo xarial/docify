@@ -84,10 +84,6 @@ stages:
                 git checkout -b dev
                 git clean --f --d
                 git rm * -r -f
-                cp -a $(Pipeline.Workspace)/site/. .
-                git add .
-                git commit -a -m "Pubishing Site"
-                git push origin dev
 
           - task: CopyFiles@2
             inputs:

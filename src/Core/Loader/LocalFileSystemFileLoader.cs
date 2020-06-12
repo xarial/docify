@@ -19,15 +19,17 @@ namespace Xarial.Docify.Core.Loader
     public class LocalFileSystemFileLoader : IFileLoader
     {
         private readonly System.IO.Abstractions.IFileSystem m_FileSystem;
+        private readonly ILogger m_Logger;
 
-        public LocalFileSystemFileLoader()
-            : this(new System.IO.Abstractions.FileSystem())
+        public LocalFileSystemFileLoader(ILogger logger)
+            : this(new System.IO.Abstractions.FileSystem(), logger)
         {
         }
 
-        public LocalFileSystemFileLoader(System.IO.Abstractions.IFileSystem fileSystem)
+        public LocalFileSystemFileLoader(System.IO.Abstractions.IFileSystem fileSystem, ILogger logger)
         {
             m_FileSystem = fileSystem;
+            m_Logger = logger;
         }
 
         public async IAsyncEnumerable<ILocation> EnumSubFolders(ILocation location)
@@ -77,6 +79,8 @@ namespace Xarial.Docify.Core.Loader
                 if (loc.Matches(filters))
                 {
                     var content = await m_FileSystem.File.ReadAllBytesAsync(filePath);
+
+                    m_Logger.LogInformation($"Loading '{filePath}'", true);
 
                     yield return new Data.File(
                         loc, content, Guid.NewGuid().ToString());

@@ -14,11 +14,13 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
+using Xarial.Docify.Base.Services;
 using Xarial.Docify.CLI.Options;
 using Xarial.Docify.CLI.Properties;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Loader;
+using Xarial.Docify.Core.Logger;
 using Xarial.Docify.Core.Plugin.Extensions;
 using Xarial.Docify.Core.Publisher;
 using Xarial.Docify.Core.Tools;
@@ -29,6 +31,8 @@ namespace Xarial.Docify.CLI
     internal class Program
     {
         private const string STANDARD_LIB_URL = "https://docify.net/library.json";
+
+        private static ILogger m_Logger;
 
         private static async Task Main(string[] args)
         {
@@ -58,7 +62,10 @@ namespace Xarial.Docify.CLI
                 if (buildOpts != null)
                 {
                     var engine = new DocifyEngine(buildOpts.SourceDirectories.ToArray(),
-                        buildOpts.OutputDirectory, buildOpts.Library?.ToArray(), buildOpts.SiteUrl, buildOpts.Environment);
+                        buildOpts.OutputDirectory, buildOpts.Library?.ToArray(), 
+                        buildOpts.SiteUrl, buildOpts.Environment, buildOpts.Verbose);
+
+                    m_Logger = engine.Resolve<ILogger>();
 
                     await engine.Build();
                 }
@@ -68,10 +75,14 @@ namespace Xarial.Docify.CLI
                 }
                 else if (genManOpts != null)
                 {
+                    m_Logger = new ConsoleLogger(genManOpts.Verbose);
+                    //TODO: create service
                     await GenerateLibraryManifest(genManOpts);
                 }
                 else if (libOpts != null)
                 {
+                    m_Logger = new ConsoleLogger(libOpts.Verbose);
+                    //TODO: create service
                     await InstallLibrary(libOpts);
                 }
             }
@@ -81,9 +92,8 @@ namespace Xarial.Docify.CLI
                 var err = ParseError(ex, out fullLog);
                 System.Diagnostics.Trace.WriteLine(fullLog, "Xarial.Docify");
 
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine(err);
-                Console.ResetColor();
+                m_Logger.LogError(err);
+                m_Logger.LogError(fullLog, true);
 
                 Environment.Exit(1);
             }
@@ -114,7 +124,7 @@ namespace Xarial.Docify.CLI
 
             if (res.Length == 0) 
             {
-                res.Append("Generic error. Check trace log for more details");
+                res.Append("Generic error");
             }
 
             fullLog = fullLogBuilder.ToString();
@@ -124,7 +134,7 @@ namespace Xarial.Docify.CLI
 
         private static async Task GenerateLibraryManifest(GenerateLibraryManifestOptions genManOpts)
         {
-            var manGen = new ManifestGenerator(new LocalFileSystemFileLoader());
+            var manGen = new ManifestGenerator(new LocalFileSystemFileLoader(m_Logger));
             
             string publicKeyXml;
 
@@ -167,11 +177,15 @@ namespace Xarial.Docify.CLI
             {
                 if (curLibVers != null && curLibVers >= lib.Version)
                 {
-                    Console.WriteLine($"Currently installed library '{curLibVers}' is up-to-date");
+                    m_Logger.LogInformation($"Currently installed library '{curLibVers}' is up-to-date");
+                }
+                else if(curLibVers != null)
+                {
+                    m_Logger.LogInformation($"New version '{lib.Version}' is available");
                 }
                 else
                 {
-                    Console.WriteLine($"New version '{lib.Version}' is available");
+                    m_Logger.LogInformation($"Version '{lib.Version}' is available");
                 }
             }
             else if (opts.Install)
@@ -181,17 +195,28 @@ namespace Xarial.Docify.CLI
 
                 await libInstaller.InstallLibrary(Location.FromUrl(lib.DownloadUrl), destLoc, 
                     new WebZipFileLoader(lib.Signature, Resources.standard_library_public_key),
-                    new LocalFileSystemPublisher(new PublisherExtension(), 
+                    new LocalFileSystemPublisher(new PublisherExtension(), m_Logger, 
                     new SecureLibraryCleaner(Location.Library.DefaultLibraryManifestFilePath.ToPath(), 
                         Resources.standard_library_public_key)));
 
                 if (curLibVers != null && curLibVers == lib.Version)
                 {
-                    Console.WriteLine($"Reinstalled '{lib.Version}' version of the library");
+                    m_Logger.LogInformation($"Reinstalled '{lib.Version}' version of the library");
+                }
+                else if (curLibVers != null)
+                {
+                    if(curLibVers > lib.Version) 
+                    {
+                        m_Logger.LogInformation($"Library was downgraded to version '{lib.Version}'");
+                    }
+                    else
+                    {
+                        m_Logger.LogInformation($"Library was updated to version '{lib.Version}'");
+                    }
                 }
                 else 
                 {
-                    Console.WriteLine($"Library was updated to version '{lib.Version}'");
+                    m_Logger.LogInformation($"Installed '{lib.Version}' version of the library");
                 }
             }
         }

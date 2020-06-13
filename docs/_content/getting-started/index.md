@@ -71,6 +71,14 @@ To use standard library specify * as a library path
 > docify build --src C:\MySite C:\MySiteDir2 --out C:\MyOutput --url https://example.com --l *
 ~~~
 
+## Troubleshooting
+
+Docify will output the common errors into the console allowing to investigate the cause of an issue. It is additionally possible to log additional information, such as exceptions stack trace and detailed steps report by using *--verbose* option.
+
+~~~
+> docify build --src C:\MySite --out C:\MyOutput --url https://example.com --l * --verbose
+~~~
+
 ## Example
 
 * Create a folder at D:\MySite

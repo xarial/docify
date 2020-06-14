@@ -178,7 +178,7 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
 
                 if (!deleteUnused || usedAssets.Contains(path))
                 {
-                    yield return new PluginFile(defAsset.Content, outLoc.Combine(defAsset.Location), defAsset.Id);
+                    yield return defAsset;
                 }
             }
         }

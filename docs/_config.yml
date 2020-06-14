@@ -19,6 +19,7 @@ default-layout: article
 $toc:
   home-menu-title: Welcome
   title-attribute: caption
+  title-case: true
 $nav:
   upper-case: true
   title-attribute: caption

@@ -7,7 +7,7 @@ order: 7
 ---
 Layouts allow to define the reusable portion of the html page.
 
-Layouts support [dynamic content](/content#dynamic-content) and can include pseudo-dynamic portions of code.
+Layouts support [dynamic content](/content/dynamic/) and can include pseudo-dynamic portions of code.
 
 Layouts must include *{{ content }}* placeholder which will be replaced by corresponding content of the page or inherited layouts.
 

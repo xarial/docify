@@ -54,6 +54,65 @@ namespace Core.Tests
         }
 
         [Test]
+        public async Task ComposeSite_PhantomPageTest()
+        {
+            var src = new FileMock[]
+            {
+                new FileMock(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\page2\index.md"), "")
+            }.ToAsyncEnumerable();
+
+            var site = await m_Composer.ComposeSite(src, "");
+
+            Assert.AreEqual(1, site.MainPage.SubPages.Count);
+            Assert.IsInstanceOf<IPhantomPage>(site.MainPage.SubPages[0]);
+            Assert.AreEqual("page1", site.MainPage.SubPages[0].Name);
+            Assert.AreEqual(1, site.MainPage.SubPages[0].SubPages.Count);
+            Assert.AreEqual("page2", site.MainPage.SubPages[0].SubPages[0].Name);
+        }
+
+        [Test]
+        public async Task ComposeSite_PhantomPageMixedTest()
+        {
+            var src = new FileMock[]
+            {
+                new FileMock(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\page2\index.md"), ""),
+                new FileMock(Location.FromPath(@"page3\index.md"), "")
+            }.ToAsyncEnumerable();
+
+            var site = await m_Composer.ComposeSite(src, "");
+
+            Assert.AreEqual(2, site.MainPage.SubPages.Count);
+            Assert.IsInstanceOf<IPhantomPage>(site.MainPage.SubPages.First(p => p.Name == "page1"));
+            Assert.IsNotInstanceOf<IPhantomPage>(site.MainPage.SubPages.First(p => p.Name == "page3"));
+            Assert.AreEqual(1, site.MainPage.SubPages.First(p => p.Name == "page1").SubPages.Count);
+            Assert.AreEqual("page2", site.MainPage.SubPages.First(p => p.Name == "page1").SubPages[0].Name);
+        }
+
+        [Test]
+        public async Task ComposeSite_PhantomPageMixedSubPageTest()
+        {
+            var src = new FileMock[]
+            {
+                new FileMock(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\page2\index.md"), ""),
+                new FileMock(Location.FromPath(@"page3\index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\page2\page4\index.md"), ""),
+            }.ToAsyncEnumerable();
+
+            var site = await m_Composer.ComposeSite(src, "");
+
+            Assert.AreEqual(2, site.MainPage.SubPages.Count);
+            Assert.IsInstanceOf<IPhantomPage>(site.MainPage.SubPages.First(p => p.Name == "page1"));
+            Assert.IsNotInstanceOf<IPhantomPage>(site.MainPage.SubPages.First(p => p.Name == "page3"));
+            Assert.AreEqual(1, site.MainPage.SubPages.First(p => p.Name == "page1").SubPages.Count);
+            Assert.AreEqual("page2", site.MainPage.SubPages.First(p => p.Name == "page1").SubPages[0].Name);
+            Assert.AreEqual(1, site.MainPage.SubPages.First(p => p.Name == "page1").SubPages[0].SubPages.Count);
+            Assert.AreEqual("page4", site.MainPage.SubPages.First(p => p.Name == "page1").SubPages[0].SubPages[0].Name);
+        }
+
+        [Test]
         public async Task ComposeSite_NamedPageTest()
         {
             var src = new FileMock[]

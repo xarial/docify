@@ -15,9 +15,7 @@ namespace Xarial.Docify.Lib.Plugins.ImageOptimizer
         };
 
         public bool IgnoreMatchCase { get; set; } = true;
-
-        public bool ImageTagConvertSvgToPng { get; set; } = true;
-
+        
         /// <remarks>
         /// 0 to maintain aspect ration
         /// </remarks>

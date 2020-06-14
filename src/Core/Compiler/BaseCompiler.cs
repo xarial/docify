@@ -27,7 +27,6 @@ namespace Xarial.Docify.Core.Compiler
 
         private readonly ICompilerExtension m_Ext;
 
-
         public BaseCompiler(BaseCompilerConfig config,
             ILogger logger, ILayoutParser layoutParser,
             IIncludesHandler includesHandler,

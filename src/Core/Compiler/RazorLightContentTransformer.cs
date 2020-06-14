@@ -30,8 +30,11 @@ namespace Xarial.Docify.Core.Compiler
         {
             var html = content;
 
-            html = await m_RazorEngine.CompileRenderStringAsync(
-                key, html, model);
+            if (!string.IsNullOrEmpty(content))
+            {
+                html = await m_RazorEngine.CompileRenderStringAsync(
+                    key, html, model);
+            }
 
             return html;
         }

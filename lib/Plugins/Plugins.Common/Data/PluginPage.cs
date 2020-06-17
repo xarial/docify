@@ -6,11 +6,13 @@
 //*********************************************************************
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Lib.Plugins.Common.Data
 {
+    [DebuggerDisplay("{" + nameof(Name) + "}")]
     public class PluginPage : IPage
     {
         public List<IPage> SubPages { get; }

@@ -57,11 +57,6 @@ namespace Xarial.Docify.Core.Loader
 
         public async IAsyncEnumerable<IFile> LoadFolder(ILocation location, string[] filters)
         {
-            if (location.IsFile())
-            {
-                throw new Exception("Specified location is not a folder");
-            }
-
             var path = location.ToPath();
 
             if (!m_FileSystem.Directory.Exists(path))

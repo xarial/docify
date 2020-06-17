@@ -6,6 +6,7 @@
 //*********************************************************************
 
 using System;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -14,20 +15,16 @@ namespace Xarial.Docify.Core.Helpers
 {
     internal class PlaceholdersParser
     {
-        //TODO: implement handling of protected symbols
-        private const string REGEX_TEMPLATE = @"(?:{0})[.\s\S]*?(:?{1})";
+        private const string REGEX_TEMPLATE = @"{0}*({1}([.\s\S]*?){2})";
+        private const string REGEX_ESCAPED = @"^{0}{{1}}[^{0}]";
 
         private readonly string m_RegexPattern;
+        private readonly string m_RegexEscapePattern;
 
-        private readonly string m_StartTag;
-        private readonly string m_EndTag;
-
-        internal PlaceholdersParser(string startTag, string endTag)
+        internal PlaceholdersParser(string startTag, string endTag, string protectionSymbol = "\\")
         {
-            m_RegexPattern = string.Format(REGEX_TEMPLATE, Regex.Escape(startTag), Regex.Escape(endTag));
-
-            m_StartTag = startTag;
-            m_EndTag = endTag;
+            m_RegexPattern = string.Format(REGEX_TEMPLATE, Regex.Escape(protectionSymbol), Regex.Escape(startTag), Regex.Escape(endTag));
+            m_RegexEscapePattern = string.Format(REGEX_ESCAPED, Regex.Escape(protectionSymbol));
         }
 
         internal async Task<string> ReplaceAsync(string input, Func<string, Task<string>> evaluator)
@@ -39,11 +36,20 @@ namespace Xarial.Docify.Core.Helpers
 
             foreach (Match match in regex.Matches(input))
             {
-                //TODO: implement group instead of trim
-                var plc = match.Value.Substring(m_StartTag.Length, match.Value.Length - m_StartTag.Length - m_EndTag.Length).Trim();
+                var includeContent = match.Groups[1];
 
-                sb.Append(input, lastIndex, match.Index - lastIndex)
-                  .Append(await evaluator.Invoke(plc).ConfigureAwait(false));
+                if (Regex.IsMatch(match.Value, m_RegexEscapePattern))
+                {
+                    sb.Append(input, lastIndex, match.Index - lastIndex)
+                      .Append(includeContent.Value);
+                }
+                else 
+                {
+                    var plc = match.Groups[2].Value.Trim();
+
+                    sb.Append(input, lastIndex, includeContent.Index - lastIndex)
+                      .Append(await evaluator.Invoke(plc).ConfigureAwait(false));
+                }
 
                 lastIndex = match.Index + match.Length;
             }

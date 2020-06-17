@@ -54,5 +54,10 @@ namespace Xarial.Docify.Lib.Plugins.Common.Data
         {
             return new PluginLocation(fileName, path);
         }
+
+        public override string ToString()
+        {
+            return this.ToId();
+        }
     }
 }

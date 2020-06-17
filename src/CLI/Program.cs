@@ -19,6 +19,7 @@ using Xarial.Docify.CLI.Options;
 using Xarial.Docify.CLI.Properties;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Data;
+using Xarial.Docify.Core.Library;
 using Xarial.Docify.Core.Loader;
 using Xarial.Docify.Core.Logger;
 using Xarial.Docify.Core.Plugin.Extensions;
@@ -154,69 +155,58 @@ namespace Xarial.Docify.CLI
 
         private static async Task InstallLibrary(LibraryOptions opts) 
         {
-            var libInstaller = new LibraryInstaller();
+            var libInstaller = new AppCenterSecureLibraryInstaller(
+                STANDARD_LIB_URL, Location.Library.DefaultLibraryManifestFilePath,
+                Resources.standard_library_public_key,
+                new LocalFileSystemPublisher(new PublisherExtension(), m_Logger,
+                    new SecureLibraryCleaner(Location.Library.DefaultLibraryManifestFilePath.ToPath(),
+                        Resources.standard_library_public_key)));
 
-            var libData = await new HttpClient().GetStringAsync(STANDARD_LIB_URL);
-            var libColl = new UserSettingsService().ReadSettings<LibraryCollection>(new StringReader(libData));
-
-            var lib = libInstaller.FindLibrary(libColl, typeof(DocifyEngine).Assembly.GetName().Version, opts.Version);
-
-            Version curLibVers = null;
-
-            var manifestFilePath = Location.Library.DefaultLibraryManifestFilePath.ToPath();
-
-            if (System.IO.File.Exists(manifestFilePath))
-            {
-                var manifest = new UserSettingsService().ReadSettings<SecureLibraryManifest>(
-                            manifestFilePath, new BaseValueSerializer<ILocation>(null, x => Location.FromString(x)));
-
-                curLibVers = manifest.Version;
-            }
+            var curLibVers = await libInstaller.GetCurrentVersion();
+            var libVersion = await libInstaller.GetLatestAvailableVersion(typeof(DocifyEngine).Assembly.GetName().Version);
 
             if (opts.CheckForUpdates)
             {
-                if (curLibVers != null && curLibVers >= lib.Version)
+                if (curLibVers != null && curLibVers >= libVersion)
                 {
                     m_Logger.LogInformation($"Currently installed library '{curLibVers}' is up-to-date");
                 }
-                else if(curLibVers != null)
+                else if (curLibVers != null)
                 {
-                    m_Logger.LogInformation($"New version '{lib.Version}' is available");
+                    m_Logger.LogInformation($"New version '{libVersion}' is available");
                 }
                 else
                 {
-                    m_Logger.LogInformation($"Version '{lib.Version}' is available");
+                    m_Logger.LogInformation($"Version '{libVersion}' is available");
                 }
             }
             else if (opts.Install)
             {
-                var destLoc = Location.Library.DefaultLibraryManifestFilePath;
-                destLoc = destLoc.Copy("", destLoc.Path);
-
-                await libInstaller.InstallLibrary(Location.FromUrl(lib.DownloadUrl), destLoc, 
-                    new WebZipFileLoader(lib.Signature, Resources.standard_library_public_key),
-                    new LocalFileSystemPublisher(new PublisherExtension(), m_Logger, 
-                    new SecureLibraryCleaner(Location.Library.DefaultLibraryManifestFilePath.ToPath(), 
-                        Resources.standard_library_public_key)));
-
-                if (curLibVers != null && curLibVers == lib.Version)
+                if (opts.Version != null) 
                 {
-                    m_Logger.LogInformation($"Reinstalled '{lib.Version}' version of the library");
+                    libVersion = opts.Version;
+                }
+
+                await libInstaller.Install(libVersion);
+
+                if (curLibVers != null && curLibVers == libVersion)
+                {
+                    m_Logger.LogInformation($"Reinstalled '{libVersion}' version of the library");
                 }
                 else if (curLibVers != null)
                 {
-                    if(curLibVers > lib.Version) 
+                    if (curLibVers > libVersion)
                     {
-                        m_Logger.LogInformation($"Library was downgraded to version '{lib.Version}'");
+                        m_Logger.LogInformation($"Library was downgraded to version '{libVersion}'");
                     }
                     else
                     {
-                        m_Logger.LogInformation($"Library was updated to version '{lib.Version}'");
+                        m_Logger.LogInformation($"Library was updated to version '{libVersion}'");
                     }
                 }
-                else 
+                else
                 {
-                    m_Logger.LogInformation($"Installed '{lib.Version}' version of the library");
+                    m_Logger.LogInformation($"Installed '{libVersion}' version of the library");
                 }
             }
         }

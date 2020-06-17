@@ -6,11 +6,13 @@
 //*********************************************************************
 
 using System;
+using System.Diagnostics;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Lib.Plugins.Common.Data
 {
+    [DebuggerDisplay("{" + nameof(Location) + "}")]
     public class PluginFile : IFile
     {
         public byte[] Content { get; }

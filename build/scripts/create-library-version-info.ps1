@@ -25,7 +25,7 @@ if($version -eq $releaseInfo.version)
     
     $signature = $rsa.SignData($buffer, [System.Security.Cryptography.HashAlgorithmName]::SHA256, [System.Security.Cryptography.RSASignaturePadding]::Pss)
 
-    $newVersion.DownloadUrl = $releaseInfo.download_url
+    $newVersion.DownloadUrl = -join("https://api.appcenter.ms/v0.1/apps/xarial/docify/distribution_groups/library/", $releaseInfo.id, "/")
     $newVersion.MinimumAppVersion = $versionsInfo.Versions[-1].MinimumAppVersion
     $newVersion.Version = $version
     $newVersion.Signature = [System.Convert]::ToBase64String($signature)

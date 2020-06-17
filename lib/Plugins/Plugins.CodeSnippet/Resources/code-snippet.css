@@ -1,7 +1,9 @@
-﻿pre.code-snippet {
+﻿pre {
     border: none;
     overflow: auto;
     background: #eff0f1;
+    padding: 0.5rem;
+    font-size: large;
 }
 
 pre.jagged-top {
@@ -10,7 +12,7 @@ pre.jagged-top {
     background-position: top center;
     background-size: 0.75rem 0.75rem, 0.75rem 0.75rem, 100% 1rem;
     background-repeat: repeat-x;
-    padding: 1rem 0;
+    padding: 1rem 0.5rem;
 }
 
 pre.jagged-bottom {
@@ -19,17 +21,17 @@ pre.jagged-bottom {
     background-position: bottom center;
     background-size: 0.75rem 0.75rem, 0.75rem 0.75rem, 100% 1rem;
     background-repeat: repeat-x;
-    padding: 1rem 0;
+    padding: 1rem 0.5rem;
 }
 
-pre.jagged {
-    background-color: #eff0f1;
-    background-image: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(-135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(45deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(-45deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(to bottom, #eff0f1 0%, #eff0f1 100%), linear-gradient(to top, #eff0f1 0%, #eff0f1 100%);
-    background-position: top center, top center, bottom center, bottom center, top center, bottom center;
-    background-size: 0.75rem 0.75rem, 0.75rem 0.75rem, 0.75rem 0.75rem, 0.75rem 0.75rem, 100% 1rem, 100% 1rem;
-    background-repeat: repeat-x;
-    padding: 1rem 0;
-}
+    pre.jagged {
+        background-color: #eff0f1;
+        background-image: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(-135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(45deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(-45deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%), linear-gradient(to bottom, #eff0f1 0%, #eff0f1 100%), linear-gradient(to top, #eff0f1 0%, #eff0f1 100%);
+        background-position: top center, top center, bottom center, bottom center, top center, bottom center;
+        background-size: 0.75rem 0.75rem, 0.75rem 0.75rem, 0.75rem 0.75rem, 0.75rem 0.75rem, 100% 1rem, 100% 1rem;
+        background-repeat: repeat-x;
+        padding: 1rem 0.5rem;
+    }
 
 .code-tab {
     overflow: hidden;

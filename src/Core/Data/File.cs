@@ -5,11 +5,13 @@
 //License: https://docify.net/license/
 //*********************************************************************
 
+using System.Diagnostics;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 
 namespace Xarial.Docify.Core.Data
 {
+    [DebuggerDisplay("{" + nameof(Location) + "}")]
     public class File : IFile
     {
         public byte[] Content { get; }

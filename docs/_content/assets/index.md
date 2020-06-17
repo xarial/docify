@@ -34,6 +34,26 @@ This will generate the following urls in the resulting site
 /page1/logo.png
 ~~~
 
+Assets will be associated with first default page (i.e. index.md or index.html). For example
+
+~~~
+page1
+    index.md
+    logo.png
+    page2.md
+    page2
+        file.txt
+~~~
+
+Will result into *file.txt* be assigned to *page1* in a sub-folder *page2*. This still generates the same url structure and only needs to be considered when developing [plugins](/custom-library/plugins/)
+
+~~~
+/page1/
+/page1/logo.png
+/page2/
+/page2/file.txt
+~~~
+
 > Although *_assets* is not a special name in Docify and assets can be placed in any folder, it is recommended for the root assets to use the *_assets* folder. This name is used in all items from the [standard library](/standard-library/)
 
 By default assets are not compilable and will be output as is into the published site. However in some cases it can be beneficial for the assets to use [dynamic content](/content/dynamic/). This can be achieved by referring the [includes](/includes/) and explicitly setting the files pattern in *compilable-assets* array, to resolve includes in the [configuration](/configuration/).
@@ -48,7 +68,7 @@ compilable-assets:
 ~~~ xml
 <?xml version="1.0" encoding="UTF-8"?>
 <myxml>
-{\% my-include %}
+\{% my-include %}
 </myxml>
 ~~~
 

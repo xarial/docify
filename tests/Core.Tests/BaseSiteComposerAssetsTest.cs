@@ -202,21 +202,41 @@ namespace Core.Tests
             Assert.AreEqual("a2", a2.AsTextContent());
         }
 
-        //TODO: this is throwing error - investigate
-        //[Test]
-        //public async Task ComposeSite_NonDefaultPageAsset()
-        //{
-        //    var src = new FileMock[]
-        //    {
-        //        new FileMock(Location.FromPath(@"index.md"), ""),
-        //        new FileMock(Location.FromPath(@"page1\page2.md"), ""),
-        //        new FileMock(Location.FromPath(@"page1\page2\asset1.txt"), "a1"),
-        //        new FileMock(Location.FromPath(@"page3\index.md"), ""),//commenting this line - works OK
-        //        //new FileMock(Location.FromPath(@"page3\page4.md"), ""),
-        //        //new FileMock(Location.FromPath(@"page3\page4\asset2.txt"), "a2")
-        //    }.ToAsyncEnumerable();
+        [Test]
+        public async Task ComposeSite_NonDefaultPageAsset()
+        {
+            var src = new FileMock[]
+            {
+                new FileMock(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\page2.md"), ""),
+                new FileMock(Location.FromPath(@"page1\page2\asset1.txt"), "a1"),
+                new FileMock(Location.FromPath(@"page3\index.md"), ""),
+                new FileMock(Location.FromPath(@"page3\page4.md"), ""),
+                new FileMock(Location.FromPath(@"page3\page4\asset2.txt"), "a2")
+            }.ToAsyncEnumerable();
 
-        //    var site = await m_Composer.ComposeSite(src, "");
-        //}
+            var site = await m_Composer.ComposeSite(src, "");
+            var p1 = site.MainPage.SubPages.First(p => p.Name == "page1");
+            var p2 = p1.SubPages.First(p => p.Name == "page2");
+            var p3 = site.MainPage.SubPages.First(p => p.Name == "page3");
+            var p4 = p3.SubPages.First(p => p.Name == "page4");
+
+            Assert.AreEqual(0, site.MainPage.Assets.Count);
+            Assert.AreEqual(1, site.MainPage.Folders.Count);
+            Assert.AreEqual("page1", site.MainPage.Folders[0].Name);
+            Assert.AreEqual(1, site.MainPage.Folders[0].Folders.Count);
+            Assert.AreEqual("page2", site.MainPage.Folders[0].Folders[0].Name);
+            Assert.AreEqual(1, site.MainPage.Folders[0].Folders[0].Assets.Count);
+            Assert.AreEqual("asset1.txt", site.MainPage.Folders[0].Folders[0].Assets[0].FileName);
+            Assert.AreEqual(0, p2.Assets.Count);
+            Assert.AreEqual(0, p2.Folders.Count);
+            Assert.AreEqual(0, p3.Assets.Count);
+            Assert.AreEqual(1, p3.Folders.Count);
+            Assert.AreEqual("page4", p3.Folders[0].Name);
+            Assert.AreEqual(1, p3.Folders[0].Assets.Count);
+            Assert.AreEqual("asset2.txt", p3.Folders[0].Assets[0].FileName);
+            Assert.AreEqual(0, p4.Assets.Count);
+            Assert.AreEqual(0, p4.Folders.Count);
+        }
     }
 }

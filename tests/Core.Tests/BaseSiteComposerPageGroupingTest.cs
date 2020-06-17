@@ -91,6 +91,27 @@ namespace Core.Tests
         }
 
         [Test]
+        public async Task ComposeSite_PhantomPageSiblingTest()
+        {
+            var src = new FileMock[]
+            {
+                new FileMock(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"page1\page2\index.md"), ""),
+                new FileMock(Location.FromPath(@"page3\page4\index.md"), ""),
+            }.ToAsyncEnumerable();
+
+            var site = await m_Composer.ComposeSite(src, "");
+
+            Assert.AreEqual(2, site.MainPage.SubPages.Count);
+            Assert.IsInstanceOf<IPhantomPage>(site.MainPage.SubPages.First(p => p.Name == "page1"));
+            Assert.IsInstanceOf<IPhantomPage>(site.MainPage.SubPages.First(p => p.Name == "page3"));
+            Assert.AreEqual(1, site.MainPage.SubPages.First(p => p.Name == "page1").SubPages.Count);
+            Assert.AreEqual(1, site.MainPage.SubPages.First(p => p.Name == "page3").SubPages.Count);
+            Assert.AreEqual("page2", site.MainPage.SubPages.First(p => p.Name == "page1").SubPages[0].Name);
+            Assert.AreEqual("page4", site.MainPage.SubPages.First(p => p.Name == "page3").SubPages[0].Name);
+        }
+
+        [Test]
         public async Task ComposeSite_PhantomPageMixedSubPageTest()
         {
             var src = new FileMock[]

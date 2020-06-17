@@ -1,4 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿//*********************************************************************
+//Docify
+//Copyright(C) 2020 Xarial Pty Limited
+//Product URL: https://docify.net
+//License: https://docify.net/license/
+//*********************************************************************
+
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

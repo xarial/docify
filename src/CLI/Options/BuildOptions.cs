@@ -20,8 +20,8 @@ namespace Xarial.Docify.CLI.Options
         [Option('o', "out", Required = true, HelpText = "Output directory")]
         public string OutputDirectory { get; set; }
 
-        [Option('u', "url", Required = true, HelpText = "Target site url")]
-        public string SiteUrl { get; set; }
+        [Option('u', "url", Required = false, HelpText = "Target site url")]
+        public string SiteUrl { get; set; } = "";
 
         [Option('e', "env", Required = false, HelpText = "Build environment, either standard set or custom")]
         public string Environment { get; set; }

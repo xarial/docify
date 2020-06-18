@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
@@ -23,6 +24,7 @@ using Xarial.Docify.Core.Compiler.MarkdigMarkdownParser;
 using Xarial.Docify.Core.Composer;
 using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Exceptions;
+using Xarial.Docify.Core.Host;
 using Xarial.Docify.Core.Loader;
 using Xarial.Docify.Core.Logger;
 using Xarial.Docify.Core.Plugin;
@@ -39,13 +41,67 @@ namespace Xarial.Docify.CLI
         Task Build();
     }
 
+    public interface IDocifyServeEngine
+    {
+        T Resolve<T>();
+        Task Serve(Func<Task> serveCallback);
+    }
+
+    public class DocifyServeEngine : DocifyEngine, IDocifyServeEngine
+    {
+        private static string GetOutDir(string outDir)
+        {
+            if (string.IsNullOrEmpty(outDir)) 
+            {
+                outDir = Path.Combine(Path.GetTempPath(), "Docify", Guid.NewGuid().ToString());
+            }
+
+            return outDir;
+        }
+
+        private readonly int m_HttpPort;
+        private readonly int m_HttpsPort;
+
+        public DocifyServeEngine(string[] srcDirs, string outDir, 
+            string[] libs, string siteUrl, string env, bool verbose, int httpPort, int httpsPort)
+            : base(srcDirs, GetOutDir(outDir), libs, siteUrl, env, verbose)
+        {
+            m_HttpPort = httpPort;
+            m_HttpsPort = httpsPort;
+        }
+
+        public async Task Serve(Func<Task> serveCallback)
+        {
+            var host = Resolve<ISiteHost>();
+            
+            await Build();
+                        
+            await host.Host(m_OutDir, serveCallback);
+
+            var dirCleaner = Resolve<ITargetDirectoryCleaner>();
+            await dirCleaner.ClearDirectory(m_OutDir);
+        }
+
+        protected override void RegisterDependencies(ContainerBuilder builder, string env)
+        {
+            base.RegisterDependencies(builder, env);
+
+            builder.RegisterType<OwinSiteHost>()
+                .As<ISiteHost>()
+                .WithParameter(
+                new ResolvedParameter(
+                    (pi, cx) => pi.ParameterType == typeof(HostSettings), 
+                    (pi, cx) => new HostSettings(m_HttpPort, m_HttpsPort)));
+        }
+    }
+
     public class DocifyEngine : IDocifyEngine
     {
         private readonly IContainer m_Container;
 
         private readonly string m_SiteUrl;
         private readonly ILocation[] m_SrcDirs;
-        private readonly ILocation m_OutDir;
+        protected readonly ILocation m_OutDir;
         private readonly string[] m_Libs;
         private readonly bool m_Verbose;
 
@@ -54,6 +110,12 @@ namespace Xarial.Docify.CLI
             var builder = new ContainerBuilder();
 
             m_SiteUrl = siteUrl;
+
+            if (srcDirs?.Any() != true) 
+            {
+                srcDirs = new string[] { Directory.GetCurrentDirectory() };
+            }
+
             m_SrcDirs = srcDirs.Select(s => Location.FromPath(s)).ToArray();
             m_OutDir = Location.FromPath(outDir);
 
@@ -81,7 +143,7 @@ namespace Xarial.Docify.CLI
 
             await publisher.Write(m_OutDir, outFiles);
         }
-
+        
         public T Resolve<T>()
         {
             return m_Container.Resolve<T>();
@@ -100,6 +162,9 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<BaseCompilerConfig>()
                 .UsingConstructor(typeof(IConfiguration));
+
+            builder.RegisterType<LocalFileSystemTargetDirectoryCleaner>()
+                .As<ITargetDirectoryCleaner>();
 
             builder.RegisterType<LocalFileSystemPublisher>()
                 .As<IPublisher>();

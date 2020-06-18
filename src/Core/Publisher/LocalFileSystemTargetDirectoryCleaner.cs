@@ -17,6 +17,10 @@ namespace Xarial.Docify.Core.Publisher
         private readonly IFileSystem m_FileSystem;
         private readonly bool m_ClearTarget;
 
+        public LocalFileSystemTargetDirectoryCleaner() : this(new FileSystem(), true)
+        {
+        }
+
         public LocalFileSystemTargetDirectoryCleaner(IFileSystem fileSystem,
             bool clearTarget) 
         {

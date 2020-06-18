@@ -30,9 +30,12 @@ namespace Xarial.Docify.Core.Loader
 
         private readonly string[] m_Filter;
         private readonly ILoaderExtension m_Ext;
+        private readonly ILogger m_Logger;
 
         public ProjectLoader(IFileLoader fileLoader,
-            ILibraryLoader libraryLoader, IPluginsManager pluginsMgr, IConfiguration conf, ILoaderExtension ext)
+            ILibraryLoader libraryLoader, IPluginsManager pluginsMgr, 
+            IConfiguration conf, ILoaderExtension ext,
+            ILogger logger)
         {
             m_FileLoader = fileLoader;
             m_LibraryLoader = libraryLoader;
@@ -40,6 +43,7 @@ namespace Xarial.Docify.Core.Loader
             m_PluginsManager = pluginsMgr;
 
             m_Ext = ext;
+            m_Logger = logger;
 
             m_Filter = GetFilesFilter();
         }
@@ -52,6 +56,8 @@ namespace Xarial.Docify.Core.Loader
 
             foreach (var loc in locations)
             {
+                m_Logger.LogInformation($"Loading project files from {loc.ToId()}");
+
                 var filter = new List<string>();
 
                 if (m_Filter != null)

@@ -373,18 +373,7 @@ namespace Xarial.Docify.Core.Composer
                     new Location(curLoc.Path.Concat(new string[] { page.Name })), page.Layout ?? curLayout);
             }
 
-            if (!children.Any() && subPages.Any())
-            {
-                foreach (var phantomGroup in subPages
-                    .Select(p => p.Location.GetRelative(curLoc).GetRoot())
-                    .Distinct(m_Comparer))
-                {
-                    var phantomPage = new PhantomPage(phantomGroup);
-
-                    ProcessChildPage(phantomPage);
-                }
-            }
-            else
+            if(children.Any())
             {
                 var usedNames = new List<string>();
 
@@ -412,6 +401,20 @@ namespace Xarial.Docify.Core.Composer
                     {
                         parent.SubPages.Add(page);
                     }
+                }
+            }
+
+            var phantomPages = subPages.Intersect(pages);
+
+            if (phantomPages.Any())
+            {
+                foreach (var phantomGroup in phantomPages
+                    .Select(p => p.Location.GetRelative(curLoc).GetRoot())
+                    .Distinct(m_Comparer))
+                {
+                    var phantomPage = new PhantomPage(phantomGroup);
+
+                    ProcessChildPage(phantomPage);
                 }
             }
 

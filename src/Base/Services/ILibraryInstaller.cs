@@ -8,14 +8,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Xarial.Docify.Core.Exceptions
+namespace Xarial.Docify.Base.Services
 {
-    public class DuplicatePluginException : UserMessageException
+    public interface ILibraryInstaller
     {
-        public DuplicatePluginException(string pluginName) 
-            : base($"Plugin '{pluginName}' contains more than one plugin") 
-        {
-        }
+        Task<Version> GetCurrentVersion();
+        Task<Version> GetLatestAvailableVersion(Version appVersion);
+        Task Install(Version version);
     }
 }

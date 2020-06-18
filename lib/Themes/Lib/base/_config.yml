@@ -16,3 +16,5 @@ plugins:
 title-attribute: caption
 ignore:
   - _config.yml
+  - .git\*
+  - .gitignore

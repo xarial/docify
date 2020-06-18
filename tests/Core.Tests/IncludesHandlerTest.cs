@@ -366,5 +366,31 @@ namespace Core.Tests
 
             Assert.AreEqual("abcxyzabc_page1.html_a1=z_page1.html__page1.html___abc_page1.html_", res1);
         }
+
+        [Test]
+        public async Task ParseParameters_EscapedInclude()
+        {
+            IContextMetadata data = null;
+
+            var mock = new Mock<IDynamicContentTransformer>();
+            mock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ContextModel>()))
+                .Returns(new Func<string, string, IContextModel, Task<string>>(
+                    (c, k, m) => Task.FromResult("---")));
+
+            var handler = new IncludesHandler(mock.Object, new Mock<IIncludesHandlerExtension>().Object);
+
+            var s = new Site("", new PageMock("", ""), null);
+            s.Includes.Add(new TemplateMock("include", ""));
+
+            var res1 = await handler.ResolveAll("\\{% include %}", s, s.MainPage, "");
+            var res2 = await handler.ResolveAll("\\\\{% include %}", s, s.MainPage, "");
+            var res3 = await handler.ResolveAll("\\\\\\{% include %}", s, s.MainPage, "");
+            var res4 = await handler.ResolveAll("abc \\{% include %}xyz", s, s.MainPage, "");
+                        
+            Assert.AreEqual("{% include %}", res1);
+            Assert.AreEqual("\\\\---", res2);
+            Assert.AreEqual("\\\\\\---", res3);
+            Assert.AreEqual("abc {% include %}xyz", res4);
+        }
     }
 }

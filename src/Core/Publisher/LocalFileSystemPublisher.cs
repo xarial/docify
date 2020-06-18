@@ -28,7 +28,7 @@ namespace Xarial.Docify.Core.Publisher
 
         public LocalFileSystemPublisher(IPublisherExtension ext, ILogger logger)
             : this(new System.IO.Abstractions.FileSystem(), ext, logger, 
-                  new LocalFileSystemTargetDirectoryCleaner(new System.IO.Abstractions.FileSystem(), true))
+                  new LocalFileSystemTargetDirectoryCleaner())
         {
         }
 

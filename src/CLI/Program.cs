@@ -59,20 +59,32 @@ namespace Xarial.Docify.CLI
                 .WithNotParsed(e => Environment.Exit(1));
 
             try
-            {
-                if (buildOpts != null)
+            {   
+                if (serveOpts != null)
                 {
-                    var engine = new DocifyEngine(buildOpts.SourceDirectories.ToArray(),
-                        buildOpts.OutputDirectory, buildOpts.Library?.ToArray(), 
+                    var engine = new DocifyServeEngine(serveOpts.SourceDirectories?.ToArray(),
+                        serveOpts.OutputDirectory, serveOpts.Library?.ToArray(),
+                        serveOpts.SiteUrl, serveOpts.Environment, serveOpts.Verbose, 
+                        serveOpts.HttpPort, serveOpts.HttpsPort);
+
+                    m_Logger = engine.Resolve<ILogger>();
+
+                    await engine.Serve(() =>
+                    {
+                        m_Logger.LogInformation("Press any key to close host");
+                        Console.ReadLine();
+                        return Task.CompletedTask;
+                    });
+                }
+                else if (buildOpts != null)
+                {
+                    var engine = new DocifyEngine(buildOpts.SourceDirectories?.ToArray(),
+                        buildOpts.OutputDirectory, buildOpts.Library?.ToArray(),
                         buildOpts.SiteUrl, buildOpts.Environment, buildOpts.Verbose);
 
                     m_Logger = engine.Resolve<ILogger>();
 
                     await engine.Build();
-                }
-                else if (serveOpts != null)
-                {
-                    throw new NotSupportedException("This option is not supported");
                 }
                 else if (genManOpts != null)
                 {

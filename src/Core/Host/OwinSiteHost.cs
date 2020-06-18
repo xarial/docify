@@ -1,4 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿//*********************************************************************
+//Docify
+//Copyright(C) 2020 Xarial Pty Limited
+//Product URL: https://docify.net
+//License: https://docify.net/license/
+//*********************************************************************
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
@@ -40,8 +47,10 @@ namespace Xarial.Docify.Core.Host
             m_Logger = logger;
         }
 
-        public async Task Host(ILocation site, Func<Task> hostCalback)
+        public async Task Host(ILocation siteLoc, Func<Task> hostCalback)
         {
+            var sitePath = siteLoc.ToPath();
+
             var hostBuilder = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
@@ -55,7 +64,7 @@ namespace Xarial.Docify.Core.Host
                     {
                         var opts = new FileServerOptions()
                         {
-                            FileProvider = new PhysicalFileProvider(site.ToPath()),
+                            FileProvider = new PhysicalFileProvider(sitePath),
                             EnableDefaultFiles = true,
                         };
 
@@ -69,7 +78,7 @@ namespace Xarial.Docify.Core.Host
             
             await host.StartAsync();
 
-            m_Logger.LogInformation($"'{site.ToPath()}' is served at {m_HttpUrl} and {m_HttpsUrl}");
+            m_Logger.LogInformation($"'{sitePath}' is served at {m_HttpUrl} and {m_HttpsUrl}");
 
             await hostCalback.Invoke();
 

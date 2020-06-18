@@ -85,6 +85,8 @@ namespace Xarial.Docify.CLI
                     m_Logger = engine.Resolve<ILogger>();
 
                     await engine.Build();
+
+                    m_Logger.LogInformation($"Build completed. Site has been published to '{buildOpts.OutputDirectory}'");
                 }
                 else if (genManOpts != null)
                 {

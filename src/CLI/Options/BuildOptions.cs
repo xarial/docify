@@ -14,11 +14,11 @@ namespace Xarial.Docify.CLI.Options
     [Verb("build", HelpText = "Builds the static site from source")]
     public class BuildOptions : BaseOptions
     {
-        [Option('s', "src", Required = true, HelpText = "Source directories")]
+        [Option('s', "src", Required = false, HelpText = "Source directories. If not specified, current directory is used")]
         public IEnumerable<string> SourceDirectories { get; set; }
 
         [Option('o', "out", Required = true, HelpText = "Output directory")]
-        public string OutputDirectory { get; set; }
+        public virtual string OutputDirectory { get; set; }
 
         [Option('u', "url", Required = false, HelpText = "Target site url")]
         public string SiteUrl { get; set; } = "";

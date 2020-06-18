@@ -51,7 +51,8 @@ namespace Core.Tests
                 new Mock<ILibraryLoader>().Object,
                 new Mock<IPluginsManager>().Object,
                 new Configuration(), 
-                new Mock<ILoaderExtension>().Object);
+                new Mock<ILoaderExtension>().Object,
+                new Mock<ILogger>().Object);
             
             var res = await loader.Load(new ILocation[] 
             {
@@ -80,7 +81,8 @@ namespace Core.Tests
                 new Mock<ILibraryLoader>().Object,
                 new Mock<IPluginsManager>().Object,
                 new Configuration(),
-                new Mock<ILoaderExtension>().Object);
+                new Mock<ILoaderExtension>().Object,
+                new Mock<ILogger>().Object);
 
             await AssertException.ThrowsOfTypeAsync<DuplicateFileException>(async () =>
             {
@@ -114,7 +116,8 @@ namespace Core.Tests
                 libLoaderMock.Object,
                 new Mock<IPluginsManager>().Object,
                 new Configuration() { Components = new string[] { "A" }.ToList() },
-                new Mock<ILoaderExtension>().Object);
+                new Mock<ILoaderExtension>().Object,
+                new Mock<ILogger>().Object);
 
             var res = await loader.Load(new ILocation[0]).ToListAsync();
 
@@ -160,7 +163,9 @@ namespace Core.Tests
             conf.ThemesHierarchy.Add("A");
 
             var loader = new ProjectLoader(fileLoaderMock.Object,
-                libLoaderMock.Object, new Mock<IPluginsManager>().Object, conf, new Mock<ILoaderExtension>().Object);
+                libLoaderMock.Object, new Mock<IPluginsManager>().Object, conf, 
+                new Mock<ILoaderExtension>().Object, 
+                new Mock<ILogger>().Object);
             
             var res = await loader.Load(new ILocation[] { Location.FromPath("") }).ToListAsync();
 
@@ -220,7 +225,8 @@ namespace Core.Tests
             conf.ThemesHierarchy.Add("B");
 
             var loader = new ProjectLoader(fileLoaderMock.Object,
-                libLoader.Object, new Mock<IPluginsManager>().Object, conf, new Mock<ILoaderExtension>().Object);
+                libLoader.Object, new Mock<IPluginsManager>().Object, conf, new Mock<ILoaderExtension>().Object,
+                new Mock<ILogger>().Object);
 
             var res = await loader.Load(new ILocation[] { Location.FromPath("") }).ToListAsync();
             
@@ -263,7 +269,7 @@ namespace Core.Tests
             };
 
             var loader = new ProjectLoader(fileLoaderMock.Object,
-                libLoader.Object, new Mock<IPluginsManager>().Object, conf, new Mock<ILoaderExtension>().Object);
+                libLoader.Object, new Mock<IPluginsManager>().Object, conf, new Mock<ILoaderExtension>().Object, new Mock<ILogger>().Object);
 
             Assert.Throws<DuplicateComponentSourceFileException>(
                 () => loader.Load(new ILocation[] { Location.FromPath("") }).ToEnumerable().ToList());

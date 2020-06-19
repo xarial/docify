@@ -2,7 +2,7 @@
 caption: Custom Library
 title: Managing custom library in Docify
 description: Creating reusable library components, plugins and themes in Docify
-order: 8
+order: 10
 ---
 Library is a way to reuse components, define plugins and themes. In addition to [standard library](/standard-library/) it is possible to create custom library stored on the local drive.
 

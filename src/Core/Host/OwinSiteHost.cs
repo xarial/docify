@@ -84,6 +84,8 @@ namespace Xarial.Docify.Core.Host
 
             await host.StopAsync();
 
+            host.Dispose();
+
             m_Logger.LogInformation("Host is closed");
         }
     }

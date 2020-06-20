@@ -73,6 +73,14 @@ To use standard library specify * as a library path
 > docify build --src C:\MySite C:\MySiteDir2 --out C:\MyOutput --url https://example.com --l *
 ~~~
 
+### Using Environment
+
+Environment is an optional *--env* parameter allowing to define the current environment of the site, e.g. test, staging, production. Some [includes](/includes/) or [plugins](/plugins/) may refer the environment to enable or disable certain functionality
+
+~~~
+> docify build --env test
+~~~
+
 ## Serving The Site
 
 For design purpose, site can be served, in this case site will be built to temp location (unless explicitly specified) and served in the *localhost* so it can be accessed i nany browser without the need to configure the host.

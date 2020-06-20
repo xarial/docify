@@ -7,6 +7,36 @@ image:
 ---
 This component will add the *feed.xml* containing the [RSS feed](https://en.wikipedia.org/wiki/RSS).
 
+~~~ xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Site Title</title>
+        <description>Site Description</description>
+        <link>https://www.example.com</link>
+        <image>
+            <url>/logo.png</url>
+            <title>Site Title</title>
+            <link>https://www.example.com</link>
+        </image>
+        <lastBuildDate>Sat, 20 Jun 2020 08:22:31 GMT</lastBuildDate>
+        <atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
+      <item>
+          <title>Page 1</title>
+          <description>Description of page1</description>
+          <link>/page1/</link>
+          <guid isPermaLink="true">/page1/</guid>
+      </item>
+      <item>
+          <title>Page 2</title>
+          <description>Description of page2</description>
+          <link>/page2/</link>
+          <guid isPermaLink="true">/page2/</guid>
+      </item>
+    </channel>
+</rss>
+~~~
+
 This component is included into the [base theme](/standard-library/themes/base/)
 
 ## Parameters
@@ -26,7 +56,7 @@ Data will be extracted from each page attributes
 
 ~~~
 title: Page Title
-description: page description
+description: Page description
 categories:
   - Category1
   - Category2

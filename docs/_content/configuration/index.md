@@ -64,7 +64,7 @@ default-layout: default
 
 ## Environment Specific Configuration
 
-Environment specific configuration file can be specified by adding the environment as the suffix:
+[Environment](/getting-started#using-environment) specific configuration file can be specified by adding the environment as the suffix:
 
 ~~~
 _config.{Environment Name}.yml

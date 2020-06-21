@@ -45,6 +45,7 @@ $social-links:
   nuget: https://www.nuget.org/profiles/Xarial
   github: https://github.com/xarial
   rss: /feed.xml
+  reddit: https://www.reddit.com/r/docify/
   email: info@xarial.com
 ^script-style-optimizer:
   minify-css: true

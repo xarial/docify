@@ -23,7 +23,7 @@ stages:
   - job:
     pool:
       name: 'Azure Pipelines'
-      vmImage: windows-latest
+      vmImage: ubuntu-latest
 
     steps:
       - task: UseDotNet@2

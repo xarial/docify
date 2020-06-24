@@ -65,7 +65,7 @@ Themes are encouraged to have overridable files so the consumer can tailor the t
 
 The theme itself can have a parent theme. In this case, it should have a *_config.yml* file with the *theme* attribute. For example, if the *_config.yml* of the theme in the example above will have the following attribute, the files from the *base* theme will be also merged to a site following the same merging and overriding rules.
 
-~~~ jagged-bottom
+~~~ yaml jagged-bottom
 theme: base
 ~~~
 

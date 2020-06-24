@@ -36,15 +36,16 @@ $cookie-consent:
   enable: true
   message: This website uses cookies to ensure you get the best experience on our website. By using our website you agree on the following <a href="/cookies-policy/">Cookie Policy</a>, <a href="/privacy-policy/">Privacy Policy</a>, and <a href="/terms-of-use">Terms Of Use</a>
 $google-analytics:
-  traking-code:
+  traking-code: UA-160707877-4
 $disqus:
-  short-name:
+  short-name: docify
 $social-links:
   linkedin: https://www.linkedin.com/company/xarial
   youtube: https://www.youtube.com/channel/UC81d0RDT1MUNAD6nzvKBJfA
   nuget: https://www.nuget.org/profiles/Xarial
   github: https://github.com/xarial
   rss: /feed.xml
+  reddit: https://www.reddit.com/r/docify/
   email: info@xarial.com
 ^script-style-optimizer:
   minify-css: true

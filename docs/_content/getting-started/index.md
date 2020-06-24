@@ -51,6 +51,8 @@ It is possible to specify multiple folders for compilation
 
 This can be useful to separate the content and the frames and layouts.
 
+If *--src* is not specified, current working folder is used as the source for the site.
+
 ### Using Libraries
 
 In order to use [custom library](/custom-library/) use *--l* switch and specify the path to the library directory
@@ -69,6 +71,30 @@ To use standard library specify * as a library path
 
 ~~~
 > docify build --src C:\MySite C:\MySiteDir2 --out C:\MyOutput --url https://example.com --l *
+~~~
+
+### Using Environment
+
+Environment is an optional *--env* parameter allowing to define the current environment of the site, e.g. test, staging, production. Some [includes](/includes/) or [plugins](/plugins/) may refer the environment to enable or disable certain functionality
+
+~~~
+> docify build --env test
+~~~
+
+## Serving The Site
+
+For design purpose, site can be served, in this case site will be built to temp location (unless explicitly specified) and served in the *localhost* so it can be accessed i nany browser without the need to configure the host.
+
+~~~
+> docify serve
+~~~
+
+The url of the site as well as temp directory will be output to the console. Press any key to stop the host and delete all temp files.
+
+Explore more options of *serve* command by using the *--help* switch
+
+~~~
+> docify serve --help
 ~~~
 
 ## Troubleshooting

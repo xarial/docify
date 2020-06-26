@@ -437,7 +437,7 @@ namespace Xarial.Docify.Core.Composer
                 if (string.IsNullOrEmpty(fileName))
                 {
                     //file with no extension
-                    fileName = a.Location.GetRoot();
+                    fileName = a.Location.Path.Last();
                 }
 
                 return new Asset(fileName, a.Content, a.Id);

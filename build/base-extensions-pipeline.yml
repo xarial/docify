@@ -7,6 +7,8 @@ trigger:
     include:
     - src/Base.Extensions/*
 
+name: '$(Date:yyyyMMdd).$(Rev:r)[$(BuildID)]'
+
 stages:
 - template: templates/reference.yml
   parameters:

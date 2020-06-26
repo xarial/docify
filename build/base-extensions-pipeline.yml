@@ -1,0 +1,13 @@
+trigger:
+  branches:
+    include:
+    - master
+    - dev
+  paths:
+    include:
+    - src/Base.Extensions/*
+
+stages:
+- template: templates/reference.yml
+  parameters:
+    project: src/Base.Extensions/Base.Extensions.csproj

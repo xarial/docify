@@ -26,7 +26,7 @@ stages:
         displayName: 'NuGet restore'
         inputs:
           command: restore
-          projects: '**\*.sln'
+          projects: '${{ parameters.project }}'
 
       - task: VSBuild@1
         displayName: 'Build preview version'
@@ -62,7 +62,7 @@ stages:
 - stage: 'PublishPreviewNuGetPackage'
   displayName: 'Publish Preview NuGet Package to xarial nuget feed'
   dependsOn: 'Build'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'), ne(variables['Build.Reason'], 'PullRequest'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/references'), ne(variables['Build.Reason'], 'PullRequest'))
   jobs:
   - deployment:
     pool:

@@ -1,7 +1,5 @@
 parameters:
-  project : ''
-
-name: '$(Date:yyyyMMdd).$(Rev:r)[$(BuildID)]'
+  project: ''
 
 stages:
 

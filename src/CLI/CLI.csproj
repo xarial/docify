@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Xarial.Docify.CLI</RootNamespace>
-	<AssemblyName>Docify</AssemblyName>
+	  <AssemblyName>Docify</AssemblyName>
     <StartupObject>Xarial.Docify.CLI.Program</StartupObject>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <PackageId>Docify</PackageId>
@@ -68,5 +68,5 @@
     <Copy SourceFiles="@(LibDir)" DestinationFiles="@(LibDir->'%(TargetPath)')" OverwriteReadOnlyFiles="true" />
   </Target>
   
-  <Import Project="..\..\common\common.props" />
+  <Import Project="..\..\common\common.cli.props" />
 </Project>

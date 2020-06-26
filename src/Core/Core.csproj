@@ -22,5 +22,5 @@
     <ProjectReference Include="..\Base.Extensions\Base.Extensions.csproj" />
     <ProjectReference Include="..\Base\Base.csproj" />
   </ItemGroup>
-  <Import Project="..\..\common\common.props" />
+  <Import Project="..\..\common\common.cli.props" />
 </Project>

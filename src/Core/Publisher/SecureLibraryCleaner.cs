@@ -114,7 +114,7 @@ namespace Xarial.Docify.Core.Publisher
 
                     m_FileSystem.File.Delete(m_ManifestFilePath);
 
-                    foreach (var dir in dirs.OrderByDescending(d => d.Count(c => c == '\\'))) 
+                    foreach (var dir in dirs.OrderByDescending(d => d.Count(c => c == LocationExtension.PATH_SEP))) 
                     {
                         if (!m_FileSystem.Directory.EnumerateFileSystemEntries(dir).Any())
                         {

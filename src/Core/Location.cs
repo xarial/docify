@@ -24,7 +24,8 @@ namespace Xarial.Docify.Core
             public static ILocation DefaultLibraryManifestFilePath 
                 => FromPath(System.IO.Path.Combine(Environment.GetFolderPath(
                     Environment.SpecialFolder.LocalApplicationData),
-                    "Xarial\\Docify\\Library\\library.manifest"));
+                    string.Join(LocationExtension.PATH_SEP, 
+                    "Xarial", "Docify", "Library", "library.manifest")));
         }
 
         public static Location Empty => new Location(Enumerable.Empty<string>());
@@ -38,7 +39,7 @@ namespace Xarial.Docify.Core
             {
                 if (path.StartsWith(relTo, StringComparison.CurrentCultureIgnoreCase))
                 {
-                    path = path.Substring(relTo.Length).TrimStart('\\');
+                    path = path.Substring(relTo.Length).TrimStart(LocationExtension.PATH_SEP);
                 }
             }
 
@@ -58,7 +59,7 @@ namespace Xarial.Docify.Core
 
             if (!string.IsNullOrEmpty(dir))
             {
-                blocks = dir.Split(new string[] { LocationExtension.PATH_SEP }, StringSplitOptions.None).ToArray();
+                blocks = dir.Split(new string[] { LocationExtension.PATH_SEP.ToString() }, StringSplitOptions.None).ToArray();
             }
             else
             {
@@ -101,7 +102,7 @@ namespace Xarial.Docify.Core
         {
             var blocks = loc.Split(new string[] 
             {
-                LocationExtension.PATH_SEP,
+                LocationExtension.PATH_SEP.ToString(),
                 LocationExtension.URL_SEP, 
                 LocationExtension.ID_SEP 
             }, StringSplitOptions.None).ToArray();

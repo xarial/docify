@@ -231,7 +231,7 @@ namespace Xarial.Docify.Core.Composer
 
                 if (usedIncludes.Contains(name, m_Comparer))
                 {
-                    throw new DuplicateTemplateException(name);
+                    throw new DuplicateTemplateException($"include {name}");
                 }
 
                 usedIncludes.Add(name);
@@ -301,7 +301,7 @@ namespace Xarial.Docify.Core.Composer
 
             if (layouts.ContainsKey(layoutName))
             {
-                throw new DuplicateTemplateException(layoutName);
+                throw new DuplicateTemplateException($"layout {layoutName}");
             }
 
             layouts.Add(layoutName, layout);

@@ -29,17 +29,17 @@ namespace Xarial.Docify.Core.Library
     {
         private readonly string m_LibInfoUrl;
         private readonly ILocation m_ManifestFileLocation;
-        private readonly string m_PublicKeyXml;
         private readonly IPublisher m_DestWriter;
+        private readonly ILogger m_Logger;
         private readonly RSA m_Rsa;
 
         public AppCenterSecureLibraryInstaller(string libInfoUrl,
-            ILocation manifestFileLoc, string publicKeyXml, IPublisher destWriter) 
+            ILocation manifestFileLoc, string publicKeyXml, IPublisher destWriter, ILogger logger) 
         {
             m_LibInfoUrl = libInfoUrl;
             m_ManifestFileLocation = manifestFileLoc;
-            m_PublicKeyXml = publicKeyXml;
             m_DestWriter = destWriter;
+            m_Logger = logger;
 
             m_Rsa = RSA.Create();
             m_Rsa.FromXmlString(publicKeyXml);
@@ -80,6 +80,8 @@ namespace Xarial.Docify.Core.Library
                 var appCenterVersionInfo = JObject.Parse(await new HttpClient().GetStringAsync(lib.DownloadUrl));
 
                 var downloadUrl = appCenterVersionInfo.Value<string>("download_url");
+
+                m_Logger.LogInformation($"Installing library to {destLoc.ToPath()}", true);
 
                 await m_DestWriter.Write(destLoc, LoadLibraryFiles(downloadUrl, lib.Signature));
             }

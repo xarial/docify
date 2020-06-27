@@ -18,7 +18,7 @@ namespace Xarial.Docify.Base
     /// </summary>
     public static class LocationExtension
     {
-        public const string PATH_SEP = "\\";
+        public static readonly char PATH_SEP = System.IO.Path.DirectorySeparatorChar;
         public const string URL_SEP = "/";
         public const string ID_SEP = "::";
 
@@ -37,7 +37,23 @@ namespace Xarial.Docify.Base
         /// <returns>Path</returns>
         public static string ToPath(this ILocation loc, string root = "")
         {
-            return FormFullLocation(loc, root, PATH_SEP);
+            var fullPath = new List<string>();
+            if (!string.IsNullOrEmpty(root)) 
+            {
+                fullPath.Add(root);
+            }
+
+            if (loc.Path?.Any() == true) 
+            {
+                fullPath.AddRange(loc.Path);
+            }
+
+            if (!string.IsNullOrEmpty(loc.FileName)) 
+            {
+                fullPath.Add(loc.FileName);
+            }
+
+            return System.IO.Path.Combine(fullPath.ToArray());
         }
 
         /// <summary>
@@ -262,7 +278,7 @@ namespace Xarial.Docify.Base
             else
             {
                 filters = filters.Select(f => f
-                    .Replace(PATH_SEP, ID_SEP)
+                    .Replace(PATH_SEP.ToString(), ID_SEP)
                     .Replace(URL_SEP, ID_SEP)).ToArray();
             }
 

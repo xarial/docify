@@ -14,6 +14,7 @@ using Xarial.Docify.Core.Data;
 using Xarial.Docify.Core.Plugin.Extensions;
 using System.Text;
 using Xarial.Docify.Base.Plugins;
+using System.Linq;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -68,11 +69,11 @@ namespace Xarial.Docify.Core.Compiler
 
             if (!baseLoc.IsEmpty())
             {
-                thisLoc = baseLoc.Combine(new Location(PAGE_FILE_NAME, page.Name));
+                thisLoc = baseLoc.Combine(new Location("", PAGE_FILE_NAME, new string[] { page.Name }));
             }
             else
             {
-                thisLoc = new Location(PAGE_FILE_NAME);
+                thisLoc = new Location("", PAGE_FILE_NAME, Enumerable.Empty<string>());
             }
 
             ILocation pageLoc;
@@ -83,7 +84,7 @@ namespace Xarial.Docify.Core.Compiler
             }
             else
             {
-                pageLoc = baseLoc.Combine(new Location(page.Name));
+                pageLoc = baseLoc.Combine(new Location("", page.Name, Enumerable.Empty<string>()));
             }
 
             if (!(page is IPhantomPage))
@@ -109,7 +110,7 @@ namespace Xarial.Docify.Core.Compiler
         {
             foreach (var asset in folder.Assets)
             {
-                var thisLoc = baseLoc.Combine(new Location(asset.FileName));
+                var thisLoc = baseLoc.Combine(new Location("", asset.FileName, Enumerable.Empty<string>()));
 
                 if (thisLoc.Matches(m_Config.CompilableAssetsFilter))
                 {
@@ -124,7 +125,7 @@ namespace Xarial.Docify.Core.Compiler
 
             foreach (var subFolder in folder.Folders)
             {
-                var folderLoc = baseLoc.Combine(new Location("", subFolder.Name));
+                var folderLoc = baseLoc.Combine(new Location("", "", new string[] { subFolder.Name }));
                 await foreach (var subFolderAsset in CompileAssets(subFolder, page, site, folderLoc))
                 {
                     yield return subFolderAsset;

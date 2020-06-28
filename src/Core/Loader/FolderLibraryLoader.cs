@@ -47,7 +47,7 @@ namespace Xarial.Docify.Core.Loader
         {
             try
             {
-                var compsLoc = m_Location.Combine(new Location(new string[] { subFolder, itemName }));
+                var compsLoc = m_Location.Combine(new Location("", "", new string[] { subFolder, itemName }));
                 return m_FileLoader.LoadFolder(compsLoc, filters);
             }
             catch (Exception ex)
@@ -58,7 +58,7 @@ namespace Xarial.Docify.Core.Loader
 
         private bool ContainsLibraryItem(string itemType, string itemName) 
         {
-            return m_FileLoader.Exists(m_Location.Combine(new Location("", itemType, itemName)));
+            return m_FileLoader.Exists(m_Location.Combine(new Location("", "", new string[] { itemType, itemName })));
         }
     }
 }

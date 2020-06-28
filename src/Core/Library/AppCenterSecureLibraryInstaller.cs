@@ -75,7 +75,7 @@ namespace Xarial.Docify.Core.Library
             {
                 var lib = await FindLibrary(null, version);
 
-                var destLoc = new Location("", m_ManifestFileLocation.Path.ToArray());
+                var destLoc = new Location(m_ManifestFileLocation.Root, "", m_ManifestFileLocation.Segments);
 
                 var appCenterVersionInfo = JObject.Parse(await new HttpClient().GetStringAsync(lib.DownloadUrl));
 
@@ -138,7 +138,7 @@ namespace Xarial.Docify.Core.Library
                     if (!m_Rsa.VerifyData(buffer, signature,
                             HashAlgorithmName.SHA256, RSASignaturePadding.Pss))
                     {
-                        throw new DigitalSignatureMismatchException(Location.FromUrl(url));
+                        throw new DigitalSignatureMismatchException(url);
                     }
                 }
 

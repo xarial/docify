@@ -18,41 +18,26 @@ namespace Xarial.Docify.Lib.Plugins.Common.Data
 
         public static ILocation FromPath(string path)
         {
-            var isRel = !PathSeparators.Any(s => path.StartsWith(s));
-            var parts = path.Split(PathSeparators, StringSplitOptions.RemoveEmptyEntries);
-
-            var offset = 0;
-            var fileName = "";
-
-            if (parts.Any() && System.IO.Path.HasExtension(parts.Last()))
-            {
-                offset = 1;
-                fileName = parts.Last();
-            }
-
-            var dir = parts.Take(parts.Length - offset);
-
-            if (!isRel)
-            {
-                dir = new string[] { "" }.Concat(dir);
-            }
-
-            return new PluginLocation(fileName, dir);
+            LocationExtension.ParsePath(path, out string root, out string fileName, out string[] segments);
+            return new PluginLocation(root, fileName, segments);
         }
-
-        public IReadOnlyList<string> Path { get; }
-
+        
         public string FileName { get; }
 
-        public PluginLocation(string fileName, IEnumerable<string> path)
+        public IReadOnlyList<string> Segments { get; }
+
+        public string Root { get; }
+
+        public PluginLocation(string root, string fileName, IEnumerable<string> path)
         {
+            Root = root;
             FileName = fileName;
-            Path = new List<string>(path);
+            Segments = new List<string>(path);
         }
 
-        public ILocation Copy(string fileName, IEnumerable<string> path)
+        public ILocation Copy(string root, string fileName, IEnumerable<string> path)
         {
-            return new PluginLocation(fileName, path);
+            return new PluginLocation(root, fileName, path);
         }
 
         public override string ToString()

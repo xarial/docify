@@ -86,9 +86,9 @@ namespace Core.Tests
         public void ContainsTest() 
         {
             var lib = new List<string>();
-            lib.Add("D:::lib::_components::c1");
-            lib.Add("D:::lib::_themes::t1");
-            lib.Add("D:::lib::_plugins::p1");
+            lib.Add("D:\\::lib::_components::c1");
+            lib.Add("D:\\::lib::_themes::t1");
+            lib.Add("D:\\::lib::_plugins::p1");
 
             var fileLoaderMock = new Mock<IFileLoader>();
             fileLoaderMock.Setup(m => m.Exists(It.IsAny<ILocation>()))

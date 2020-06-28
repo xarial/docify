@@ -91,7 +91,7 @@ namespace Xarial.Docify.Core.Loader
                     if (!m_Rsa.VerifyData(file.Content, fileManifest.Signature,
                         HashAlgorithmName.SHA256, RSASignaturePadding.Pss))
                     {
-                        throw new DigitalSignatureMismatchException(file.Location);
+                        throw new DigitalSignatureMismatchException(file.Location.ToId());
                     }
 
                     yield return file;

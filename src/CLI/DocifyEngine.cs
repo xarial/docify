@@ -326,7 +326,7 @@ namespace Xarial.Docify.CLI
                 manifestPath, new BaseValueSerializer<ILocation>(null, x => Location.FromString(x)));
 
             ILocation libLoc = Location.FromString(manifestPath);
-            libLoc = libLoc.Copy("", libLoc.Path);
+            libLoc = libLoc.Copy(libLoc.Root, "", libLoc.Segments);
 
             return ctx.Resolve<SecureLibraryLoader>(
                    new TypedParameter(typeof(ILocation), libLoc),

@@ -151,7 +151,7 @@ namespace Xarial.Docify.Lib.Plugins.ScriptStyleOptimizer
                 var dir = parts.Take(parts.Length - 1);
                 var fileName = parts.Last();
 
-                yield return new PluginFile(bundle.Value.ToString(), outLoc.Combine(new PluginLocation(fileName, dir)));
+                yield return new PluginFile(bundle.Value.ToString(), outLoc.Combine(new PluginLocation("", fileName, dir)));
             }
 
             await foreach (var defStyle in RetrieveDeferredAssets(

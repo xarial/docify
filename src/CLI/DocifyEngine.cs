@@ -307,7 +307,7 @@ namespace Xarial.Docify.CLI
                             }
                             else
                             {
-                                throw new UserMessageException("When specifying path to the library manifest file, the path to public key XML must be specified as well by separating path with pipe | symbol");
+                                throw new UserMessageException($"When specifying path '{libPath}' to the library manifest file, the path to public key XML must be specified as well by separating path with pipe | symbol or use * for the standard library");
                             }
                         }
                     }

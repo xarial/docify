@@ -82,7 +82,7 @@ namespace Xarial.Docify.Core.Publisher
 
                                     var curFileDir = itemDir;
 
-                                    foreach (var pathPart in file.Name.Path)
+                                    foreach (var pathPart in file.Name.Segments)
                                     {
                                         curFileDir = Path.Combine(curFileDir, pathPart);
 
@@ -114,7 +114,7 @@ namespace Xarial.Docify.Core.Publisher
 
                     m_FileSystem.File.Delete(m_ManifestFilePath);
 
-                    foreach (var dir in dirs.OrderByDescending(d => d.Count(c => c == LocationExtension.PATH_SEP))) 
+                    foreach (var dir in dirs.OrderByDescending(d => d.Count(c => c == Path.DirectorySeparatorChar))) 
                     {
                         if (!m_FileSystem.Directory.EnumerateFileSystemEntries(dir).Any())
                         {

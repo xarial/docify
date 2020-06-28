@@ -18,7 +18,9 @@ namespace Xarial.Docify.Base
         /// <summary>
         /// Breadcrumb path
         /// </summary>
-        IReadOnlyList<string> Path { get; }
+        IReadOnlyList<string> Segments { get; }
+        
+        string Root { get; }
 
         /// <summary>
         /// Name of the file or an empty string for a folder
@@ -31,6 +33,6 @@ namespace Xarial.Docify.Base
         /// <param name="fileName">Name of the file</param>
         /// <param name="path">Path</param>
         /// <returns>Instance of this location</returns>
-        ILocation Copy(string fileName, IEnumerable<string> path);
+        ILocation Create(string root, string fileName, IEnumerable<string> path);
     }
 }

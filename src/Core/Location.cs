@@ -37,9 +37,9 @@ namespace Xarial.Docify.Core
 
         public static Location FromString(string loc)
         {
-            LocationExtension.ParseRelative(loc, out string fileName, out string[] segments);
+            LocationExtension.Parse(loc, out string root, out string fileName, out string[] segments);
 
-            return new Location("", fileName, segments);
+            return new Location(root, fileName, segments);
         }
 
         public IReadOnlyList<string> Segments { get; }
@@ -60,7 +60,7 @@ namespace Xarial.Docify.Core
             return this.ToId();
         }
 
-        public ILocation Copy(string root, string fileName, IEnumerable<string> path)
+        public ILocation Create(string root, string fileName, IEnumerable<string> path)
         {
             return new Location(root, fileName, path.ToArray());
         }

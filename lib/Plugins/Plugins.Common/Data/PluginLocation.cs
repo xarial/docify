@@ -35,7 +35,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Data
             Segments = new List<string>(path);
         }
 
-        public ILocation Copy(string root, string fileName, IEnumerable<string> path)
+        public ILocation Create(string root, string fileName, IEnumerable<string> path)
         {
             return new PluginLocation(root, fileName, path);
         }

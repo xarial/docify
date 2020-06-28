@@ -64,7 +64,7 @@ namespace Xarial.Docify.Lib.Tools
             Segments = new List<string>(path);
         }
 
-        public ILocation Copy(string root, string fileName, IEnumerable<string> path)
+        public ILocation Create(string root, string fileName, IEnumerable<string> path)
         {
             return new UrlLocation(fileName, path);
         }

@@ -45,7 +45,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
 
         public static IAssetsFolder FindAssetsFolder(ISite site, IAssetsFolder page, ILocation path)
         {
-            var isRel = !path.Segments.Any() || !string.IsNullOrEmpty(path.Segments[0]);
+            var isRel = string.IsNullOrEmpty(path.Root);
 
             IAssetsFolder curFolder = null;
 
@@ -58,7 +58,7 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
                 curFolder = site.MainPage;
             }
 
-            foreach (var curDir in path.Segments.Skip(isRel ? 0 : 1))
+            foreach (var curDir in path.Segments)
             {
                 var nextDir = curFolder.Folders.FirstOrDefault(f => string.Equals(f.Name, curDir));
 

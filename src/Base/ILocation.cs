@@ -33,6 +33,6 @@ namespace Xarial.Docify.Base
         /// <param name="fileName">Name of the file</param>
         /// <param name="path">Path</param>
         /// <returns>Instance of this location</returns>
-        ILocation Copy(string root, string fileName, IEnumerable<string> path);
+        ILocation Create(string root, string fileName, IEnumerable<string> path);
     }
 }

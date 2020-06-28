@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Xarial.Docify.Base.Exceptions;
 
 namespace Xarial.Docify.Base
 {
@@ -135,7 +136,7 @@ namespace Xarial.Docify.Base
         {
             if (parent.IsFile())
             {
-                throw new Exception("Parent must not be a file");
+                throw new BaseUserMessageException($"Parent {parent.ToId()} must not be a file to check is in location");
             }
 
             if (string.Equals(loc.Root, parent.Root, StringComparison.CurrentCultureIgnoreCase)
@@ -174,7 +175,7 @@ namespace Xarial.Docify.Base
             }
             else
             {
-                throw new Exception($"'{loc.ToId()}' location is not within the '{relativeTo.ToId()}'");
+                throw new BaseUserMessageException($"'{loc.ToId()}' location is not within the '{relativeTo.ToId()}'");
             }
         }
 
@@ -234,7 +235,7 @@ namespace Xarial.Docify.Base
         {
             if (!loc.IsRelative()) 
             {
-                throw new Exception("Only relative paths are supported");
+                throw new BaseUserMessageException("Only relative paths are supported");
             }
 
             if (filters?.Any() != true)

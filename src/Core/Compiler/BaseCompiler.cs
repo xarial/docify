@@ -135,6 +135,8 @@ namespace Xarial.Docify.Core.Compiler
 
         private async Task<IFile> CompilePage(IPage page, ISite site, ILocation loc)
         {
+            m_Logger.LogInformation($"Compiling page: '{loc.ToId()}'", true);
+
             var url = loc.ToUrl();
 
             var content = await m_ContentTransformer.Transform(page.RawContent);
@@ -159,6 +161,8 @@ namespace Xarial.Docify.Core.Compiler
 
         private async Task<IFile> CompileAsset(IAsset asset, ISite site, IPage page, ILocation loc)
         {
+            m_Logger.LogInformation($"Compiling asset: '{loc.ToId()}'", true);
+
             var url = loc.ToUrl();
 
             var rawContent = asset.AsTextContent();

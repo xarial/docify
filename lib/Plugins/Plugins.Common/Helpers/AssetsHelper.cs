@@ -20,65 +20,22 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
     public static class AssetsHelper
     {
         public static IAsset FindAsset(ISite site, IAssetsFolder page, string path)
-            => FindAsset(site, page, PluginLocation.FromPath(path));
-
-        public static IAsset FindAsset(ISite site, IAssetsFolder page, ILocation path)
         {
-            if (!path.IsFile())
-            {
-                throw new PluginUserMessageException("Location is not a file");
-            }
-
-            var fileName = path.FileName;
-
-            var curFolder = FindAssetsFolder(site, page, path);
-
-            var asset = curFolder.Assets.FirstOrDefault(a => string.Equals(a.FileName, fileName));
-
-            if (asset == null)
-            {
-                throw new AssetNotFoundException(curFolder, fileName);
-            }
-
-            return asset;
+            var loc = PluginLocation.FromPath(path);
+            var folder = GetBaseFolder(site, page, loc);
+            return folder.FindAsset(loc);
         }
 
-        public static IAssetsFolder FindAssetsFolder(ISite site, IAssetsFolder page, ILocation path)
+        public static IAssetsFolder GetBaseFolder(ISite site, IAssetsFolder page, ILocation loc) 
         {
-            var isRel = string.IsNullOrEmpty(path.Root);
-
-            IAssetsFolder curFolder = null;
-
-            if (isRel)
+            if (loc.IsRelative())
             {
-                curFolder = page;
+                return page;
             }
             else
             {
-                curFolder = site.MainPage;
+                return site.MainPage;
             }
-
-            foreach (var curDir in path.Segments)
-            {
-                var nextDir = curFolder.Folders.FirstOrDefault(f => string.Equals(f.Name, curDir));
-
-                if (nextDir == null)
-                {
-                    if (curFolder is IPage)
-                    {
-                        nextDir = (curFolder as IPage).SubPages.FirstOrDefault(p => string.Equals(p.Name, curDir));
-                    }
-                }
-
-                if (nextDir == null)
-                {
-                    throw new AssetNotFoundException(curFolder, curDir);
-                }
-
-                curFolder = nextDir;
-            }
-
-            return curFolder;
         }
 
         public static void AddTextAsset(string content, IPage page, string path)
@@ -126,46 +83,6 @@ namespace Xarial.Docify.Lib.Plugins.Common.Helpers
                                 AddAsset(entryBuffer, page, entry.FullName);
                             }
                         }
-                    }
-                }
-            }
-        }
-
-        public static IEnumerable<IPage> GetAllPages(IPage page)
-        {
-            yield return page;
-
-            foreach (var childPage in page.SubPages)
-            {
-                foreach (var subPage in GetAllPages(childPage))
-                {
-                    yield return subPage;
-                }
-            }
-        }
-
-        public static IEnumerable<IAsset> GetAllAssets(IAssetsFolder folder)
-        {
-            foreach (var asset in folder.Assets)
-            {
-                yield return asset;
-            }
-
-            foreach (var subFolder in folder.Folders)
-            {
-                foreach (var subAsset in GetAllAssets(subFolder))
-                {
-                    yield return subAsset;
-                }
-            }
-
-            if (folder is IPage)
-            {
-                foreach (var subPage in (folder as IPage).SubPages)
-                {
-                    foreach (var subPageAsset in GetAllAssets(subPage))
-                    {
-                        yield return subPageAsset;
                     }
                 }
             }

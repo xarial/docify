@@ -9,6 +9,7 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using Xarial.Docify.Base;
+using Xarial.Docify.Base.Exceptions;
 using Xarial.Docify.Core;
 using Xarial.Docify.Core.Exceptions;
 
@@ -122,7 +123,7 @@ namespace Core.Tests
             Assert.IsTrue(r3);
             Assert.IsFalse(r4);
 
-            Assert.Throws<Exception>(() => l2.IsInLocation(l1));
+            Assert.Throws<BaseUserMessageException>(() => l2.IsInLocation(l1));
         }
 
         [Test]
@@ -142,8 +143,9 @@ namespace Core.Tests
             Assert.AreEqual("page.html", r1.ToId());
             Assert.AreEqual("dir3::dir4", r2.ToId());
             Assert.AreEqual("dir2::f1.txt", r3.ToId());
-            Assert.Throws<Exception>(() => l1.GetRelative(l3));
-            Assert.Throws<Exception>(() => l3.GetRelative(l4));
+            
+            Assert.Throws<BaseUserMessageException>(() => l1.GetRelative(l3));
+            Assert.Throws<BaseUserMessageException>(() => l3.GetRelative(l4));
         }
 
         [Test]
@@ -181,7 +183,7 @@ namespace Core.Tests
             Assert.IsTrue(r4);
             Assert.IsFalse(r5);
             Assert.IsTrue(r6);
-            Assert.Throws<Exception>(() => Location.FromPath("D:\\file1.txt").Matches(new string[] { "*" }));
+            Assert.Throws<BaseUserMessageException>(() => Location.FromPath("D:\\file1.txt").Matches(new string[] { "*" }));
         }
 
         [Test]

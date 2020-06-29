@@ -31,3 +31,9 @@ Set the parameters in the [configuration](/configuration/) file.
     - *.bmp$
   svg-png-width: 600
 ~~~
+
+When using this plugin on Linux systems (such as Ubuntu), it is required to install the *libgdiplus* library. Run the following command in the terminal to install the library
+
+~~~
+> sudo apt install libgdiplus
+~~~

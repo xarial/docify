@@ -55,14 +55,14 @@ namespace Xarial.Docify.Core.Compiler.Context
         {
             if (string.IsNullOrEmpty(url))
             {
-                url = "/";
+                url = LocationExtension.URL_SEP.ToString();
             }
 
             m_Site = site;
             BasePage = page;
             Url = url;
 
-            var partUrl = Url.TrimStart('/');
+            var partUrl = Url.TrimStart(LocationExtension.URL_SEP);
 
             FullUrl = site.BaseUrl + (string.IsNullOrEmpty(partUrl) ? "" : "/" + partUrl);
         }

@@ -38,9 +38,9 @@ namespace Xarial.Docify.Lib.Tools
 
     public class UrlLocation : ILocation
     {
-        public IReadOnlyList<string> Path { get; }
-
         public string FileName { get; }
+        public IReadOnlyList<string> Segments { get; }
+        public string Root { get; }
 
         public UrlLocation(string url)
         {
@@ -55,16 +55,16 @@ namespace Xarial.Docify.Lib.Tools
             }
 
             FileName = fileName;
-            Path = new List<string>(parts);
+            Segments = new List<string>(parts);
         }
 
         private UrlLocation(string fileName, IEnumerable<string> path)
         {
             FileName = fileName;
-            Path = new List<string>(path);
+            Segments = new List<string>(path);
         }
 
-        public ILocation Copy(string fileName, IEnumerable<string> path)
+        public ILocation Create(string root, string fileName, IEnumerable<string> path)
         {
             return new UrlLocation(fileName, path);
         }

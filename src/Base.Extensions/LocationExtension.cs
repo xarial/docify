@@ -7,9 +7,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Xarial.Docify.Base.Exceptions;
 
 namespace Xarial.Docify.Base
 {
@@ -18,12 +20,9 @@ namespace Xarial.Docify.Base
     /// </summary>
     public static class LocationExtension
     {
-        public const string PATH_SEP = "\\";
-        public const string URL_SEP = "/";
+        public const char URL_SEP = '/';
         public const string ID_SEP = "::";
-
-        public const string URL_PROTOCOL_REGEX = "^(http|https):/";
-
+        
         public const string NEGATIVE_FILTER = "|";
         public const string ANY_FILTER = "*";
 
@@ -35,30 +34,23 @@ namespace Xarial.Docify.Base
         /// <param name="loc">Location</param>
         /// <param name="root">Root directory</param>
         /// <returns>Path</returns>
-        public static string ToPath(this ILocation loc, string root = "")
-        {
-            return FormFullLocation(loc, root, PATH_SEP);
-        }
-
+        public static string ToPath(this ILocation loc) => Path.Combine(EnumAllSegments(loc).ToArray());
+        
         /// <summary>
         /// Converts this location to universal id
         /// </summary>
         /// <param name="loc">Location</param>
         /// <returns>Id of the location</returns>
-        public static string ToId(this ILocation loc)
-        {
-            return FormFullLocation(loc, "", ID_SEP);
-        }
+        public static string ToId(this ILocation loc) => string.Join(ID_SEP, EnumAllSegments(loc));
 
         /// <summary>
         /// Converts location to url
         /// </summary>
         /// <param name="loc">Location</param>
-        /// <param name="baseUrl">Base url</param>
         /// <returns>Url</returns>
-        public static string ToUrl(this ILocation loc, string baseUrl = "")
+        public static string ToUrl(this ILocation loc)
         {
-            var url = FormFullLocation(loc, baseUrl, URL_SEP);
+            var url = string.Join(URL_SEP, EnumAllSegments(loc));
 
             if (url.EndsWith(INDEX_PAGE_NAME, StringComparison.CurrentCultureIgnoreCase))
             {
@@ -71,14 +63,10 @@ namespace Xarial.Docify.Base
                     url = url.Substring(0, url.Length - INDEX_PAGE_NAME.Length - 1);
                 }
 
-                if (!string.Equals(url, baseUrl, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    url += "/";
-                }
+                url += "/";
             }
 
-            if (string.IsNullOrEmpty(baseUrl) && 
-                (loc.GetRoot() == null || !Regex.IsMatch(loc.GetRoot(), URL_PROTOCOL_REGEX)))
+            if (loc.IsRelative())
             {
                 url = "/" + url.TrimStart('/');
             }
@@ -91,21 +79,7 @@ namespace Xarial.Docify.Base
         /// </summary>
         /// <param name="loc">Location</param>
         /// <returns>True if location is empty, False if not</returns>
-        public static bool IsEmpty(this ILocation loc) => !loc.Path.Any() && string.IsNullOrEmpty(loc.FileName);
-
-        /// <summary>
-        /// Checks if this file is a root file
-        /// </summary>
-        /// <param name="loc">Location</param>
-        /// <returns>True if files is root file, False if it is contained in the sub-folder(s)</returns>
-        public static bool IsRoot(this ILocation loc) => !loc.Path.Any();
-
-        /// <summary>
-        /// Gets the root name of this location
-        /// </summary>
-        /// <param name="loc">Location</param>
-        /// <returns>Root of the location</returns>
-        public static string GetRoot(this ILocation loc) => loc.Path.FirstOrDefault();
+        public static bool IsEmpty(this ILocation loc) => !loc.Segments.Any() && string.IsNullOrEmpty(loc.FileName);
 
         /// <summary>
         /// Checks if this location is file or folder
@@ -122,14 +96,14 @@ namespace Xarial.Docify.Base
         /// <returns>New combined location</returns>
         public static ILocation Combine(this ILocation loc, params string[] blocks)
         {
-            return loc.Copy("", loc.Path.Concat(blocks));
+            return loc.Create(loc.Root, "", loc.Segments.Concat(blocks));
         }
 
         /// <see cref="Combine(ILocation, string[])"/>
         /// <param name="other">Other location to append to this location</param>
         public static ILocation Combine(this ILocation loc, ILocation other)
         {
-            return loc.Copy(other.FileName, loc.Path.Concat(other.Path));
+            return loc.Create(loc.Root, other.FileName, loc.Segments.Concat(other.Segments));
         }
 
         /// <summary>
@@ -142,11 +116,11 @@ namespace Xarial.Docify.Base
         {
             if (loc.IsFile())
             {
-                return loc.Copy("", loc.Path.Take(loc.Path.Count - (level - 1)));
+                return loc.Create(loc.Root, "", loc.Segments.Take(loc.Segments.Count - (level - 1)));
             }
             else
             {
-                return loc.Copy("", loc.Path.Take(loc.Path.Count - level));
+                return loc.Create(loc.Root, "", loc.Segments.Take(loc.Segments.Count - level));
             }
         }
 
@@ -162,20 +136,24 @@ namespace Xarial.Docify.Base
         {
             if (parent.IsFile())
             {
-                throw new Exception("Parent must not be a file");
+                throw new BaseUserMessageException($"Parent {parent.ToId()} must not be a file to check is in location");
             }
 
-            if (loc.Path.Count >= parent.Path.Count)
+            if (string.Equals(loc.Root, parent.Root, StringComparison.CurrentCultureIgnoreCase)
+                || loc.IsRelative() && parent.IsRelative())
             {
-                for (int i = 0; i < parent.Path.Count; i++)
+                if (loc.Segments.Count >= parent.Segments.Count)
                 {
-                    if (!string.Equals(loc.Path[i], parent.Path[i], compType))
+                    for (int i = 0; i < parent.Segments.Count; i++)
                     {
-                        return false;
+                        if (!string.Equals(loc.Segments[i], parent.Segments[i], compType))
+                        {
+                            return false;
+                        }
                     }
-                }
 
-                return true;
+                    return true;
+                }
             }
 
             return false;
@@ -193,11 +171,11 @@ namespace Xarial.Docify.Base
         {
             if (loc.IsInLocation(relativeTo, compType))
             {
-                return loc.Copy(loc.FileName, loc.Path.Skip(relativeTo.Path.Count));
+                return loc.Create("", loc.FileName, loc.Segments.Skip(relativeTo.Segments.Count));
             }
             else
             {
-                throw new Exception($"'{loc.ToId()}' location is not within the '{relativeTo.ToId()}'");
+                throw new BaseUserMessageException($"'{loc.ToId()}' location is not within the '{relativeTo.ToId()}'");
             }
         }
 
@@ -229,11 +207,11 @@ namespace Xarial.Docify.Base
                 }
             }
 
-            if (loc.Path.Count == other.Path.Count)
+            if (loc.Segments.Count == other.Segments.Count)
             {
-                for (int i = 0; i < loc.Path.Count; i++)
+                for (int i = 0; i < loc.Segments.Count; i++)
                 {
-                    if (!string.Equals(loc.Path[i], other.Path[i], compType))
+                    if (!string.Equals(loc.Segments[i], other.Segments[i], compType))
                     {
                         return false;
                     }
@@ -255,6 +233,11 @@ namespace Xarial.Docify.Base
         /// <returns>True if matches, False if not</returns>
         public static bool Matches(this ILocation loc, IEnumerable<string> filters)
         {
+            if (!loc.IsRelative()) 
+            {
+                throw new BaseUserMessageException("Only relative paths are supported");
+            }
+
             if (filters?.Any() != true)
             {
                 return true;
@@ -262,8 +245,8 @@ namespace Xarial.Docify.Base
             else
             {
                 filters = filters.Select(f => f
-                    .Replace(PATH_SEP, ID_SEP)
-                    .Replace(URL_SEP, ID_SEP)).ToArray();
+                    .Replace(Path.DirectorySeparatorChar.ToString(), ID_SEP)
+                    .Replace(URL_SEP.ToString(), ID_SEP)).ToArray();
             }
 
             var path = loc.ToId();
@@ -281,7 +264,7 @@ namespace Xarial.Docify.Base
                 return Regex.IsMatch(path, regex, RegexOptions.IgnoreCase);
             }
 
-            var posFilters = filters.Where(f => !IsNegative(f));
+            var posFilters = filters.Where(f => !IsNegativeFilter(f));
             var negFilters = filters.Except(posFilters);
 
             if (posFilters.Any() && !posFilters.Any(f => MatchFilter(f)))
@@ -305,7 +288,7 @@ namespace Xarial.Docify.Base
         /// <remarks>Use the filters with <see cref="LocationExtension.Matches(ILocation, IEnumerable{string})"/> method</remarks>
         public static string RevertFilter(string filter)
         {
-            if (IsNegative(filter))
+            if (IsNegativeFilter(filter))
             {
                 return filter.Substring(1);
             }
@@ -315,43 +298,159 @@ namespace Xarial.Docify.Base
             }
         }
 
-        private static bool IsNegative(string filter) => filter.StartsWith(NEGATIVE_FILTER);
+        public static bool IsRelative(this ILocation loc) => string.IsNullOrEmpty(loc.Root);
 
-        private static string FormFullLocation(ILocation loc, string basePart, string sep)
+        public static void ParsePath(string path, out string root, 
+            out string fileName, out string[] segments)
         {
-            var fullLoc = new StringBuilder();
-
-            var hasContent = false;
-
-            if (!string.IsNullOrEmpty(basePart))
+            IEnumerable<string> GetSegments(string path)
             {
-                fullLoc.Append(basePart);
-                hasContent = true;
-            }
-
-            foreach (var block in loc.Path)
-            {
-                if (hasContent)
+                while (!string.IsNullOrEmpty(path))
                 {
-                    fullLoc.Append(sep);
+                    var seg = "";
+
+                    var prevPath = path;
+                    path = Path.GetDirectoryName(path);
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        seg = Path.GetRelativePath(path, prevPath);
+                    }
+                    else
+                    {
+                        seg = prevPath;
+                    }
+
+                    if (seg != ".")
+                    {
+                        yield return seg;
+                    }
                 }
-
-                fullLoc.Append(block);
-
-                hasContent = true;
             }
-
-            if (!string.IsNullOrEmpty(loc.FileName))
+                        
+            fileName = Path.GetFileName(path);
+            if (string.IsNullOrEmpty(Path.GetExtension(fileName)))
             {
-                if (fullLoc.Length > 0)
-                {
-                    fullLoc.Append(sep);
-                }
-
-                fullLoc.Append(loc.FileName);
+                fileName = "";
+            }
+            
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                path = Path.GetDirectoryName(path);
             }
 
-            return fullLoc.ToString();
+            root = Path.GetPathRoot(path);
+            
+            if (!string.IsNullOrEmpty(root))
+            {
+                path = Path.GetRelativePath(root, path);
+            }
+
+            segments = GetSegments(path).Reverse().ToArray();
+        }
+
+        public static void ParseUrl(string url, out string root,
+            out string fileName, out string[] segments)
+        {
+            root = "";
+            fileName = "";
+
+            if (url.StartsWith(URL_SEP)) 
+            {
+                root = URL_SEP.ToString();
+                url = url.TrimStart(URL_SEP);
+            }
+
+            var uri = new Uri(url, UriKind.RelativeOrAbsolute);
+
+            if (uri.IsAbsoluteUri) 
+            {
+                root = $"{uri.Scheme}://{uri.Host}";
+                if (uri.Port != 443 && uri.Port != 80) 
+                {
+                    root += ":" + uri.Port;
+                }
+                url = uri.LocalPath;
+            }
+
+            if (!string.IsNullOrEmpty(url))
+            {
+                segments = url.Split(URL_SEP, StringSplitOptions.RemoveEmptyEntries);
+                
+                if (!string.IsNullOrEmpty(Path.GetExtension(segments.Last()))) 
+                {
+                    fileName = segments.Last();
+                    segments = segments.Take(segments.Length - 1).ToArray();
+                }
+            }
+            else 
+            {
+                segments = new string[0];
+            }
+        }
+
+        public static void ParseId(string id, out string root,
+            out string fileName, out string[] segments)
+        {
+            root = "";
+            fileName = "";
+
+            if (id.StartsWith(ID_SEP))
+            {
+                root = ID_SEP.ToString();
+                id = id.Substring(ID_SEP.Length);
+            }
+            
+            if (!string.IsNullOrEmpty(id))
+            {
+                segments = id.Split(ID_SEP, StringSplitOptions.RemoveEmptyEntries);
+
+                if (!string.IsNullOrEmpty(Path.GetExtension(segments.Last())))
+                {
+                    fileName = segments.Last();
+                    segments = segments.Take(segments.Length - 1).ToArray();
+                }
+            }
+            else
+            {
+                segments = new string[0];
+            }
+        }
+
+        public static void Parse(string loc, out string root,
+            out string fileName, out string[] segments)
+        {   
+            if (loc.Contains(ID_SEP)) 
+            {
+                ParseId(loc, out root, out fileName, out segments);
+            }
+            else if (Uri.IsWellFormedUriString(loc, UriKind.RelativeOrAbsolute))
+            {
+                ParseUrl(loc, out root, out fileName, out segments);
+            }
+            else
+            {
+                ParsePath(loc, out root, out fileName, out segments);
+            }
+        }
+
+        private static bool IsNegativeFilter(string filter) => filter.StartsWith(NEGATIVE_FILTER);
+
+        private static IEnumerable<string> EnumAllSegments(ILocation loc)
+        {
+            if (!loc.IsRelative())
+            {
+                yield return loc.Root;
+            }
+
+            foreach (var seg in loc.Segments)
+            {
+                yield return seg;
+            }
+
+            if (loc.IsFile())
+            {
+                yield return loc.FileName;
+            }
         }
     }
 }

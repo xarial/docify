@@ -44,7 +44,7 @@ namespace Xarial.Docify.Lib.Plugins.ImageOptimizer
 
         private Task OnPreCompile(ISite site)
         {
-            foreach (var page in AssetsHelper.GetAllPages(site.MainPage))
+            foreach (var page in site.MainPage.GetAllPages())
             {
                 string image;
 

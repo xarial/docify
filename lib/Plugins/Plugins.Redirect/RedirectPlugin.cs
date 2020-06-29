@@ -36,7 +36,7 @@ namespace Xarial.Docify.Lib.Plugins.Redirect
 
         private Task OnPreCompile(ISite site)
         {
-            TraversePages(site, site.MainPage, "/");
+            TraversePages(site, site.MainPage, LocationExtension.URL_SEP.ToString());
 
             return Task.CompletedTask;
         }
@@ -51,7 +51,7 @@ namespace Xarial.Docify.Lib.Plugins.Redirect
                 {
                     var redirectUrl = redirectFrom;
 
-                    if (!redirectUrl.StartsWith("/"))
+                    if (!redirectUrl.StartsWith(LocationExtension.URL_SEP))
                     {
                         redirectUrl = curUrl + redirectUrl;
                     }
@@ -80,7 +80,7 @@ namespace Xarial.Docify.Lib.Plugins.Redirect
             {
                 var page = parentPage.SubPages[i];
 
-                var pageUrl = curUrl + page.Name + "/";
+                var pageUrl = curUrl + page.Name + LocationExtension.URL_SEP;
 
                 var redirectTo = page.Data.GetParameterOrDefault<string>(REDIRECT_TO_PARAM_NAME);
 

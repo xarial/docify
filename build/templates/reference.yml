@@ -1,22 +1,5 @@
-trigger:
-  branches:
-    include:
-    - master
-    - dev
-  paths:
-    include:
-    - src/*
-
-pr:
-  branches:
-    include:
-    - master
-    - dev
-  paths:
-    include:
-    - src/*
-
-name: '$(Date:yyyyMMdd).$(Rev:r)[$(BuildID)]'
+parameters:
+  project: ''
 
 stages:
 
@@ -43,39 +26,25 @@ stages:
         displayName: 'NuGet restore'
         inputs:
           command: restore
-          projects: '**\*.sln'
+          projects: '${{ parameters.project }}'
 
       - task: VSBuild@1
         displayName: 'Build preview version'
         inputs:
-          solution: 'src\CLI\CLI.csproj'
+          solution: '${{ parameters.project }}'
           configuration: '$(BuildConfiguration)'
 
       - task: DotNetCoreCLI@2
         inputs:
           command: custom
           custom: pack
-          arguments: src/CLI/CLI.csproj --version-suffix $(Build.BuildId) --output $(Build.ArtifactStagingDirectory)/packages/preview --no-build /p:Configuration=$(BuildConfiguration)
-      
-      - task: VSBuild@1
-        displayName: 'Build test projects'
-        inputs:
-            solution: 'tests\**\*.Tests\*.csproj'
-            configuration: '$(BuildConfiguration)'
-            
-      - task: VSTest@2
-        displayName: 'Unit test'
-        inputs:
-          testAssemblyVer2: |
-            tests\**\*.Tests.dll
-            !**\obj\**
-          configuration: '$(BuildConfiguration)'
+          arguments: ${{ parameters.project }} --version-suffix $(Build.BuildId) --output $(Build.ArtifactStagingDirectory)/packages/preview --no-build /p:Configuration=$(BuildConfiguration)
 
       - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest')) }}:
         - task: VSBuild@1
           displayName: 'Build production version'
           inputs:
-            solution: 'src\CLI\CLI.csproj'
+            solution: '${{ parameters.project }}'
             configuration: '$(BuildConfiguration)'
             clean: true
 
@@ -84,7 +53,7 @@ stages:
           inputs:
             command: custom
             custom: pack
-            arguments: src/CLI/CLI.csproj --output $(Build.ArtifactStagingDirectory)/packages/release --no-build /p:Configuration=$(BuildConfiguration)
+            arguments: ${{ parameters.project }} --output $(Build.ArtifactStagingDirectory)/packages/release --no-build /p:Configuration=$(BuildConfiguration)
       
       - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
         - publish: '$(Build.ArtifactStagingDirectory)/packages'

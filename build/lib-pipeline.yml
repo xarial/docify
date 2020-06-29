@@ -6,6 +6,9 @@ trigger:
   paths:
     include:
     - lib/*
+    - src/Base/*
+    - src/Base.Context/*
+    - src/Base.Extensions/*
 
 pr:
   branches:
@@ -15,6 +18,9 @@ pr:
   paths:
     include:
     - lib/*
+    - src/Base/*
+    - src/Base.Context/*
+    - src/Base.Extensions/*
 
 name: '$(Date:yyyyMMdd).$(Rev:r)[$(BuildID)]'
 

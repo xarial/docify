@@ -3,7 +3,28 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>Xarial.Docify.Base</RootNamespace>
+    <VersionPrefix>0.6.0</VersionPrefix>
+    <PackageId>Xarial.Docify.Base</PackageId>
+    <PackageProjectUrl>https://docify.net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/xarial/docify</RepositoryUrl>
+    <PackageTags>static site,html,markdown,razor</PackageTags>
+    <Description>Static site generator (base interfaces)</Description>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconUrl>https://docify.net/icon.png</PackageIconUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE.md" Link="LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\..\data\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.1.0" />
@@ -13,6 +34,6 @@
     <ProjectReference Include="..\Base.Context\Base.Context.csproj" />
   </ItemGroup>
 
-  <Import Project="..\..\common\common.props" />
+  <Import Project="..\..\common\common.assemblyinfo.props" />
   
 </Project>

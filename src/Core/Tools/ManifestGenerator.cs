@@ -46,10 +46,10 @@ namespace Xarial.Docify.Core.Tools
 
             await foreach (var file in m_Loader.LoadFolder(libFolder, null))
             {
-                if (file.Location.Path.Count >= 2)
+                if (file.Location.Segments.Count >= 2)
                 {
-                    var itemType = file.Location.Path[0];
-                    var itemName = file.Location.Path[1];
+                    var itemType = file.Location.Segments[0];
+                    var itemName = file.Location.Segments[1];
                     Dictionary<string, List<SecureLibraryItemFile>> thisComp = null;
 
                     switch (itemType.ToLower()) 
@@ -82,7 +82,7 @@ namespace Xarial.Docify.Core.Tools
 
                     var fileManifest = new SecureLibraryItemFile()
                     {
-                        Name = file.Location.GetRelative(new Location("", itemType, itemName)),
+                        Name = file.Location.GetRelative(new Location("", "", new string[] { itemType, itemName })),
                         Signature = signature
                     };
 

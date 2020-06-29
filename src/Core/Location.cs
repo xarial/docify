@@ -24,122 +24,45 @@ namespace Xarial.Docify.Core
             public static ILocation DefaultLibraryManifestFilePath 
                 => FromPath(System.IO.Path.Combine(Environment.GetFolderPath(
                     Environment.SpecialFolder.LocalApplicationData),
-                    "Xarial\\Docify\\Library\\library.manifest"));
+                    "Xarial", "Docify", "Library", "library.manifest"));
         }
 
-        public static Location Empty => new Location(Enumerable.Empty<string>());
+        public static Location Empty => new Location("", "", Enumerable.Empty<string>());
 
-        //TODO: this needs better approach
-        public static Location FromPath(string path, string relTo = "")
+        public static Location FromPath(string path)
         {
-            //TODO: check if path is valid
-
-            if (!string.IsNullOrEmpty(relTo))
-            {
-                if (path.StartsWith(relTo, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    path = path.Substring(relTo.Length).TrimStart('\\');
-                }
-            }
-
-            var isFile = !string.IsNullOrEmpty(System.IO.Path.GetExtension(path));
-
-            var fileName = System.IO.Path.GetFileName(path);
-
-            var dir = System.IO.Path.GetDirectoryName(path);
-
-            if (!isFile)
-            {
-                fileName = "";
-                dir = path;
-            }
-
-            string[] blocks;
-
-            if (!string.IsNullOrEmpty(dir))
-            {
-                blocks = dir.Split(new string[] { LocationExtension.PATH_SEP }, StringSplitOptions.None).ToArray();
-            }
-            else
-            {
-                blocks = new string[0];
-            }
-
-            return new Location(fileName, blocks);
-        }
-
-        //TODO: this needs better approach
-        public static Location FromUrl(string url) 
-        {
-            string protocol = null;
-
-            url = Regex.Replace(url, LocationExtension.URL_PROTOCOL_REGEX, m =>
-            {
-                protocol = m.Value;
-                return "";
-            });
-
-            var parts = url.Split(LocationExtension.URL_SEP, StringSplitOptions.RemoveEmptyEntries);
-
-            if (!string.IsNullOrEmpty(protocol)) 
-            {
-                parts = new string[] { protocol }.Concat(parts).ToArray();
-            }
-
-            var fileName = "";
-
-            if (System.IO.Path.HasExtension(parts.Last())) 
-            {
-                fileName = parts.Last();
-                parts = parts.Take(parts.Length - 1).ToArray();
-            }
-
-            return new Location(fileName, parts);
+            LocationExtension.ParsePath(path, out string root, out string fileName, out string[] segs);
+            return new Location(root, fileName, segs);
         }
 
         public static Location FromString(string loc)
         {
-            var blocks = loc.Split(new string[] 
-            {
-                LocationExtension.PATH_SEP,
-                LocationExtension.URL_SEP, 
-                LocationExtension.ID_SEP 
-            }, StringSplitOptions.None).ToArray();
+            LocationExtension.Parse(loc, out string root, out string fileName, out string[] segments);
 
-            var fileName = "";
-
-            if (!string.IsNullOrEmpty(System.IO.Path.GetExtension(blocks.Last()))) 
-            {
-                fileName = blocks.Last();
-                blocks = blocks.Take(blocks.Length - 1).ToArray();
-            }
-            
-            return new Location(fileName, blocks);
+            return new Location(root, fileName, segments);
         }
 
-        public IReadOnlyList<string> Path { get; }
+        public IReadOnlyList<string> Segments { get; }
 
         public string FileName { get; }
 
-        public Location(string fileName, params string[] path)
+        public string Root { get; }
+
+        public Location(string root, string fileName, IEnumerable<string> path)
         {
+            Root = root;
             FileName = fileName;
-            Path = new List<string>(path);
+            Segments = new List<string>(path);
         }
-
-        public Location(IEnumerable<string> path)
-        {
-            Path = new List<string>(path);
-        }
-
+        
         public override string ToString()
         {
             return this.ToId();
         }
 
-        public ILocation Copy(string fileName, IEnumerable<string> path)
+        public ILocation Create(string root, string fileName, IEnumerable<string> path)
         {
-            return new Location(fileName, path.ToArray());
+            return new Location(root, fileName, path.ToArray());
         }
     }
 }

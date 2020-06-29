@@ -174,11 +174,11 @@ namespace Xarial.Docify.Core.Composer
 
             foreach (var file in files)
             {
-                if (string.Equals(file.Location.GetRoot(), LAYOUTS_FOLDER, m_Comparison))
+                if (string.Equals(GetBaseSegment(file.Location), LAYOUTS_FOLDER, m_Comparison))
                 {
                     layoutsList.Add(file);
                 }
-                else if (string.Equals(file.Location.GetRoot(), INCLUDES_FOLDER, m_Comparison))
+                else if (string.Equals(GetBaseSegment(file.Location), INCLUDES_FOLDER, m_Comparison))
                 {
                     includesList.Add(file);
                 }
@@ -231,7 +231,7 @@ namespace Xarial.Docify.Core.Composer
 
                 if (usedIncludes.Contains(name, m_Comparer))
                 {
-                    throw new DuplicateTemplateException(name);
+                    throw new DuplicateTemplateException($"include {name}");
                 }
 
                 usedIncludes.Add(name);
@@ -247,7 +247,7 @@ namespace Xarial.Docify.Core.Composer
 
         private string GetTemplateName(ILocation loc)
         {
-            var path = loc.Path.Skip(1).ToList();
+            var path = loc.Segments.Skip(1).ToList();
             path.Add(Path.GetFileNameWithoutExtension(loc.FileName));
 
             return string.Join(LocationExtension.ID_SEP, path.ToArray());
@@ -301,7 +301,7 @@ namespace Xarial.Docify.Core.Composer
 
             if (layouts.ContainsKey(layoutName))
             {
-                throw new DuplicateTemplateException(layoutName);
+                throw new DuplicateTemplateException($"layout {layoutName}");
             }
 
             layouts.Add(layoutName, layout);
@@ -315,7 +315,7 @@ namespace Xarial.Docify.Core.Composer
             IReadOnlyList<IFile> assets)
         {
             var mainSrcPage = srcPages.FirstOrDefault(
-                p => p.Location.IsRoot() && IsDefaultPageLocation(p.Location));
+                p => IsRootLocation(p.Location) && IsDefaultPageLocation(p.Location));
 
             if (mainSrcPage == null)
             {
@@ -370,7 +370,7 @@ namespace Xarial.Docify.Core.Composer
                 parent.SubPages.Add(page);
 
                 ProcessChildren(page, pages, assets, layouts,
-                    new Location(curLoc.Path.Concat(new string[] { page.Name })), page.Layout ?? curLayout);
+                    new Location("", "", curLoc.Segments.Concat(new string[] { page.Name })), page.Layout ?? curLayout);
             }
 
             if(children.Any())
@@ -380,7 +380,7 @@ namespace Xarial.Docify.Core.Composer
                 foreach (var child in children)
                 {
                     var pageName = IsDefaultPageLocation(child.Location) ?
-                        child.Location.Path.LastOrDefault()
+                        child.Location.Segments.LastOrDefault()
                         : Path.GetFileNameWithoutExtension(child.Location.FileName);
 
                     if (usedNames.Contains(pageName,
@@ -409,7 +409,7 @@ namespace Xarial.Docify.Core.Composer
             if (phantomPages.Any())
             {
                 foreach (var phantomGroup in phantomPages
-                    .Select(p => p.Location.GetRelative(curLoc).GetRoot())
+                    .Select(p => GetBaseSegment(p.Location.GetRelative(curLoc)))
                     .Distinct(m_Comparer))
                 {
                     var phantomPage = new PhantomPage(phantomGroup);
@@ -437,7 +437,7 @@ namespace Xarial.Docify.Core.Composer
                 if (string.IsNullOrEmpty(fileName))
                 {
                     //file with no extension
-                    fileName = a.Location.GetRoot();
+                    fileName = a.Location.Segments.Last();
                 }
 
                 return new Asset(fileName, a.Content, a.Id);
@@ -449,13 +449,17 @@ namespace Xarial.Docify.Core.Composer
             if (pageAssets.Any())
             {
                 foreach (var subFolderName in pageAssets.Select(
-                    a => a.Location.GetRelative(curLoc).GetRoot()).Distinct(m_Comparer))
+                    a => GetBaseSegment(a.Location.GetRelative(curLoc))).Distinct(m_Comparer))
                 {
                     var subFolder = new AssetsFolder(subFolderName);
                     folder.Folders.Add(subFolder);
-                    LoadAssets(subFolder, assets, curLoc.Combine(new Location("", subFolderName)));
+                    LoadAssets(subFolder, assets, curLoc.Combine(new Location("", "", new string[] { subFolderName })));
                 }
             }
         }
+
+        private bool IsRootLocation(ILocation loc) => !loc.Segments.Any();
+
+        private string GetBaseSegment(ILocation loc) => loc.Segments.FirstOrDefault();
     }
 }

@@ -17,6 +17,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Services;
+using Xarial.Docify.Core.Exceptions;
 
 namespace Xarial.Docify.Core.Host
 {
@@ -49,44 +50,50 @@ namespace Xarial.Docify.Core.Host
 
         public async Task Host(ILocation siteLoc, Func<Task> hostCalback)
         {
-            var sitePath = siteLoc.ToPath();
+            try
+            {
+                var sitePath = siteLoc.ToPath();
 
-            var hostBuilder = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.SuppressStatusMessages(true);
-                    webBuilder.ConfigureLogging((context, logging) =>
+                var hostBuilder = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
+                    .ConfigureWebHostDefaults(webBuilder =>
                     {
-                        logging.ClearProviders();
-                    });
-                    webBuilder.UseUrls(m_HttpUrl, m_HttpsUrl);
-                    webBuilder.Configure(app =>
-                    {
-                        var opts = new FileServerOptions()
+                        webBuilder.SuppressStatusMessages(true);
+                        webBuilder.ConfigureLogging((context, logging) =>
                         {
-                            FileProvider = new PhysicalFileProvider(sitePath),
-                            EnableDefaultFiles = true,
-                        };
+                            logging.ClearProviders();
+                        });
+                        webBuilder.UseUrls(m_HttpUrl, m_HttpsUrl);
+                        webBuilder.Configure(app =>
+                        {
+                            var opts = new FileServerOptions()
+                            {
+                                FileProvider = new PhysicalFileProvider(sitePath),
+                                EnableDefaultFiles = true,
+                            };
 
-                        opts.StaticFileOptions.ServeUnknownFileTypes = true;
+                            opts.StaticFileOptions.ServeUnknownFileTypes = true;
 
-                        app.UseFileServer(opts);
+                            app.UseFileServer(opts);
+                        });
                     });
-                });
 
-            var host = hostBuilder.Build();
-            
-            await host.StartAsync();
+                using (var host = hostBuilder.Build())
+                {
+                    await host.StartAsync();
 
-            m_Logger.LogInformation($"'{sitePath}' is served at {m_HttpUrl} and {m_HttpsUrl}");
+                    m_Logger.LogInformation($"'{sitePath}' is served at {m_HttpUrl} and {m_HttpsUrl}");
 
-            await hostCalback.Invoke();
+                    await hostCalback.Invoke();
 
-            await host.StopAsync();
+                    await host.StopAsync();
+                }
 
-            host.Dispose();
-
-            m_Logger.LogInformation("Host is closed");
+                m_Logger.LogInformation("Host is closed");
+            }
+            catch (Exception ex)
+            {
+                throw new SiteHostingFailedException(ex);
+            }
         }
     }
 }

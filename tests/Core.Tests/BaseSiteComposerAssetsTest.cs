@@ -134,6 +134,23 @@ namespace Core.Tests
         }
 
         [Test]
+        public async Task ComposeSite_NoExtensionSubFolderAsset()
+        {
+            var src = new FileMock[]
+            {
+                new FileMock(Location.FromPath(@"index.md"), ""),
+                new FileMock(Location.FromPath(@"folder\asset"), "a1"),
+            }.ToAsyncEnumerable();
+
+            var site = await m_Composer.ComposeSite(src, "");
+
+            Assert.AreEqual(0, site.MainPage.Assets.Count);
+            Assert.AreEqual(1, site.MainPage.Folders.Count);
+            Assert.AreEqual(1, site.MainPage.Folders[0].Assets.Count);
+            Assert.AreEqual("asset", site.MainPage.Folders[0].Assets[0].FileName);
+        }
+
+        [Test]
         public async Task ComposeSite_SubFolderAsset()
         {
             var src = new FileMock[]

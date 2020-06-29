@@ -42,10 +42,12 @@ In order to enable IntelliSense, install [Xarial.Docify.Base.Context](https://ww
 @page
 @using Xarial.Docify.Base.Context
 @model IContextModel
-@{
-    var url = Model.Page.Url;
-}
-<div>@url</div>
+<ul>
+    @foreach (var childPage in Model.Page.SubPages)
+    {    
+        <li>@childPage.Url</li>
+    }
+</ul>
 ~~~
 
 The above code will generate an unordered list of urls of all children pages of the current page.

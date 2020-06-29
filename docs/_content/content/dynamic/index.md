@@ -34,21 +34,18 @@ Model
     Data - current metadata of the include
 ~~~
 
-In order to enable IntelliSense, add the reference to *Base.Context.dll* and [Razor Light](https://www.nuget.org/packages/RazorLight) nuget package. Then use @inherits as shown below
+In order to enable IntelliSense, install [Xarial.Docify.Base.Context](https://www.nuget.org/packages/Xarial.Docify.Base.Context/) package and specify the model as follows.
 
 ![Intellisense enabled for the content model in the MS Visual Studio editor](razor-pages-intelli-sense.png)
 
 ~~~ html
-@using RazorLight
-@using System
+@page
 @using Xarial.Docify.Base.Context
-@inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>
-<ul>
-    @foreach (var childPage in Model.Page.SubPages)
-    {    
-        <li>@childPage.Url</li>
-    }
-</ul>
+@model IContextModel
+@{
+    var url = Model.Page.Url;
+}
+<div>@url</div>
 ~~~
 
 The above code will generate an unordered list of urls of all children pages of the current page.

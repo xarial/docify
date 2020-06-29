@@ -1,0 +1,15 @@
+trigger:
+  branches:
+    include:
+    - master
+    - dev
+  paths:
+    include:
+    - src/Base/*
+
+name: '$(Date:yyyyMMdd).$(Rev:r)[$(BuildID)]'
+
+stages:
+- template: templates/reference.yml
+  parameters:
+    project: src/Base/Base.csproj

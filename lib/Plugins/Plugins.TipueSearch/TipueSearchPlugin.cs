@@ -127,7 +127,7 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch
             var searchContent = JsonSerializer.Serialize(m_SearchIndex, opts).ToString();
 
             yield return new PluginFile($"var tipuesearch = {{ \"pages\": {searchContent} }};",
-                outLoc.Combine(new PluginLocation("search-content.js", new string[] { SEARCH_PAGE_NAME })));
+                outLoc.Combine(new PluginLocation("", "search-content.js", new string[] { SEARCH_PAGE_NAME })));
         }
 
         private string HtmlToPlainText(string html, string node, out string title)

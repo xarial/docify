@@ -26,7 +26,7 @@ namespace Xarial.Docify.CLI.Options
         [Option('e', "env", Required = false, HelpText = "Build environment, either standard set or custom")]
         public string Environment { get; set; }
 
-        [Option('l', "lib", Required = false, HelpText = "Path to libraries. For standard library specify *. For the folder based libraries specify the path to directory. For secure library specify the path to library manifest file and the public key XML file separated by pipe symbol |")]
+        [Option('l', "lib", Required = false, HelpText = "Path to libraries. For standard library specify " + DocifyEngine.STANDARD_LIB_PATH + ". For the folder based libraries specify the path to directory. For secure library specify the path to library manifest file and the public key XML file separated by pipe symbol " + DocifyEngine.LIB_PATH_PUBLIC_KEY_SEP)]
         public IEnumerable<string> Library { get; set; }
 
         [Usage]

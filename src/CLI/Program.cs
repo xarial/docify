@@ -174,7 +174,7 @@ namespace Xarial.Docify.CLI
                 Resources.standard_library_public_key,
                 new LocalFileSystemPublisher(new PublisherExtension(), m_Logger,
                     new SecureLibraryCleaner(Location.Library.DefaultLibraryManifestFilePath.ToPath(),
-                        Resources.standard_library_public_key)));
+                        Resources.standard_library_public_key)), m_Logger);
 
             var curLibVers = await libInstaller.GetCurrentVersion();
             var libVersion = await libInstaller.GetLatestAvailableVersion(typeof(DocifyEngine).Assembly.GetName().Version);

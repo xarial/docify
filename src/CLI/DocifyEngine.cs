@@ -97,6 +97,9 @@ namespace Xarial.Docify.CLI
 
     public class DocifyEngine : IDocifyEngine
     {
+        internal const string STANDARD_LIB_PATH = "*";
+        internal const string LIB_PATH_PUBLIC_KEY_SEP = "|";
+
         private readonly IContainer m_Container;
 
         private readonly string m_SiteUrl;
@@ -251,11 +254,11 @@ namespace Xarial.Docify.CLI
             {
                 foreach (var lib in m_Libs)
                 {
-                    var libData = lib.Split("|");
+                    var libData = lib.Split(LIB_PATH_PUBLIC_KEY_SEP);
 
                     var libPath = libData[0];
 
-                    if (libPath == "*")
+                    if (libPath == STANDARD_LIB_PATH)
                     {
                         libPath = Location.Library.DefaultLibraryManifestFilePath.ToPath();
 
@@ -307,7 +310,7 @@ namespace Xarial.Docify.CLI
                             }
                             else
                             {
-                                throw new UserMessageException("When specifying path to the library manifest file, the path to public key XML must be specified as well by separating path with pipe | symbol");
+                                throw new UserMessageException($"When specifying path '{libPath}' to the library manifest file, the path to public key XML must be specified as well by separating path with pipe {LIB_PATH_PUBLIC_KEY_SEP} symbol or use {STANDARD_LIB_PATH} for the standard library");
                             }
                         }
                     }
@@ -326,7 +329,7 @@ namespace Xarial.Docify.CLI
                 manifestPath, new BaseValueSerializer<ILocation>(null, x => Location.FromString(x)));
 
             ILocation libLoc = Location.FromString(manifestPath);
-            libLoc = libLoc.Copy("", libLoc.Path);
+            libLoc = libLoc.Create(libLoc.Root, "", libLoc.Segments);
 
             return ctx.Resolve<SecureLibraryLoader>(
                    new TypedParameter(typeof(ILocation), libLoc),

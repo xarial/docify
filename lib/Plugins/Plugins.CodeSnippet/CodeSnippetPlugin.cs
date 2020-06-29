@@ -87,7 +87,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
                     m_SnippetsFolder = nextFolder;
                 }
 
-                foreach (var snipAsset in AssetsHelper.GetAllAssets(m_SnippetsFolder))
+                foreach (var snipAsset in m_SnippetsFolder.GetAllAssets())
                 {
                     m_SnippetFileIds.Add(snipAsset.Id);
                 }
@@ -115,9 +115,9 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
 
                 var fileName = Path.GetFileName(snipData.FileName);
                 var dir = snipData.FileName.Substring(0, snipData.FileName.Length - fileName.Length);
-                var snipsFolder = AssetsHelper.FindAssetsFolder(
-                    m_Site, page,
-                    PluginLocation.FromPath(dir));
+
+                var loc = PluginLocation.FromPath(dir);
+                var snipsFolder = AssetsHelper.GetBaseFolder(m_Site, page, loc).FindFolder(loc);
 
                 snipData.Tabs = new Dictionary<string, string>();
 

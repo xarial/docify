@@ -15,7 +15,7 @@ Plugins have access to interfaces defined in *Base.dll*
 To create plugin:
 
 * Create new class library in .NET Core or .NET Standard
-* Add the reference to *Base.dll*
+* Install the [Xarial.Docify.Base](https://www.nuget.org/packages/Xarial.Docify.Base/) nuget package. Optionally install [Xarial.Docify.Base.Extensions](https://www.nuget.org/packages/Xarial.Docify.Base.Extensions/) package for some extension methods for common interfaces.
 * Create new public class and implement *Xarial.Docify.Base.Plugins.IPlugin* or *Xarial.Docify.Base.Plugins.IPlugin<T>* interface. Later interface allows to specify the plugin settings which can be defined by the user in the [configuration](/configuration/) file
 
 ~~~ cs

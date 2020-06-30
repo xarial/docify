@@ -42,7 +42,7 @@ namespace Xarial.Docify.Core.Compiler.MarkdigMarkdownParser
             }
             else
             {
-                throw new NotSupportedException("Renderer is not upported");
+                throw new NotSupportedException("Renderer is not supported");
             }
         }
     }

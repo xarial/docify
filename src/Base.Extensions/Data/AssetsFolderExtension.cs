@@ -1,4 +1,11 @@
-﻿using System;
+﻿//*********************************************************************
+//Docify
+//Copyright(C) 2020 Xarial Pty Limited
+//Product URL: https://docify.net
+//License: https://docify.net/license/
+//*********************************************************************
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

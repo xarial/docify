@@ -70,7 +70,7 @@ namespace Xarial.Docify.Lib.Plugins.ResponsiveImage.Properties {
         /// </summary>
         internal static string img_figure {
             get {
-                return ResourceManager.GetString("img_figure", resourceCulture);
+                return ResourceManager.GetString("img-figure", resourceCulture);
             }
         }
         

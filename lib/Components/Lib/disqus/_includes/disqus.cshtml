@@ -1,16 +1,20 @@
 ﻿---
 short-name:
 count: true
+environment: production
 ---
+@using System
 @using RazorLight
 @inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>
 @{
+    var env = Model.Data.Get<string>("environment");
+
     var shortName = Model.Data.Get<string>("short-name");
     var src = $"https://{shortName}.disqus.com/embed.js";
     var countSrc = $"//{shortName}.disqus.com/count.js";
     var hasSitemap = !Model.Page.Data.ContainsKey("sitemap") || Model.Page.Data.Get<bool>("sitemap");
     var hasComments = !Model.Page.Data.ContainsKey("comments") || Model.Page.Data.Get<bool>("comments");
-    var enable = !string.IsNullOrEmpty(shortName) && hasSitemap && hasComments;
+    var enable = (env == "-" || string.Equals(Model.Site.Configuration.Environment, env, StringComparison.CurrentCultureIgnoreCase)) && !string.IsNullOrEmpty(shortName) && hasSitemap && hasComments;
 }
 @if (enable)
 {

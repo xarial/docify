@@ -31,8 +31,8 @@ namespace Xarial.Docify.Base
         /// Initiates an instance from the input data
         /// </summary>
         /// <param name="fileName">Name of the file</param>
-        /// <param name="path">Path</param>
+        /// <param name="segments">Path</param>
         /// <returns>Instance of this location</returns>
-        ILocation Create(string root, string fileName, IEnumerable<string> path);
+        ILocation Create(string root, string fileName, IEnumerable<string> segments);
     }
 }

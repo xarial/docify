@@ -61,6 +61,36 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///&lt;head&gt;
+        ///    &lt;style&gt;
+        ///        .tipue_search_group {
+        ///            text-align: right;
+        ///            margin: 5px 0px;
+        ///        }
+        ///        .tipue_search_button {
+        ///            float: right;
+        ///            margin: 3px;
+        ///        }
+        ///        #tipue_search_input {
+        ///            width: 99%;
+        ///            margin: 2px;
+        ///        }
+        ///    &lt;/style&gt;
+        ///&lt;/head&gt;
+        ///&lt;body&gt;
+        ///    {0}
+        ///&lt;/body&gt;
+        ///&lt;/html&gt;.
+        /// </summary>
+        internal static string default_search_template {
+            get {
+                return ResourceManager.GetString("default-search-template", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;link href=&quot;/_assets/tipuesearch/normalize.min.css&quot;&gt;
         ///&lt;script src=&quot;/_assets/tipuesearch/jquery.min.js&quot;&gt;&lt;/script&gt;
         ///
@@ -95,7 +125,7 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;form action=&quot;/search/&quot;&gt;
         ///    &lt;div class=&quot;tipue_search_group&quot;&gt;
-        ///        &lt;input type=&quot;image&quot; src=&quot;/_assets/images/search.svg&quot; class=&quot;tipue_search_button&quot; width=&quot;25px&quot; border=&quot;0&quot; alt=&quot;Submit&quot; /&gt;
+        ///        &lt;input type=&quot;image&quot; src=&quot;/_assets/images/search.svg&quot; class=&quot;tipue_search_button&quot; width=&quot;18px&quot; border=&quot;0&quot; alt=&quot;Submit&quot; /&gt;
         ///        &lt;div style=&quot;overflow: hidden;padding-right: .5em;&quot;&gt;
         ///            &lt;input type=&quot;text&quot; name=&quot;q&quot; id=&quot;tipue_search_input&quot; placeholder=&quot;Search&quot; pattern=&quot;.{3,}&quot; title=&quot;At least 3 characters&quot; required&gt;
         ///        &lt;/div&gt;

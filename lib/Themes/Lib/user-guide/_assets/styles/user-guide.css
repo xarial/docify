@@ -45,6 +45,10 @@
     }
 }
 
+.disqus-comments :empty {
+    display: none;
+}
+
 @media screen and (max-width: 1200px) {
     .layout {
         grid-template-areas: 'header' 'toc' 'main';

@@ -79,7 +79,7 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch
             }
             else
             {
-                content = $"<!DOCTYPE html><html><head></head><body>{content}</body></html>";
+                content = string.Format(Resources.default_search_template, Resources.tipue_search_box + content);
             }
 
             m_Site.MainPage.SubPages.Add(new PluginPage(SEARCH_PAGE_NAME, content,

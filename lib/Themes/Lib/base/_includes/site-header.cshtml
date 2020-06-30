@@ -1,6 +1,6 @@
 ﻿---
-icon_width: 75px
-show_title: true
+icon-width: 75px
+show-title: true
 ---
 @using RazorLight
 @inherits TemplatePage<Xarial.Docify.Base.Context.IContextModel>
@@ -13,8 +13,8 @@ show_title: true
     
     var title = Xarial.Docify.Lib.Tools.PageHelper.GetCaption(Model.Site.MainPage, Model.Site.Configuration)?.ToUpper();
     var description = Model.Site.MainPage.Data.GetOrDefault<string>("description");
-    var iconWidth = Model.Data.Get<string>("icon_width");
-    var showTitle = Model.Data.Get<bool>("show_title");
+    var iconWidth = Model.Data.Get<string>("icon-width");
+    var showTitle = Model.Data.Get<bool>("show-title");
     if (!showTitle)
     {
         title = "";

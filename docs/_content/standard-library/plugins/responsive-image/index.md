@@ -18,3 +18,9 @@ Plugin will automatically enable the responsiveness for all images inserted in m
 ~~~
 ![image alt](/image.png)
 ~~~
+
+To disable the responsiveness for the particular image, add the *responsive-image=false* attribute as follows:
+
+~~~
+![image alt](/image.png){ responsive-image=false }
+~~~

@@ -15,6 +15,7 @@ Component is using [Disqus](https://disqus.com/) for comments. It is required to
 
 * short-name - disqus account short name
 * count - true to enable the comments count badge
+* environment - [environment](/getting-started#using-environment) where comments are enabled (default *production*). Use *-* to enable comments in all environments.
 * sitemap (page metadata) - if false, comments will not be rendered
 * comments (page metadata) - if false, comments will not be rendered
 

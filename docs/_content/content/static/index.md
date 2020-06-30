@@ -69,15 +69,15 @@ Image uses a similar format to url, but with a ! symbol at the beginning. Additi
 ![Image Alt Text](sample-image.png)
 ![Image with width 100](sample-image.png){ width=100 }
 ![Image with height 200](sample-image.png){ height=200 }
-![Image with height 50 and width 150](sample-image.png){ height=50, width=150 }
+![Image with height 100 and width 150](sample-image.png){ height=100 width=150 }
 ~~~
 
 ### Result
 
-![Image Alt Text](sample-image.png)
-![Image with width 100](sample-image.png){ width=100 }
-![Image with height 200](sample-image.png){ height=200 }
-![Image with height 50 and width 150](sample-image.png){ height=50 width=150 }
+![Image Alt Text](sample-image.png){ responsive-image=false }
+![Image with width 100](sample-image.png){ width=100 responsive-image=false }
+![Image with height 200](sample-image.png){ height=200 responsive-image=false }
+![Image with height 100 and width 150](sample-image.png){ height=100 width=150 responsive-image=false }
 
 ## Text Decorations
 

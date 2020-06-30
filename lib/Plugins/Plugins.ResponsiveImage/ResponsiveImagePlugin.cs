@@ -23,6 +23,7 @@ namespace Xarial.Docify.Lib.Plugins.ResponsiveImage
     {
         private const string CSS_FILE_PATH = "/_assets/styles/responsive-image.css";
         private const string CLASS_NAME = "responsive";
+        private const string RESP_IMG_ATT = "responsive-image";
 
         private IDocifyApplication m_App;
 
@@ -57,20 +58,40 @@ namespace Xarial.Docify.Lib.Plugins.ResponsiveImage
             var classAtt = doc.Root.Attributes().FirstOrDefault(
                 a => string.Equals(a.Name.ToString(), "class", StringComparison.CurrentCultureIgnoreCase));
 
-            if (classAtt != null)
+            var respImgAtt = doc.Root.Attributes().FirstOrDefault(
+                a => string.Equals(a.Name.ToString(), RESP_IMG_ATT, StringComparison.CurrentCultureIgnoreCase));
+
+            var processImage = true;
+
+            if (respImgAtt != null) 
             {
-                classAtt.Value = $"{classAtt.Value} {CLASS_NAME}";
+                processImage = bool.Parse(respImgAtt.Value);
+                respImgAtt.Remove();
             }
-            else
+
+            if (processImage)
             {
-                classAtt = new XAttribute("class", CLASS_NAME);
-                doc.Root.Add(classAtt);
+                if (classAtt != null)
+                {
+                    classAtt.Value = $"{classAtt.Value} {CLASS_NAME}";
+                }
+                else
+                {
+                    classAtt = new XAttribute("class", CLASS_NAME);
+                    doc.Root.Add(classAtt);
+                }
             }
 
             img = doc.ToString();
 
             html.Clear();
-            html.Append(string.Format(Resources.img_figure, img, imgSrc, imgAlt));
+
+            if (processImage) 
+            {
+                img = string.Format(Resources.img_figure, img, imgSrc, imgAlt);
+            }
+
+            html.Append(img);
         }
 
         private Task OnWritePageContent(StringBuilder html, IMetadata data, string url)

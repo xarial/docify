@@ -27,3 +27,7 @@ blockquote {
     margin: 1.5em 10px;
     padding: 0.5em 10px;
 }
+
+figcaption {
+    margin: 10px;
+}

@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Xarial.Docify.Core.Data;
 
 namespace Components.Tests
 {
@@ -21,11 +22,23 @@ namespace Components.Tests
         [Test]
         public async Task BasicTest()
         {
-            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% disqus short-name: test %}\r\n</div>", INCLUDE_PATH);
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% disqus short-name: test %}\r\n</div>", 
+                INCLUDE_PATH, new Metadata() { { "$disqus", new Dictionary<string, object>() { { "environment", "-" } } } });
             
             var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 
             Assert.AreEqual(Resources.disqus1, res);
+        }
+
+        [Test]
+        public async Task EnvironmentTest()
+        {
+            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% disqus short-name: test %}\r\n</div>",
+                INCLUDE_PATH, new Metadata() { { "$disqus", new Dictionary<string, object>() { { "environment", "ABC" } } } });
+
+            var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
+
+            Assert.AreEqual("<div>\r\n</div>", res);
         }
 
         [Test]
@@ -50,7 +63,9 @@ namespace Components.Tests
         [Test]
         public async Task NotCountTest() 
         {
-            var site = ComponentsTest.Instance.NewSite("<div>\r\n{% disqus { short-name: test, count: false } %}\r\n</div>", INCLUDE_PATH);
+            var site = ComponentsTest.Instance.NewSite(
+                "<div>\r\n{% disqus { short-name: test, count: false } %}\r\n</div>", INCLUDE_PATH,
+                new Metadata() { { "$disqus", new Dictionary<string, object>() { { "environment", "-" } } } });
 
             var res = await ComponentsTest.Instance.CompileMainPageNormalize(site);
 

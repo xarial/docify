@@ -5,6 +5,8 @@ title: User guide theme in docify
 description: Theme to create user guides using Docify
 image: user-guide-article-layout.png
 ---
+{% youtube id:kWjYHH32w7A %}
+
 This theme is designed for the creation of user guides and technical documentation. Theme is based on [base theme](/standard-library/themes/base/).
 
 ![Article layout in user guide theme](user-guide-article-layout.png){ width=600 }

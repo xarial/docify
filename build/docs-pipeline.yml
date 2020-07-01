@@ -49,6 +49,11 @@ stages:
       #    script: 'sudo apt install libgdiplus'
 
       - task: CmdLine@2
+        displayName: 'Install GDI Plus (MacOS)'
+        inputs:
+          script: 'brew install mono-libgdiplus'
+
+      - task: CmdLine@2
         displayName: 'Build site'
         inputs:
           script: 'docify build --src "$(System.DefaultWorkingDirectory)/docs" --out "$(Build.ArtifactStagingDirectory)/site" --l "*" --env production --url https://docify.xarial.com --verbose'

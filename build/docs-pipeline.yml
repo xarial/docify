@@ -44,17 +44,17 @@ stages:
         inputs:
           script: 'docify library --install --verbose'
 
-      - ${{ if eq(variables['Agent.OS'], 'Linux') }}:
-        - task: CmdLine@2
-          displayName: 'Install GDI Plus (Linux)'
-          inputs:
-            script: 'sudo apt install libgdiplus'
+      - task: CmdLine@2
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+        displayName: 'Install GDI Plus (Linux)'
+        inputs:
+          script: 'sudo apt install libgdiplus'
 
-      - ${{ if eq(variables['Agent.OS'], 'Darwin') }}:
-        - task: CmdLine@2
-          displayName: 'Install GDI Plus (MacOS)'
-          inputs:
-            script: 'brew install mono-libgdiplus'
+      - task: CmdLine@2
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
+        displayName: 'Install GDI Plus (MacOS)'
+        inputs:
+          script: 'brew install mono-libgdiplus'
 
       - task: CmdLine@2
         displayName: 'Build site'

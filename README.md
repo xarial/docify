@@ -1,3 +1,5 @@
+[![User Guide](https://img.shields.io/badge/-Documentation-green.svg)](https://docify.xarial.com)
+
 <img src="data/icon.png" width="100" />
 
 [Docify](https://www.docify.net) - content oriented static site generator developed in .NET Core. Best suited for developing blogs, technical user documentation, help files.

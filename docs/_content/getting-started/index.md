@@ -73,7 +73,7 @@ To use standard library specify * as a library path
 > docify build --src C:\MySite C:\MySiteDir2 --out C:\MyOutput --url https://example.com --l *
 ~~~
 
-On Linux systems (such as ubuntu) it is required to protect the * library symbol, by enclosing it into quotes '*'
+On Linux systems (such as ubuntu) or MacOS it is required to protect the * library symbol, by enclosing it into quotes '*'
 
 ### Using Environment
 

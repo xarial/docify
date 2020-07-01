@@ -26,6 +26,9 @@ stages:
       vmImage: macOS-latest
 
     steps:
+
+      - script: echo $(Agent.Name) $(Agent.OS)
+
       - task: UseDotNet@2
         inputs:
           packageType: 'sdk'
@@ -37,7 +40,7 @@ stages:
           custom: 'tool'
           includeNuGetOrg: true
           arguments: 'install -g docify'
-          
+
       - task: CmdLine@2
         displayName: 'Install Docify standard library'
         inputs:

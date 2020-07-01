@@ -23,7 +23,7 @@ stages:
   - job:
     pool:
       name: 'Azure Pipelines'
-      vmImage: ubuntu-latest
+      vmImage: macOS-latest
 
     steps:
       - task: UseDotNet@2
@@ -43,10 +43,10 @@ stages:
         inputs:
           script: 'docify library --install --verbose'
 
-      - task: CmdLine@2
-        displayName: 'Install GDI Plus'
-        inputs:
-          script: 'sudo apt install libgdiplus'
+      #- task: CmdLine@2
+      #  displayName: 'Install GDI Plus (Linux)'
+      #  inputs:
+      #    script: 'sudo apt install libgdiplus'
 
       - task: CmdLine@2
         displayName: 'Build site'

@@ -23,7 +23,7 @@ stages:
   - job:
     pool:
       name: 'Azure Pipelines'
-      vmImage: ubuntu-latest
+      vmImage: windows-latest
 
     steps:
 
@@ -59,7 +59,7 @@ stages:
       - task: CmdLine@2
         displayName: 'Build site'
         inputs:
-          script: 'docify build --src "$(System.DefaultWorkingDirectory)/docs" --out "$(Build.ArtifactStagingDirectory)/site" --l "*" --env production --url https://docify.xarial.com --verbose'
+          script: 'docify build --src "$(System.DefaultWorkingDirectory)\docs" --out "$(Build.ArtifactStagingDirectory)\site" --l "*" --env production --url https://docify.xarial.com --verbose'
       
       - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
         - publish: '$(Build.ArtifactStagingDirectory)/site'

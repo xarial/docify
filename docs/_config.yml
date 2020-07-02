@@ -79,3 +79,4 @@ ignore:
   - $
   - .git\*
   - .gitignore
+  - _plugins\_src\*

@@ -135,7 +135,7 @@ namespace Xarial.Docify.Core.Loader
                 {
                     await foreach (var pluginLoc in m_FileLoader.EnumSubFolders(pluginsLoc))
                     {
-                        yield return new PluginInfo(pluginLoc.Segments.Last(), m_FileLoader.LoadFolder(pluginLoc, null));
+                        yield return new PluginInfo(pluginLoc.Segments.Last(), m_FileLoader.LoadFolder(pluginLoc, m_Filter));
                     }
                 }
             }

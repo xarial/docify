@@ -42,6 +42,9 @@ namespace Xarial.Docify.Base.Data
             }
         }
 
+        public static IAssetsFolder FindFolder(this IAssetsFolder curFolder, string path)
+            => FindFolder(curFolder, new BaseLocation(path));
+
         public static IAssetsFolder FindFolder(this IAssetsFolder curFolder, ILocation path)
         {
             foreach (var curDir in path.Segments)
@@ -66,6 +69,9 @@ namespace Xarial.Docify.Base.Data
 
             return curFolder;
         }
+
+        public static IAsset FindAsset(this IAssetsFolder folder, string path) 
+            => FindAsset(folder, new BaseLocation(path));
 
         public static IAsset FindAsset(this IAssetsFolder folder, ILocation path)
         {

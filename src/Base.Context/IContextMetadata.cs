@@ -35,5 +35,12 @@ namespace Xarial.Docify.Base.Context
         /// <see cref="Get{T}(string)"/>
         /// <returns>True if property is read, False if not</returns>
         bool TryGet<T>(string prpName, out T val);
+
+        /// <summary>
+        /// Deserializes metadata into the structure
+        /// </summary>
+        /// <typeparam name="T">Type of the structure</typeparam>
+        /// <returns>Deserialized structure</returns>
+        T ToObject<T>();
     }
 }

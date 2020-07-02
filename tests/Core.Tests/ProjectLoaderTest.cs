@@ -91,6 +91,30 @@ namespace Core.Tests
         }
 
         [Test]
+        public async Task Load_ExcludePluginFilesTest()
+        {
+            var fs = new System.IO.Abstractions.TestingHelpers.MockFileSystem();
+            fs.AddFile("C:\\site\\index.md", new System.IO.Abstractions.TestingHelpers.MockFileData(""));
+            fs.AddFile("C:\\site\\_plugins\\abc\\plugin.dll", new System.IO.Abstractions.TestingHelpers.MockFileData(""));
+            
+            var loader = new ProjectLoader(
+                new LocalFileSystemFileLoader(fs, new Mock<ILogger>().Object),
+                new Mock<ILibraryLoader>().Object,
+                new Mock<IPluginsManager>().Object,
+                new Configuration(),
+                new Mock<ILoaderExtension>().Object,
+                new Mock<ILogger>().Object);
+
+            var res = await loader.Load(new ILocation[]
+            {
+                Location.FromPath("C:\\site"),
+            }).ToListAsync();
+
+            Assert.AreEqual(1, res.Count());
+            Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "index.md"));
+        }
+
+        [Test]
         public async Task LoadLibrary_Components()
         {
             var libLoaderMock = new Mock<ILibraryLoader>();

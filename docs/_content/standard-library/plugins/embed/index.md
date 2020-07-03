@@ -3,6 +3,7 @@ layout: $
 caption: Embed
 title: Embed external file plugin
 description: Embeds the content from the external file into the page
+repo-link: Plugins/Plugins.Embed
 ---
 This plugin allows to embed the content from external text file directly into the page. Content is embedded as is.
 

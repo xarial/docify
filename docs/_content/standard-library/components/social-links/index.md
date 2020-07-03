@@ -4,6 +4,7 @@ caption: Social Links
 title: Adding social links to the site
 description: Adding social links (e.g. LinkedIn, YouTube, Facebook, etc.) to the site
 image: social-links.png
+repo-link: Components/Lib/social-links
 ---
 This component allows to automatically generate social links for the most common social platforms.
 

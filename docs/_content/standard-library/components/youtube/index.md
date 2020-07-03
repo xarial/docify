@@ -4,6 +4,7 @@ caption: YouTube
 title: Embed YouTube to site
 description: Component to embed YouTube video to the site
 image: embedded-youtube.png
+repo-link: Components/Lib/youtube
 ---
 This components provides a shortcut of embedding video from YouTube from the site.
 

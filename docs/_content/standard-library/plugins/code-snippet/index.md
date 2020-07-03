@@ -4,6 +4,7 @@ caption: Code Snippet
 title: Code Snippet Plugin
 description: Plugin to manage code snippets and tabs in Docify
 image: code-snippet-tabs.png
+repo-link: Plugins/Plugins.CodeSnippet
 ---
 This plugin enables referring code snippets from external files. This simplifies the management of code as it is not embedded into the markdown file rather stays independent. This allows to employ code validation practices such as unit testing without compromising a markdown.
 

@@ -4,6 +4,7 @@ caption: Cookie Consent
 title: Cookie consent acceptance popup component
 description: Component to manage the cookie consent
 image: cookie-consent-popup.png
+repo-link: Components/Lib/cookie-consent
 ---
 ![Cookie consent popup form on a web-site](cookie-consent-popup.png)
 

@@ -3,6 +3,7 @@ layout: $
 caption: SEO
 title: Search Engine Optimization (SEO) component for Docify
 description: Component to automatically generate SEO attributes based on the page metadata
+repo-link: Components/Lib/seo
 ---
 This component allows to automatically add required metadata into the head of HTML page to improve Search Engine Optimization (SEO). Component will automatically generate *title* and *meta description* nodes based on the page [metadata](/metadata/).
 

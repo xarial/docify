@@ -4,6 +4,7 @@ caption: Navigation Menu
 title: Creating a responsive navigation menu in the site
 description: Creating responsive (mobile friendly) navigation menu in the site
 image: menu.png
+repo-link: Components/Lib/nav
 ---
 This component allows adding the menu into the site either automatically generated or custom defined. The menu can have any levels of sub-menu items.
 

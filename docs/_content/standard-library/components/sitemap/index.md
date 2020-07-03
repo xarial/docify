@@ -3,6 +3,7 @@ layout: $
 caption: Sitemap
 title: Adding sitemap for the site
 description: Automatically generating sitemap XML for the site
+repo-link: Components/Lib/sitemap
 ---
 Automatically generates [sitemap](https://en.wikipedia.org/wiki/Site_map) for all pages of the site where *sitemap* attribute is not set to *false*.
 

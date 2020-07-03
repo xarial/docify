@@ -3,6 +3,7 @@ layout: $
 caption: Image Optimizer
 title: Optimizing images plugin for Docify
 description: Optimize images by applying the lossless compression and converting vector images to png
+repo-link: Plugins/Plugins.ImageOptimizer
 ---
 This plugin automatically optimizes images used in the site in 2 ways
 

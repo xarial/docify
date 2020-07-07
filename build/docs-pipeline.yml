@@ -32,6 +32,18 @@ stages:
           packageType: 'sdk'
 
       - task: DotNetCoreCLI@2
+        displayName: 'NuGet restore'
+        inputs:
+          command: restore
+          projects: 'docs\_plugins\_src\**\*.csproj'
+
+      - task: DotNetCoreCLI@2
+        displayName: 'Build plugins'
+        inputs:
+          command: build
+          projects: 'docs\_plugins\_src\**\*.csproj'
+
+      - task: DotNetCoreCLI@2
         displayName: 'Install Docify'
         inputs:
           command: 'custom'

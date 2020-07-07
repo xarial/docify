@@ -1,0 +1,4 @@
+![Image Alt Text](sample-image.png)
+![Image with width 100](sample-image.png){ width=100 }
+![Image with height 200](sample-image.png){ height=200 }
+![Image with height 100 and width 150](sample-image.png){ height=100 width=150 }

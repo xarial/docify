@@ -1,0 +1,27 @@
+﻿---
+base-url:
+---
+@page
+@model Xarial.Docify.Base.Context.IContextModel
+@{
+    var repoLink = Model.Data.GetOrDefault<string>("repo-link");
+
+    if(string.IsNullOrEmpty(repoLink))
+    {
+        repoLink = Model.Page.Data.GetOrDefault<string>("repo-link");
+    }
+
+    var repoUrl = "";
+    
+    if(!string.IsNullOrEmpty(repoLink))
+    {
+        repoUrl = Model.Data.Get<string>("base-url").TrimEnd('/') + "/" + repoLink.TrimStart('/');
+    }
+}
+@if(!string.IsNullOrEmpty(repoUrl))
+{
+    <div style="text-align: right; vertical-align: middle">
+        <img height="20px" style="vertical-align:middle; margin: 5px;" src="/_assets/images/source-code-icon.svg">
+        <a href="@repoUrl">View Source Code</a>
+    </div>
+}

@@ -3,6 +3,7 @@ layout: $
 caption: Code Syntax Highlighter
 title: Highlighting code syntax in Docify static site generator
 description: Enabling the automatic code syntax highlighting for the most popular programming languages
+repo-link: Plugins/Plugins.CodeSyntaxHighlighter
 ---
 This plugin converts the markdown code snippets into the code with highlighted syntax.
 

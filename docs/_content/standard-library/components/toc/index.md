@@ -4,6 +4,7 @@ caption: Table Of Content
 title: Creating tale of content in the site
 description: Creating a Table Of Content (TOC) navigation bar in the site
 image: table-of-content.png
+repo-link: Components/Lib/toc
 ---
 This component allows adding the Table Of Content (TOC) into the site either automatically generated or custom defined. Table Of Content can have any levels of sub-menu items.
 

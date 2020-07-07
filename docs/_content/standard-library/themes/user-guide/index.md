@@ -4,8 +4,9 @@ caption: User Guide
 title: User guide theme in docify
 description: Theme to create user guides using Docify
 image: user-guide-article-layout.png
+repo-link: Themes/Lib/user-guide
 ---
-{% youtube id: kWjYHH32w7A  %}
+{% youtube id: kWjYHH32w7A %}
 
 This theme is designed for the creation of user guides and technical documentation. Theme is based on [base theme](/standard-library/themes/base/).
 
@@ -30,6 +31,8 @@ This theme is designed for the creation of user guides and technical documentati
 ## Theme Specific Components
 
 ### GitHub Issues
+
+{% library-source-reference repo-link: Themes/Lib/user-guide/_includes/github-issues.cshtml %}
 
 Loads the list of GitHub issues for the public repository with an option to raise new issue.
 

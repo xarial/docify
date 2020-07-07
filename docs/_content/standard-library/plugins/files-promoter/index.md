@@ -3,6 +3,7 @@ layout: $
 caption: Files Promoter
 title: Files promoter plugin for Docify
 description: Promoting levels of files and folders in Docify
+repo-link: Plugins/Plugins.FilesPromoter
 ---
 This plugin allows to promote the files in the specified folders to upper level.
 

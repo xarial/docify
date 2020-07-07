@@ -3,6 +3,7 @@ layout: $
 caption: Base
 title: Base theme in docify
 description: Base theme for blog, user guide, etc.
+repo-link: Themes/Lib/base
 ---
 This is a parent theme for [user guide theme](/standard-library/themes/user-guide/) and [blog theme](/standard-library/themes/blog/).
 
@@ -48,6 +49,8 @@ styles:
 
 ### Date 
 
+{% library-source-reference repo-link: Themes/Lib/base/_includes/date.cshtml %}
+
 This [include](/includes/) allows to add a current date with the specified format
 
 ~~~
@@ -55,6 +58,8 @@ This [include](/includes/) allows to add a current date with the specified forma
 ~~~
 
 ### Legal
+
+{% library-source-reference repo-link: Themes/Lib/base/_includes/legal.cshtml %}
 
 Generates a footer with the references to legal information (i.e. Terms Of Use, Privacy Policy, Cookies Policy etc.) and copyright notices
 
@@ -79,6 +84,8 @@ $legal:
 
 ### Page Language
 
+{% library-source-reference repo-link: Themes/Lib/base/_includes/page-lang.cshtml %}
+
 Component resolves the language of the page and add this to a HTML page header
 
 ~~~ html jagged-bottom
@@ -92,6 +99,8 @@ Language is extracted from the *lang* attribute of the page [metadata](/metadata
 Default value is *en* and can be assigned via *default-lang* attribute of the include.
 
 ### Site Header
+
+{% library-source-reference repo-link: Themes/Lib/base/_includes/site-header.cshtml %}
 
 Component provides a generic responsive layout for the site header. It includes title of the site, description and icon.
 

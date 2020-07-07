@@ -4,6 +4,7 @@ caption: Social Share
 title: Adding the social share shortcuts to the pages
 description: Adding the social share (LinkedIn, Facebook, Reddit etc.) to pages
 image: social-share.png
+repo-link: Components/Lib/social-share
 ---
 This component allows to add the social share badge to enable a shortcut for sharing the page on social platforms.
 

@@ -3,6 +3,7 @@ layout: $
 caption: Google Analytics
 title: Tracking site statistics using Google Analytics
 description: Enabling collection the site traffic data using Google Analytics
+repo-link: Components/Lib/google-analytics
 ---
 This components enables tracking of the site statistics using [Google Analytics](https://analytics.google.com/analytics/web/).
 

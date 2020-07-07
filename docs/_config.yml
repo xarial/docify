@@ -79,3 +79,7 @@ ignore:
   - $
   - .git\*
   - .gitignore
+  - _plugins\_src\*
+  - _includes\bin\*
+  - _includes\obj\*
+  - _includes\*.csproj

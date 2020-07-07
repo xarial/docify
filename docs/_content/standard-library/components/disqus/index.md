@@ -4,6 +4,7 @@ caption: Disqus
 title: Enabling comments using Disqus
 description: Component to enable comments to pages using Disqus
 image: disqus-comments.png
+repo-link: Components/Lib/disqus
 ---
 ![Comments section with Disqus](disqus-comments.png){ width=600 }
 

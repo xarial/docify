@@ -210,7 +210,14 @@ namespace Xarial.Docify.Base.Data
                 }
                 else if (dynVal is IConvertible)
                 {
-                    val = (T)Convert.ChangeType(dynVal, typeof(T));
+                    if (typeof(T).IsEnum)
+                    {
+                        val = (T)Enum.Parse(typeof(T), dynVal.ToString());
+                    }
+                    else 
+                    {
+                        val = (T)Convert.ChangeType(dynVal, typeof(T));
+                    }
                 }
                 else
                 {

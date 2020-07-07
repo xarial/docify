@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
@@ -66,7 +67,7 @@ namespace Xarial.Docify.Core.Loader
                 }
 
                 var pluginExcludeFilter = LocationExtension.NEGATIVE_FILTER
-                    + loc.Combine(Location.Library.PluginsFolderName, LocationExtension.ANY_FILTER).ToId();
+                    + Path.Combine(Location.Library.PluginsFolderName, LocationExtension.ANY_FILTER);
 
                 filter.Add(pluginExcludeFilter);
 
@@ -135,7 +136,7 @@ namespace Xarial.Docify.Core.Loader
                 {
                     await foreach (var pluginLoc in m_FileLoader.EnumSubFolders(pluginsLoc))
                     {
-                        yield return new PluginInfo(pluginLoc.Segments.Last(), m_FileLoader.LoadFolder(pluginLoc, null));
+                        yield return new PluginInfo(pluginLoc.Segments.Last(), m_FileLoader.LoadFolder(pluginLoc, m_Filter));
                     }
                 }
             }

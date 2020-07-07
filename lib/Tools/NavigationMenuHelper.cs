@@ -105,10 +105,8 @@ namespace Xarial.Docify.Lib.Tools
                 return val;
             }
 
-            public bool TryGet<T>(string prpName, out T val)
-            {
-                return MetadataExtension.TryGetParameter<T>(this, prpName, out val);
-            }
+            public T ToObject<T>() => MetadataExtension.ToObject<T>(this);
+            public bool TryGet<T>(string prpName, out T val) => MetadataExtension.TryGetParameter<T>(this, prpName, out val);
         }
 
         /// <summary>

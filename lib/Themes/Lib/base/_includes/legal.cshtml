@@ -17,7 +17,7 @@ links:
 @{
     string GetCopyright()
     {
-        var data = DataDeserializer.Deserialize<LegalData>(Model.Data);
+        var data = Model.Data.ToObject<LegalData>();
 
         var comp = data.Company;
 
@@ -38,7 +38,7 @@ links:
 
     IEnumerable<KeyValuePair<string, string>> GetLinks()
     {
-        var data = DataDeserializer.Deserialize<LegalData>(Model.Data);
+        var data = Model.Data.ToObject<LegalData>();
 
         if (data.Links != null)
         {

@@ -23,30 +23,38 @@ stages:
   - job:
     pool:
       name: 'Azure Pipelines'
-      vmImage: macOS-latest
+      vmImage: windows-latest
 
     steps:
+
       - task: UseDotNet@2
         inputs:
           packageType: 'sdk'
 
       - task: DotNetCoreCLI@2
-        displayName: 'Install docify'
+        displayName: 'Install Docify'
         inputs:
           command: 'custom'
           custom: 'tool'
           includeNuGetOrg: true
           arguments: 'install -g docify'
-          
+
       - task: CmdLine@2
         displayName: 'Install Docify standard library'
         inputs:
           script: 'docify library --install --verbose'
 
-      #- task: CmdLine@2
-      #  displayName: 'Install GDI Plus (Linux)'
-      #  inputs:
-      #    script: 'sudo apt install libgdiplus'
+      - task: CmdLine@2
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+        displayName: 'Install GDI Plus (Linux)'
+        inputs:
+          script: 'sudo apt install libgdiplus'
+
+      - task: CmdLine@2
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
+        displayName: 'Install GDI Plus (MacOS)'
+        inputs:
+          script: 'brew install mono-libgdiplus'
 
       - task: CmdLine@2
         displayName: 'Install GDI Plus (MacOS)'
@@ -56,7 +64,7 @@ stages:
       - task: CmdLine@2
         displayName: 'Build site'
         inputs:
-          script: 'docify build --src "$(System.DefaultWorkingDirectory)/docs" --out "$(Build.ArtifactStagingDirectory)/site" --l "*" --env production --url https://docify.xarial.com --verbose'
+          script: 'docify build --src "$(System.DefaultWorkingDirectory)\docs" --out "$(Build.ArtifactStagingDirectory)\site" --l "*" --env production --url https://docify.xarial.com --verbose'
       
       - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
         - publish: '$(Build.ArtifactStagingDirectory)/site'
@@ -66,7 +74,7 @@ stages:
   variables:
   - group: build-vars
   dependsOn: 'Build'
-  condition: ne(variables['Build.Reason'], 'PullRequest')
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest'))
   jobs:
   - deployment:
     pool:

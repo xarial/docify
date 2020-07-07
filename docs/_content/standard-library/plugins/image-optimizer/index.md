@@ -33,8 +33,18 @@ Set the parameters in the [configuration](/configuration/) file.
   svg-png-width: 600
 ~~~
 
-When using this plugin on Linux systems (such as Ubuntu), it is required to install the *libgdiplus* library. Run the following command in the terminal to install the library
+When using this plugin on Linux systems (such as Ubuntu) or MacOS, it is required to install the *libgdiplus* library.
+
+Run the following command in the terminal to install the library
+
+### Linux
 
 ~~~
 > sudo apt install libgdiplus
+~~~
+
+### MacOS
+
+~~~
+> brew install mono-libgdiplus
 ~~~

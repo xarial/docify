@@ -3,7 +3,7 @@ layout: $
 caption: RSS Feed
 title: RSS feed XML file generation component
 description: Component to automatically generate RSS feed xml file from the pages
-image: 
+repo-link: Components/Lib/feed
 ---
 This component will add the *feed.xml* containing the [RSS feed](https://en.wikipedia.org/wiki/RSS).
 

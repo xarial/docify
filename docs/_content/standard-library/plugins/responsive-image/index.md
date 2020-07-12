@@ -4,6 +4,7 @@ caption: Responsive Image
 title: Enabling the responsiveness in images using Docify
 description: Plugin to enable the responsive layout for all images
 image: responsive-image.gif
+repo-link: Plugins/Plugins.ResponsiveImage
 ---
 This plugin will automatically generate a responsive layout for all images and will add the figure text.
 
@@ -17,4 +18,10 @@ Plugin will automatically enable the responsiveness for all images inserted in m
 
 ~~~
 ![image alt](/image.png)
+~~~
+
+To disable the responsiveness for the particular image, add the *responsive-image=false* attribute as follows:
+
+~~~
+![image alt](/image.png){ responsive-image=false }
 ~~~

@@ -3,6 +3,7 @@ layout: $
 caption: Redirect
 title: Redirect from and to pages plugin in Docify
 description: Plugin to create redirect pages from or to page in Docify
+repo-link: Plugins/Plugins.Redirect
 ---
 This plugin allows to automatically generate redirect pages either to the current page or from the page.
 

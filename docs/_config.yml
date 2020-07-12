@@ -41,7 +41,7 @@ $disqus:
   short-name: docify
 $social-links:
   linkedin: https://www.linkedin.com/company/xarial
-  youtube: https://www.youtube.com/channel/UC81d0RDT1MUNAD6nzvKBJfA
+  youtube: https://www.youtube.com/c/xarial
   nuget: https://www.nuget.org/profiles/Xarial
   github: https://github.com/xarial
   rss: /feed.xml
@@ -79,3 +79,7 @@ ignore:
   - $
   - .git\*
   - .gitignore
+  - _plugins\_src\*
+  - _includes\bin\*
+  - _includes\obj\*
+  - _includes\*.csproj

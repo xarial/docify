@@ -4,6 +4,8 @@ title: Creating plugins for Docify engine to automate the site building process
 description: Creating and managing plugins in Docify Engine
 order: 9
 ---
+{% youtube id: Z98CKsQt4p8 %}
+
 Plugins are powerful mechanisms to tailor Docify engine to specific needs.
 
 Docify engine exposes various APIs which can intercept and modify data on the various steps of the compilation and publishing process.

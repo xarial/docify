@@ -5,6 +5,8 @@ description: Managing the pseudo-dynamic reusable snippets in the page and text 
 image: includes-folder.png
 order: 8
 ---
+{% youtube id: a0Uxlm_jplY %}
+
 Includes are files with the [c# razor page](https://docs.microsoft.com/en-us/aspnet/core/razor-pages/?view=aspnetcore-3.1&tabs=visual-studio) syntax allowing to generate pseudo-dynamic content which is resolved at the compile time.
 
 Includes can be used in the [pages](/pages/), [layouts](/layouts/). Includes can be also resolved in [assets](/assets/) if corresponding filter is set in the [configuration](/configuration/).

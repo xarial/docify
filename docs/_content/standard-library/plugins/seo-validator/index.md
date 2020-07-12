@@ -4,6 +4,7 @@ caption: SEO Validator
 title: Plugin to validating the SEO setting for the site
 description: Docify plugin which validates various Search Engine Optimization (SEO) configurations (e.g. title, description and content length) for the site
 image: seo-validation-warnings.png
+repo-link: Plugins/Plugins.SeoValidator
 ---
 This plugin automatically runs Search Engine Optimization (SEO) rules during the build process to ensure the page employs good SEO practices.
 

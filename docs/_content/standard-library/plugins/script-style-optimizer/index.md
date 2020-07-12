@@ -3,6 +3,7 @@ layout: $
 caption: Scripts And Styles Optimizer
 title: Optimized scripts and styles in the site using Docify
 description: 'Plugin to optimize scripts and styles: bundle reusable scripts and styles, remove unused files and minify'
+repo-link: Plugins/Plugins.ScriptStyleOptimizer
 ---
 This plugin allows to optimize scripts and styles in the site in 3 ways
 

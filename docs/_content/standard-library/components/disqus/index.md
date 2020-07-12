@@ -4,6 +4,7 @@ caption: Disqus
 title: Enabling comments using Disqus
 description: Component to enable comments to pages using Disqus
 image: disqus-comments.png
+repo-link: Components/Lib/disqus
 ---
 ![Comments section with Disqus](disqus-comments.png){ width=600 }
 
@@ -15,6 +16,7 @@ Component is using [Disqus](https://disqus.com/) for comments. It is required to
 
 * short-name - disqus account short name
 * count - true to enable the comments count badge
+* environment - [environment](/getting-started#using-environment) where comments are enabled (default *production*). Use *-* to enable comments in all environments.
 * sitemap (page metadata) - if false, comments will not be rendered
 * comments (page metadata) - if false, comments will not be rendered
 

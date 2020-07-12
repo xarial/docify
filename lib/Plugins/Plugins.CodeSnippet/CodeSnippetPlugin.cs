@@ -101,13 +101,14 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
                     throw new PluginUserMessageException($"{nameof(m_Settings.AutoTabs)} setting must be set to use automatic code snippet tabs");
                 }
 
-                var snipsFolder = FindSnippetFolder(m_Site, page, snipData.FileName);
+                var fileName = snipData.FileName;
+                var snipsFolder = FindSnippetFolder(m_Site, page, ref fileName);
                 
                 snipData.Tabs = new Dictionary<string, string>();
 
                 foreach (var asset in snipsFolder.Assets
                     .Where(a => string.Equals(Path.GetFileNameWithoutExtension(a.FileName),
-                    Path.GetFileNameWithoutExtension(snipData.FileName), StringComparison.CurrentCultureIgnoreCase)))
+                    Path.GetFileNameWithoutExtension(fileName), StringComparison.CurrentCultureIgnoreCase)))
                 {
                     string ext = Path.GetExtension(asset.FileName).TrimStart('.');
 
@@ -199,7 +200,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
 
             try
             {
-                var searchFolder = FindSnippetFolder(m_Site, page, filePath);
+                var searchFolder = FindSnippetFolder(m_Site, page, ref filePath);
 
                 var fileName = new PluginLocation("", Path.GetFileName(filePath), Enumerable.Empty<string>());
                 snipAsset = searchFolder.FindAsset(fileName);
@@ -293,7 +294,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
             }
         }
 
-        private IAssetsFolder FindSnippetFolder(ISite site, IPage page, string snipLoc)
+        private IAssetsFolder FindSnippetFolder(ISite site, IPage page, ref string snipLoc)
         {
             IAssetsFolder snippetsBaseFolder = null;
 

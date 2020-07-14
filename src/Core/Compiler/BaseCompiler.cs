@@ -191,6 +191,7 @@ namespace Xarial.Docify.Core.Compiler
             SetBaseUrlToAttribute(doc.DocumentNode.SelectNodes("//link[@href][@rel='stylesheet']"), "href");
             SetBaseUrlToAttribute(doc.DocumentNode.SelectNodes("//a[@href]"), "href");
             SetBaseUrlToAttribute(doc.DocumentNode.SelectNodes("//img[@src]"), "src");
+            SetBaseUrlToAttribute(doc.DocumentNode.SelectNodes("//input[@src]"), "src");
 
             return doc.DocumentNode.OuterHtml;
         }

@@ -103,6 +103,22 @@ namespace Core.Tests
         }
 
         [Test]
+        public async Task Compile_BaseUrlTest()
+        {
+            var layout = new TemplateMock("l1", "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"/_assets/a1.css\"><link rel=\"stylesheet\" type=\"text/css\" href=\"a2.css\"><link rel=\"stylesheet\" type=\"text/css\" href=\"https://www.example.com/a3.css\"><script type=\"text/javascript\" src=\"/_assets/s1.js\"></script><script type=\"text/javascript\" src=\"s2.js\"></script><script type=\"text/javascript\" src=\"https://www.example.com/s3.js\"></script><title>P1</title></head><body><h1>Heading</h1><img src=\"/_assets/i1.png\"><img src=\"i2.png\"><img src=\"https://www.example.com/i3.png\"><a href=\"/\"></a><a href=\"/l1/\"></a><a href=\"l2/\"></a><a href=\"https://www.example.com/l3/\"></a><p>Paragraph</p></body></html>");
+            var page = new PageMock("p1", "test", layout);
+
+            var site = new Site("", "/basetest/",
+                page, null);
+
+            var files = await m_Compiler.Compile(site).ToListAsync();
+
+            var content = files.First(f => f.Location.ToId() == "index.html").AsTextContent();
+
+            Assert.AreEqual("<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"/basetest/_assets/a1.css\"><link rel=\"stylesheet\" type=\"text/css\" href=\"a2.css\"><link rel=\"stylesheet\" type=\"text/css\" href=\"https://www.example.com/a3.css\"><script type=\"text/javascript\" src=\"/basetest/_assets/s1.js\"></script><script type=\"text/javascript\" src=\"s2.js\"></script><script type=\"text/javascript\" src=\"https://www.example.com/s3.js\"></script><title>P1</title></head><body><h1>Heading</h1><img src=\"/basetest/_assets/i1.png\"><img src=\"i2.png\"><img src=\"https://www.example.com/i3.png\"><a href=\"/basetest/\"></a><a href=\"/basetest/l1/\"></a><a href=\"l2/\"></a><a href=\"https://www.example.com/l3/\"></a><p>Paragraph</p></body></html>", content);
+        }
+
+        [Test]
         public async Task Compile_MultipleNestedPagesTest()
         {
             var p1 = new PageMock("", "P1");

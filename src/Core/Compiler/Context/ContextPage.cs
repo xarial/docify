@@ -64,9 +64,21 @@ namespace Xarial.Docify.Core.Compiler.Context
 
             var partUrl = Url.TrimStart(LocationExtension.URL_SEP);
 
-            FullUrl = site.Host + (string.IsNullOrEmpty(partUrl) ? "" : "/" + partUrl);
+            var baseUrl = "";
+
+            if (!string.IsNullOrEmpty(site.BaseUrl))
+            {
+                baseUrl = LocationExtension.URL_SEP + site.BaseUrl.TrimStart(LocationExtension.URL_SEP).TrimEnd(LocationExtension.URL_SEP);
+            }
+
+            if (!string.IsNullOrEmpty(partUrl)) 
+            {
+                partUrl = LocationExtension.URL_SEP + partUrl;
+            }
+            
+            FullUrl = site.Host + baseUrl + partUrl;
         }
 
-        private string GetChildPageUrl(IPage page) => Url.TrimEnd('/') + "/" + page.Name + "/";
+        private string GetChildPageUrl(IPage page) => Url.TrimEnd(LocationExtension.URL_SEP) + LocationExtension.URL_SEP + page.Name + LocationExtension.URL_SEP;
     }
 }

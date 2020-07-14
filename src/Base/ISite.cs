@@ -21,6 +21,11 @@ namespace Xarial.Docify.Base
         string Host { get; }
 
         /// <summary>
+        /// Base url of the site
+        /// </summary>
+        string BaseUrl { get; }
+
+        /// <summary>
         /// Main page of the site
         /// </summary>
         IPage MainPage { get; }

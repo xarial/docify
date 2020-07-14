@@ -29,7 +29,14 @@ namespace Xarial.Docify.Base
                 host = site.Host.TrimEnd(LocationExtension.URL_SEP);
             }
 
-            return site.Host + baseUrl + partUrl;
+            var res = site.Host + baseUrl + partUrl;
+
+            if (string.IsNullOrEmpty(res)) 
+            {
+                res = url;
+            }
+
+            return res;
         }
     }
 }

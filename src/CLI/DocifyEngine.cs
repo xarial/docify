@@ -63,8 +63,8 @@ namespace Xarial.Docify.CLI
         private readonly int m_HttpsPort;
 
         public DocifyServeEngine(string[] srcDirs, string outDir, 
-            string[] libs, string siteUrl, string env, bool verbose, int httpPort, int httpsPort)
-            : base(srcDirs, GetOutDir(outDir), libs, siteUrl, env, verbose)
+            string[] libs, string host, string baseUrl, string env, bool verbose, int httpPort, int httpsPort)
+            : base(srcDirs, GetOutDir(outDir), libs, host, baseUrl, env, verbose)
         {
             m_HttpPort = httpPort;
             m_HttpsPort = httpsPort;
@@ -102,17 +102,20 @@ namespace Xarial.Docify.CLI
 
         private readonly IContainer m_Container;
 
-        private readonly string m_SiteUrl;
+        private readonly string m_Host;
+        private readonly string m_BaseUrl;
+
         private readonly ILocation[] m_SrcDirs;
         protected readonly ILocation m_OutDir;
         private readonly string[] m_Libs;
         private readonly bool m_Verbose;
 
-        public DocifyEngine(string[] srcDirs, string outDir, string[] libs, string siteUrl, string env, bool verbose)
+        public DocifyEngine(string[] srcDirs, string outDir, string[] libs, string host, string baseUrl, string env, bool verbose)
         {
             var builder = new ContainerBuilder();
 
-            m_SiteUrl = siteUrl;
+            m_Host = host;
+            m_BaseUrl = baseUrl;
 
             if (srcDirs?.Any() != true) 
             {
@@ -140,7 +143,7 @@ namespace Xarial.Docify.CLI
 
             var srcFiles = loader.Load(m_SrcDirs);
 
-            var site = await composer.ComposeSite(srcFiles, m_SiteUrl);
+            var site = await composer.ComposeSite(srcFiles, m_Host, m_BaseUrl);
 
             var outFiles = compiler.Compile(site);
 

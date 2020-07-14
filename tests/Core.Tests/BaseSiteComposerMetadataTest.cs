@@ -43,7 +43,7 @@ namespace Core.Tests
                 "---\r\nprp1: A\r\nprp2: B\r\n---\r\nText Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(2, site.MainPage.Data.Count);
@@ -60,7 +60,7 @@ namespace Core.Tests
                 "---\r\nprp1: A\r\nprp2:\r\n  prp3: B\r\n---\r\nText Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(2, site.MainPage.Data.Count);
@@ -78,7 +78,7 @@ namespace Core.Tests
                 "---\r\nprp1: A\r\nprp2:\r\n  - B\r\n  - C\r\n---\r\nText Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(2, site.MainPage.Data.Count);
@@ -97,7 +97,7 @@ namespace Core.Tests
                 "Text Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(0, site.MainPage.Data.Count);
@@ -112,7 +112,7 @@ namespace Core.Tests
                 "---\r\nText Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
-            await AssertException.ThrowsInnerAsync<FrontMatterErrorException>(() => m_Composer.ComposeSite(src, ""));
+            await AssertException.ThrowsInnerAsync<FrontMatterErrorException>(() => m_Composer.ComposeSite(src, "", ""));
         }
     }
 }

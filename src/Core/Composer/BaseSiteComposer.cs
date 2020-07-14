@@ -117,7 +117,7 @@ namespace Xarial.Docify.Core.Composer
             return new Page(name, rawContent, pageData, src.Id, layout);
         }
 
-        public async Task<ISite> ComposeSite(IAsyncEnumerable<IFile> files, string baseUrl)
+        public async Task<ISite> ComposeSite(IAsyncEnumerable<IFile> files, string host, string baseUrl)
         {
             var filesList = new List<IFile>();
 
@@ -144,7 +144,7 @@ namespace Xarial.Docify.Core.Composer
                 var assets = ParseAssets(srcAssets);
                 var mainPage = ParsePages(srcPages, layouts, assets);
 
-                var site = new Site(baseUrl, mainPage, m_Config);
+                var site = new Site(host, baseUrl, mainPage, m_Config);
                 site.Layouts.AddRange(layouts.Values);
                 site.Includes.AddRange(includes);
 

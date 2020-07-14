@@ -94,7 +94,7 @@ namespace Core.Tests
         [Test]
         public async Task Compile_SinglePageTest()
         {
-            var site = new Site("",
+            var site = new Site("", "",
                 new PageMock("", "abc _CC_ _FN_ test"), null);
 
             var files = await m_Compiler.Compile(site).ToListAsync();
@@ -107,7 +107,7 @@ namespace Core.Tests
         {
             var p1 = new PageMock("", "P1");
 
-            var site = new Site("", p1, null);
+            var site = new Site("", "", p1, null);
 
             var p2 = new PageMock("page2", "P2");
             p1.SubPages.Add(p2);
@@ -128,7 +128,7 @@ namespace Core.Tests
         [Test]
         public async Task Compile_NonDefaultPageTest()
         {
-            var site = new Site("", new PageMock("", "P1"), null);
+            var site = new Site("", "", new PageMock("", "P1"), null);
             var p2 = new PageMock("page2.html", "P2");
             site.MainPage.SubPages.Add(p2);
 
@@ -141,7 +141,7 @@ namespace Core.Tests
         [Test]
         public async Task Compile_SimpleTemplatePageTest()
         {
-            var site = new Site("",
+            var site = new Site("", "",
                 new PageMock("", "My Page Content",
                 new TemplateMock("t1", "TemplateText1 _C_ TemplateText2")), null);
 
@@ -153,7 +153,7 @@ namespace Core.Tests
         [Test]
         public async Task Compile_NestedSimpleTemplatePageTest()
         {
-            var site = new Site("",
+            var site = new Site("", "",
                 new PageMock("",
                 "My Page Content",
                 new TemplateMock("t1", "T1 _C_ T1", null,
@@ -174,7 +174,7 @@ namespace Core.Tests
 
             p1.SubPages.Add(new PageMock("page2", "Page2 _FN_", t1));
 
-            var site = new Site("", p1, null);
+            var site = new Site("", "", p1, null);
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
@@ -198,7 +198,7 @@ namespace Core.Tests
             p2.SubPages.Add(p4);
             p4.SubPages.Add(p6);
 
-            var site = new Site("", p1, null);
+            var site = new Site("", "", p1, null);
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 

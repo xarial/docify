@@ -64,7 +64,7 @@ namespace Xarial.Docify.CLI
                 {
                     var engine = new DocifyServeEngine(serveOpts.SourceDirectories?.ToArray(),
                         serveOpts.OutputDirectory, serveOpts.Library?.ToArray(),
-                        serveOpts.SiteUrl, serveOpts.Environment, serveOpts.Verbose, 
+                        serveOpts.Host, serveOpts.BaseUrl, serveOpts.Environment, serveOpts.Verbose, 
                         serveOpts.HttpPort, serveOpts.HttpsPort);
 
                     m_Logger = engine.Resolve<ILogger>();
@@ -80,7 +80,7 @@ namespace Xarial.Docify.CLI
                 {
                     var engine = new DocifyEngine(buildOpts.SourceDirectories?.ToArray(),
                         buildOpts.OutputDirectory, buildOpts.Library?.ToArray(),
-                        buildOpts.SiteUrl, buildOpts.Environment, buildOpts.Verbose);
+                        buildOpts.Host, buildOpts.BaseUrl, buildOpts.Environment, buildOpts.Verbose);
 
                     m_Logger = engine.Resolve<ILogger>();
 

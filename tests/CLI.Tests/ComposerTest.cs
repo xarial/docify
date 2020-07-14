@@ -38,7 +38,7 @@ namespace CLI.Tests
                 new FileMock(Location.FromPath("index.html"), "test")
             };
 
-            var site = await m_Composer.ComposeSite(files.ToAsyncEnumerable(), "");
+            var site = await m_Composer.ComposeSite(files.ToAsyncEnumerable(), "", "");
 
             Assert.AreEqual(0, site.MainPage.SubPages.Count);
             Assert.AreEqual("test", site.MainPage.RawContent);

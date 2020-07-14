@@ -42,7 +42,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(1, site.Includes.Count);
             Assert.AreEqual("i1", site.Includes[0].Name);
@@ -61,7 +61,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(3, site.Includes.Count);
             Assert.AreEqual(0, site.Includes.Select(i => i.Name).Except(new string[] { "i1", "i2", "i3" }).Count());
@@ -79,7 +79,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(1, site.Includes.Count);
             Assert.AreEqual("i1", site.Includes[0].Name);
@@ -98,7 +98,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
-            Assert.ThrowsAsync<DuplicateTemplateException>(() => m_Composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<DuplicateTemplateException>(() => m_Composer.ComposeSite(src, "", ""));
         }
 
         [Test]
@@ -110,7 +110,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(1, site.Includes.Count);
             Assert.AreEqual("dir1::i1", site.Includes[0].Name);

@@ -14,7 +14,7 @@ namespace Xarial.Docify.Core.Compiler.Context
     {
         internal ISite BaseSite { get; }
 
-        public string BaseUrl => BaseSite.BaseUrl;
+        public string BaseUrl => BaseSite.Host;
         public IContextPage MainPage => new ContextPage(BaseSite, BaseSite.MainPage, "");
         public IContextConfiguration Configuration => new ContextConfiguration(BaseSite.Configuration);
 

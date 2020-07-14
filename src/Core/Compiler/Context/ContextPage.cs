@@ -64,7 +64,7 @@ namespace Xarial.Docify.Core.Compiler.Context
 
             var partUrl = Url.TrimStart(LocationExtension.URL_SEP);
 
-            FullUrl = site.BaseUrl + (string.IsNullOrEmpty(partUrl) ? "" : "/" + partUrl);
+            FullUrl = site.Host + (string.IsNullOrEmpty(partUrl) ? "" : "/" + partUrl);
         }
 
         private string GetChildPageUrl(IPage page) => Url.TrimEnd('/') + "/" + page.Name + "/";

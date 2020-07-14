@@ -99,5 +99,23 @@ namespace Core.Tests
             Assert.AreEqual("https://www.example.com/root/abc/xyz", u4);
             Assert.AreEqual("https://www.example.com/root/abc", u5);
         }
+
+        [Test]
+        public void GetFullUrl_HostBase3Test()
+        {
+            var site = new Site("https://www.example.com/", "/root/", new PageMock("p1", ""), null);
+
+            var u1 = site.GetFullUrl("");
+            var u2 = site.GetFullUrl("/");
+            var u3 = site.GetFullUrl("/abc");
+            var u4 = site.GetFullUrl("/abc/xyz");
+            var u5 = site.GetFullUrl("abc");
+
+            Assert.AreEqual("https://www.example.com/root", u1);
+            Assert.AreEqual("https://www.example.com/root", u2);
+            Assert.AreEqual("https://www.example.com/root/abc", u3);
+            Assert.AreEqual("https://www.example.com/root/abc/xyz", u4);
+            Assert.AreEqual("https://www.example.com/root/abc", u5);
+        }
     }
 }

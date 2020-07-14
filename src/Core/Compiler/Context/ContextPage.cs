@@ -21,9 +21,7 @@ namespace Xarial.Docify.Core.Compiler.Context
 
         public string Url { get; }
         public string FullUrl { get; }
-        //public string Name { get; }
-        //public string RawContent { get; }
-
+        
         public IContextMetadata Data
         {
             get
@@ -61,22 +59,7 @@ namespace Xarial.Docify.Core.Compiler.Context
             m_Site = site;
             BasePage = page;
             Url = url;
-
-            var partUrl = Url.TrimStart(LocationExtension.URL_SEP);
-
-            var baseUrl = "";
-
-            if (!string.IsNullOrEmpty(site.BaseUrl))
-            {
-                baseUrl = LocationExtension.URL_SEP + site.BaseUrl.TrimStart(LocationExtension.URL_SEP).TrimEnd(LocationExtension.URL_SEP);
-            }
-
-            if (!string.IsNullOrEmpty(partUrl)) 
-            {
-                partUrl = LocationExtension.URL_SEP + partUrl;
-            }
-            
-            FullUrl = site.Host + baseUrl + partUrl;
+            FullUrl = site.GetFullUrl(url);
         }
 
         private string GetChildPageUrl(IPage page) => Url.TrimEnd(LocationExtension.URL_SEP) + LocationExtension.URL_SEP + page.Name + LocationExtension.URL_SEP;

@@ -6,12 +6,12 @@
 
 ## Features
 
-* Transforming the markdown into the html
-* Layouts support
-* Includes support (pseudo-dynamic) in C# Razor Pages syntax
-* Plugins in .NET Core
-* Themes support
-* Standard library of components, plugins and themes
+* [Transforming the markdown into the html](https://docify.xarial.com/content/static/)
+* [Layouts support](https://docify.xarial.com/layouts/)
+* [Includes support (pseudo-dynamic) in C# Razor Pages syntax](https://docify.xarial.com/content/dynamic/)
+* [Plugins in .NET Core](https://docify.xarial.com/plugins/)
+* [Themes support](https://docify.xarial.com/custom-library/themes/)
+* [Standard library of components, plugins and themes](https://docify.xarial.com/standard-library/)
 
 ## CLI
 [![NuGet version (Docify)](https://img.shields.io/nuget/v/Docify.svg?style=flat-square)](https://www.nuget.org/packages/Docify/)

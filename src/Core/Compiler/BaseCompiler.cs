@@ -170,13 +170,16 @@ namespace Xarial.Docify.Core.Compiler
         {
             void SetBaseUrlToAttribute(HtmlNodeCollection nodes, string attName) 
             {
-                foreach (var script in nodes)
+                if (nodes != null)
                 {
-                    var val = script.Attributes[attName].Value;
-                    if (val.StartsWith("/"))
+                    foreach (var script in nodes)
                     {
-                        val = baseUrl + val;
-                        script.Attributes[attName].Value = val;
+                        var val = script.Attributes[attName].Value;
+                        if (val.StartsWith("/"))
+                        {
+                            val = baseUrl + val;
+                            script.Attributes[attName].Value = val;
+                        }
                     }
                 }
             }

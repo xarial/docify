@@ -38,7 +38,7 @@ Docify files are plain text file and any compatible text editor can be used. The
 To build a simple site, use the following command
 
 ~~~
-> docify build --src C:\MySite --out C:\MyOutput --url https://example.com
+> docify build --src C:\MySite --out C:\MyOutput --host https://example.com
 ~~~
 
 All files from the *C:\MySite* folder will be published to the *C:\MyOutput*.
@@ -46,31 +46,41 @@ All files from the *C:\MySite* folder will be published to the *C:\MyOutput*.
 It is possible to specify multiple folders for compilation
 
 ~~~
-> docify build --src C:\MySiteDir1 C:\MySiteDir2 --out C:\MyOutput --url https://example.com
+> docify build --src C:\MySiteDir1 C:\MySiteDir2 --out C:\MyOutput --host https://example.com
 ~~~
 
 This can be useful to separate the content and the frames and layouts.
 
 If *--src* is not specified, current working folder is used as the source for the site.
 
+*--host* parameter is optional, but some components might need to use full url including the host, e.g. SEO components or canonical url generator.
+
+If site is hosted in sub-folder (e.g. https://example.com/root/{site}), use *--base* parameter to specify base url. Docify will automatically update the references for scripts, styles, images and links which are using absolute url (e.g. start with /) to use base url.
+
+~~~
+> docify build --src C:\MySite --out C:\MyOutput --host https://example.com --base /root/
+~~~
+
+This will be required if using [GitHub Pages](https://pages.github.com/) for hosting the site with the default url as url will be generated in the following format: *https://{user-name}.github.io/{repo-name}/*. Use *--base /{repo-name}/*
+
 ### Using Libraries
 
 In order to use [custom library](/custom-library/) use *--l* switch and specify the path to the library directory
 
 ~~~
-> docify build --src C:\MySite C:\MySiteDir2 --out C:\MyOutput --url https://example.com --l D:\MyLibrary
+> docify build --src C:\MySite C:\MySiteDir2 --out C:\MyOutput --host https://example.com --l D:\MyLibrary
 ~~~
 
 To use the [secure library](/custom-library#secure-library/), specify the path to manifest and public key XML separated by |
 
 ~~~
-> docify build --src C:\MySite C:\MySiteDir2 --out C:\MyOutput --url https://example.com --l D:\MySecureLibrary.manifest|D:\SecureLibraryPublicKey.xml
+> docify build --src C:\MySite C:\MySiteDir2 --out C:\MyOutput --host https://example.com --l D:\MySecureLibrary.manifest|D:\SecureLibraryPublicKey.xml
 ~~~
 
 To use standard library specify * as a library path
 
 ~~~
-> docify build --src C:\MySite C:\MySiteDir2 --out C:\MyOutput --url https://example.com --l *
+> docify build --src C:\MySite C:\MySiteDir2 --out C:\MyOutput --host https://example.com --l *
 ~~~
 
 On Linux systems (such as ubuntu) or MacOS it is required to protect the * library symbol, by enclosing it into quotes '*'
@@ -104,7 +114,7 @@ Explore more options of *serve* command by using the *--help* switch
 Docify will output the common errors into the console allowing to investigate the cause of an issue. It is additionally possible to log additional information, such as exceptions stack trace and detailed steps report by using *--verbose* option.
 
 ~~~
-> docify build --src C:\MySite --out C:\MyOutput --url https://example.com --l * --verbose
+> docify build --src C:\MySite --out C:\MyOutput --host https://example.com --l * --verbose
 ~~~
 
 ## Example
@@ -128,7 +138,7 @@ Hello World from [Docify](https://docify.net)!
 * Run the following command to build the site
 
 ~~~
-> docify build --src D:\MySite --out D:\MyOutput --url https://example.com
+> docify build --src D:\MySite --out D:\MyOutput --host https://example.com
 ~~~
 
 * As the result static markdown is converted into index.html page:

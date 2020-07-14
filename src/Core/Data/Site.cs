@@ -13,6 +13,7 @@ namespace Xarial.Docify.Core.Data
 {
     public class Site : ISite
     {
+        public string Host { get; }
         public string BaseUrl { get; }
 
         public IPage MainPage { get; }
@@ -20,11 +21,13 @@ namespace Xarial.Docify.Core.Data
         public List<ITemplate> Includes { get; }
         public IConfiguration Configuration { get; }
 
-        public Site(string baseUrl, IPage mainPage, IConfiguration config)
+        public Site(string host, string baseUrl, IPage mainPage, IConfiguration config)
         {
+            Host = host;
             BaseUrl = baseUrl;
+
             MainPage = mainPage;
-            //Assets = new List<Asset>();
+
             Layouts = new List<ITemplate>();
             Includes = new List<ITemplate>();
             Configuration = config ?? new Configuration();

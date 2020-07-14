@@ -43,7 +43,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\index.md"), "p1")
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("", site.MainPage.Name);
@@ -62,7 +62,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\page2\index.md"), "")
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.IsInstanceOf<IPhantomPage>(site.MainPage.SubPages[0]);
@@ -81,7 +81,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page3\index.md"), "")
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(2, site.MainPage.SubPages.Count);
             Assert.IsInstanceOf<IPhantomPage>(site.MainPage.SubPages.First(p => p.Name == "page1"));
@@ -100,7 +100,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page3\page4\index.md"), ""),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(2, site.MainPage.SubPages.Count);
             Assert.IsInstanceOf<IPhantomPage>(site.MainPage.SubPages.First(p => p.Name == "page1"));
@@ -122,7 +122,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\page2\page4\index.md"), ""),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(2, site.MainPage.SubPages.Count);
             Assert.IsInstanceOf<IPhantomPage>(site.MainPage.SubPages.First(p => p.Name == "page1"));
@@ -142,7 +142,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1.md"), "p1")
             }.ToAsyncEnumerable();
             
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
@@ -159,7 +159,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\page2\index.md"), "p2")
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
@@ -180,7 +180,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\index.md"), "p1")
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
@@ -200,7 +200,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\page2.md"), "p2")
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
@@ -224,7 +224,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\page2.md"), "p2")
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("i", site.MainPage.RawContent);
@@ -245,7 +245,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1.md"), "")
             }.ToAsyncEnumerable();
 
-            Assert.ThrowsAsync<DuplicatePageException>(() => m_Composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<DuplicatePageException>(() => m_Composer.ComposeSite(src, "", ""));
         }
 
         [Test]
@@ -259,7 +259,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\Page3\INDEX.md"), "p3"),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             var p1 = site.MainPage.SubPages.First(p => p.Name.Equals("page1", StringComparison.CurrentCultureIgnoreCase));
             var p2 = p1?.SubPages.First(p => p.Name.Equals("page2", StringComparison.CurrentCultureIgnoreCase));
@@ -284,7 +284,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\index.txt"), ""),
             }.ToAsyncEnumerable();
 
-            Assert.ThrowsAsync<EmptySiteException>(() => m_Composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<EmptySiteException>(() => m_Composer.ComposeSite(src, "", ""));
         }
 
         [Test]
@@ -296,7 +296,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1.md"), "")
             }.ToAsyncEnumerable();
 
-            Assert.ThrowsAsync<SiteMainPageMissingException>(() => m_Composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<SiteMainPageMissingException>(() => m_Composer.ComposeSite(src, "", ""));
         }
 
         [Test]
@@ -310,7 +310,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\page3\index.html"), "p3"),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             var p1 = site.MainPage.SubPages.First(p => p.Name.Equals("page1", StringComparison.CurrentCultureIgnoreCase));
             var p2 = p1?.SubPages.First(p => p.Name.Equals("page2", StringComparison.CurrentCultureIgnoreCase));
@@ -338,7 +338,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"asset2.ini"), "p1")
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(1, site.MainPage.SubPages.Count);
             Assert.AreEqual("", site.MainPage.Name);

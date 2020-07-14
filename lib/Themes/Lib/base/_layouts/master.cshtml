@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/x-icon" href="@string.Format("{0}/{1}", Model.Site.GetFullUrl("favicon.ico"))">
+    <link rel="shortcut icon" type="image/x-icon" href="@Model.Site.GetFullUrl("favicon.ico")">
     <link rel="alternate" type="application/rss+xml" title="@PageHelper.GetTitle(Model.Site.MainPage, null) - Feed" href="@Model.Site.GetFullUrl("feed.xml")">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <link rel="stylesheet" type="text/css" href="/_assets/styles/social-share.css" />

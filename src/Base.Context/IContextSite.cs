@@ -16,11 +16,11 @@ namespace Xarial.Docify.Base.Context
         /// Configuration of the site
         /// </summary>
         IContextConfiguration Configuration { get; }
-        
+
         /// <summary>
-        /// Base url
+        /// Generates full url using the host and base url
         /// </summary>
-        string BaseUrl { get; }
+        string GetFullUrl(string url);
 
         /// <summary>
         /// Entry page of the site

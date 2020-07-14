@@ -37,7 +37,7 @@ namespace Core.Tests
                     "---\r\nprp1: A\r\nlayout: l1\r\n---\r\nText Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
-            var site = await composer.ComposeSite(src, "");
+            var site = await composer.ComposeSite(src, "", "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.AreEqual(1, site.MainPage.Data.Count);
@@ -64,7 +64,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"p4.md"), "---\r\nlayout: l4\r\n---\r\nP4")
             }.ToAsyncEnumerable();
 
-            var site = await composer.ComposeSite(src, "");
+            var site = await composer.ComposeSite(src, "", "");
 
             Assert.AreEqual("Text Line1\r\nText Line2", site.MainPage.RawContent);
             Assert.IsNull(site.MainPage.Layout);
@@ -89,7 +89,7 @@ namespace Core.Tests
                     "---\r\nprp1: A\r\nlayout: l2\r\n---\r\nText Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
-            Assert.ThrowsAsync<MissingLayoutException>(() => composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<MissingLayoutException>(() => composer.ComposeSite(src, "", ""));
         }
 
         [Test]
@@ -104,7 +104,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
-            Assert.ThrowsAsync<DuplicateTemplateException>(() => composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<DuplicateTemplateException>(() => composer.ComposeSite(src, "", ""));
         }
 
         [Test]
@@ -119,7 +119,7 @@ namespace Core.Tests
                     "---\r\nprp1: A\r\nlayout: l1\r\n---\r\nText Line1\r\nText Line2"),
             }.ToAsyncEnumerable();
 
-            var site = await composer.ComposeSite(src, "");
+            var site = await composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(2, site.MainPage.Data.Count);
             Assert.AreEqual("A", site.MainPage.Data["prp1"]);
@@ -138,7 +138,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath("index.md"), ""),
             }.ToAsyncEnumerable();
 
-            var site = await composer.ComposeSite(src, "");
+            var site = await composer.ComposeSite(src, "", "");
 
             var layout = site.Layouts.First(l => l.Name == "l2");
 
@@ -164,7 +164,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
-            Assert.ThrowsAsync<InvalidLayoutException>(() => composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<InvalidLayoutException>(() => composer.ComposeSite(src, "", ""));
         }
 
         [Test]
@@ -178,7 +178,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"index.md"), ""),
             }.ToAsyncEnumerable();
 
-            var site = await composer.ComposeSite(src, "");
+            var site = await composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(1, site.Layouts.Count);
             Assert.AreEqual("dir1::l1", site.Layouts[0].Name);
@@ -196,7 +196,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\\index.md"), "---\r\nlayout: $\r\n---")
             }.ToAsyncEnumerable();
 
-            Assert.ThrowsAsync<MissingInheritLayoutException>(() => composer.ComposeSite(src, ""));
+            Assert.ThrowsAsync<MissingInheritLayoutException>(() => composer.ComposeSite(src, "", ""));
         }
 
         [Test]
@@ -211,7 +211,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\\index.md"), "---\r\nlayout: $\r\n---"),
             }.ToAsyncEnumerable();
 
-            var site = await composer.ComposeSite(src, "");
+            var site = await composer.ComposeSite(src, "", "");
 
             Assert.AreEqual("l1", site.MainPage.SubPages.First(p => p.Name == "page1").Layout.Name);
         }
@@ -228,7 +228,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\\page2\\index.md"), "---\r\nlayout: $\r\n---"),
             }.ToAsyncEnumerable();
 
-            var site = await composer.ComposeSite(src, "");
+            var site = await composer.ComposeSite(src, "", "");
 
             Assert.AreEqual("l1", site.MainPage.SubPages.First(p => p.Name == "page1").SubPages.First(p => p.Name == "page2").Layout.Name);
         }
@@ -246,7 +246,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\\page2\\index.md"), "---\r\nlayout: $\r\n---"),
             }.ToAsyncEnumerable();
 
-            var site = await composer.ComposeSite(src, "");
+            var site = await composer.ComposeSite(src, "", "");
 
             Assert.AreEqual("l1", site.MainPage.SubPages.First(p => p.Name == "page1").SubPages.First(p => p.Name == "page2").Layout.Name);
         }
@@ -266,7 +266,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page2\\index.md"), "---\r\nlayout: l2\r\n---"),
             }.ToAsyncEnumerable();
 
-            var site = await composer.ComposeSite(src, "");
+            var site = await composer.ComposeSite(src, "", "");
 
             Assert.AreEqual("l1", site.MainPage.Layout.Name);
             Assert.AreEqual("l1", site.MainPage.SubPages.First(p => p.Name == "page1").Layout.Name);

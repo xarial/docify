@@ -64,7 +64,7 @@ namespace Tests.Common
         public Site NewSite(string pageContent, string includePath, Metadata pageData = null, Configuration siteConfig = null)
         {
             var page = new PageMock("index", pageContent, pageData);
-            var site = new Site("www.example.com", page, siteConfig);
+            var site = new Site("www.example.com", "", page, siteConfig);
 
             LoadInclude(includePath, site);
 

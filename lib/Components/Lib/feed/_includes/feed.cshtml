@@ -24,7 +24,7 @@ title-attribute: title
 
     if (!string.IsNullOrEmpty(img))
     {
-        img = Model.Site.BaseUrl + "/" + img.TrimStart('/');
+        img = Model.Site.GetFullUrl(img);
     }
 
     var pages = PageHelper.GetAllPages(Model.Site.MainPage).Where(p => !p.Data.ContainsKey("sitemap") || p.Data.Get<bool>("sitemap"));
@@ -45,17 +45,17 @@ title-attribute: title
 }
 <title>@PageHelper.GetTitle(Model.Site.MainPage, Model.Data)</title>
 <description>@(Model.Site.MainPage.Data.GetOrDefault<string>("description"))</description>
-@Raw($"<link>{Model.Site.BaseUrl}</link>")
+@Raw($"<link>{Model.Site.GetFullUrl("")}</link>")
 @if (!string.IsNullOrEmpty(img))
 {
     <image>
         <url>@img</url>
         <title>@PageHelper.GetTitle(Model.Site.MainPage, Model.Data)</title>
-        @Raw($"<link>{Model.Site.BaseUrl}</link>")
+        @Raw($"<link>{Model.Site.GetFullUrl("")}</link>")
     </image>
 }
 <lastBuildDate>@DateTime.UtcNow.ToString("r")</lastBuildDate>
-<atom:link href="@Model.Site.BaseUrl/feed.xml" rel="self" type="application/rss+xml" />
+<atom:link href="@Model.Site.GetFullUrl("feed.xml")" rel="self" type="application/rss+xml" />
 @foreach (var page in pages)
 {
     <item>

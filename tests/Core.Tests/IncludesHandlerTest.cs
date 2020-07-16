@@ -77,7 +77,7 @@ namespace Core.Tests
                        
             var handler = new IncludesHandler(mock.Object, new Mock<IIncludesHandlerExtension>().Object);
 
-            var s = new Site("", new PageMock("", ""), null);
+            var s = new Site("", "", new PageMock("", ""), null);
             s.Includes.Add(new TemplateMock("include", ""));
             
             IContextMetadata p1, p2, p3;
@@ -118,7 +118,7 @@ namespace Core.Tests
 
             var handler = new IncludesHandler(mock.Object, new Mock<IIncludesHandlerExtension>().Object);
 
-            var s = new Site("", new PageMock("", ""), null);
+            var s = new Site("", "", new PageMock("", ""), null);
             s.Includes.Add(new TemplateMock("include", ""));
             
             await handler.ResolveAll("{% include a1: A\r\na2: B\r\na3:\r\n    - X\r\n    - Y %}", s, s.MainPage, "");
@@ -147,7 +147,7 @@ namespace Core.Tests
 
             var handler = new IncludesHandler(mock.Object, new Mock<IIncludesHandlerExtension>().Object);
 
-            var s = new Site("", new PageMock("", ""), null);
+            var s = new Site("", "", new PageMock("", ""), null);
             s.Includes.Add(new TemplateMock("include", ""));
 
             await handler.ResolveAll("{% include %}", s, s.MainPage, "");
@@ -160,7 +160,7 @@ namespace Core.Tests
         {
             var p1 = new PageMock("", "");
             var p2 = new PageMock("page2", "");
-            var s = new Site("", p1, null);
+            var s = new Site("", "", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
             p1.SubPages.Add(p2);
             
@@ -175,7 +175,7 @@ namespace Core.Tests
         public async Task Render_MergedIncludeParameters()
         {
             var p1 = new PageMock("", "");
-            var s = new Site("", p1, null);
+            var s = new Site("", "", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc", new Metadata() { { "a1", "A" }, { "a2", "B" } }));
 
             var res1 = await m_Handler.ResolveAll("{% i1 { a1: X, a3: Y} %}", s, p1, "/page1/");
@@ -194,7 +194,7 @@ namespace Core.Tests
             });
 
             var p1 = new PageMock("", "", md);
-            var s = new Site("", p1, null);
+            var s = new Site("", "", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc", new Metadata() { { "a1", "A" }, { "a2", "B" } }));
 
             var res1 = await m_Handler.ResolveAll("{% i1 { a1: X, a3: Y } %}", s, p1, "/page1/");
@@ -213,7 +213,7 @@ namespace Core.Tests
             });
 
             var p1 = new PageMock("", "");
-            var s = new Site("", p1, conf);
+            var s = new Site("", "", p1, conf);
             s.Includes.Add(new TemplateMock("i1", "abc", new Metadata() { { "a1", "A" }, { "a2", "B" } }));
 
             var res1 = await m_Handler.ResolveAll("{% i1 { a1: X, a3: Y } %}", s, p1, "/page1/");
@@ -241,7 +241,7 @@ namespace Core.Tests
             });
 
             var p1 = new PageMock("", "", md);
-            var s = new Site("", p1, conf);
+            var s = new Site("", "", p1, conf);
             s.Includes.Add(new TemplateMock("i1", "abc", new Metadata() { { "a1", "T1" }, { "a2", "T2" }, { "a3", "" }, { "a4", "T4" } }));
 
             var res1 = await m_Handler.ResolveAll("{% i1 { a1: I1, a2:, a4: } %}", s, p1, "/page1/");
@@ -253,7 +253,7 @@ namespace Core.Tests
         public async Task Render_MissingIncludes()
         {
             var p1 = new PageMock("", "");
-            var s = new Site("", p1, null);
+            var s = new Site("", "", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
 
             await AssertException.ThrowsInnerAsync<MissingIncludeException>(() => m_Handler.ResolveAll("{% i2 %}", s, p1, "/page1/"));
@@ -270,7 +270,7 @@ namespace Core.Tests
                 extMock.Object);
 
             var p1 = new PageMock("", "{% plugin-include { param1: x, param2: b} %}");
-            var s = new Site("", p1, null);
+            var s = new Site("", "", p1, null);
 
             var res = await includesHandler.ResolveAll("{% plugin-include %}", s, p1, "/page1/");
 
@@ -281,7 +281,7 @@ namespace Core.Tests
         public async Task ReplaceAll_NewLineSingleLineInclude()
         {
             var p1 = new PageMock("", "");
-            var s = new Site("", p1, null);
+            var s = new Site("", "", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
 
             var res = await m_Handler.ResolveAll("abc\r\n{% i1 a1: x %}\r\nxyz", s, p1, "/page1/");
@@ -293,7 +293,7 @@ namespace Core.Tests
         public async Task ReplaceAll_InlineInclude()
         {
             var p1 = new PageMock("", "");
-            var s = new Site("", p1, null);
+            var s = new Site("", "", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
 
             var res = await m_Handler.ResolveAll("abc{% i1 a1: x %}xyz", s, p1, "/page1/");
@@ -305,7 +305,7 @@ namespace Core.Tests
         public async Task ReplaceAll_MultilineInlineInclude()
         {
             var p1 = new PageMock("", "");
-            var s = new Site("", p1, null);
+            var s = new Site("", "", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
 
             var res = await m_Handler.ResolveAll("abc{% i1 a1: x\r\na2: y %}xyz", s, p1, "/page1/");
@@ -317,7 +317,7 @@ namespace Core.Tests
         public async Task ReplaceAll_HtmlTagsInclude()
         {
             var p1 = new PageMock("", "");
-            var s = new Site("", p1, null);
+            var s = new Site("", "", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
 
             var res1 = await m_Handler.ResolveAll("<div>{% i1 a1: x %}</div>", s, p1, "/page1/");
@@ -331,7 +331,7 @@ namespace Core.Tests
         public async Task ReplaceAll_MultipleIncludes()
         {
             var p1 = new PageMock("", "");
-            var s = new Site("", p1, null);
+            var s = new Site("", "", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
             s.Includes.Add(new TemplateMock("i2", "xyz"));
 
@@ -344,7 +344,7 @@ namespace Core.Tests
         public async Task ReplaceAll_NestedIncludes()
         {
             var p1 = new PageMock("", "");
-            var s = new Site("", p1, null);
+            var s = new Site("", "", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
             s.Includes.Add(new TemplateMock("i2", "xyz{% i1 a1: z %}"));
 
@@ -357,7 +357,7 @@ namespace Core.Tests
         public async Task ReplaceAll_NestedMultiLevelIncludes()
         {
             var p1 = new PageMock("", "");
-            var s = new Site("", p1, null);
+            var s = new Site("", "", p1, null);
             s.Includes.Add(new TemplateMock("i1", "abc"));
             s.Includes.Add(new TemplateMock("i2", "xyz{% i1 a1: z %}"));
             s.Includes.Add(new TemplateMock("i3", "abc{% i2 %}"));
@@ -370,8 +370,6 @@ namespace Core.Tests
         [Test]
         public async Task ParseParameters_EscapedInclude()
         {
-            IContextMetadata data = null;
-
             var mock = new Mock<IDynamicContentTransformer>();
             mock.Setup(m => m.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ContextModel>()))
                 .Returns(new Func<string, string, IContextModel, Task<string>>(
@@ -379,7 +377,7 @@ namespace Core.Tests
 
             var handler = new IncludesHandler(mock.Object, new Mock<IIncludesHandlerExtension>().Object);
 
-            var s = new Site("", new PageMock("", ""), null);
+            var s = new Site("", "", new PageMock("", ""), null);
             s.Includes.Add(new TemplateMock("include", ""));
 
             var res1 = await handler.ResolveAll("\\{% include %}", s, s.MainPage, "");

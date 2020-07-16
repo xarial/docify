@@ -94,7 +94,7 @@ namespace Core.Tests
         [Test]
         public async Task Compile_SinglePageTest()
         {
-            var site = new Site("",
+            var site = new Site("", "",
                 new PageMock("", "abc _CC_ _FN_ test"), null);
 
             var files = await m_Compiler.Compile(site).ToListAsync();
@@ -103,11 +103,27 @@ namespace Core.Tests
         }
 
         [Test]
+        public async Task Compile_BaseUrlTest()
+        {
+            var layout = new TemplateMock("l1", "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"/_assets/a1.css\"><link rel=\"stylesheet\" type=\"text/css\" href=\"a2.css\"><link rel=\"stylesheet\" type=\"text/css\" href=\"https://www.example.com/a3.css\"><script type=\"text/javascript\" src=\"/_assets/s1.js\"></script><script type=\"text/javascript\" src=\"s2.js\"></script><script type=\"text/javascript\" src=\"https://www.example.com/s3.js\"></script><title>P1</title></head><body><h1>Heading</h1><img src=\"/_assets/i1.png\"><img src=\"i2.png\"><img src=\"https://www.example.com/i3.png\"><a href=\"/\"></a><a href=\"/l1/\"></a><a href=\"l2/\"></a><a href=\"https://www.example.com/l3/\"></a><p>Paragraph</p></body></html>");
+            var page = new PageMock("p1", "test", layout);
+
+            var site = new Site("", "/basetest/",
+                page, null);
+
+            var files = await m_Compiler.Compile(site).ToListAsync();
+
+            var content = files.First(f => f.Location.ToId() == "index.html").AsTextContent();
+
+            Assert.AreEqual("<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"/basetest/_assets/a1.css\"><link rel=\"stylesheet\" type=\"text/css\" href=\"a2.css\"><link rel=\"stylesheet\" type=\"text/css\" href=\"https://www.example.com/a3.css\"><script type=\"text/javascript\" src=\"/basetest/_assets/s1.js\"></script><script type=\"text/javascript\" src=\"s2.js\"></script><script type=\"text/javascript\" src=\"https://www.example.com/s3.js\"></script><title>P1</title></head><body><h1>Heading</h1><img src=\"/basetest/_assets/i1.png\"><img src=\"i2.png\"><img src=\"https://www.example.com/i3.png\"><a href=\"/basetest/\"></a><a href=\"/basetest/l1/\"></a><a href=\"l2/\"></a><a href=\"https://www.example.com/l3/\"></a><p>Paragraph</p></body></html>", content);
+        }
+
+        [Test]
         public async Task Compile_MultipleNestedPagesTest()
         {
             var p1 = new PageMock("", "P1");
 
-            var site = new Site("", p1, null);
+            var site = new Site("", "", p1, null);
 
             var p2 = new PageMock("page2", "P2");
             p1.SubPages.Add(p2);
@@ -128,7 +144,7 @@ namespace Core.Tests
         [Test]
         public async Task Compile_NonDefaultPageTest()
         {
-            var site = new Site("", new PageMock("", "P1"), null);
+            var site = new Site("", "", new PageMock("", "P1"), null);
             var p2 = new PageMock("page2.html", "P2");
             site.MainPage.SubPages.Add(p2);
 
@@ -141,7 +157,7 @@ namespace Core.Tests
         [Test]
         public async Task Compile_SimpleTemplatePageTest()
         {
-            var site = new Site("",
+            var site = new Site("", "",
                 new PageMock("", "My Page Content",
                 new TemplateMock("t1", "TemplateText1 _C_ TemplateText2")), null);
 
@@ -153,7 +169,7 @@ namespace Core.Tests
         [Test]
         public async Task Compile_NestedSimpleTemplatePageTest()
         {
-            var site = new Site("",
+            var site = new Site("", "",
                 new PageMock("",
                 "My Page Content",
                 new TemplateMock("t1", "T1 _C_ T1", null,
@@ -174,7 +190,7 @@ namespace Core.Tests
 
             p1.SubPages.Add(new PageMock("page2", "Page2 _FN_", t1));
 
-            var site = new Site("", p1, null);
+            var site = new Site("", "", p1, null);
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 
@@ -198,7 +214,7 @@ namespace Core.Tests
             p2.SubPages.Add(p4);
             p4.SubPages.Add(p6);
 
-            var site = new Site("", p1, null);
+            var site = new Site("", "", p1, null);
 
             var files = await m_Compiler.Compile(site).ToListAsync();
 

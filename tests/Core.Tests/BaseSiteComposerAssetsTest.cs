@@ -44,7 +44,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\asset.txt"), "a1"),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(0, site.MainPage.Assets.Count);
             Assert.AreEqual(1, site.MainPage.SubPages[0].Assets.Count);
@@ -60,7 +60,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"asset.txt"), "a1"),
             }.ToAsyncEnumerable();
             
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(1, site.MainPage.Assets.Count);
             Assert.AreEqual(1, site.MainPage.Assets.Count);
@@ -78,7 +78,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\asset1.bin"), new byte[] { 1,2,3 })
             }.ToAsyncEnumerable();
             
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(0, site.MainPage.Assets.Count);
             Assert.AreEqual(2, site.MainPage.SubPages[0].Assets.Count);
@@ -101,7 +101,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page2\page3\asset2.txt"), "a4")
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(1, site.MainPage.Assets.Count);
             Assert.AreEqual("a1", site.MainPage.Assets[0].AsTextContent());
@@ -126,7 +126,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"asset"), "a1"),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(1, site.MainPage.Assets.Count);
             Assert.AreEqual("asset", site.MainPage.Assets[0].FileName);
@@ -142,7 +142,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"folder\asset"), "a1"),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             Assert.AreEqual(0, site.MainPage.Assets.Count);
             Assert.AreEqual(1, site.MainPage.Folders.Count);
@@ -162,7 +162,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\asset3.txt"), "a3")
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             var p1 = site.MainPage.SubPages.First(p => p.Name == "page1");
 
@@ -199,7 +199,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page1\page2\Page3\index.md"), ""),
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
 
             var p1 = site.MainPage.SubPages.First(p => p.Name == "page1");
             var p2 = p1.SubPages.First(p => p.Name == "page2");
@@ -232,7 +232,7 @@ namespace Core.Tests
                 new FileMock(Location.FromPath(@"page3\page4\asset2.txt"), "a2")
             }.ToAsyncEnumerable();
 
-            var site = await m_Composer.ComposeSite(src, "");
+            var site = await m_Composer.ComposeSite(src, "", "");
             var p1 = site.MainPage.SubPages.First(p => p.Name == "page1");
             var p2 = p1.SubPages.First(p => p.Name == "page2");
             var p3 = site.MainPage.SubPages.First(p => p.Name == "page3");

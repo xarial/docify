@@ -21,8 +21,9 @@ namespace Xarial.Docify.Base.Services
         /// Compose site
         /// </summary>
         /// <param name="files">Source files</param>
+        /// <param name="host">Site host</param>
         /// <param name="baseUrl">Base url of the site</param>
         /// <returns>Composed site</returns>
-        Task<ISite> ComposeSite(IAsyncEnumerable<IFile> files, string baseUrl);
+        Task<ISite> ComposeSite(IAsyncEnumerable<IFile> files, string host, string baseUrl);
     }
 }

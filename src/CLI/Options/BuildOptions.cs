@@ -20,8 +20,11 @@ namespace Xarial.Docify.CLI.Options
         [Option('o', "out", Required = true, HelpText = "Output directory")]
         public virtual string OutputDirectory { get; set; }
 
-        [Option('u', "url", Required = false, HelpText = "Target site url")]
-        public string SiteUrl { get; set; } = "";
+        [Option('h', "host", Required = false, HelpText = "Target site host name")]
+        public string Host { get; set; } = "";
+
+        [Option('b', "base", Required = false, HelpText = "Base url")]
+        public string BaseUrl { get; set; } = "";
 
         [Option('e', "env", Required = false, HelpText = "Build environment, either standard set or custom")]
         public string Environment { get; set; }
@@ -40,7 +43,7 @@ namespace Xarial.Docify.CLI.Options
                         new BuildOptions
                         {
                             SourceDirectories = new string[] { "C:\\my_site_src" },
-                            SiteUrl = "https://www.example.com",
+                            Host = "https://www.example.com",
                             OutputDirectory = "C:\\my_site_compile"
                         }),
 
@@ -48,7 +51,7 @@ namespace Xarial.Docify.CLI.Options
                         new BuildOptions
                         {
                             SourceDirectories = new string[] { "C:\\my_site_src\\content", "C:\\my_site_src\\frame" },
-                            SiteUrl = "https://www.example.com",
+                            Host = "https://www.example.com",
                             Library = new string[] { "*" },
                             Environment = "Production",
                             OutputDirectory = "C:\\my_site_compile"
@@ -58,7 +61,7 @@ namespace Xarial.Docify.CLI.Options
                         new BuildOptions
                         {
                             SourceDirectories = new string[] { "C:\\my_site_src"  },
-                            SiteUrl = "https://www.example.com",
+                            Host = "https://www.example.com",
                             Library = new string[] { "C:\\my_lib\\library.manifest|C:\\public_key.xml" },
                             OutputDirectory = "C:\\my_site_compile"
                         })

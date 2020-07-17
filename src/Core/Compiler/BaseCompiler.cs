@@ -15,6 +15,7 @@ using Xarial.Docify.Core.Plugin.Extensions;
 using System.Text;
 using Xarial.Docify.Base.Plugins;
 using System.Linq;
+using HtmlAgilityPack;
 
 namespace Xarial.Docify.Core.Compiler
 {
@@ -120,7 +121,6 @@ namespace Xarial.Docify.Core.Compiler
                 {
                     yield return new File(thisLoc, asset.Content, asset.Id);
                 }
-
             }
 
             foreach (var subFolder in folder.Folders)
@@ -156,7 +156,44 @@ namespace Xarial.Docify.Core.Compiler
 
             content = contentStrBuilder.ToString();
 
+            if (!string.IsNullOrEmpty(site.BaseUrl)) 
+            {
+                var baseUrl = LocationExtension.URL_SEP + site.BaseUrl.TrimStart(LocationExtension.URL_SEP).TrimEnd(LocationExtension.URL_SEP);
+
+                content = SetBaseUrl(content, baseUrl);
+            }
+
             return new File(loc, ContentExtension.ToByteArray(content), page.Id);
+        }
+
+        private string SetBaseUrl(string content, string baseUrl)
+        {
+            void SetBaseUrlToAttribute(HtmlNodeCollection nodes, string attName) 
+            {
+                if (nodes != null)
+                {
+                    foreach (var script in nodes)
+                    {
+                        var val = script.Attributes[attName].Value;
+                        if (val.StartsWith("/"))
+                        {
+                            val = baseUrl + val;
+                            script.Attributes[attName].Value = val;
+                        }
+                    }
+                }
+            }
+
+            var doc = new HtmlDocument();
+            doc.LoadHtml(content);
+
+            SetBaseUrlToAttribute(doc.DocumentNode.SelectNodes("//script[@src]"), "src");
+            SetBaseUrlToAttribute(doc.DocumentNode.SelectNodes("//link[@href][@rel='stylesheet']"), "href");
+            SetBaseUrlToAttribute(doc.DocumentNode.SelectNodes("//a[@href]"), "href");
+            SetBaseUrlToAttribute(doc.DocumentNode.SelectNodes("//img[@src]"), "src");
+            SetBaseUrlToAttribute(doc.DocumentNode.SelectNodes("//input[@src]"), "src");
+
+            return doc.DocumentNode.OuterHtml;
         }
 
         private async Task<IFile> CompileAsset(IAsset asset, ISite site, IPage page, ILocation loc)

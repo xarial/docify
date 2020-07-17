@@ -14,6 +14,7 @@ using System.Xml.Linq;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Plugins;
+using Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter.Properties;
 using Xarial.Docify.Lib.Plugins.Common.Exceptions;
 using Xarial.Docify.Lib.Plugins.Common.Helpers;
 
@@ -26,6 +27,9 @@ namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
         private CodeColorizerBase m_Formatter;
 
         private const string CSS_FILE_PATH = "/_assets/styles/syntax-highlight.css";
+        private const string CLIPBOARDJS_FILE_PATH = @"/_assets/scripts/clipboard.min.js";
+        private const string COPYCODE_FILE_PATH = @"/_assets/scripts/copycodeclipboard.js";
+        private const string COPYCODE_ICON_FILE_PATH = @"/_assets/images/copy-code.svg";
 
         private IDocifyApplication m_App;
 
@@ -46,6 +50,13 @@ namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
                 var css = (Formatter as HtmlClassFormatter).GetCSSString();
                 css = css.Substring("body{background-color:#FFFFFFFF;} ".Length);//temp solution - find a better way
                 AssetsHelper.AddTextAsset(css, site.MainPage, CSS_FILE_PATH);
+            }
+
+            if (m_Settings.AddCopyCodeButton) 
+            {
+                AssetsHelper.AddAsset(Resources.copy_code, site.MainPage, COPYCODE_ICON_FILE_PATH);
+                AssetsHelper.AddTextAsset(Resources.clipboard_min, site.MainPage, CLIPBOARDJS_FILE_PATH);
+                AssetsHelper.AddTextAsset(Resources.copycodeclipboard, site.MainPage, COPYCODE_FILE_PATH);
             }
 
             return Task.CompletedTask;
@@ -118,31 +129,49 @@ namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
             var pre = cont.Element("pre");
             pre.Add(new XAttribute("class", $"code-snippet {lang} {args}"));
 
+            if (m_Settings.AddCopyCodeButton)
+            {
+                var copyCodeBtn = new XElement("button");
+                copyCodeBtn.Add(new XAttribute("class", "copy-code-btn"));
+                var img = new XElement("img");
+                img.SetAttributeValue("src", COPYCODE_ICON_FILE_PATH);
+                img.SetAttributeValue("alt", "Copy code to clipboard");
+                img.SetAttributeValue("width", "16px");
+                img.SetAttributeValue("height", "16px");
+                copyCodeBtn.Add(img);
+
+                pre.AddBeforeSelf(copyCodeBtn);
+            }
+
             html.Clear();
             html.Append(cont);
         }
 
         private Task OnWritePageContent(StringBuilder html, IMetadata data, string url)
         {
-            if (!m_Settings.EmbedStyle)
+            if (html.Length > 0)
             {
-                if (html.Length > 0)
+                try
                 {
-                    try
+                    var writer = new HtmlHeadWriter(html);
+
+                    if (!m_Settings.EmbedStyle)
                     {
-                        var writer = new HtmlHeadWriter(html);
                         writer.AddStyleSheets(CSS_FILE_PATH);
                     }
-                    catch (Exception ex)
+
+                    if (m_Settings.AddCopyCodeButton) 
                     {
-                        throw new HeadAssetLinkFailedException(CSS_FILE_PATH, url, ex);
+                        writer.AddScripts(CLIPBOARDJS_FILE_PATH, COPYCODE_FILE_PATH);
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    return Task.FromResult(html);
+                    throw new HeadAssetLinkFailedException(CSS_FILE_PATH, url, ex);
                 }
             }
+
+            
 
             return Task.FromResult(html);
         }

@@ -10,5 +10,6 @@ namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
     public class CodeSyntaxHighlighterSettings
     {
         public bool EmbedStyle { get; set; } = true;
+        public bool AddCopyCodeButton { get; set; } = true;
     }
 }

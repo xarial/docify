@@ -57,7 +57,12 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch
             m_Site = site;
             m_SearchIndex = new List<PageSearchData>();
 
-            AssetsHelper.AddAssetsFromZip(Resources.tipue_search, site.MainPage);
+            AssetsHelper.AddAsset(Resources.assets_images_search, site.MainPage, @"/_assets/images/search.svg");
+            AssetsHelper.AddTextAsset(Resources.assets_styles_tipue_search, site.MainPage, @"/_assets/styles/tipue-search.css");
+            AssetsHelper.AddTextAsset(Resources.assets_3rdpty_jquery_min, site.MainPage, @"/_assets/tipuesearch/jquery.min.js");
+            AssetsHelper.AddTextAsset(Resources.assets_3rdpty_normalize_min, site.MainPage, @"/_assets/tipuesearch/normalize.min.css");
+            AssetsHelper.AddTextAsset(Resources.assets_3rdpty_tipuesearch_min, site.MainPage, @"/_assets/tipuesearch/tipuesearch.min.js");
+            AssetsHelper.AddTextAsset(Resources.assets_3rdpty_tipuesearch_set, site.MainPage, @"/_assets/tipuesearch/tipuesearch_set.js");
 
             var data = new PluginMetadata();
             data.Add(SITEMAP_PARAM, false);

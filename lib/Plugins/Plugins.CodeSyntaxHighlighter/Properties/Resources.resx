@@ -118,31 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="assets-3rdpty-jquery_min" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\_assets\tipuesearch\jquery.min.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="clipboard_min" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\clipboard.min.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="assets-3rdpty-normalize_min" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\_assets\tipuesearch\normalize.min.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="copycodeclipboard" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\copycodeclipboard.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="assets-3rdpty-tipuesearch_min" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\_assets\tipuesearch\tipuesearch.min.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="assets-3rdpty-tipuesearch_set" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\_assets\tipuesearch\tipuesearch_set.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="assets-images-search" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\_assets\images\search.svg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="assets-styles-tipue-search" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\_assets\styles\tipue-search.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="default-search-template" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\default-search-template.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="search" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\search.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="tipue_search_box" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\tipue-search-box.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="copy_code" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\copy-code.svg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

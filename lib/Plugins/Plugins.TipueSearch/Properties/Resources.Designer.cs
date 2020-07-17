@@ -61,22 +61,126 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /*! jQuery v3.3.1 | (c) JS Foundation and other contributors | jquery.org/license */
+        ///!function(e,t){&quot;use strict&quot;;&quot;object&quot;==typeof module&amp;&amp;&quot;object&quot;==typeof module.exports?module.exports=e.document?t(e,!0):function(e){if(!e.document)throw new Error(&quot;jQuery requires a window with a document&quot;);return t(e)}:t(e)}(&quot;undefined&quot;!=typeof window?window:this,function(e,t){&quot;use strict&quot;;var n=[],r=e.document,i=Object.getPrototypeOf,o=n.slice,a=n.concat,s=n.push,u=n.indexOf,l={},c=l.toString,f=l.hasOwnProperty,p=f.toStrin [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string assets_3rdpty_jquery_min {
+            get {
+                return ResourceManager.GetString("assets-3rdpty-jquery_min", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{fo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string assets_3rdpty_normalize_min {
+            get {
+                return ResourceManager.GetString("assets-3rdpty-normalize_min", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (function($){$.fn.tipuesearch=function(options){var set=$.extend({&apos;contextBuffer&apos;:60,&apos;contextLength&apos;:60,&apos;contextStart&apos;:90,&apos;debug&apos;:false,&apos;descriptiveWords&apos;:25,&apos;footerPages&apos;:3,&apos;highlightTerms&apos;:true,&apos;imageZoom&apos;:true,&apos;minimumLength&apos;:3,&apos;newWindow&apos;:false,&apos;show&apos;:10,&apos;showContext&apos;:true,&apos;showRelated&apos;:true,&apos;showTime&apos;:true,&apos;showTitleCount&apos;:true,&apos;showURL&apos;:true,&apos;wholeWords&apos;:true},options);return this.each(function(){var tipuesearch_t_c=0;var tipue_search_w=&apos;&apos;;if(set.newWindow)
+        ///{tipue_search_w=&apos; target=&quot;_blank&quot;&apos;;}
+        ///functio [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string assets_3rdpty_tipuesearch_min {
+            get {
+                return ResourceManager.GetString("assets-3rdpty-tipuesearch_min", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ////*
+        ///Tipue Search 7.1
+        ///Copyright (c) 2019 Tipue
+        ///Tipue Search is released under the MIT License
+        ///http://www.tipue.com/search
+        ///*/
+        ///
+        ///
+        ////*
+        ///Stop words
+        ///Stop words list from http://www.ranks.nl/stopwords
+        ///*/
+        ///
+        ///var tipuesearch_stop_words = [&quot;a&quot;, &quot;above&quot;, &quot;after&quot;, &quot;again&quot;, &quot;against&quot;, &quot;all&quot;, &quot;am&quot;, &quot;an&quot;, &quot;and&quot;, &quot;any&quot;, &quot;are&quot;, &quot;aren&apos;t&quot;, &quot;as&quot;, &quot;at&quot;, &quot;be&quot;, &quot;because&quot;, &quot;been&quot;, &quot;before&quot;, &quot;being&quot;, &quot;below&quot;, &quot;between&quot;, &quot;both&quot;, &quot;but&quot;, &quot;by&quot;, &quot;can&apos;t&quot;, &quot;cannot&quot;, &quot;could&quot;, &quot;couldn&apos;t&quot;, &quot;did&quot;, &quot;didn&apos;t&quot;, &quot;do&quot;, &quot;does&quot;, &quot;doesn&apos;t&quot;, &quot;doing&quot;, &quot;don&apos;t [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string assets_3rdpty_tipuesearch_set {
+            get {
+                return ResourceManager.GetString("assets-3rdpty-tipuesearch_set", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] assets_images_search {
+            get {
+                object obj = ResourceManager.GetObject("assets-images-search", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .tipue_search_result {
+        ///    padding-top: 25px;
+        ///}
+        ///
+        ///.tipue_search_content_title {
+        ///    font-weight: bold;
+        ///    font-size: large;
+        ///}
+        ///
+        ///.tipue_search_content_text {
+        ///    font-size: small;
+        ///}
+        ///
+        ///.tipue_search_content_title a {
+        ///    text-decoration: none;
+        ///    color: inherit;
+        ///}
+        ///
+        ///.tipue_search_img {
+        ///    width: 100%;
+        ///    max-width: 330px;
+        ///    height: auto;
+        ///}
+        ///
+        ///#tipue_search_foot_boxes li.current {
+        ///    color: #ccc;
+        ///    padding: 10px;
+        ///    margin-right: 10px;
+        ///    text-align: center;
+        ///}
+        ///
+        ///#tipue_search [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string assets_styles_tipue_search {
+            get {
+                return ResourceManager.GetString("assets-styles-tipue-search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
         ///&lt;html&gt;
         ///&lt;head&gt;
         ///    &lt;style&gt;
-        ///        .tipue_search_group {
+        ///        .tipue_search_group {{
         ///            text-align: right;
         ///            margin: 5px 0px;
-        ///        }
-        ///        .tipue_search_button {
+        ///            width: 300px;
+        ///        }}
+        ///        .tipue_search_button {{
         ///            float: right;
         ///            margin: 3px;
-        ///        }
-        ///        #tipue_search_input {
+        ///        }}
+        ///        #tipue_search_input {{
         ///            width: 99%;
         ///            margin: 2px;
-        ///        }
+        ///        }}
         ///    &lt;/style&gt;
         ///&lt;/head&gt;
         ///&lt;body&gt;
@@ -109,16 +213,6 @@ namespace Xarial.Docify.Lib.Plugins.TipueSearch.Properties {
         internal static string search {
             get {
                 return ResourceManager.GetString("search", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] tipue_search {
-            get {
-                object obj = ResourceManager.GetObject("tipue_search", resourceCulture);
-                return ((byte[])(obj));
             }
         }
         

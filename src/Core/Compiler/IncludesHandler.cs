@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
@@ -56,8 +57,16 @@ namespace Xarial.Docify.Core.Compiler
                 var data = ComposeDataParameters(name, param, site, page);
                 data = data.Merge(include.Data);
 
-                return await m_Transformer.Transform(include.RawContent, include.Id,
-                    new ContextModel(site, page, data, url));
+                var contextModel = new ContextModel(site, page, data, url);
+
+                await m_Ext.PreResolveInclude(name, contextModel);
+
+                var html = new StringBuilder(await m_Transformer.Transform(include.RawContent, include.Id,
+                    contextModel));
+
+                await m_Ext.PostResolveInclude(name, contextModel, html);
+                
+                return html.ToString();
             }
             else
             {

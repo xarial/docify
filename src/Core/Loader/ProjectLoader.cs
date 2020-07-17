@@ -29,7 +29,7 @@ namespace Xarial.Docify.Core.Loader
 
         private readonly IPluginsManager m_PluginsManager;
 
-        private readonly string[] m_Filter;
+        private readonly string[] m_UserFilter;
         private readonly ILoaderExtension m_Ext;
         private readonly ILogger m_Logger;
 
@@ -46,7 +46,7 @@ namespace Xarial.Docify.Core.Loader
             m_Ext = ext;
             m_Logger = logger;
 
-            m_Filter = GetFilesFilter();
+            m_UserFilter = GetFilesFilter();
         }
 
         public async IAsyncEnumerable<IFile> Load(ILocation[] locations)
@@ -55,22 +55,16 @@ namespace Xarial.Docify.Core.Loader
 
             await m_PluginsManager.LoadPlugins(LoadPluginFiles(locations, resFileIds));
 
+            var pluginExcludeFilter = LocationExtension.NEGATIVE_FILTER
+                + Path.Combine(Location.Library.PluginsFolderName, LocationExtension.ANY_FILTER);
+
+            var filter = (m_UserFilter ?? Enumerable.Empty<string>())
+                .Concat(new string[] { pluginExcludeFilter }).ToArray();
+            
             foreach (var loc in locations)
             {
                 m_Logger.LogInformation($"Loading project files from {loc.ToId()}");
-
-                var filter = new List<string>();
-
-                if (m_Filter != null)
-                {
-                    filter.AddRange(m_Filter);
-                }
-
-                var pluginExcludeFilter = LocationExtension.NEGATIVE_FILTER
-                    + Path.Combine(Location.Library.PluginsFolderName, LocationExtension.ANY_FILTER);
-
-                filter.Add(pluginExcludeFilter);
-
+                
                 await foreach (var srcFile in m_FileLoader.LoadFolder(loc, filter.ToArray()))
                 {
                     var args = new PreLoadFileArgs()
@@ -103,7 +97,7 @@ namespace Xarial.Docify.Core.Loader
                 foreach (var compName in m_Config.Components)
                 {
                     await foreach (var srcFile in ProcessLibraryItems(
-                            m_LibraryLoader.LoadComponentFiles(compName, m_Filter), resFileIds, false))
+                            m_LibraryLoader.LoadComponentFiles(compName, filter), resFileIds, false))
                     {
                         yield return srcFile;
                     }
@@ -117,7 +111,7 @@ namespace Xarial.Docify.Core.Loader
                     foreach (var themeName in m_Config.ThemesHierarchy)
                     {
                         await foreach (var srcFile in ProcessLibraryItems(
-                            m_LibraryLoader.LoadThemeFiles(themeName, m_Filter), resFileIds, true))
+                            m_LibraryLoader.LoadThemeFiles(themeName, filter), resFileIds, true))
                         {
                             yield return srcFile;
                         }
@@ -136,7 +130,7 @@ namespace Xarial.Docify.Core.Loader
                 {
                     await foreach (var pluginLoc in m_FileLoader.EnumSubFolders(pluginsLoc))
                     {
-                        yield return new PluginInfo(pluginLoc.Segments.Last(), m_FileLoader.LoadFolder(pluginLoc, m_Filter));
+                        yield return new PluginInfo(pluginLoc.Segments.Last(), m_FileLoader.LoadFolder(pluginLoc, m_UserFilter));
                     }
                 }
             }

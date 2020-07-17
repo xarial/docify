@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <OutDir>..\..\..\Themes\Lib\$(ThemeName)\_plugins\$(PluginName)</OutDir>
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <Import Project="common.assemblyinfo.props" />
+</Project>

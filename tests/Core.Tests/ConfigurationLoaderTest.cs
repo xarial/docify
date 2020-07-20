@@ -114,8 +114,8 @@ namespace Core.Tests
                 .Returns((ILocation l, string[] f) => new IFile[] { new FileMock("_config.yml", "a1: val\r\ntheme: theme1") }.ToAsyncEnumerable());
 
             var libLoaderMock = new Mock<ILibraryLoader>();
-            libLoaderMock.Setup(m => m.LoadThemeFiles(It.IsAny<string>(), It.IsAny<string[]>()))
-                .Returns((string t, string[] f) => AsyncEnumerable.Empty<IFile>());
+            libLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation t, string[] f) => AsyncEnumerable.Empty<IFile>());
 
             var confLoader = new ConfigurationLoader(
                 fileLoaderMock.Object, libLoaderMock.Object, "Test");
@@ -151,7 +151,7 @@ namespace Core.Tests
             string[] filters = null;
             string[] themeFilters = null;
             string loc = "";
-            string theme = "";
+            ILocation theme = Location.Empty;
 
             var fileLoaderMock = new Mock<IFileLoader>();
             fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
@@ -166,8 +166,8 @@ namespace Core.Tests
                 });
 
             var libLoaderMock = new Mock<ILibraryLoader>();
-            libLoaderMock.Setup(m => m.LoadThemeFiles(It.IsAny<string>(), It.IsAny<string[]>()))
-                .Returns((string t, string[] f)=>
+            libLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation t, string[] f)=>
                 {
                     theme = t;
                     themeFilters = f;
@@ -186,7 +186,7 @@ namespace Core.Tests
             Assert.Contains("_config.yml", themeFilters);
             Assert.Contains("_config.Test.yml", themeFilters);
             Assert.AreEqual("C:\\site", loc);
-            Assert.AreEqual("theme1", theme);
+            Assert.AreEqual("_themes::theme1", theme.ToId());
         }
 
         [Test]
@@ -261,8 +261,8 @@ namespace Core.Tests
                 }.ToAsyncEnumerable());
 
             var libLoaderMock = new Mock<ILibraryLoader>();
-            libLoaderMock.Setup(m => m.LoadThemeFiles(It.IsAny<string>(), It.IsAny<string[]>()))
-                .Returns((string t, string[] f) => new IFile[]
+            libLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation t, string[] f) => new IFile[]
                 {
                     new FileMock("_config.yml", "x1: C\r\nx2: D\r\na1: E")
                 }.ToAsyncEnumerable());
@@ -293,17 +293,17 @@ namespace Core.Tests
                 }.ToAsyncEnumerable());
 
             var libLoaderMock = new Mock<ILibraryLoader>();
-            libLoaderMock.Setup(m => m.LoadThemeFiles(It.IsAny<string>(), It.IsAny<string[]>()))
-                .Returns((string t, string[] f) =>
+            libLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation t, string[] f) =>
                 {
-                    if (t == "theme1")
+                    if (t.Segments[0] == "_themes" && t.Segments[1] == "theme1")
                     {
                         return new IFile[]
                         {
                             new FileMock("_config.yml", "a: 1\r\nb: 2\r\nd: 6")
                         }.ToAsyncEnumerable();
                     }
-                    else if (t == "theme2") 
+                    if (t.Segments[0] == "_themes" && t.Segments[1] == "theme2")
                     {
                         return new IFile[]
                         {
@@ -343,17 +343,17 @@ namespace Core.Tests
                 }.ToAsyncEnumerable());
 
             var libLoaderMock = new Mock<ILibraryLoader>();
-            libLoaderMock.Setup(m => m.LoadThemeFiles(It.IsAny<string>(), It.IsAny<string[]>()))
-                .Returns((string t, string[] f) =>
+            libLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
+                .Returns((ILocation t, string[] f) =>
                 {
-                    if (t == "theme1")
+                    if (t.Segments[0] == "_themes" && t.Segments[1] == "theme1")
                     {
                         return new IFile[]
                         {
                             new FileMock("_config.yml", "a:\r\n  - 1\r\n  - 2")
                         }.ToAsyncEnumerable();
                     }
-                    else if (t == "theme2")
+                    if (t.Segments[0] == "_themes" && t.Segments[1] == "theme2")
                     {
                         return new IFile[]
                         {

@@ -14,15 +14,24 @@ using Xarial.Docify.Core.Exceptions;
 
 namespace Xarial.Docify.Core.Loader
 {
-    public class FolderLibraryLoader : LocalFileSystemFileLoader, ILibraryLoader
+    public class FolderLibraryLoader : IFileLoader
     {
         private readonly ILocation m_Location;
         private readonly IFileLoader m_FileLoader;
         
-        public FolderLibraryLoader(ILocation location, IFileLoader fileLoader) : base(null, null)
+        public FolderLibraryLoader(ILocation location, IFileLoader fileLoader)
         {
             m_Location = location;
             m_FileLoader = fileLoader;
         }
+
+        public IAsyncEnumerable<ILocation> EnumSubFolders(ILocation location)
+            => m_FileLoader.EnumSubFolders(m_Location.Combine(location));
+
+        public bool Exists(ILocation location)
+            => m_FileLoader.Exists(m_Location.Combine(location));
+
+        public IAsyncEnumerable<IFile> LoadFolder(ILocation location, string[] filters)
+            => m_FileLoader.LoadFolder(m_Location.Combine(location), filters);
     }
 }

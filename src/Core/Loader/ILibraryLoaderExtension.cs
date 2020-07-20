@@ -15,7 +15,7 @@ namespace Xarial.Docify.Core.Loader
         /// <param name="themeName">name of the theme</param>
         /// <returns>True if theme is available, False if not</returns>
         public static bool ContainsTheme(this ILibraryLoader libLoader, string themeName)
-            => libLoader.Exists(new Location(Location.Library.ThemesFolderName, themeName, Enumerable.Empty<string>()));
+            => libLoader.Exists(new Location("", "", new string[] { Location.Library.ThemesFolderName, themeName }));
 
         /// <summary>
         /// Checks if the specified component available in the library
@@ -23,7 +23,7 @@ namespace Xarial.Docify.Core.Loader
         /// <param name="compName">Name of the component</param>
         /// <returns>True if component is available, False if not</returns>
         public static bool ContainsComponent(this ILibraryLoader libLoader, string compName)
-            => libLoader.Exists(new Location(Location.Library.ComponentsFolderName, compName, Enumerable.Empty<string>()));
+            => libLoader.Exists(new Location("", "", new string[] { Location.Library.ComponentsFolderName, compName }));
 
         /// <summary>
         /// Checks if the specified plugin available in the library
@@ -31,7 +31,7 @@ namespace Xarial.Docify.Core.Loader
         /// <param name="pluginName">Name of the plugin</param>
         /// <returns>True if plugin is available, False if not</returns>
         public static bool ContainsPlugin(this ILibraryLoader libLoader, string pluginName)
-            => libLoader.Exists(new Location(Location.Library.PluginsFolderName, pluginName, Enumerable.Empty<string>()));
+            => libLoader.Exists(new Location("", "", new string[] { Location.Library.PluginsFolderName, pluginName }));
 
         /// <summary>
         /// Loads the files of the theme
@@ -40,7 +40,7 @@ namespace Xarial.Docify.Core.Loader
         /// <param name="filters">File filters</param>
         /// <returns>Files from the theme</returns>
         public static IAsyncEnumerable<IFile> LoadThemeFiles(this ILibraryLoader libLoader, string themeName, string[] filters)
-            => libLoader.LoadFolder(new Location(Location.Library.ThemesFolderName, themeName, Enumerable.Empty<string>()), filters);
+            => libLoader.LoadFolder(new Location("", "", new string[] { Location.Library.ThemesFolderName, themeName }), filters);
 
         /// <summary>
         /// Loads the files of the component
@@ -49,7 +49,7 @@ namespace Xarial.Docify.Core.Loader
         /// <param name="filters">File filters</param>
         /// <returns>Files from the component</returns>
         public static IAsyncEnumerable<IFile> LoadComponentFiles(this ILibraryLoader libLoader, string componentName, string[] filters)
-            => libLoader.LoadFolder(new Location(Location.Library.ComponentsFolderName, componentName, Enumerable.Empty<string>()), filters);
+            => libLoader.LoadFolder(new Location("", "", new string[] { Location.Library.ComponentsFolderName, componentName }), filters);
 
         /// <summary>
         /// Loads the files of the plugin
@@ -58,6 +58,6 @@ namespace Xarial.Docify.Core.Loader
         /// <param name="filters">File filters</param>
         /// <returns>Files from the plugin</returns>
         public static IAsyncEnumerable<IFile> LoadPluginFiles(this ILibraryLoader libLoader, string pluginName, string[] filters)
-            => libLoader.LoadFolder(new Location(Location.Library.PluginsFolderName, pluginName, Enumerable.Empty<string>()), filters);
+            => libLoader.LoadFolder(new Location("", "", new string[] { Location.Library.PluginsFolderName, pluginName }), filters);
     }
 }

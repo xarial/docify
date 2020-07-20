@@ -45,14 +45,10 @@ namespace Xarial.Docify.Core.Loader
 
         public bool Exists(ILocation location)
         {
-            if (location.IsFile())
-            {
-                return m_FileSystem.File.Exists(location.ToPath());
-            }
-            else 
-            {
-                return m_FileSystem.Directory.Exists(location.ToPath());
-            }
+            var path = location.ToPath();
+            
+            return m_FileSystem.File.Exists(path) 
+                || m_FileSystem.Directory.Exists(path);
         }
 
         public async IAsyncEnumerable<IFile> LoadFolder(ILocation location, string[] filters)

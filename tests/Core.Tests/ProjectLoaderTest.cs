@@ -22,6 +22,7 @@ using Xarial.Docify.Core;
 using Xarial.Docify.Core.Exceptions;
 using Xarial.Docify.Core.Plugin.Extensions;
 using Tests.Common;
+using Xarial.Docify.Base.Plugins;
 
 namespace Core.Tests
 {
@@ -58,7 +59,7 @@ namespace Core.Tests
             {
                 Location.FromPath("C:\\site"), 
                 Location.FromPath("C:\\site1") 
-            }).ToListAsync();
+            }, new Mock<IDocifyApplication>().Object).ToListAsync();
 
             Assert.AreEqual(4, res.Count());
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "index.md"));
@@ -86,7 +87,9 @@ namespace Core.Tests
 
             await AssertException.ThrowsOfTypeAsync<DuplicateFileException>(async () =>
             {
-                await loader.Load(new ILocation[] { Location.FromPath("C:\\site"), Location.FromPath("C:\\site1") }).ToListAsync();
+                await loader.Load(
+                    new ILocation[] { Location.FromPath("C:\\site"), Location.FromPath("C:\\site1") },
+                    new Mock<IDocifyApplication>().Object).ToListAsync();
             });
         }
 
@@ -108,7 +111,7 @@ namespace Core.Tests
             var res = await loader.Load(new ILocation[]
             {
                 Location.FromPath("C:\\site"),
-            }).ToListAsync();
+            }, new Mock<IDocifyApplication>().Object).ToListAsync();
 
             Assert.AreEqual(1, res.Count());
             Assert.IsNotNull(res.FirstOrDefault(f => f.Location.ToId() == "index.md"));
@@ -143,7 +146,7 @@ namespace Core.Tests
                 new Mock<ILoaderExtension>().Object,
                 new Mock<ILogger>().Object);
 
-            var res = await loader.Load(new ILocation[0]).ToListAsync();
+            var res = await loader.Load(new ILocation[0], new Mock<IDocifyApplication>().Object).ToListAsync();
 
             Assert.AreEqual(2, res.Count());
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file2.txt"));
@@ -191,7 +194,7 @@ namespace Core.Tests
                 new Mock<ILoaderExtension>().Object, 
                 new Mock<ILogger>().Object);
             
-            var res = await loader.Load(new ILocation[] { Location.FromPath("") }).ToListAsync();
+            var res = await loader.Load(new ILocation[] { Location.FromPath("") }, new Mock<IDocifyApplication>().Object).ToListAsync();
 
             Assert.AreEqual(4, res.Count());
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file1.txt"));
@@ -252,7 +255,7 @@ namespace Core.Tests
                 libLoaderMock.Object, new Mock<IPluginsManager>().Object, conf, new Mock<ILoaderExtension>().Object,
                 new Mock<ILogger>().Object);
 
-            var res = await loader.Load(new ILocation[] { Location.FromPath("") }).ToListAsync();
+            var res = await loader.Load(new ILocation[] { Location.FromPath("") }, new Mock<IDocifyApplication>().Object).ToListAsync();
             
             Assert.AreEqual(6, res.Count());
             Assert.IsNotNull(res.First(f => f.Location.ToId() == "file1.txt"));
@@ -296,7 +299,7 @@ namespace Core.Tests
                 libLoader.Object, new Mock<IPluginsManager>().Object, conf, new Mock<ILoaderExtension>().Object, new Mock<ILogger>().Object);
 
             Assert.Throws<DuplicateComponentSourceFileException>(
-                () => loader.Load(new ILocation[] { Location.FromPath("") }).ToEnumerable().ToList());
+                () => loader.Load(new ILocation[] { Location.FromPath("") }, new Mock<IDocifyApplication>().Object).ToEnumerable().ToList());
         }
     }
 }

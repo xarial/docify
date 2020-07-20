@@ -52,23 +52,39 @@ namespace Xarial.Docify.Core.Plugin
 
         private IEnumerable<IPluginBase> m_Plugins;
 
-        private readonly IDocifyApplication m_Engine;
+        private IDocifyApplication m_Engine;
         private readonly IConfiguration m_Conf;
 
         private bool m_IsLoaded;
 
-        public PluginsManager(IConfiguration conf, IDocifyApplication engine)
+        public IEnumerable<IPluginBase> Plugins 
+        {
+            get 
+            {
+                if (m_IsLoaded)
+                {
+                    return m_Plugins;
+                }
+                else 
+                {
+                    throw new Exception("Plugins never loaded");
+                }
+            }
+        }
+
+        public PluginsManager(IConfiguration conf)
         {
             m_Conf = conf;
-            m_Engine = engine;
-
+            
             m_IsLoaded = false;
         }
 
-        public async Task LoadPlugins(IAsyncEnumerable<IPluginInfo> pluginInfos)
+        public async Task LoadPlugins(IAsyncEnumerable<IPluginInfo> pluginInfos, IDocifyApplication engine)
         {
             if (!m_IsLoaded)
             {
+                m_Engine = engine;
+
                 m_IsLoaded = true;
 
                 var cb = new ConventionBuilder();

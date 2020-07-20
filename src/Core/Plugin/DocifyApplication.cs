@@ -5,6 +5,7 @@
 //License: https://docify.net/license/
 //*********************************************************************
 
+using System.Collections.Generic;
 using Xarial.Docify.Base.Plugins;
 using Xarial.Docify.Base.Services;
 
@@ -19,12 +20,17 @@ namespace Xarial.Docify.Core.Plugin
         public IPublisherManager Publisher { get; }
         public ILoaderManager Loader { get; }
 
+        public IEnumerable<IPluginBase> Plugins => m_PluginsMgr.Plugins;
+
+        private readonly IPluginsManager m_PluginsMgr;
+
         public DocifyApplication(IIncludesHandlerManager includes,
             ICompilerManager compiler,
             IComposerManager composer,
             IPublisherManager publisher,
             ILoaderManager loader,
-            ILogger logger)
+            ILogger logger,
+            IPluginsManager pluginsMgr)
         {
             Includes = includes;
             Compiler = compiler;
@@ -32,6 +38,7 @@ namespace Xarial.Docify.Core.Plugin
             Publisher = publisher;
             Loader = loader;
             Logger = logger;
+            m_PluginsMgr = pluginsMgr;
         }
     }
 }

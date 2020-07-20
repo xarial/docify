@@ -141,7 +141,7 @@ namespace Xarial.Docify.CLI
             var compiler = Resolve<ICompiler>();
             var publisher = Resolve<IPublisher>();
 
-            var srcFiles = loader.Load(m_SrcDirs);
+            var srcFiles = loader.Load(m_SrcDirs, Resolve<IDocifyApplication>());
 
             var site = await composer.ComposeSite(srcFiles, m_Host, m_BaseUrl);
 
@@ -206,7 +206,8 @@ namespace Xarial.Docify.CLI
             builder.Register(c => c.Resolve<IConfigurationLoader>().Load(m_SrcDirs).Result)
                 .SingleInstance();
 
-            builder.RegisterType<PluginsManager>().As<IPluginsManager>();
+            builder.RegisterType<PluginsManager>().As<IPluginsManager>()
+                .SingleInstance();
 
             RegisterExtensions(builder);
         }
@@ -248,7 +249,8 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<LoaderManager>().As<ILoaderManager>();
 
-            builder.RegisterType<DocifyApplication>().As<IDocifyApplication>();
+            builder.RegisterType<DocifyApplication>()
+                .As<IDocifyApplication>();
         }
 
         private IEnumerable<IFileLoader> ResolveLibraryLoaders(IComponentContext ctx)

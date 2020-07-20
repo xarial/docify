@@ -112,12 +112,12 @@ namespace Core.Tests
             var mgr = new PluginsManager(new Configuration() 
             {
                 Plugins = new List<string>() 
-            }, new Mock<IDocifyApplication>().Object);
+            });
 
             await mgr.LoadPlugins(new PluginInfoMock[] 
             {
-                new PluginInfoMock("plg1", new FileMock(Location.FromPath("Plugin1Mock.dll"), assmBuffer1)),
-            }.ToAsyncEnumerable());
+                new PluginInfoMock("plg1", new FileMock(Location.FromPath("Plugin1Mock.dll"), assmBuffer1))
+            }.ToAsyncEnumerable(), new Mock<IDocifyApplication>().Object);
 
             var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPluginBase>;
 
@@ -147,12 +147,12 @@ namespace Core.Tests
             var mgr = new PluginsManager(new Configuration()
             {
                 Plugins = new string[] { "plugin1" }.ToList()
-            }, new Mock<IDocifyApplication>().Object);
+            });
 
             await mgr.LoadPlugins(new PluginInfoMock[]
             {
                 new PluginInfoMock("plugin1", new FileMock(Location.FromPath("mockplugins.dll"), assmBuffer))
-            }.ToAsyncEnumerable());
+            }.ToAsyncEnumerable(), new Mock<IDocifyApplication>().Object);
                         
             var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPluginBase>;
             var plg = res.OfType<PluginMock<MockSettings1>>().FirstOrDefault();
@@ -185,12 +185,12 @@ namespace Core.Tests
             var conf = new MetadataSerializer().Deserialize<Configuration>("^plg1:\r\n  prop-two: 0.1\r\n  prp3:\r\n    - A\r\n    - B");
             conf.Plugins = new List<string>(new string[] { "plg1" });
 
-            var mgr = new PluginsManager(conf, new Mock<IDocifyApplication>().Object);
+            var mgr = new PluginsManager(conf);
 
             await mgr.LoadPlugins(new PluginInfoMock[]
             {
                 new PluginInfoMock("plg1", new FileMock(Location.FromPath("mockplugins.dll"), assmBuffer))
-            }.ToAsyncEnumerable());
+            }.ToAsyncEnumerable(), new Mock<IDocifyApplication>().Object);
                         
             var res = mgr.GetType().GetField("m_Plugins", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mgr) as IEnumerable<IPluginBase>;
             var plg = res.OfType<PluginMock<MockSettings1>>().FirstOrDefault();
@@ -222,13 +222,13 @@ namespace Core.Tests
             var mgr = new PluginsManager(new Configuration()
             {
                 Plugins = new List<string>()
-            }, new Mock<IDocifyApplication>().Object);
+            });
 
             Assert.ThrowsAsync<DuplicatePluginException>(() => mgr.LoadPlugins(new PluginInfoMock[]
             {
                 new PluginInfoMock("plg1", new FileMock(Location.FromPath("Plugin1Mock.dll"), assmBuffer1)),
                 new PluginInfoMock("plg1", new FileMock(Location.FromPath("Plugin2Mock.dll"), assmBuffer1)),
-            }.ToAsyncEnumerable()));
+            }.ToAsyncEnumerable(), new Mock<IDocifyApplication>().Object));
         }
 
         [Test]
@@ -248,12 +248,12 @@ namespace Core.Tests
             var mgr = new PluginsManager(new Configuration()
             {
                 Plugins = new List<string>()
-            }, new Mock<IDocifyApplication>().Object);
+            });
 
             Assert.ThrowsAsync<MissingPluginImplementationException>(() => mgr.LoadPlugins(new PluginInfoMock[]
             {
                 new PluginInfoMock("plg1", new FileMock(Location.FromPath("Plugin1Mock.dll"), assmBuffer1))
-            }.ToAsyncEnumerable()));
+            }.ToAsyncEnumerable(), new Mock<IDocifyApplication>().Object));
         }
 
         [Test]
@@ -280,12 +280,12 @@ namespace Core.Tests
             var mgr = new PluginsManager(new Configuration()
             {
                 Plugins = new List<string>()
-            }, new Mock<IDocifyApplication>().Object);
+            });
 
             Assert.ThrowsAsync<MultiplePluginsPerNameException>(() => mgr.LoadPlugins(new PluginInfoMock[]
             {
                 new PluginInfoMock("plg1", new FileMock(Location.FromPath("Plugin1Mock.dll"), assmBuffer1))
-            }.ToAsyncEnumerable()));
+            }.ToAsyncEnumerable(), new Mock<IDocifyApplication>().Object));
         }
     }
 }

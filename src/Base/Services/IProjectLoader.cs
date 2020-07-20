@@ -7,6 +7,7 @@
 
 using System.Collections.Generic;
 using Xarial.Docify.Base.Data;
+using Xarial.Docify.Base.Plugins;
 
 namespace Xarial.Docify.Base.Services
 {
@@ -21,6 +22,6 @@ namespace Xarial.Docify.Base.Services
         /// </summary>
         /// <param name="locations">Input locations for projects</param>
         /// <returns>Project files</returns>
-        IAsyncEnumerable<IFile> Load(ILocation[] locations);
+        IAsyncEnumerable<IFile> Load(ILocation[] locations, IDocifyApplication app);
     }
 }

@@ -49,11 +49,11 @@ namespace Xarial.Docify.Core.Loader
             m_UserFilter = GetFilesFilter();
         }
 
-        public async IAsyncEnumerable<IFile> Load(ILocation[] locations)
+        public async IAsyncEnumerable<IFile> Load(ILocation[] locations, IDocifyApplication app)
         {
             var resFileIds = new List<string>();
 
-            await m_PluginsManager.LoadPlugins(LoadPluginFiles(locations, resFileIds));
+            await m_PluginsManager.LoadPlugins(LoadPluginFiles(locations, resFileIds), app);
 
             var pluginExcludeFilter = LocationExtension.NEGATIVE_FILTER
                 + Path.Combine(Location.Library.PluginsFolderName, LocationExtension.ANY_FILTER);

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using Xarial.Docify.Base;
 using Xarial.Docify.Base.Data;
 using Xarial.Docify.Base.Services;
@@ -38,49 +39,115 @@ namespace Xarial.Docify.Core.Loader
             m_Logger = logger;
         }
 
-        public IAsyncEnumerable<IFile> LoadComponentFiles(string componentName, string[] filters)
-            => ProcessLibraryItems(Location.Library.ComponentsFolderName, componentName, m_Manifest.Components, filters);
-
-        public IAsyncEnumerable<IFile> LoadPluginFiles(string pluginName, string[] filters)
-            => ProcessLibraryItems(Location.Library.PluginsFolderName, pluginName, m_Manifest.Plugins, filters);
-
-        public IAsyncEnumerable<IFile> LoadThemeFiles(string themeName, string[] filters) 
-            => ProcessLibraryItems(Location.Library.ThemesFolderName, themeName, m_Manifest.Themes, filters);
-
-        private IAsyncEnumerable<IFile> ProcessLibraryItems(string itemType, string itemName, 
-            SecureLibraryItem[] itemsList, string[] filters) 
+        public async IAsyncEnumerable<ILocation> EnumSubFolders(ILocation location)
         {
-            var item = itemsList?.FirstOrDefault(i => string.Equals(i.Name, itemName, StringComparison.CurrentCultureIgnoreCase));
+            await Task.CompletedTask;
 
-            if (item != null)
+            if (TryParseLibraryLocation(location, out string type, out string name, out ILocation path))
             {
-                var libLoc = m_Loc.Combine(itemType, item.Name);
-
-                try
+                if (TryFindItem(type, name, out SecureLibraryItem item))
                 {
+                    foreach (var subFolder in item.Files
+                        .Select(i => i.Name.Root)
+                        .Where(i => !string.IsNullOrEmpty(i))
+                        .Distinct(StringComparer.CurrentCultureIgnoreCase)) 
+                    {
+                        yield return location.Combine(subFolder);
+                    }
+                }
+                else
+                {
+                    throw new UserMessageException($"'{type}/{name}' item is not present in the secure library manifest");
+                }
+            }
+            else
+            {
+                throw new Exception("Invalid library item path");
+            }
+        }
+
+        public bool Exists(ILocation location) => 
+            TryParseLibraryLocation(location, out string type, out string name, out _) 
+            && TryFindItem(type, name, out _);
+
+        public IAsyncEnumerable<IFile> LoadFolder(ILocation location, string[] filters)
+        {
+            if (TryParseLibraryLocation(location, out string type, out string name, out ILocation path)) 
+            {
+                if (TryFindItem(type, name, out SecureLibraryItem item))
+                {
+                    var libLoc = m_Loc.Combine(location);
+
                     return LoadAndValidateFiles(libLoc, item.Files, filters);
                 }
-                catch (Exception ex)
+                else
                 {
-                    throw new LibraryItemLoadException(itemName, libLoc.ToId(), ex);
+                    throw new UserMessageException($"'{type}/{name}' item is not present in the secure library manifest");
                 }
             }
             else 
             {
-                throw new UserMessageException($"'{itemName}' item is not present in the secure library manifest");
+                throw new Exception("Invalid library item path");
             }
         }
 
-        public bool ContainsTheme(string themeName)
-            => ContainsLibraryItem(m_Manifest.Themes, themeName);
+        private bool TryParseLibraryLocation(ILocation location, out string type, out string name, out ILocation path)
+        {
+            type = "";
+            name = "";
+            path = null;
 
-        public bool ContainsComponent(string compName)
-            => ContainsLibraryItem(m_Manifest.Components, compName);
+            if (location.Segments.Count >= 2)
+            {
+                type = location.Segments[0];
+                name = location.Segments[1];
 
-        public bool ContainsPlugin(string pluginName)
-            => ContainsLibraryItem(m_Manifest.Plugins, pluginName);
+                path = location.GetRelative(new Location(type, name, Enumerable.Empty<string>()));
+                return true;
+            }
 
-        private async IAsyncEnumerable<IFile> LoadAndValidateFiles(ILocation loc, SecureLibraryItemFile[] files, string[] filters)
+            return false;
+        }
+
+        private bool TryFindItem(string type, string name, out SecureLibraryItem item)
+        {
+            item = null;
+
+            SecureLibraryItem[] itemsList;
+
+            if (string.Equals(type, Location.Library.ComponentsFolderName,
+                StringComparison.CurrentCultureIgnoreCase))
+            {
+                itemsList = m_Manifest.Components;
+            }
+            else if (string.Equals(type, Location.Library.ComponentsFolderName,
+                StringComparison.CurrentCultureIgnoreCase))
+            {
+                itemsList = m_Manifest.Components;
+            }
+            else if (string.Equals(type, Location.Library.ComponentsFolderName,
+                StringComparison.CurrentCultureIgnoreCase))
+            {
+                itemsList = m_Manifest.Components;
+            }
+            else
+            {
+                return false;
+            }
+
+            item = itemsList.FirstOrDefault(i => string.Equals(
+                i.Name, name, StringComparison.CurrentCultureIgnoreCase));
+
+            if (item != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private async IAsyncEnumerable<IFile> LoadAndValidateFiles(
+            ILocation loc, IEnumerable<SecureLibraryItemFile> files, string[] filters)
         {
             await foreach (var file in m_FileLoader.LoadFolder(loc, filters))
             {
@@ -103,7 +170,7 @@ namespace Xarial.Docify.Core.Loader
             }
         }
 
-        private bool ContainsLibraryItem(SecureLibraryItem[] items, string itemName) 
+        private bool ContainsLibraryItem(SecureLibraryItem[] items, string itemName)
         {
             return items.FirstOrDefault(i => string.Equals(i.Name, itemName, StringComparison.CurrentCultureIgnoreCase)) != null;
         }

@@ -49,11 +49,11 @@ namespace Xarial.Docify.Core.Loader
             m_UserFilter = GetFilesFilter();
         }
 
-        public async IAsyncEnumerable<IFile> Load(ILocation[] locations)
+        public async IAsyncEnumerable<IFile> Load(ILocation[] locations, IDocifyApplication app)
         {
             var resFileIds = new List<string>();
 
-            await m_PluginsManager.LoadPlugins(LoadPluginFiles(locations, resFileIds));
+            await m_PluginsManager.LoadPlugins(LoadPluginFiles(locations, resFileIds), app);
 
             var pluginExcludeFilter = LocationExtension.NEGATIVE_FILTER
                 + Path.Combine(Location.Library.PluginsFolderName, LocationExtension.ANY_FILTER);
@@ -106,32 +106,25 @@ namespace Xarial.Docify.Core.Loader
 
             if (m_Config.ThemesHierarchy?.Any() == true)
             {
-                foreach (var theme in m_Config.ThemesHierarchy)
+                foreach (var themeName in m_Config.ThemesHierarchy)
                 {
-                    foreach (var themeName in m_Config.ThemesHierarchy)
+                    await foreach (var srcFile in ProcessLibraryItems(
+                        m_LibraryLoader.LoadThemeFiles(themeName, filter), resFileIds, true))
                     {
-                        await foreach (var srcFile in ProcessLibraryItems(
-                            m_LibraryLoader.LoadThemeFiles(themeName, filter), resFileIds, true))
-                        {
-                            yield return srcFile;
-                        }
+                        yield return srcFile;
                     }
                 }
             }
         }
-        
-        private async IAsyncEnumerable<IPluginInfo> LoadPluginFiles(ILocation[] locations, List<string> resFileIds)
+
+        private async IAsyncEnumerable<IPluginInfo> LoadPluginFiles(
+            ILocation[] locations, List<string> resFileIds)
         {
             foreach (var loc in locations)
             {
-                var pluginsLoc = loc.Combine(Location.Library.PluginsFolderName);
-
-                if (m_FileLoader.Exists(pluginsLoc))
+                await foreach (var pluginInfo in LoadPluginFilesFromLocalFolder(loc, m_FileLoader))
                 {
-                    await foreach (var pluginLoc in m_FileLoader.EnumSubFolders(pluginsLoc))
-                    {
-                        yield return new PluginInfo(pluginLoc.Segments.Last(), m_FileLoader.LoadFolder(pluginLoc, m_UserFilter));
-                    }
+                    yield return pluginInfo;
                 }
             }
 
@@ -141,6 +134,46 @@ namespace Xarial.Docify.Core.Loader
                 {
                     yield return new PluginInfo(pluginName, ProcessLibraryItems(
                         m_LibraryLoader.LoadPluginFiles(pluginName, null), resFileIds, true));
+                }
+            }
+
+            if (m_Config.Components?.Any() == true)
+            {
+                foreach (var compName in m_Config.Components)
+                {
+                    var loc = new Location("", "", new string[] { Location.Library.ComponentsFolderName, compName });
+
+                    await foreach (var pluginInfo in LoadPluginFilesFromLocalFolder(loc, m_LibraryLoader))
+                    {
+                        yield return pluginInfo;
+                    }
+                }
+            }
+
+            if (m_Config.ThemesHierarchy?.Any() == true)
+            {
+                foreach (var themeName in m_Config.ThemesHierarchy)
+                {
+                    var loc = new Location("", "", new string[] { Location.Library.ThemesFolderName, themeName });
+
+                    await foreach (var pluginInfo in LoadPluginFilesFromLocalFolder(loc, m_LibraryLoader))
+                    {
+                        yield return pluginInfo;
+                    }
+                }
+            }
+        }
+
+        private async IAsyncEnumerable<IPluginInfo> LoadPluginFilesFromLocalFolder(ILocation baseLoc, IFileLoader loader)
+        {
+            var pluginsLoc = baseLoc.Combine(Location.Library.PluginsFolderName);
+
+            if (loader.Exists(pluginsLoc))
+            {
+                await foreach (var pluginLoc in loader.EnumSubFolders(pluginsLoc))
+                {
+                    yield return new PluginInfo(pluginLoc.Segments.Last(),
+                        loader.LoadFolder(pluginLoc, m_UserFilter));
                 }
             }
         }

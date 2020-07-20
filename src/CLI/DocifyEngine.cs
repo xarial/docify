@@ -141,7 +141,7 @@ namespace Xarial.Docify.CLI
             var compiler = Resolve<ICompiler>();
             var publisher = Resolve<IPublisher>();
 
-            var srcFiles = loader.Load(m_SrcDirs);
+            var srcFiles = loader.Load(m_SrcDirs, Resolve<IDocifyApplication>());
 
             var site = await composer.ComposeSite(srcFiles, m_Host, m_BaseUrl);
 
@@ -160,11 +160,11 @@ namespace Xarial.Docify.CLI
             builder.RegisterType<LibraryLoader>()
                 .As<ILibraryLoader>()
                 .WithParameter(new ResolvedParameter(
-                       (pi, ctx) => pi.ParameterType == typeof(ILibraryLoader[]),
+                       (pi, ctx) => pi.ParameterType == typeof(IFileLoader[]),
                        (pi, ctx) => ResolveLibraryLoaders(ctx).ToArray()));
 
             builder.RegisterType<FolderLibraryLoader>();
-            builder.RegisterType<SecureLibraryLoader>();
+            builder.RegisterType<SecureFileLoader>();
 
             builder.RegisterType<BaseCompilerConfig>()
                 .UsingConstructor(typeof(IConfiguration));
@@ -206,7 +206,8 @@ namespace Xarial.Docify.CLI
             builder.Register(c => c.Resolve<IConfigurationLoader>().Load(m_SrcDirs).Result)
                 .SingleInstance();
 
-            builder.RegisterType<PluginsManager>().As<IPluginsManager>();
+            builder.RegisterType<PluginsManager>().As<IPluginsManager>()
+                .SingleInstance();
 
             RegisterExtensions(builder);
         }
@@ -248,10 +249,11 @@ namespace Xarial.Docify.CLI
 
             builder.RegisterType<LoaderManager>().As<ILoaderManager>();
 
-            builder.RegisterType<DocifyApplication>().As<IDocifyApplication>();
+            builder.RegisterType<DocifyApplication>()
+                .As<IDocifyApplication>();
         }
 
-        private IEnumerable<ILibraryLoader> ResolveLibraryLoaders(IComponentContext ctx)
+        private IEnumerable<IFileLoader> ResolveLibraryLoaders(IComponentContext ctx)
         {
             if (m_Libs?.Any() == true)
             {
@@ -265,7 +267,7 @@ namespace Xarial.Docify.CLI
                     {
                         libPath = Location.Library.DefaultLibraryManifestFilePath.ToPath();
 
-                        ILibraryLoader standardLib;
+                        IFileLoader standardLib;
 
                         try
                         {
@@ -321,7 +323,7 @@ namespace Xarial.Docify.CLI
             }
         }
 
-        private SecureLibraryLoader ResolveSecureLibrary(IComponentContext ctx, string manifestPath, string publicKeyXml)
+        private SecureFileLoader ResolveSecureLibrary(IComponentContext ctx, string manifestPath, string publicKeyXml)
         {
             if (!System.IO.File.Exists(manifestPath))
             {
@@ -331,12 +333,34 @@ namespace Xarial.Docify.CLI
             var manifest = new UserSettingsService().ReadSettings<SecureLibraryManifest>(
                 manifestPath, new BaseValueSerializer<ILocation>(null, x => Location.FromString(x)));
 
+            IEnumerable<SecureFileManifest> ConvertToSecureFilesManifest(SecureLibraryItem[] items, string typeName) 
+            {
+                foreach (var item in items) 
+                {
+                    var baseLoc = new Location("", "", new string[] { typeName, item.Name });
+
+                    foreach (var file in item.Files) 
+                    {
+                        yield return new SecureFileManifest()
+                        {
+                            Location = baseLoc.Combine(file.Name),
+                            Signature = file.Signature
+                        };
+                    }
+                }
+            }
+
+            var secureFilesManifest =
+                ConvertToSecureFilesManifest(manifest.Themes, Location.Library.ThemesFolderName)
+                .Concat(ConvertToSecureFilesManifest(manifest.Components, Location.Library.ComponentsFolderName))
+                .Concat(ConvertToSecureFilesManifest(manifest.Plugins, Location.Library.PluginsFolderName));
+
             ILocation libLoc = Location.FromString(manifestPath);
             libLoc = libLoc.Create(libLoc.Root, "", libLoc.Segments);
 
-            return ctx.Resolve<SecureLibraryLoader>(
+            return ctx.Resolve<SecureFileLoader>(
                    new TypedParameter(typeof(ILocation), libLoc),
-                   new TypedParameter(typeof(SecureLibraryManifest), manifest),
+                   new TypedParameter(typeof(SecureFileManifest[]), secureFilesManifest.ToArray()),
                    new TypedParameter(typeof(string), publicKeyXml));
         }
     }

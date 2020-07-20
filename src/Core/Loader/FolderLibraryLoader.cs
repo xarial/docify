@@ -14,7 +14,7 @@ using Xarial.Docify.Core.Exceptions;
 
 namespace Xarial.Docify.Core.Loader
 {
-    public class FolderLibraryLoader : ILibraryLoader
+    public class FolderLibraryLoader : IFileLoader
     {
         private readonly ILocation m_Location;
         private readonly IFileLoader m_FileLoader;
@@ -25,40 +25,18 @@ namespace Xarial.Docify.Core.Loader
             m_FileLoader = fileLoader;
         }
 
-        public IAsyncEnumerable<IFile> LoadComponentFiles(string componentName, string[] filters)
-            => LoadLibraryItem(componentName, Location.Library.ComponentsFolderName, filters);
-
-        public IAsyncEnumerable<IFile> LoadPluginFiles(string pluginName, string[] filters)
-            => LoadLibraryItem(pluginName, Location.Library.PluginsFolderName, filters);
-
-        public IAsyncEnumerable<IFile> LoadThemeFiles(string themeName, string[] filters)
-            => LoadLibraryItem(themeName, Location.Library.ThemesFolderName, filters);
-
-        public bool ContainsTheme(string themeName) 
-            => ContainsLibraryItem(Location.Library.ThemesFolderName, themeName);
-
-        public bool ContainsComponent(string compName)
-            => ContainsLibraryItem(Location.Library.ComponentsFolderName, compName);
-
-        public bool ContainsPlugin(string pluginName)
-            => ContainsLibraryItem(Location.Library.PluginsFolderName, pluginName);
-
-        private IAsyncEnumerable<IFile> LoadLibraryItem(string itemName, string subFolder, string[] filters)
+        public async IAsyncEnumerable<ILocation> EnumSubFolders(ILocation location)
         {
-            try
+            await foreach (var subFolderLoc in m_FileLoader.EnumSubFolders(m_Location.Combine(location))) 
             {
-                var compsLoc = m_Location.Combine(new Location("", "", new string[] { subFolder, itemName }));
-                return m_FileLoader.LoadFolder(compsLoc, filters);
-            }
-            catch (Exception ex)
-            {
-                throw new LibraryItemLoadException(itemName, subFolder, ex);
+                yield return subFolderLoc.GetRelative(m_Location);
             }
         }
 
-        private bool ContainsLibraryItem(string itemType, string itemName) 
-        {
-            return m_FileLoader.Exists(m_Location.Combine(new Location("", "", new string[] { itemType, itemName })));
-        }
+        public bool Exists(ILocation location)
+            => m_FileLoader.Exists(m_Location.Combine(location));
+
+        public IAsyncEnumerable<IFile> LoadFolder(ILocation location, string[] filters)
+            => m_FileLoader.LoadFolder(m_Location.Combine(location), filters);
     }
 }

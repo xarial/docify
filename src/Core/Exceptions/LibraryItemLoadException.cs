@@ -6,13 +6,14 @@
 //*********************************************************************
 
 using System;
+using Xarial.Docify.Base;
 
 namespace Xarial.Docify.Core.Exceptions
 {
     public class LibraryItemLoadException : UserMessageException
     {
-        public LibraryItemLoadException(string itemName, string loc, Exception inner)
-            : base($"Failed to load library item: '{itemName}' from '{loc}'", inner)
+        public LibraryItemLoadException(ILocation loc)
+            : base($"Failed to load library item: '{loc.ToId()}'")
         {
         }
     }

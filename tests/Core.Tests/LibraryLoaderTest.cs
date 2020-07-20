@@ -23,14 +23,14 @@ using Xarial.Docify.Core.Loader;
 
 namespace Core.Tests
 {
-    public class FolderLibraryLoaderTest
+    public class LibraryLoaderTest
     {
         [Test]
         public void LoadComponentFilesTest() 
         {
             ILocation loc = null;
 
-            var fileLoaderMock = new Mock<IFileLoader>();
+            var fileLoaderMock = new Mock<ILibraryLoader>();
             fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
                 .Returns((ILocation l, string[] f) =>
                 {
@@ -38,10 +38,10 @@ namespace Core.Tests
                     return AsyncEnumerable.Empty<IFile>();
                 });
 
-            var libLoader = new FolderLibraryLoader(Location.FromPath("D:\\lib"), fileLoaderMock.Object);
+            var libLoader = fileLoaderMock.Object;
             libLoader.LoadComponentFiles("A", null);
 
-            Assert.AreEqual("D:\\lib\\_components\\A", loc.ToPath());
+            Assert.AreEqual("_components::A", loc.ToId());
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace Core.Tests
         {
             ILocation loc = null;
 
-            var fileLoaderMock = new Mock<IFileLoader>();
+            var fileLoaderMock = new Mock<ILibraryLoader>();
             fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
                 .Returns((ILocation l, string[] f) =>
                 {
@@ -57,10 +57,10 @@ namespace Core.Tests
                     return AsyncEnumerable.Empty<IFile>();
                 });
 
-            var libLoader = new FolderLibraryLoader(Location.FromPath("D:\\lib"), fileLoaderMock.Object);
+            var libLoader = fileLoaderMock.Object;
             libLoader.LoadThemeFiles("A", null);
 
-            Assert.AreEqual("D:\\lib\\_themes\\A", loc.ToPath());
+            Assert.AreEqual("_themes\\A", loc.ToPath());
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace Core.Tests
         {
             ILocation loc = null;
 
-            var fileLoaderMock = new Mock<IFileLoader>();
+            var fileLoaderMock = new Mock<ILibraryLoader>();
             fileLoaderMock.Setup(m => m.LoadFolder(It.IsAny<ILocation>(), It.IsAny<string[]>()))
                 .Returns((ILocation l, string[] f) =>
                 {
@@ -76,25 +76,25 @@ namespace Core.Tests
                     return AsyncEnumerable.Empty<IFile>();
                 });
 
-            var libLoader = new FolderLibraryLoader(Location.FromPath("D:\\lib"), fileLoaderMock.Object);
+            var libLoader = fileLoaderMock.Object;
             libLoader.LoadPluginFiles("A", null);
 
-            Assert.AreEqual("D:\\lib\\_plugins\\A", loc.ToPath());
+            Assert.AreEqual("_plugins\\A", loc.ToPath());
         }
 
         [Test]
         public void ContainsTest() 
         {
             var lib = new List<string>();
-            lib.Add("D:\\::lib::_components::c1");
-            lib.Add("D:\\::lib::_themes::t1");
-            lib.Add("D:\\::lib::_plugins::p1");
+            lib.Add("_components::c1");
+            lib.Add("_themes::t1");
+            lib.Add("_plugins::p1");
 
-            var fileLoaderMock = new Mock<IFileLoader>();
+            var fileLoaderMock = new Mock<ILibraryLoader>();
             fileLoaderMock.Setup(m => m.Exists(It.IsAny<ILocation>()))
                 .Returns((ILocation l) => lib.Contains(l.ToId()));
 
-            var libLoader = new FolderLibraryLoader(Location.FromPath("D:\\lib"), fileLoaderMock.Object);
+            var libLoader = fileLoaderMock.Object;
 
             var r1 = libLoader.ContainsComponent("c1");
             var r2 = libLoader.ContainsComponent("c2");

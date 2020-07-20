@@ -5,6 +5,7 @@
 //License: https://docify.net/license/
 //*********************************************************************
 
+using System.Collections.Generic;
 using Xarial.Docify.Base.Services;
 
 namespace Xarial.Docify.Base.Plugins
@@ -14,6 +15,8 @@ namespace Xarial.Docify.Base.Plugins
     /// </summary>
     public interface IDocifyApplication
     {
+        IEnumerable<IPluginBase> Plugins { get; }
+
         /// <summary>
         /// Instance of the logger to log user messages
         /// </summary>

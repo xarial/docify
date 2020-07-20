@@ -25,8 +25,13 @@ namespace Xarial.Docify.Core.Loader
             m_FileLoader = fileLoader;
         }
 
-        public IAsyncEnumerable<ILocation> EnumSubFolders(ILocation location)
-            => m_FileLoader.EnumSubFolders(m_Location.Combine(location));
+        public async IAsyncEnumerable<ILocation> EnumSubFolders(ILocation location)
+        {
+            await foreach (var subFolderLoc in m_FileLoader.EnumSubFolders(m_Location.Combine(location))) 
+            {
+                yield return subFolderLoc.GetRelative(m_Location);
+            }
+        }
 
         public bool Exists(ILocation location)
             => m_FileLoader.Exists(m_Location.Combine(location));

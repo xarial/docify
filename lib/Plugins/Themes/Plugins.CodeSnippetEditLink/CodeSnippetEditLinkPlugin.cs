@@ -52,12 +52,13 @@ namespace Plugins.CodeSnippetEditLink
             
             var editSnippetBtn = new XElement("button");
             editSnippetBtn.Add(new XAttribute("class", "snippet-btn"));
+            editSnippetBtn.Add(new XAttribute("title", "Edit Code Snippet"));
             var img = new XElement("img");
             img.SetAttributeValue("src", "/_assets/images/edit-icon.svg");
             img.SetAttributeValue("alt", "Edit Snippet");
             img.SetAttributeValue("width", "16px");
             img.SetAttributeValue("height", "16px");
-            editSnippetBtn.SetAttributeValue("onclick", $"window.location.href = '{snippetUrl}'");
+            editSnippetBtn.SetAttributeValue("onclick", $"window.open('{snippetUrl}','_blank')");
             editSnippetBtn.Add(img);
 
             snippetXml.Root.AddFirst(editSnippetBtn);

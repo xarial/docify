@@ -28,7 +28,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
 
         private const string CSS_FILE_PATH = "/_assets/styles/syntax-highlight.css";
         private const string CLIPBOARDJS_FILE_PATH = @"/_assets/scripts/clipboard.min.js";
-        private const string COPYCODE_FILE_PATH = @"/_assets/scripts/copycodeclipboard.js";
+        private const string COPYCODE_FILE_PATH = @"/_assets/scripts/copy-code-clipboard.js";
         private const string COPYCODE_ICON_FILE_PATH = @"/_assets/images/copy-code.svg";
 
         private IDocifyApplication m_App;
@@ -133,6 +133,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
             {
                 var copyCodeBtn = new XElement("button");
                 copyCodeBtn.Add(new XAttribute("class", "snippet-btn copy-code-btn"));
+                copyCodeBtn.Add(new XAttribute("title", "Copy Code To Clipboard"));
                 var img = new XElement("img");
                 img.SetAttributeValue("src", COPYCODE_ICON_FILE_PATH);
                 img.SetAttributeValue("alt", "Copy code to clipboard");

@@ -57,6 +57,12 @@
     vertical-align: middle;
 }
 
+.snippet-btn {
+    margin-right: 5px;
+    position: relative;
+    top: 0.8em;
+}
+
 @media screen and (max-width: 1200px) {
     .layout {
         grid-template-areas: 'header' 'toc' 'main';

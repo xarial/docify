@@ -11,6 +11,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\src\Base\Base.csproj" />
+    <ProjectReference Include="..\..\Plugins.CodeSnippet\Plugins.CodeSnippet.csproj">
+      <Private>false</Private>
+    </ProjectReference>
     <ProjectReference Include="..\..\Plugins.Common\Plugins.Common.csproj" />
   </ItemGroup>
   

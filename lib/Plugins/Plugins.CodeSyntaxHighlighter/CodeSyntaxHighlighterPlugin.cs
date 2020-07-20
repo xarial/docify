@@ -132,7 +132,7 @@ namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
             if (m_Settings.AddCopyCodeButton)
             {
                 var copyCodeBtn = new XElement("button");
-                copyCodeBtn.Add(new XAttribute("class", "copy-code-btn"));
+                copyCodeBtn.Add(new XAttribute("class", "snippet-btn copy-code-btn"));
                 var img = new XElement("img");
                 img.SetAttributeValue("src", COPYCODE_ICON_FILE_PATH);
                 img.SetAttributeValue("alt", "Copy code to clipboard");
@@ -170,8 +170,6 @@ namespace Xarial.Docify.Lib.Plugins.CodeSyntaxHighlighter
                     throw new HeadAssetLinkFailedException(CSS_FILE_PATH, url, ex);
                 }
             }
-
-            
 
             return Task.FromResult(html);
         }

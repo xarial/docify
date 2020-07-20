@@ -7,5 +7,6 @@ namespace Plugins.Themes.UserGuide.CodeSnippetEditLink
     public class CodeSnippetEditLinkPluginSettings
     {
         public bool Enable { get; set; } = false;
+        public string BaseUrl { get; set; }
     }
 }

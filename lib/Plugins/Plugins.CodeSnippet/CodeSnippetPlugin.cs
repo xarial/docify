@@ -24,12 +24,17 @@ using Xarial.Docify.Lib.Plugins.Common.Helpers;
 
 namespace Xarial.Docify.Lib.Plugins.CodeSnippet
 {
+    public delegate void InsertSnippetDelegate(IAsset asset, ref string htmlSnippet);
+
     public interface ICodeSnippetPlugin 
     {
+        event InsertSnippetDelegate InsertSnippet;
     }
 
     public class CodeSnippetPlugin : IPlugin<CodeSnippetSettings>, ICodeSnippetPlugin
     {
+        public event InsertSnippetDelegate InsertSnippet;
+
         private CodeSnippetSettings m_Settings;
 
         private const string CSS_FILE_PATH = "/_assets/styles/code-snippet.css";
@@ -259,7 +264,11 @@ namespace Xarial.Docify.Lib.Plugins.CodeSnippet
                     }
 
                     var code = $"~~~{lang} {snipClass}\r\n{snip.Code}\r\n~~~";
-                    html.AppendLine(await m_App.Compiler.StaticContentTransformer.Transform(code));
+                    var htmlSnippet = await m_App.Compiler.StaticContentTransformer.Transform(code);
+
+                    InsertSnippet?.Invoke(snipAsset, ref htmlSnippet);
+
+                    html.AppendLine(htmlSnippet);
                 }
             }
             else

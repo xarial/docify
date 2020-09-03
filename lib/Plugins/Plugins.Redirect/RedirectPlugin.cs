@@ -87,6 +87,17 @@ namespace Xarial.Docify.Lib.Plugins.Redirect
                 if (!string.IsNullOrEmpty(redirectTo))
                 {
                     var redirectPage = CreateRedirectPage(page.Name, page.Id, page.Data, redirectTo);
+                    
+                    if (page.Assets?.Any() == true)
+                    {
+                        redirectPage.Assets.AddRange(page.Assets);
+                    }
+
+                    if (page.Folders?.Any() == true)
+                    {
+                        redirectPage.Folders.AddRange(page.Folders);
+                    }
+
                     redirectPage.SubPages.AddRange(page.SubPages);
                     parentPage.SubPages.Remove(page);
                     parentPage.SubPages.Insert(i, redirectPage);

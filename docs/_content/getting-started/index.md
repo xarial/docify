@@ -12,7 +12,8 @@ Docify is available as [.NET Core Global Tool](https://docs.microsoft.com/en-us/
 Docify can be installed by running the following command:
 
 ~~~
-> dotnet install -g docify
+> dotnet tool install -g docify
+
 ~~~
 
 To update to newer version run

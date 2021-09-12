@@ -1,7 +1,7 @@
 ---
 layout: $
 caption: Table Of Content
-title: Creating tale of content in the site
+title: Creating table of content in the site
 description: Creating a Table Of Content (TOC) navigation bar in the site
 image: table-of-content.png
 repo-link: Components/Lib/toc

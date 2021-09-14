@@ -95,7 +95,7 @@ Environment is an optional *--env* parameter allowing to define the current envi
 
 ## Serving The Site
 
-For design purpose, site can be served, in this case site will be built to temp location (unless explicitly specified) and served in the *localhost* so it can be accessed i nany browser without the need to configure the host.
+For design purpose, site can be served, in this case site will be built to temp location (unless explicitly specified) and served in the *localhost* so it can be accessed in any browser without the need to configure the host.
 
 ~~~
 > docify serve
